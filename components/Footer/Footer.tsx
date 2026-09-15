@@ -2,7 +2,7 @@ import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
 import { BUILD, color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile } from "../shared/primitives";
-import { useBreakpoint, detailFor } from "../shared/responsive";
+import { detailFor, useBreakpoint, useStacked } from "../shared/responsive";
 import Wordmark from "./Wordmark";
 
 /**
@@ -20,7 +20,7 @@ export default function Footer({
   backgroundSrc?: string;
 }) {
   const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
   const dots = Math.round(14 * detailFor(bp));
 
   const rootRef = useGsapContext(

@@ -5,7 +5,7 @@ import { whyStride as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MicroLabel } from "../shared/primitives";
 import ScrambleText from "../shared/ScrambleText";
-import { useBreakpoint } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 import HeroObject, { type HeroObjectHandle } from "../Hero/HeroObject";
 
 /**
@@ -27,7 +27,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
   const surface = useRef<SurfaceHandle | null>(null);
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
   const [, setTick] = useState(0);
 
   const rootRef = useGsapContext(

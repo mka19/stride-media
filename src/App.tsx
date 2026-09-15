@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { initSmoothScroll } from "../components/shared/smoothScroll";
 import Marquee from "../components/shared/Marquee";
+import Diagnostics from "../components/shared/Diagnostics";
 import { marquee } from "../components/shared/copy";
 import Nav from "../components/Nav/Nav";
 import Hero from "../components/Hero/Hero";
@@ -42,6 +43,7 @@ export default function App() {
       <FinalCTA />
       <FAQ />
       <Footer />
+      <Diagnostics />
     </>
   );
 }

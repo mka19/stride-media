@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { howItWorks as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { MediaTile, MicroLabel } from "./primitives";
-import { useBreakpoint } from "./responsive";
+import { useBreakpoint, useStacked } from "./responsive";
 import FieldTexture from "./FieldTexture";
 import GradientRevealText from "./GradientRevealText";
 
@@ -31,7 +31,7 @@ export default function HowItWorks({
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
 
   const rootRef = useGsapContext(
     (root) => {

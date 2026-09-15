@@ -4,7 +4,7 @@ import { brand, finalCta as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { GlowButton, Grain, MicroLabel } from "./primitives";
 import ScrambleText from "./ScrambleText";
-import { useBreakpoint } from "./responsive";
+import { useBreakpoint, useStacked } from "./responsive";
 
 /**
  * Final CTA — Norvin-style contact section.
@@ -28,7 +28,7 @@ export default function FinalCTA({
   ready?: boolean;
 }) {
   const bp = useBreakpoint();
-  const stacked = bp === "mobile" || bp === "tablet";
+  const stacked = useStacked() || bp === "tablet";
 
   const rootRef = useGsapContext(
     (root) => {

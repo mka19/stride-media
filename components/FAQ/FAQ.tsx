@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
 import { faq as copy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
-import { useBreakpoint } from "../shared/responsive";
+import { useStacked } from "../shared/responsive";
 
 /**
  * FAQ — sondaven.com reference.
@@ -17,8 +17,7 @@ import { useBreakpoint } from "../shared/responsive";
  */
 export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string }) {
   const [open, setOpen] = useState<number | null>(0);
-  const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
 
   const rootRef = useGsapContext(
     (root) => {

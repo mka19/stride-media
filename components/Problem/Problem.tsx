@@ -4,7 +4,7 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
 import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
-import { useBreakpoint } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 
 /**
  * Problem — sakazuki.io Philosophy reference.
@@ -37,7 +37,7 @@ export default function Problem({
   // Pinning is what janks on real phone hardware, and a cycling slot is
   // disorienting on a small screen, so below tablet the section becomes
   // ordinary sequential scroll instead of a shortened version of the pin.
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
 
   const rootRef = useGsapContext(
     (root) => {

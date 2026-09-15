@@ -1,7 +1,7 @@
 import { addPropertyControls, ControlType } from "framer"
 import { gsap, useGsapContext } from "./gsap";
 import { useInView } from "./useInView";
-import { useBreakpoint } from "./responsive";
+import { useStacked } from "./responsive";
 import { solution as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { MediaTile, MicroLabel } from "./primitives";
@@ -30,10 +30,9 @@ export default function Solution({
 }) {
   // The reel starts once the section is half on screen, and only then.
   const { ref: stageRef, inView } = useInView<HTMLDivElement>({ threshold: 0.5 }, false);
-  const bp = useBreakpoint();
   // A scroll-driven expand to full screen is excessive on a phone: the reel
   // is simply a fixed plate that plays when it comes into view.
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
 
   const rootRef = useGsapContext(
     (root) => {

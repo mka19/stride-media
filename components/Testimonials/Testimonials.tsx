@@ -5,7 +5,7 @@ import { testimonials as copy } from "../shared/copy";
 import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
-import { useBreakpoint } from "../shared/responsive";
+import { useStacked } from "../shared/responsive";
 
 /**
  * Testimonials — trionn.com scattered gallery reference.
@@ -20,8 +20,7 @@ import { useBreakpoint } from "../shared/responsive";
  */
 export default function Testimonials() {
   const surface = useRef<SurfaceHandle | null>(null);
-  const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
 
   // Resting positions: a loose mosaic, deliberately not a grid, with cards
   // overlapping by a little rather than tiling.

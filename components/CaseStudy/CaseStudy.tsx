@@ -6,7 +6,7 @@ import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from ".
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import ScrambleText from "../shared/ScrambleText";
 import HoverBadge from "../shared/HoverBadge";
-import { useBreakpoint } from "../shared/responsive";
+import { useStacked } from "../shared/responsive";
 
 /**
  * Case Study — sondaven.com reference.
@@ -30,8 +30,7 @@ export default function CaseStudy({
   scrollLength?: string;
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
-  const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
 
   // Each plate gets its own lane and speed so the collage travels as a spread
   // rather than a single sheet.

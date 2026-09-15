@@ -54,6 +54,25 @@ export function useCanHover(): boolean {
   return can;
 }
 
+/**
+ * True when a section should drop its pinned, scrubbed sequence for ordinary
+ * sequential scroll.
+ *
+ * Width alone was the wrong test. Pinning is dropped because it janks on
+ * phone hardware and disorients on a small touch screen — not because a
+ * window is narrow. A desktop browser in a narrow panel, which is how this
+ * build is previewed, was being handed the phone layout: no pinned Problem
+ * chapter at all, and What We Do and How It Works static, which reads as a
+ * missing section and two frozen ones.
+ *
+ * So it takes both: a small viewport AND no real pointer.
+ */
+export function useStacked(): boolean {
+  const bp = useBreakpoint();
+  const canHover = useCanHover();
+  return bp === "mobile" && !canHover;
+}
+
 /** Phones get a fraction of the particle and vertex counts. */
 export function detailFor(bp: Breakpoint): number {
   if (bp === "mobile") return 0.35;

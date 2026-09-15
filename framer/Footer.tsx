@@ -3,7 +3,7 @@ import { gsap, useGsapContext } from "./gsap";
 import { brand, footer as copy } from "./copy";
 import { BUILD, color, ease, hexA, layout, space, typeScale } from "./theme";
 import { Grain, MediaTile } from "./primitives";
-import { useBreakpoint, detailFor } from "./responsive";
+import { detailFor, useBreakpoint, useStacked } from "./responsive";
 import Wordmark from "./Wordmark";
 
 /**
@@ -21,7 +21,7 @@ export default function Footer({
   backgroundSrc?: string;
 }) {
   const bp = useBreakpoint();
-  const stacked = bp === "mobile";
+  const stacked = useStacked();
   const dots = Math.round(14 * detailFor(bp));
 
   const rootRef = useGsapContext(
