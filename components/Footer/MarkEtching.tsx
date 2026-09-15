@@ -8,19 +8,24 @@ import { detailFor, type Breakpoint } from "../shared/responsive";
  * totem. The mark is filled to an offscreen canvas, then each column is
  * sampled and redrawn as broken hairlines whose density follows the shape.
  *
- * It is deliberately still. The mark turns in Why Stride, where rotation is
- * the point; here it is a backdrop, and a second spinning copy would compete.
+ * It does not spin — the mark already turns in Why Stride and a second
+ * rotating copy would compete — but it does answer the pointer, leaning
+ * toward the cursor as it crosses the footer.
  */
 export default function MarkEtching({
   size = 360,
   breakpoint = "desktop",
   tone = color.ruby,
+  pointerTracking = true,
 }: {
   size?: number;
   breakpoint?: Breakpoint;
   tone?: string;
+  /** Lean toward the cursor as it crosses the footer. */
+  pointerTracking?: boolean;
 }) {
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const stage = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -94,11 +99,47 @@ export default function MarkEtching({
     }
   }, [size, breakpoint, tone]);
 
+  // Pointer lean. Damped toward the cursor so it follows rather than snaps,
+  // and driven by transform rather than a redraw — re-etching the canvas on
+  // every pointer move would cost a full sample pass per frame.
+  useEffect(() => {
+    const el = stage.current;
+    if (!el || !pointerTracking) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    let targetX = 0;
+    let targetY = 0;
+    let x = 0;
+    let y = 0;
+    let raf = 0;
+
+    const onPointer = (e: PointerEvent) => {
+      targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetY = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+
+    const frame = () => {
+      raf = requestAnimationFrame(frame);
+      x += (targetX - x) * 0.05;
+      y += (targetY - y) * 0.05;
+      el.style.transform = `perspective(900px) rotateY(${x * 16}deg) rotateX(${-y * 9}deg) translate3d(${x * 14}px, ${y * 8}px, 0)`;
+    };
+    frame();
+
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onPointer);
+    };
+  }, [pointerTracking]);
+
   return (
-    <canvas
-      ref={ref}
-      aria-hidden="true"
-      style={{ width: size, height: size, display: "block", maxWidth: "100%" }}
-    />
+    <div ref={stage} style={{ willChange: "transform" }}>
+      <canvas
+        ref={ref}
+        aria-hidden="true"
+        style={{ width: size, height: size, display: "block", maxWidth: "100%" }}
+      />
+    </div>
   );
 }
