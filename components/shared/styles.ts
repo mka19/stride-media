@@ -52,6 +52,12 @@ body {
 @keyframes stride-spin { to { transform: rotate(360deg); } }
 .stride-spin { animation: stride-spin 20s linear infinite; }
 
+/* The sound button's bars, while a track is playing. */
+@keyframes stride-eq {
+  0%, 100% { transform: scaleY(0.35); }
+  50%      { transform: scaleY(1); }
+}
+
 /* Ambient dots: a slow float that never resets abruptly. */
 @keyframes stride-float {
   0%, 100% { transform: translate3d(0, 0, 0); }

@@ -3,6 +3,7 @@ import { useBreakpoint } from "./responsive";
 import { brand, nav as navCopy } from "./copy";
 import { color, ease, hexA, layout, space, typeScale } from "./theme";
 import { GlowButton, StrideMark } from "./primitives";
+import SoundButton from "./SoundButton";
 import { subscribeSurface, toneAt, type Tone } from "./surface";
 
 /**
@@ -29,8 +30,11 @@ import { subscribeSurface, toneAt, type Tone } from "./surface";
 export default function Nav({
   /** Height of the bar; the underline segments sit on its bottom edge. */
   height = layout.navHeight,
+  /** A track for the sound button. Without one the button toggles silently. */
+  soundtrack,
 }: {
   height?: number;
+  soundtrack?: string;
 }) {
   const [activeIndex, setActiveIndex] = useState(-1);
   const [progress, setProgress] = useState(0);
@@ -213,6 +217,9 @@ export default function Nav({
           </button>
         ) : (
           <>
+            {/* Sound sits beside the CTA, as a pair. It never starts on its
+                own — nothing plays until it is clicked. */}
+            <SoundButton src={soundtrack} />
             <GlowButton href="#contact">{navCopy.cta}</GlowButton>
             <Segment fill={0} active={false} hairline={hairline} />
           </>

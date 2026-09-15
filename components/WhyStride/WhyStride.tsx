@@ -74,8 +74,10 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       const field = root.getBoundingClientRect();
       const cx = field.left + field.width / 2;
       const cy = field.top + field.height / 2;
-      const reach = Math.min(window.innerWidth * 0.52, 980);
-      const lift = Math.min(window.innerHeight * 0.46, 520);
+      // Far enough that the letters clear the frame rather than
+      // gathering in a loose cloud around the middle of it.
+      const reach = window.innerWidth * 0.82;
+      const lift = window.innerHeight * 0.78;
 
       letters.forEach((letter, i) => {
         const box = letter.getBoundingClientRect();
@@ -84,7 +86,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         const len = Math.hypot(dx, dy) || 1;
         // A floor on the radius so a letter sitting near the centre still
         // gets thrown somewhere rather than barely moving.
-        const push = 0.45 + 0.55 * Math.min(1, len / (field.width * 0.42));
+        const push = 0.72 + 0.4 * Math.min(1, len / (field.width * 0.34));
 
         tl.to(
           letter,

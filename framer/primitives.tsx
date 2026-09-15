@@ -1,6 +1,7 @@
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
-import { color, ease, glow, hexA, space, typeScale } from "./theme";
+import { color, ease, hexA, space, typeScale } from "./theme";
 import { injectStrideStyles } from "./styles";
+import SmearLabel from "./SmearLabel";
 
 /* ------------------------------------------------------------------ *
  * Brand mark
@@ -149,36 +150,45 @@ export function GlowButton({
   style?: CSSProperties;
 }) {
   const solid = variant === "solid";
+
+  /*
+   * The solid button is bone with dark type, not accent with white — a light
+   * plate is what carries a smear: the letters have somewhere to move
+   * against. An 8px radius rather than a pill, so it reads as a plate and
+   * not as a tag.
+   */
   const base: CSSProperties = {
+    position: "relative",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: space.s,
-    /* 56px tall, 32px of horizontal padding — identical on every CTA. */
-    height: 56,
-    padding: `0 ${space.xl}px`,
-    borderRadius: 999,
-    border: "none",
+    height: 48,
+    padding: `0 ${space.lg}px`,
+    borderRadius: 8,
+    border: solid ? "none" : `1px solid ${color.hairlineOnDark}`,
     cursor: "pointer",
     textDecoration: "none",
+    overflow: "hidden",
     ...typeScale.eyebrow,
     fontWeight: 500,
-    background: solid ? color.accent : "transparent",
-    color: solid ? "#fff" : color.textOnDark,
-    boxShadow: solid ? glow.box : `inset 0 0 0 1px ${color.hairlineOnDark}`,
-    transition: `box-shadow 520ms ${ease.out}, transform 520ms ${ease.out}, background 520ms ${ease.out}`,
+    background: solid ? color.boneSoft : "transparent",
+    color: solid ? color.textOnLight : color.textOnDark,
+    transition: `background 420ms ${ease.out}, color 420ms ${ease.out}, border-color 420ms ${ease.out}`,
     ...style,
   };
 
   const hoverIn = (el: HTMLElement) => {
-    el.style.boxShadow = solid ? glow.boxStrong : `inset 0 0 0 1px ${hexA(color.accent, 0.6)}, ${glow.textSoft}`;
-    el.style.transform = "translateY(-2px)";
-    if (!solid) el.style.background = hexA(color.accent, 0.08);
+    if (solid) {
+      el.style.background = "#FFFFFF";
+    } else {
+      el.style.background = hexA("#FFFFFF", 0.06);
+      el.style.borderColor = hexA("#FFFFFF", 0.3);
+    }
   };
   const hoverOut = (el: HTMLElement) => {
-    el.style.boxShadow = base.boxShadow as string;
-    el.style.transform = "translateY(0)";
-    if (!solid) el.style.background = "transparent";
+    el.style.background = base.background as string;
+    if (!solid) el.style.borderColor = color.hairlineOnDark;
   };
 
   const handlers = {
@@ -188,9 +198,11 @@ export function GlowButton({
     onBlur: (e: React.FocusEvent<HTMLElement>) => hoverOut(e.currentTarget),
   };
 
+  const label = typeof children === "string" ? <SmearLabel>{children}</SmearLabel> : children;
+
   const inner = (
     <>
-      {children}
+      {label}
       {arrow && <ArrowIcon />}
     </>
   );

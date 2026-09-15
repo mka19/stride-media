@@ -64,10 +64,8 @@ export const typeScale = {
    *   display  96 / 102     h1  54 / 62     h3  26 / 32
    *   number  115 / 120     body 18 / 24    eyebrow 12 / 15
    *
-   * Tracking is −2px on everything that is set at a headline size or larger.
-   * Running text takes a fraction of that, and the small caps go the other
-   * way: −2px on a 12px uppercase label would close the letters up until the
-   * word could not be read.
+   * Tracking is −1px on every token, whatever the size — one value, applied
+   * without exception, including the uppercase labels.
    *
    * Weights: medium (500) for statements, regular (400) for everything else.
    */
@@ -78,7 +76,7 @@ export const typeScale = {
     fontSize: fluid(40, 96),
     fontWeight: 500,
     lineHeight: fluid(43, 102),
-    letterSpacing: "-2px",
+    letterSpacing: "-1px",
   },
   /** Every section and sub-section headline, and the About statement. */
   h1: {
@@ -86,7 +84,7 @@ export const typeScale = {
     fontSize: fluid(32, 54),
     fontWeight: 500,
     lineHeight: fluid(37, 62),
-    letterSpacing: "-2px",
+    letterSpacing: "-1px",
   },
   /** Card headlines, questions, stats — the working headline size. */
   h3: {
@@ -94,7 +92,7 @@ export const typeScale = {
     fontSize: fluid(20, 26),
     fontWeight: 400,
     lineHeight: fluid(25, 32),
-    letterSpacing: "-2px",
+    letterSpacing: "-1px",
   },
   /** Oversized numerals: 01/02/03 and the case-study metrics. */
   numberXl: {
@@ -102,7 +100,7 @@ export const typeScale = {
     fontSize: fluid(56, 115),
     fontWeight: 500,
     lineHeight: fluid(58, 120),
-    letterSpacing: "-2px",
+    letterSpacing: "-1px",
   },
   /** All running text. */
   bodyLg: {
@@ -110,7 +108,7 @@ export const typeScale = {
     fontSize: fluid(15, 18),
     fontWeight: 400,
     lineHeight: fluid(20, 24),
-    letterSpacing: "-0.2px",
+    letterSpacing: "-1px",
   },
   /** Every small label: eyebrows, nav, captions, meta. */
   eyebrow: {
@@ -118,7 +116,7 @@ export const typeScale = {
     fontSize: fluid(11, 12),
     fontWeight: 400,
     lineHeight: fluid(14, 15),
-    letterSpacing: "1.2px",
+    letterSpacing: "-1px",
     textTransform: "uppercase" as const,
   },
 } as const;
@@ -174,7 +172,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B53";
+export const BUILD = "B54";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;
