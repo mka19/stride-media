@@ -1,4 +1,6 @@
+import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
+import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
 import { color, ease, fluid, font, hexA, layout } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
@@ -30,6 +32,9 @@ export default function Problem({
   scrollLength?: string;
 }) {
   const words = copy.intro.split(" ");
+  // The nav flips to its light treatment when part 2 takes over, so this
+  // section publishes its own tone rather than leaving the nav to guess.
+  const surface = useRef<SurfaceHandle | null>(null);
 
   const rootRef = useGsapContext(
     (root) => {
@@ -43,7 +48,15 @@ export default function Problem({
       gsap.set(q(".pb-aside"), { opacity: 0, y: 16 });
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.6 },
+        scrollTrigger: {
+          trigger: root,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.6,
+          // Hand the nav its tone at the crossfade's midpoint, so the bar
+          // changes with the background rather than before or after it.
+          onUpdate: (self) => surface.current?.setTone(self.progress > 0.39 ? "light" : "dark"),
+        },
       });
 
       // --- part 1: paragraph reveals, word by word ----------------------
@@ -96,8 +109,20 @@ export default function Problem({
       gsap.set(q(".pb-card"), { opacity: 1, position: "relative" });
       gsap.set(q(".pb-light"), { opacity: 1, scale: 1 });
       gsap.set(q(".pb-dark"), { opacity: 1 });
+      surface.current?.setTone("light");
     },
   );
+
+  useEffect(() => {
+    const frame = rootRef.current?.querySelector<HTMLElement>(".pb-frame");
+    if (!frame) return;
+    const handle = registerSurface(frame, "dark");
+    surface.current = handle;
+    return () => {
+      handle.release();
+      surface.current = null;
+    };
+  }, [rootRef]);
 
   return (
     <section
@@ -110,7 +135,7 @@ export default function Problem({
         fontFamily: font.sans,
       }}
     >
-      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+      <div className="pb-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
         {/* ---------------- part 1 — dark, fixed background ------------- */}
         <div className="pb-dark" style={{ position: "absolute", inset: 0 }}>
           <MediaTile

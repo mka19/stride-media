@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { brand, nav as navCopy } from "../shared/copy";
 import { color, ease, font, hexA, layout, microLabel } from "../shared/theme";
 import { GlowButton, StrideMark } from "../shared/primitives";
+import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
 
 /**
  * Sticky nav — designxhand.com/experience reference, locked.
@@ -17,6 +18,11 @@ import { GlowButton, StrideMark } from "../shared/primitives";
  * frame rather than through a ScrollTrigger per item, which keeps the nav
  * independent of the section components — they're separate Framer code
  * components and can't be relied on to register anything.
+ *
+ * The bar also flips to a light treatment (ink text, dark hairline, bone
+ * backing) whenever a section that declared itself light is under it. The
+ * declaration comes from shared/surface, not from reading the DOM, because
+ * Problem changes tone halfway through its own scroll.
  */
 export default function Nav({
   /** Height of the bar; the underline segments sit on its bottom edge. */
@@ -27,6 +33,7 @@ export default function Nav({
   const [activeIndex, setActiveIndex] = useState(-1);
   const [progress, setProgress] = useState(0);
   const [lifted, setLifted] = useState(false);
+  const [tone, setTone] = useState<Tone>("dark");
 
   useEffect(() => {
     let frame = 0;
@@ -53,6 +60,7 @@ export default function Nav({
 
       setActiveIndex(found);
       setProgress(found === -1 ? 0 : ratio);
+      setTone(toneAt(height / 2));
     };
 
     const onScroll = () => {
@@ -62,12 +70,20 @@ export default function Nav({
     measure();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    // A section can change its own tone without the page scrolling.
+    const unsubscribe = subscribeSurface(onScroll);
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      unsubscribe();
     };
-  }, []);
+  }, [height]);
+
+  const light = tone === "light";
+  const ink = light ? color.textOnLight : color.textOnDark;
+  const inkMuted = light ? color.textOnLightMuted : color.textOnDarkMuted;
+  const hairline = light ? color.hairlineOnLight : color.hairlineOnDark;
 
   return (
     <header
@@ -83,11 +99,11 @@ export default function Nav({
         paddingLeft: layout.pad,
         paddingRight: layout.pad,
         fontFamily: font.sans,
-        color: color.textOnDark,
-        background: lifted ? hexA(color.black, 0.7) : "transparent",
+        color: ink,
+        background: lifted ? hexA(light ? color.bone : color.black, light ? 0.78 : 0.7) : "transparent",
         backdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
         WebkitBackdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
-        transition: `background 600ms ${ease.out}`,
+        transition: `background 600ms ${ease.out}, color 600ms ${ease.out}`,
       }}
     >
       {/* Wordmark cell — its segment is solid, the anchor the rest reads from. */}
@@ -107,7 +123,7 @@ export default function Nav({
         <span style={{ ...microLabel, fontFamily: font.sans, fontSize: 13, letterSpacing: "0.18em" }}>
           {brand.mark}
         </span>
-        <Segment fill={1} active={false} tick={false} width="58%" />
+        <Segment fill={1} active={false} tick={false} width="58%" hairline={hairline} />
       </a>
 
       <nav
@@ -134,17 +150,17 @@ export default function Nav({
                 fontSize: 13,
                 letterSpacing: "0.01em",
                 whiteSpace: "nowrap",
-                color: active ? color.textOnDark : color.textOnDarkMuted,
+                color: active ? ink : inkMuted,
                 transition: `color 400ms ${ease.out}`,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
+              onMouseEnter={(e) => (e.currentTarget.style.color = ink)}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = active ? color.textOnDark : color.textOnDarkMuted;
+                e.currentTarget.style.color = active ? ink : inkMuted;
               }}
             >
-              <Dot lit={active || done} />
+              <Dot lit={active || done} ink={ink} />
               {item.label}
-              <Segment fill={done ? 1 : active ? progress : 0} active={active} />
+              <Segment fill={done ? 1 : active ? progress : 0} active={active} hairline={hairline} />
             </a>
           );
         })}
@@ -154,7 +170,7 @@ export default function Nav({
         <GlowButton href="#contact" style={{ padding: "11px 20px" }}>
           {navCopy.cta}
         </GlowButton>
-        <Segment fill={0} active={false} />
+        <Segment fill={0} active={false} hairline={hairline} />
       </div>
     </header>
   );
@@ -164,11 +180,13 @@ export default function Nav({
 function Segment({
   fill,
   active,
+  hairline,
   tick = true,
   width = "100%",
 }: {
   fill: number;
   active: boolean;
+  hairline: string;
   tick?: boolean;
   width?: string;
 }) {
@@ -181,7 +199,8 @@ function Segment({
         bottom: 0,
         width,
         height: 1,
-        background: color.hairlineOnDark,
+        background: hairline,
+        transition: `background 600ms ${ease.out}`,
       }}
     >
       {tick && (
@@ -192,7 +211,8 @@ function Segment({
             bottom: 0,
             width: 1,
             height: 5,
-            background: color.hairlineOnDark,
+            background: hairline,
+            transition: `background 600ms ${ease.out}`,
           }}
         />
       )}
@@ -214,7 +234,7 @@ function Segment({
 }
 
 /** Small hollow marker before each label; lights ruby once its section is live. */
-function Dot({ lit }: { lit: boolean }) {
+function Dot({ lit, ink }: { lit: boolean; ink: string }) {
   return (
     <span
       aria-hidden="true"
@@ -223,7 +243,7 @@ function Dot({ lit }: { lit: boolean }) {
         height: 5,
         flexShrink: 0,
         borderRadius: "50%",
-        border: `1px solid ${lit ? color.ruby : hexA(color.textOnDark, 0.4)}`,
+        border: `1px solid ${lit ? color.ruby : hexA(ink, 0.4)}`,
         background: lit ? color.ruby : "transparent",
         boxShadow: lit ? `0 0 8px ${hexA(color.ruby, 0.8)}` : "none",
         transition: `all 400ms ${ease.out}`,
