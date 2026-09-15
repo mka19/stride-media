@@ -5,6 +5,7 @@ import { hero as heroCopy } from "./copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { GlowButton, Grain, MicroLabel } from "./primitives";
 import { useBreakpoint, useCanHover } from "./responsive";
+import ScrambleText from "./ScrambleText";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
 
@@ -31,6 +32,8 @@ export default function Hero({
 }) {
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const [interactive, setInteractive] = useState(false);
+  // The headline decodes at the point the object hands the screen over to it.
+  const [decoded, setDecoded] = useState(false);
   const bp = useBreakpoint();
   const canHover = useCanHover();
   // The object steps down with the viewport; the mosaic's push needs a real
@@ -59,6 +62,7 @@ export default function Hero({
             objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.55));
             // Hover push only once the mosaic has actually arrived.
             setInteractive(self.progress > 0.62);
+            if (self.progress > 0.3) setDecoded(true);
           },
         },
       });
@@ -251,15 +255,17 @@ export default function Hero({
           >
             {heroCopy.headline.map((line, i) => (
               <span key={i} style={{ display: "block" }}>
-                <span
+                <ScrambleText
+                  as="span"
                   className="hero-line-inner"
+                  play={decoded}
                   style={{
                     display: "block",
                     textShadow: i === heroCopy.headline.length - 1 ? glow.textSoft : undefined,
                   }}
                 >
                   {line}
-                </span>
+                </ScrambleText>
               </span>
             ))}
           </h1>

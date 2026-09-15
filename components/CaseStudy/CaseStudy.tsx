@@ -4,6 +4,7 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { caseStudy as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
+import ScrambleText from "../shared/ScrambleText";
 import { useBreakpoint } from "../shared/responsive";
 
 /**
@@ -140,9 +141,9 @@ export default function CaseStudy({
       </MicroLabel>
       <h2 className="cs-intro-item" style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>
         {copy.headline.map((line, i) => (
-          <span key={i} style={{ display: "block" }}>
+          <ScrambleText key={i} as="span" style={{ display: "block" }}>
             {line}
-          </span>
+          </ScrambleText>
         ))}
       </h2>
       <p

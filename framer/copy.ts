@@ -256,6 +256,12 @@ export const faq = {
   ],
 } as const;
 
+/** The breather strips between major sections. */
+export const marquee = {
+  process: ["Strategy", "Scripts", "Production", "Delivery"],
+  outcome: ["Authority", "Engagement", "Recognition", "Consistency"],
+} as const;
+
 export const footer = {
   wordmark: "Stride",
   tagline: "AI Creators. Real Recognition.",

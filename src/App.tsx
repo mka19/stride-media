@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { initSmoothScroll } from "../components/shared/smoothScroll";
+import Marquee from "../components/shared/Marquee";
+import { marquee } from "../components/shared/copy";
 import Nav from "../components/Nav/Nav";
 import Hero from "../components/Hero/Hero";
 import Problem from "../components/Problem/Problem";
@@ -31,8 +33,10 @@ export default function App() {
       <Problem />
       <Solution />
       <HowItWorks />
+      <Marquee items={marquee.process} />
       <CaseStudy />
       <WhyStride />
+      <Marquee items={marquee.outcome} direction={1} />
       <Results />
       <Testimonials />
       <FinalCTA />
