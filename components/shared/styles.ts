@@ -14,6 +14,13 @@ export const strideFontHref =
   "https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
 
 export const strideKeyframes = `
+/* Base size is the body token, so inherited text is on the scale too. */
+body {
+  font-family: "Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: clamp(16px, 15.00px + 0.2083vw, 19px);
+  line-height: 1.6;
+}
 /*
  * Side and section padding step at the spec's breakpoints. Inline styles
  * cannot carry media queries, so the steps live here and every section reads

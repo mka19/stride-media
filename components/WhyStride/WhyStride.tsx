@@ -121,7 +121,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     >
       <MicroLabel tone="ruby">{cap.n}</MicroLabel>
       <h3 style={{ margin: 0, ...typeScale.h3, color: color.textOnDark }}>{cap.title}</h3>
-      <p style={{ margin: 0, ...typeScale.body, color: color.textOnDarkMuted }}>{cap.body}</p>
+      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{cap.body}</p>
     </div>
   );
 
@@ -129,7 +129,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     return (
       <section
         id="why-stride"
-        style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.body.fontFamily }}
+        style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.bodyLg.fontFamily }}
       >
         <div
           style={{
@@ -140,7 +140,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           }}
         >
           <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.displayXl, lineHeight: 0.9 }}>
+          <h2 style={{ margin: 0, ...typeScale.displayLg, lineHeight: 0.9 }}>
             {copy.headline.map((w) => (
               <span key={w} style={{ display: "block" }}>
                 {w}
@@ -169,7 +169,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         position: "relative",
         height: scrollLength,
         background: color.bone,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div className="ws-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
@@ -215,7 +215,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             {copy.label}
           </MicroLabel>
           {copy.headline.map((word) => (
-            <div key={word} className="ws-word" style={{ ...typeScale.displayXl, lineHeight: 0.88 }}>
+            <div key={word} className="ws-word" style={{ ...typeScale.displayLg, lineHeight: 0.88 }}>
               {word.split("").map((ch, i) => (
                 <span key={i} className="ws-letter" style={{ display: "inline-block" }}>
                   {ch}

@@ -58,7 +58,7 @@ export default function FinalCTA({
         position: "relative",
         background: color.black,
         color: color.textOnDark,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
         padding: `${layout.section} ${layout.pad}`,
         overflow: "hidden",
       }}
@@ -129,7 +129,7 @@ export default function FinalCTA({
             className="cta-item"
             style={{ position: "relative", marginTop: space.xxl, display: "flex", flexDirection: "column", gap: space.xs }}
           >
-            <span style={{ ...typeScale.labelSm, color: color.textOnDarkMuted }}>
+            <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
               {brand.phoneLabel}
             </span>
             <a href={`tel:${brand.phone}`} style={{ ...typeScale.h3, color: color.textOnDark, textDecoration: "none" }}>
@@ -137,7 +137,12 @@ export default function FinalCTA({
             </a>
             <a
               href={`mailto:${brand.email}`}
-              style={{ ...typeScale.labelSm, color: color.textOnDarkMuted, textDecoration: "none" }}
+              style={{
+                ...typeScale.eyebrow,
+                textTransform: "none",
+                color: color.textOnDarkMuted,
+                textDecoration: "none",
+              }}
             >
               {brand.email}
             </a>
@@ -194,7 +199,7 @@ export default function FinalCTA({
               <span style={{ ...typeScale.h3, color: color.textOnDark }}>
                 Calendly booking widget
               </span>
-              <span style={{ ...typeScale.body, color: color.textOnDarkMuted, maxWidth: "36ch" }}>
+              <span style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "36ch" }}>
                 Add the real scheduling link and set calendlyReady in copy.ts. The embed is
                 pre-themed to the site: ruby primary, warm black ground.
               </span>

@@ -129,7 +129,7 @@ export default function Problem({
         style={{
           background: color.bone,
           color: color.textOnLight,
-          fontFamily: typeScale.body.fontFamily,
+          fontFamily: typeScale.bodyLg.fontFamily,
         }}
       >
         {/* Part 1 — a normal block over the background, no pin, no reveal. */}
@@ -185,7 +185,7 @@ export default function Problem({
                 />
               </div>
               <div style={{ ...typeScale.numberXl, color: color.ruby }}>{card.n}</div>
-              <p style={{ margin: 0, ...typeScale.body, color: color.textOnLightMuted }}>
+              <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}>
                 {card.body}
               </p>
             </article>
@@ -203,7 +203,7 @@ export default function Problem({
         position: "relative",
         height: scrollLength,
         background: color.black,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div
@@ -328,7 +328,7 @@ export default function Problem({
                         style={{ position: "absolute", inset: 0 }}
                       />
                     </div>
-                    <span style={{ ...typeScale.labelSm, color: color.textOnLightMuted }}>
+                    <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>
                       {card.caption}
                     </span>
                   </div>
@@ -357,7 +357,7 @@ export default function Problem({
                       style={{
                         margin: 0,
                         maxWidth: "34ch",
-                        ...typeScale.body,
+                        ...typeScale.bodyLg,
                         color: color.textOnLightMuted,
                       }}
                     >

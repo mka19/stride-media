@@ -113,7 +113,7 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
     <span style={{ display: "inline-flex", alignItems: "stretch", gap: 2 }}>
       <span
         style={{
-          ...typeScale.labelSm,
+          ...typeScale.eyebrow,
           fontWeight: 600,
           padding: `${space.xs}px ${space.sm}px`,
           color: color.ruby,
@@ -189,7 +189,7 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
     return (
       <section
         id="how-it-works"
-        style={{ background: color.bone, color: color.textOnLight, fontFamily: typeScale.body.fontFamily }}
+        style={{ background: color.bone, color: color.textOnLight, fontFamily: typeScale.bodyLg.fontFamily }}
       >
         <div style={{ padding: `${layout.section} ${layout.pad}` }}>{intro}</div>
         <div
@@ -218,7 +218,7 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
         position: "relative",
         height: scrollLength,
         background: color.bone,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div

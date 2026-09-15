@@ -94,17 +94,17 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
             placeItems: "center",
             background: color.ruby,
             color: "#fff",
-            ...typeScale.labelSm,
+            ...typeScale.eyebrow,
             fontWeight: 600,
           }}
         >
           {t.initials}
         </span>
-        <span style={{ ...typeScale.labelSm, fontWeight: 600 }}>{t.name}</span>
+        <span style={{ ...typeScale.eyebrow, fontWeight: 600 }}>{t.name}</span>
       </div>
-      <p style={{ margin: 0, ...typeScale.body }}>“{t.quote}”</p>
+      <p style={{ margin: 0, ...typeScale.bodyLg }}>“{t.quote}”</p>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space.s }}>
-        <span style={{ ...typeScale.labelSm, color: color.textOnLightMuted }}>{t.handle}</span>
+        <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
         <span style={{ ...typeScale.h3, fontWeight: 700, color: color.ruby }}>{t.stat}</span>
       </div>
     </>
@@ -128,7 +128,7 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
         style={{
           background: color.boneSoft,
           color: color.textOnLight,
-          fontFamily: typeScale.body.fontFamily,
+          fontFamily: typeScale.bodyLg.fontFamily,
           display: "flex",
           flexDirection: "column",
           gap: rhythm.headerToContent,
@@ -136,7 +136,7 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
         }}
       >
         <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-        <RevealText as="h2" style={{ ...typeScale.h2 }}>
+        <RevealText as="h2" style={{ ...typeScale.h1 }}>
           {copy.headline}
         </RevealText>
         <div style={{ display: "flex", flexDirection: "column", gap: layout.gutter }}>
@@ -158,7 +158,7 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
         position: "relative",
         height: scrollLength,
         background: color.boneSoft,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div
@@ -184,7 +184,7 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
           }}
         >
           <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-          <RevealText as="h2" style={{ ...typeScale.h2 }}>
+          <RevealText as="h2" style={{ ...typeScale.h1 }}>
             {copy.headline}
           </RevealText>
         </div>

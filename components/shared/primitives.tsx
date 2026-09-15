@@ -122,7 +122,7 @@ export function GlowButton({
     border: "none",
     cursor: "pointer",
     textDecoration: "none",
-    ...typeScale.labelSm,
+    ...typeScale.eyebrow,
     fontWeight: 600,
     background: solid ? color.ruby : "transparent",
     color: solid ? "#fff" : color.textOnDark,
@@ -298,7 +298,7 @@ export function MediaTile({
             position: "absolute",
             left: space.s,
             bottom: space.s,
-            ...typeScale.labelSm,
+            ...typeScale.eyebrow,
             color: hexA("#FFFFFF", 0.7),
             textShadow: "0 1px 8px rgba(0,0,0,0.6)",
           }}

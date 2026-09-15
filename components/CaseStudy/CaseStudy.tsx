@@ -180,7 +180,7 @@ export default function CaseStudy({
             {m.value}
             {m.suffix}
           </div>
-          <div style={{ ...typeScale.body, color: color.textOnDarkMuted }}>{m.label}</div>
+          <div style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{m.label}</div>
         </div>
       ))}
     </div>
@@ -190,7 +190,7 @@ export default function CaseStudy({
     return (
       <section
         id="case-study"
-        style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.body.fontFamily }}
+        style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.bodyLg.fontFamily }}
       >
         <div style={{ position: "relative", padding: `${layout.section} ${layout.pad}` }}>
           <Grain opacity={0.18} />
@@ -224,7 +224,7 @@ export default function CaseStudy({
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
                 <MediaTile src={plate.src} seed={plate.w} style={{ position: "absolute", inset: 0 }} />
               </div>
-              <figcaption style={{ ...typeScale.labelSm, color: color.textOnLightMuted }}>
+              <figcaption style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>
                 {plate.caption}
               </figcaption>
             </figure>
@@ -240,7 +240,7 @@ export default function CaseStudy({
           }}
         >
           <MicroLabel tone="ruby">{copy.resultsLabel}</MicroLabel>
-          <h3 style={{ margin: 0, ...typeScale.h2 }}>{copy.resultsHeadline}</h3>
+          <h3 style={{ margin: 0, ...typeScale.h1 }}>{copy.resultsHeadline}</h3>
           {metrics}
         </div>
       </section>
@@ -255,7 +255,7 @@ export default function CaseStudy({
         position: "relative",
         height: scrollLength,
         background: color.black,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div className="cs-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
@@ -289,7 +289,7 @@ export default function CaseStudy({
                     position: "absolute",
                     left: space.s,
                     bottom: space.s,
-                    ...typeScale.labelSm,
+                    ...typeScale.eyebrow,
                     color: hexA("#FFFFFF", 0.82),
                     textShadow: "0 1px 10px rgba(0,0,0,0.65)",
                   }}

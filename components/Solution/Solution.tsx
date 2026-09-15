@@ -153,7 +153,7 @@ export default function Solution({
         style={{
           background: color.black,
           color: color.textOnDark,
-          fontFamily: typeScale.body.fontFamily,
+          fontFamily: typeScale.bodyLg.fontFamily,
           display: "flex",
           flexDirection: "column",
           gap: rhythm.headerToContent,
@@ -162,7 +162,7 @@ export default function Solution({
       >
         <div style={{ display: "flex", flexDirection: "column", gap: rhythm.headlineToBody }}>
           <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.h2 }}>
+          <h2 style={{ margin: 0, ...typeScale.h1 }}>
             {copy.headline.map((line, i) => (
               <span key={i} style={{ display: "block" }}>
                 {line}
@@ -208,7 +208,7 @@ export default function Solution({
             >
               <MicroLabel tone="ruby">{pillar.n}</MicroLabel>
               <h3 style={{ margin: 0, ...typeScale.h3 }}>{pillar.title}</h3>
-              <p style={{ margin: 0, ...typeScale.body, color: color.textOnDarkMuted }}>
+              <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
                 {pillar.body}
               </p>
             </div>
@@ -227,7 +227,7 @@ export default function Solution({
         height: scrollLength,
         background: color.black,
         color: color.textOnDark,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
@@ -296,7 +296,7 @@ export default function Solution({
               className="sol-intro"
               style={{
                 margin: 0,
-                ...typeScale.h2,
+                ...typeScale.h1,
               }}
             >
               {copy.headline.map((line, i) => (
@@ -352,7 +352,7 @@ export default function Solution({
                   style={{
                     margin: 0,
                     maxWidth: "34ch",
-                    ...typeScale.body,
+                    ...typeScale.bodyLg,
                     color: color.textOnDarkMuted,
                   }}
                 >

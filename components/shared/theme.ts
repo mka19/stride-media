@@ -53,76 +53,54 @@ export const font = {
  * component spreads the token and adds nothing but colour.
  */
 export const typeScale = {
-  displayXl: {
+  /** Hero headline, Why Stride's stacked words. */
+  displayLg: {
     fontFamily: SANS,
-    fontSize: fluid(48, 120),
+    fontSize: fluid(44, 104),
     fontWeight: 700,
     lineHeight: 0.94,
     letterSpacing: "-0.042em",
   },
-  displayLg: {
-    fontFamily: SANS,
-    fontSize: fluid(40, 88),
-    fontWeight: 700,
-    lineHeight: 0.96,
-    letterSpacing: "-0.04em",
-  },
+  /** Every section and sub-section headline. */
   h1: {
     fontFamily: SANS,
-    fontSize: fluid(36, 64),
+    fontSize: fluid(34, 60),
     fontWeight: 600,
     lineHeight: 1.0,
     letterSpacing: "-0.035em",
   },
-  h2: {
-    fontFamily: SANS,
-    fontSize: fluid(28, 44),
-    fontWeight: 600,
-    lineHeight: 1.06,
-    letterSpacing: "-0.03em",
-  },
+  /** Card headlines, questions, stats — the working headline size. */
   h3: {
     fontFamily: SANS,
-    fontSize: fluid(22, 28),
+    fontSize: fluid(21, 28),
     fontWeight: 600,
     lineHeight: 1.15,
     letterSpacing: "-0.02em",
   },
+  /** Oversized numerals: 01/02/03 and the case-study metrics. */
   numberXl: {
     fontFamily: SANS,
-    fontSize: fluid(72, 140),
+    fontSize: fluid(64, 132),
     fontWeight: 700,
     lineHeight: 0.8,
     letterSpacing: "-0.05em",
   },
+  /** All running text. */
   bodyLg: {
     fontFamily: SANS,
-    fontSize: fluid(17, 20),
-    fontWeight: 400,
-    lineHeight: 1.55,
-    letterSpacing: "-0.005em",
-  },
-  body: {
-    fontFamily: SANS,
-    fontSize: fluid(15, 16),
+    fontSize: fluid(16, 19),
     fontWeight: 400,
     lineHeight: 1.6,
-    letterSpacing: "0",
+    letterSpacing: "-0.005em",
   },
+  /** Every small label: eyebrows, nav, captions, meta. */
   eyebrow: {
     fontFamily: SANS,
     fontSize: fluid(12, 13),
     fontWeight: 600,
-    lineHeight: 1.2,
+    lineHeight: 1.3,
     letterSpacing: "0.08em",
     textTransform: "uppercase" as const,
-  },
-  labelSm: {
-    fontFamily: SANS,
-    fontSize: fluid(13, 14),
-    fontWeight: 500,
-    lineHeight: 1.3,
-    letterSpacing: "0",
   },
 } as const;
 

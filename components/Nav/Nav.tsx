@@ -110,7 +110,7 @@ export default function Nav({
         alignItems: "stretch",
         paddingLeft: layout.pad,
         paddingRight: layout.pad,
-        fontFamily: typeScale.labelSm.fontFamily,
+        fontFamily: typeScale.eyebrow.fontFamily,
         color: ink,
         background: lifted ? hexA(light ? color.bone : color.black, light ? 0.78 : 0.7) : "transparent",
         backdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
@@ -132,7 +132,7 @@ export default function Nav({
         }}
       >
         <StrideMark size={24} glowing />
-        <span style={{ ...typeScale.labelSm, fontWeight: 600, letterSpacing: "0.18em" }}>
+        <span style={{ ...typeScale.eyebrow, fontWeight: 600, letterSpacing: "0.18em" }}>
           {brand.mark}
         </span>
       </a>
@@ -163,7 +163,7 @@ export default function Nav({
                 gap: space.s,
                 paddingLeft: bp === "tablet" ? space.s : space.md,
                 textDecoration: "none",
-                ...typeScale.labelSm,
+                ...typeScale.eyebrow,
                 whiteSpace: "nowrap",
                 color: active ? ink : inkMuted,
                 transition: `color 400ms ${ease.out}`,

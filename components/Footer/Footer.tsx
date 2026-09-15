@@ -56,7 +56,7 @@ export default function Footer({
         position: "relative",
         background: color.black,
         color: color.textOnDark,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
         overflow: "hidden",
       }}
     >
@@ -126,7 +126,7 @@ export default function Footer({
                 onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
                 onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
               >
-                <span style={{ ...typeScale.labelSm, color: color.ruby }}>{item.n}</span>
+                <span style={{ ...typeScale.eyebrow, color: color.ruby }}>{item.n}</span>
                 {item.label}
               </a>
             ))}
@@ -171,7 +171,7 @@ export default function Footer({
             gap: space.md,
             paddingTop: space.lg,
             borderTop: `1px solid ${color.hairlineOnDark}`,
-            ...typeScale.labelSm,
+            ...typeScale.eyebrow,
             color: color.textOnDarkMuted,
           }}
         >
@@ -181,7 +181,10 @@ export default function Footer({
           <span>
             {copy.basedLabel} {copy.basedIn}
           </span>
-          <a href={`mailto:${brand.email}`} style={{ color: "inherit", textDecoration: "none" }}>
+          <a
+            href={`mailto:${brand.email}`}
+            style={{ color: "inherit", textDecoration: "none", textTransform: "none" }}
+          >
             {brand.email}
           </a>
           <span style={{ display: "flex", gap: space.md }}>

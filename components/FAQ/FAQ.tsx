@@ -79,7 +79,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
             >
               <span
                 style={{
-                  ...typeScale.labelSm,
+                  ...typeScale.eyebrow,
                   color: color.ruby,
                   minWidth: 64,
                   letterSpacing: "0.08em",
@@ -160,14 +160,14 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
         style={{
           background: color.black,
           color: color.textOnDark,
-          fontFamily: typeScale.body.fontFamily,
+          fontFamily: typeScale.bodyLg.fontFamily,
           display: "flex",
           flexDirection: "column",
           gap: space.xl,
           padding: `${layout.section} ${layout.pad}`,
         }}
       >
-        <h2 style={{ margin: 0, ...typeScale.h2, letterSpacing: "0.12em" }}>{copy.label}</h2>
+        <h2 style={{ margin: 0, ...typeScale.h1, letterSpacing: "0.12em" }}>{copy.label}</h2>
         {list}
       </section>
     );
@@ -181,7 +181,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
         position: "relative",
         height: scrollLength,
         background: color.black,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
@@ -208,19 +208,19 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
           {/* The one size off the type scale on purpose: these letters span
               the viewport, so they track its width instead of capping at
               display-xl's 120px. */}
-          <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: 0.9 }}>
             F
           </span>
           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
             Answers to key questions
           </span>
-          <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: 0.9 }}>
             A
           </span>
           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
             All you need to know
           </span>
-          <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: 0.9 }}>
             Q
           </span>
         </div>

@@ -108,7 +108,7 @@ export default function Hero({
         height: scrollLength,
         background: color.black,
         color: color.textOnDark,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
       <div
@@ -244,7 +244,7 @@ export default function Hero({
               position: "relative",
               margin: 0,
               maxWidth: "17ch",
-              ...typeScale.displayXl,
+              ...typeScale.displayLg,
               textWrap: "balance",
             }}
           >

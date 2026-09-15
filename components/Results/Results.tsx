@@ -43,7 +43,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
       style={{
         background: color.black,
         color: color.textOnDark,
-        fontFamily: typeScale.body.fontFamily,
+        fontFamily: typeScale.bodyLg.fontFamily,
         paddingBlock: layout.section,
         overflow: "hidden",
       }}
@@ -61,7 +61,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         }}
       >
         <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-        <RevealText as="h2" style={{ ...typeScale.h2 }}>
+        <RevealText as="h2" style={{ ...typeScale.h1 }}>
           {copy.headline}
         </RevealText>
         <p
@@ -81,7 +81,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
             alignItems: "center",
             gap: space.s,
             marginTop: space.sm,
-            ...typeScale.labelSm,
+            ...typeScale.eyebrow,
             fontWeight: 600,
             color: color.ruby,
             textDecoration: "none",
@@ -264,7 +264,7 @@ function ResultCard({
             placeItems: "center",
             background: hexA(color.black, 0.55),
             border: `1px solid ${hexA("#FFFFFF", 0.3)}`,
-            ...typeScale.labelSm,
+            ...typeScale.eyebrow,
             fontWeight: 600,
             color: color.textOnDark,
           }}
@@ -288,9 +288,16 @@ function ResultCard({
         </div>
       </div>
 
-      <div style={{ ...typeScale.labelSm, color: color.ruby }}>{card.metric}</div>
-      <p style={{ margin: 0, ...typeScale.body, color: color.textOnDarkMuted }}>{card.desc}</p>
-      <div style={{ ...typeScale.labelSm, color: hexA(color.textOnDark, 0.4), marginTop: "auto" }}>
+      <div style={{ ...typeScale.eyebrow, color: color.ruby }}>{card.metric}</div>
+      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{card.desc}</p>
+      <div
+        style={{
+          ...typeScale.eyebrow,
+          textTransform: "none",
+          color: hexA(color.textOnDark, 0.4),
+          marginTop: "auto",
+        }}
+      >
         {card.handle}
       </div>
     </article>
