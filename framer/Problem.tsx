@@ -26,7 +26,7 @@ export default function Problem({
   backgroundSrc,
   /** One image per pain point, in order. */
   cardMedia = [],
-  scrollLength = "460vh",
+  scrollLength = "620vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
@@ -58,7 +58,7 @@ export default function Problem({
           invalidateOnRefresh: true,
           // Hand the nav its tone at the crossfade's midpoint, so the bar
           // turns with the ground rather than before or after it.
-          onUpdate: (self) => surface.current?.setTone(self.progress > 0.36 ? "light" : "dark"),
+          onUpdate: (self) => surface.current?.setTone(self.progress > 0.5 ? "light" : "dark"),
         },
       });
 
@@ -74,31 +74,38 @@ export default function Problem({
       )
 
         // --- bridge -------------------------------------------------------
+        // The statement holds from 0.25 to 0.42 before it leaves. It used to
+        // start fading three percent after the last word landed, which is
+        // about a hundred pixels of scroll — the sentence was gone before it
+        // could be read, so the whole dark chapter registered as missing.
+        //
         // Sequenced, not crossfaded. Fading both layers over the same beat
         // left them each half-transparent in the middle, so the footage
         // showed through the white and the bridge read as a grey wash. Now
         // the statement leaves first, the opaque light layer rises over the
         // footage, and only then does the dark layer drop out — there is no
         // frame where two grounds are visible at once.
-        .to(q(".pb-statement"), { opacity: 0, y: -24, duration: 0.05, ease: "power2.in" }, 0.28)
-        .to(q(".pb-light"), { opacity: 1, duration: 0.08, ease: "power2.inOut" }, 0.33)
-        .set(q(".pb-dark"), { opacity: 0 }, 0.42)
-
-        // The first state rises into the empty slot rather than being there
-        // already, so arriving on the light ground is itself a transition.
-        .fromTo(
-          cards[0],
-          { opacity: 0, y: 28 },
-          { opacity: 1, y: 0, duration: 0.06, ease: "power3.out" },
-          0.42,
-        );
+        .to(q(".pb-statement"), { opacity: 0, y: -24, duration: 0.06, ease: "power2.in" }, 0.42)
+        .to(q(".pb-light"), { opacity: 1, duration: 0.09, ease: "power2.inOut" }, 0.46)
+        .set(q(".pb-dark"), { opacity: 0 }, 0.56);
 
       // --- part 2: one slot, three states at even checkpoints -------------
-      const start = 0.5;
+      const start = 0.58;
       const span = (1 - start) / cards.length;
       cards.forEach((card, i) => {
         const at = start + i * span;
-        if (i > 0) {
+
+        if (i === 0) {
+          // The first state rises into the empty slot rather than being
+          // there already, so arriving on the light ground is a transition
+          // of its own rather than a cut.
+          tl.fromTo(
+            card,
+            { opacity: 0, y: 28 },
+            { opacity: 1, y: 0, duration: 0.06, ease: "power3.out" },
+            at - 0.02,
+          );
+        } else {
           // Everything swaps together: icon, label, headline, portrait and
           // number. Staggering the parts makes a state look like it is
           // assembling rather than like the slot changing its contents.
@@ -109,6 +116,26 @@ export default function Problem({
             at + 0.03,
           );
         }
+
+        // A card holds for most of its checkpoint, so without this the slot
+        // is motionless for hundreds of pixels at a time and the section
+        // reads as static. The portrait settles out of a slight push-in and
+        // the number drifts against it for the whole hold, which keeps the
+        // state alive while it is the one on screen.
+        const media = card.querySelector(".pb-media");
+        const number = card.querySelector(".pb-number");
+        if (media) {
+          tl.fromTo(media, { scale: 1.08 }, { scale: 1, duration: span, ease: "none" }, at);
+        }
+        if (number) {
+          tl.fromTo(
+            number,
+            { yPercent: 14 },
+            { yPercent: -14, duration: span, ease: "none" },
+            at,
+          );
+        }
+
         tl.to(q(`.pb-tick-${i}`), { scaleX: 1, duration: span * 0.9, ease: "none" }, at);
       });
     },
@@ -361,7 +388,18 @@ export default function Problem({
                       height: "100%",
                     }}
                   >
-                    <div style={{ position: "relative", height: "100%", aspectRatio: "3 / 4" }}>
+                    <div
+                      className="pb-media"
+                      style={{
+                        position: "relative",
+                        height: "100%",
+                        aspectRatio: "3 / 4",
+                        // The portrait settles out of a push-in across the
+                        // card's hold; without the clip it would bleed past
+                        // its own frame as it scales.
+                        overflow: "hidden",
+                      }}
+                    >
                       <MediaTile
                         src={cardMedia[i]}
                         seed={i * 5 + 11}
@@ -389,10 +427,12 @@ export default function Problem({
                     }}
                   >
                     <div
+                      className="pb-number"
                       style={{
                         ...typeScale.numberXl,
                         color: color.accent,
                         textShadow: `0 0 30px ${hexA(color.accent, 0.4)}`,
+                        willChange: "transform",
                       }}
                     >
                       {card.n}
