@@ -57,7 +57,7 @@ export const typeScale = {
   displayLg: {
     fontFamily: SANS,
     fontSize: fluid(44, 104),
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 0.94,
     letterSpacing: "-0.042em",
   },

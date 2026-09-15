@@ -161,9 +161,9 @@ export default function Testimonials() {
       }}
     >
       <div className="ts-frame" style={{ display: "flex", flexDirection: "column", gap: rhythm.headerToContent }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 640 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 900 }}>
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <RevealText as="h2" style={{ ...typeScale.h1 }}>
+          <RevealText as="h2" style={{ ...typeScale.h1, maxWidth: "26ch", textWrap: "balance" }}>
             {copy.headline}
           </RevealText>
         </div>

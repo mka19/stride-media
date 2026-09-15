@@ -3,7 +3,7 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { useEffect, useRef } from "react";
 import { howItWorks as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { MediaTile } from "../shared/primitives";
+import { MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import FieldTexture from "./FieldTexture";
 import RevealText from "../shared/RevealText";
@@ -108,37 +108,6 @@ export default function HowItWorks({
     };
   }, [rootRef, stacked]);
 
-  /** The reference's tag: the number in its own box, the label beside it. */
-  const tag = (n: string, label: string) => (
-    <span style={{ display: "inline-flex", alignItems: "stretch", gap: 2 }}>
-      <span
-        style={{
-          ...typeScale.eyebrow,
-          fontWeight: 600,
-          padding: `${space.xs}px ${space.sm}px`,
-          color: color.accent,
-          border: `1px solid ${hexA(color.accent, 0.5)}`,
-        }}
-      >
-        {n}
-      </span>
-      <span
-        style={{
-          ...typeScale.eyebrow,
-          display: "inline-flex",
-          alignItems: "center",
-          padding: `${space.xs}px ${space.s}px`,
-          background: color.accent,
-          color: "#fff",
-        }}
-      >
-        {label}
-      </span>
-      <span style={{ width: 3, background: hexA(color.accent, 0.55) }} />
-      <span style={{ width: 3, background: hexA(color.accent, 0.3) }} />
-    </span>
-  );
-
   const intro = (
     <div
       className="hw-intro"
@@ -152,13 +121,13 @@ export default function HowItWorks({
         margin: "0 auto",
       }}
     >
-      <span className="hw-intro-item">{tag("//", "How it works")}</span>
-      <RevealText as="h2" className="hw-intro-item" style={{ ...typeScale.h1 }}>
+      <MicroLabel className="hw-intro-item">How it works</MicroLabel>
+      <RevealText as="h2" className="hw-intro-item" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>
         {copy.headline}
       </RevealText>
       <p
         className="hw-intro-item"
-        style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}
+        style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "52ch" }}
       >
         {copy.body}
       </p>
@@ -181,8 +150,10 @@ export default function HowItWorks({
         margin: "0 auto",
       }}
     >
-      {tag(step.n, step.tag)}
-      <h3 style={{ margin: 0, ...typeScale.h1 }}>{step.title}</h3>
+      <MicroLabel number={step.n}>{step.tag}</MicroLabel>
+      <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+        {step.title}
+      </h3>
       <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{step.body}</p>
     </div>
   ));

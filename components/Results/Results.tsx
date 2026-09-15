@@ -61,7 +61,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         }}
       >
         <MicroLabel tone="accent">{copy.label}</MicroLabel>
-        <RevealText as="h2" style={{ ...typeScale.h1 }}>
+        <RevealText as="h2" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>
           {copy.headline}
         </RevealText>
         <p

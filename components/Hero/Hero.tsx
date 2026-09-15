@@ -247,7 +247,7 @@ export default function Hero({
             style={{
               position: "relative",
               margin: 0,
-              maxWidth: "17ch",
+              maxWidth: "26ch",
               ...typeScale.displayLg,
               textWrap: "balance",
             }}

@@ -170,7 +170,9 @@ export default function Solution({
               </span>
             ))}
           </h2>
-          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{copy.body}</p>
+          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "52ch" }}>
+            {copy.body}
+          </p>
         </div>
 
         <div ref={stageRef} style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
@@ -287,7 +289,7 @@ export default function Solution({
               display: "flex",
               flexDirection: "column",
               gap: rhythm.headlineToBody,
-              maxWidth: "min(620px, 52vw)",
+              maxWidth: "min(840px, 56vw)",
             }}
           >
             <MicroLabel tone="accent" className="sol-intro">
@@ -297,6 +299,8 @@ export default function Solution({
               className="sol-intro"
               style={{
                 margin: 0,
+                maxWidth: "28ch",
+                textWrap: "balance",
                 ...typeScale.h1,
               }}
             >
@@ -310,7 +314,8 @@ export default function Solution({
               className="sol-intro"
               style={{
                 margin: 0,
-                maxWidth: "46ch",
+                maxWidth: "52ch",
+                textWrap: "balance",
                 ...typeScale.bodyLg,
                 color: color.textOnDarkMuted,
               }}

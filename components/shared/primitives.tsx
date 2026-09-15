@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
-import { color, ease, glow, hexA, microLabel, space, typeScale } from "./theme";
+import { color, ease, glow, hexA, space, typeScale } from "./theme";
 import { injectStrideStyles } from "./styles";
 
 /* ------------------------------------------------------------------ *
@@ -54,24 +54,63 @@ export function StrideMark({
  * Type
  * ------------------------------------------------------------------ */
 
+/**
+ * Every label and eyebrow on the site: a filled tag with two ticks after it,
+ * optionally preceded by its number in an outlined box.
+ *
+ * One component rather than a style guideline, so the treatment cannot drift
+ * between sections — there are labels in eleven of them.
+ */
 export function MicroLabel({
   children,
   tone = "dark",
+  number,
   className,
   style,
 }: {
   children: ReactNode;
-  /** Which surface the label sits on. */
+  /** Which surface the tag sits on. */
   tone?: "dark" | "light" | "accent";
+  /** Shown in its own outlined box ahead of the label. */
+  number?: string;
   className?: string;
   style?: CSSProperties;
 }) {
-  const c =
-    tone === "accent" ? color.accent : tone === "light" ? color.textOnLightMuted : color.textOnDarkMuted;
+  const onLight = tone === "light";
   return (
-    <div className={className} style={{ ...microLabel, color: c, ...style }}>
-      {children}
-    </div>
+    <span
+      className={className}
+      style={{ display: "inline-flex", alignItems: "stretch", gap: 2, ...style }}
+    >
+      {number && (
+        <span
+          style={{
+            ...typeScale.eyebrow,
+            display: "inline-flex",
+            alignItems: "center",
+            padding: `${space.xs}px ${space.sm}px`,
+            color: color.accent,
+            border: `1px solid ${hexA(color.accent, 0.5)}`,
+          }}
+        >
+          {number}
+        </span>
+      )}
+      <span
+        style={{
+          ...typeScale.eyebrow,
+          display: "inline-flex",
+          alignItems: "center",
+          padding: `${space.xs}px ${space.s}px`,
+          background: color.accent,
+          color: onLight ? "#FFFFFF" : color.textOnDark,
+        }}
+      >
+        {children}
+      </span>
+      <span style={{ width: 3, background: hexA(color.accent, 0.55) }} />
+      <span style={{ width: 3, background: hexA(color.accent, 0.3) }} />
+    </span>
   );
 }
 

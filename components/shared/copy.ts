@@ -44,28 +44,28 @@ export const hero = {
 } as const;
 
 export const problem = {
-  label: "( the problem )",
+  label: "The problem",
   intro:
     "Stride Media exists because talented entrepreneurs keep losing to louder, less capable competitors. Not on skill, on visibility. We build the video presence that makes recognition inevitable, using AI to move faster than any traditional agency, without cutting corners on quality.",
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   cards: [
     {
       n: "01",
-      label: "( invisible )",
+      label: "Invisible",
       headline: "Stride brings entrepreneurs into focus.",
       body: "You've got the expertise and the results. But online, you're invisible, or worse, posting content that gets zero engagement.",
       caption: "Ep. 04 — Listing walkthrough",
     },
     {
       n: "02",
-      label: "( unscripted )",
+      label: "Unscripted",
       headline: "Stride gives every video a purpose.",
       body: "Most content fails before it's filmed. No hook, no structure, nothing that makes someone stop scrolling. A script that doesn't work, no camera can save.",
       caption: "Hook test — retention pass",
     },
     {
       n: "03",
-      label: "( inconsistent )",
+      label: "Inconsistent",
       headline: "Stride delivers, every time.",
       body: "Late deliverables, dropped projects, agencies that ghost mid-campaign. Momentum dies the moment delivery becomes unreliable.",
       caption: "Week 11 — on schedule",
@@ -74,7 +74,7 @@ export const problem = {
 } as const;
 
 export const solution = {
-  label: "( what we do )",
+  label: "What we do",
   headline: ["We build your personal brand.", "Start to finish."],
   body: "Stride Media handles everything, so you never have to touch a camera, write a script, or guess what works.",
   videoCaption: "Watch how it comes together",
@@ -99,7 +99,7 @@ export const solution = {
 } as const;
 
 export const howItWorks = {
-  label: "( how it works )",
+  label: "How it works",
   headline: "Your brand, built in 3 steps",
   body: "No guesswork, no back-and-forth. A clear process that turns your expertise into content people actually watch.",
   steps: [
@@ -126,7 +126,7 @@ export const howItWorks = {
 } as const;
 
 export const caseStudy = {
-  label: "( case study )",
+  label: "Case study",
   client: "[Client]", // PLACEHOLDER — real client name pending
   clientContext: "Real estate",
   headline: ["Why [Client]", "trusted Stride"],
@@ -145,7 +145,7 @@ export const caseStudy = {
   /** The hover badge over each gallery plate. */
   hoverTop: "View",
   hoverMain: "case study",
-  resultsLabel: "( ninety days later )",
+  resultsLabel: "Ninety days later",
   resultsHeadline: "The number that mattered moved.",
   metrics: [
     { value: "41", suffix: "×", label: "Reach, month one to month three" },
@@ -156,7 +156,7 @@ export const caseStudy = {
 } as const;
 
 export const whyStride = {
-  label: "( why stride )",
+  label: "Why Stride",
   headline: ["AI", "VIDEO", "SCRIPTS", "POSITIONING"],
   transition: "Not another content factory.",
   capabilities: [
@@ -209,7 +209,7 @@ export const results = {
 } as const;
 
 export const testimonials = {
-  label: "( testimonials )",
+  label: "Testimonials",
   headline: "What entrepreneurs say after working with Stride",
   cards: [
     { quote: "Before Stride, we were posting randomly with no real strategy. Now every video has a purpose, and it shows in the results.", name: "[Client Name]", handle: "Real estate", stat: "2.3× engagement", initials: "01" },

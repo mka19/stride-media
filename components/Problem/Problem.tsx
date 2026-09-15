@@ -175,7 +175,9 @@ export default function Problem({
               <CardIcon index={i} />
               <MicroLabel tone="light">Problem</MicroLabel>
               <div style={{ ...typeScale.h3 }}>{card.label}</div>
-              <h3 style={{ margin: 0, ...typeScale.h1 }}>{card.headline}</h3>
+              <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+                {card.headline}
+              </h3>
               <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4" }}>
                 <MediaTile
                   src={cardMedia[i]}
@@ -184,7 +186,14 @@ export default function Problem({
                 />
               </div>
               <div style={{ ...typeScale.numberXl, color: color.accent }}>{card.n}</div>
-              <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}>
+              <p
+                style={{
+                  margin: 0,
+                  maxWidth: "40ch",
+                  ...typeScale.bodyLg,
+                  color: color.textOnLightMuted,
+                }}
+              >
                 {card.body}
               </p>
             </article>
@@ -313,7 +322,9 @@ export default function Problem({
                     <CardIcon index={i} />
                     <MicroLabel tone="light">Problem</MicroLabel>
                     <div style={{ ...typeScale.h3 }}>{card.label}</div>
-                    <h3 style={{ margin: 0, maxWidth: "13ch", ...typeScale.h1 }}>{card.headline}</h3>
+                    <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+                      {card.headline}
+                    </h3>
                   </div>
 
                   {/* ---- centre: the portrait and its caption ---- */}
@@ -362,7 +373,8 @@ export default function Problem({
                     <p
                       style={{
                         margin: 0,
-                        maxWidth: "34ch",
+                        maxWidth: "40ch",
+                        textWrap: "balance",
                         ...typeScale.bodyLg,
                         color: color.textOnLightMuted,
                       }}
