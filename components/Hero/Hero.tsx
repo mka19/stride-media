@@ -1,0 +1,321 @@
+import { useRef, useState } from "react";
+import { gsap, ScrollTrigger, useGsapContext } from "../shared/gsap";
+import { hero as heroCopy } from "../shared/copy";
+import { color, ease, fluid, font, glow, hexA, layout } from "../shared/theme";
+import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
+import HeroObject, { type HeroObjectHandle } from "./HeroObject";
+import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
+
+/**
+ * Hero — three phases across one tall scroll, pinned with position: sticky.
+ *
+ *   Phase 1 (load)        The 3D glow element alone on a grainy gradient.
+ *   Phase 2 (scroll)      It dissolves into the headline as the video mosaic
+ *                         rises behind it.
+ *   Phase 3 (interactive) Mosaic takes hover: tiles push and compress.
+ *
+ * The scroll distance is one scrub timeline on the outer section; the inner
+ * frame stays stuck to the viewport for its duration. Sticky rather than
+ * ScrollTrigger.pin so the section survives being dropped into a Framer page
+ * next to other pinned components without fighting them for the scroller.
+ */
+export default function Hero({
+  /** Real client footage, top-left to bottom-right; gaps render as cinematic fills. */
+  tiles = [],
+  scrollLength = "320vh",
+}: {
+  tiles?: MosaicTile[];
+  scrollLength?: string;
+}) {
+  const objectRef = useRef<HeroObjectHandle | null>(null);
+  const [interactive, setInteractive] = useState(false);
+
+  const rootRef = useGsapContext(
+    (root) => {
+      const q = gsap.utils.selector(root);
+      const frame = q(".hero-frame")[0] as HTMLElement;
+      const lines = q(".hero-line-inner");
+
+      gsap.set(lines, { yPercent: 118, opacity: 0 });
+      gsap.set(q(".hero-mosaic"), { opacity: 0, scale: 1.14 });
+      gsap.set(q(".hero-tail"), { opacity: 0, y: 24 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: root,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.6,
+          onUpdate: (self) => {
+            // Feed the dissolve. 0 -> 1 across the first 55% of the scroll.
+            objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.55));
+            // Hover push only once the mosaic has actually arrived.
+            setInteractive(self.progress > 0.62);
+          },
+        },
+      });
+
+      tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" }, 0.18)
+        .to(q(".hero-veil"), { opacity: 0.55, duration: 0.5 }, 0.2)
+        .to(
+          lines,
+          { yPercent: 0, opacity: 1, duration: 0.42, stagger: 0.07, ease: "power3.out" },
+          0.3,
+        )
+        .to(q(".hero-glow"), { opacity: 1, duration: 0.4 }, 0.34)
+        .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 }, 0.52)
+        .to(q(".hero-intro"), { opacity: 0, y: -20, duration: 0.25 }, 0.05)
+        .to(q(".hero-hint"), { opacity: 0, duration: 0.2 }, 0.05);
+
+      // Subtle parallax on the mosaic as the hero hands off to the Problem.
+      gsap.to(frame, {
+        yPercent: -6,
+        ease: "none",
+        scrollTrigger: { trigger: root, start: "bottom bottom", end: "bottom top", scrub: true },
+      });
+
+      return () => ScrollTrigger.refresh();
+    },
+    [],
+    // Reduced motion: land on the phase-3 composition immediately, no scrub.
+    (root) => {
+      const q = gsap.utils.selector(root);
+      gsap.set(q(".hero-line-inner"), { yPercent: 0, opacity: 1 });
+      gsap.set(q(".hero-mosaic"), { opacity: 1, scale: 1 });
+      gsap.set(q(".hero-veil"), { opacity: 0.55 });
+      gsap.set(q(".hero-tail, .hero-glow"), { opacity: 1, y: 0 });
+      gsap.set(q(".hero-intro, .hero-hint"), { opacity: 0 });
+      objectRef.current?.setProgress(1);
+      setInteractive(true);
+    },
+  );
+
+  return (
+    <section
+      id="top"
+      ref={rootRef}
+      style={{
+        position: "relative",
+        height: scrollLength,
+        background: color.black,
+        color: color.textOnDark,
+        fontFamily: font.sans,
+      }}
+    >
+      <div
+        className="hero-frame"
+        style={{
+          position: "sticky",
+          top: 0,
+          height: "100vh",
+          overflow: "hidden",
+          isolation: "isolate",
+        }}
+      >
+        {/* Layer 0 — warm, noisy gradient ground */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `
+              radial-gradient(120% 80% at 50% 42%, ${hexA(color.rubyDeep, 0.38)} 0%, transparent 62%),
+              radial-gradient(90% 60% at 12% 105%, ${hexA(color.ruby, 0.18)} 0%, transparent 70%),
+              linear-gradient(180deg, ${color.black} 0%, ${color.ink} 55%, ${color.black} 100%)
+            `,
+          }}
+        />
+
+        {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
+        <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
+          <VideoMosaic tiles={tiles} interactive={interactive} />
+        </div>
+
+        {/* Layer 2 — veil that keeps type legible over moving footage */}
+        <div
+          className="hero-veil"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0,
+            pointerEvents: "none",
+            background: `linear-gradient(180deg, ${hexA(color.black, 0.8)} 0%, ${hexA(color.black, 0.35)} 45%, ${hexA(color.black, 0.92)} 100%)`,
+          }}
+        />
+
+        {/* Layer 3 — the 3D element */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div style={{ width: "min(600px, 66vw)", height: "min(600px, 62vh)" }}>
+            <HeroObject handleRef={objectRef} />
+          </div>
+        </div>
+
+        <Grain opacity={0.14} />
+
+        {/* Layer 4 — phase 1 minimal text, retires as the dissolve begins */}
+        <div
+          className="hero-intro"
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            /* Label above the object, supporting line below it — the object
+               owns the middle of the screen in phase 1. */
+            justifyContent: "space-between",
+            pointerEvents: "none",
+            padding: "16vh 24px 18vh",
+          }}
+        >
+          <MicroLabel tone="ruby">{heroCopy.label}</MicroLabel>
+          <div
+            style={{
+              fontSize: 15,
+              letterSpacing: "0.01em",
+              color: color.textOnDarkMuted,
+              maxWidth: 420,
+              textAlign: "center",
+            }}
+          >
+            {heroCopy.sub}
+          </div>
+        </div>
+
+        {/* Layer 5 — asymmetric headline block (phase 2/3) */}
+        <div
+          className="hero-copy"
+          style={{
+            position: "relative",
+            height: "100%",
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 7fr) minmax(0, 5fr)",
+            alignItems: "end",
+            gap: 40,
+            padding: `0 ${layout.pad} clamp(56px, 9vh, 104px)`,
+            pointerEvents: "none",
+          }}
+        >
+          <div>
+            {/* The subtle glow that sits behind the headline, not on it. */}
+            <div
+              className="hero-glow"
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "6%",
+                bottom: "14%",
+                width: "48vw",
+                height: "38vh",
+                opacity: 0,
+                filter: "blur(80px)",
+                background: `radial-gradient(60% 60% at 40% 50%, ${hexA(color.ruby, 0.5)} 0%, transparent 70%)`,
+                pointerEvents: "none",
+              }}
+            />
+            <h1
+              style={{
+                position: "relative",
+                margin: 0,
+                fontFamily: font.display,
+                fontWeight: 400,
+                fontSize: fluid(44, 132),
+                lineHeight: 0.96,
+                letterSpacing: "-0.025em",
+              }}
+            >
+              {heroCopy.headline.map((line, i) => (
+                <span key={i} style={{ display: "block", overflow: "hidden" }}>
+                  <span
+                    className="hero-line-inner"
+                    style={{
+                      display: "block",
+                      textShadow: i === heroCopy.headline.length - 1 ? glow.textSoft : undefined,
+                      color: i === heroCopy.headline.length - 1 ? color.textOnDark : undefined,
+                    }}
+                  >
+                    {line}
+                  </span>
+                </span>
+              ))}
+            </h1>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: 26,
+              paddingBottom: 10,
+              pointerEvents: "auto",
+            }}
+          >
+            <p
+              className="hero-tail"
+              style={{
+                margin: 0,
+                maxWidth: 380,
+                fontSize: fluid(14, 17),
+                lineHeight: 1.55,
+                color: color.textOnDarkMuted,
+              }}
+            >
+              {heroCopy.sub}
+            </p>
+            <div className="hero-tail">
+              <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
+            </div>
+          </div>
+        </div>
+
+        {/* Phase 1 scroll cue */}
+        <div
+          className="hero-hint"
+          style={{
+            position: "absolute",
+            left: "50%",
+            bottom: 28,
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 10,
+            pointerEvents: "none",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: font.mono,
+              fontSize: 10,
+              letterSpacing: "0.24em",
+              textTransform: "uppercase",
+              color: color.textOnDarkMuted,
+            }}
+          >
+            {heroCopy.scrollHint}
+          </span>
+          <span
+            className="stride-scroll-line"
+            style={{
+              width: 1,
+              height: 46,
+              background: `linear-gradient(180deg, ${hexA(color.ruby, 0.9)}, transparent)`,
+              transition: `opacity 400ms ${ease.out}`,
+            }}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
