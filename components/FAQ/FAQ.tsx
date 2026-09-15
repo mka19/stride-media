@@ -73,6 +73,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                 border: "none",
                 cursor: "pointer",
                 textAlign: "left",
+                font: "inherit",
                 color: color.textOnDark,
               }}
             >
@@ -204,6 +205,9 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
         >
           {/* Letters spread across the frame with the supporting lines set
               between them, as in the reference — not three letters alone. */}
+          {/* The one size off the type scale on purpose: these letters span
+              the viewport, so they track its width instead of capping at
+              display-xl's 120px. */}
           <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
             F
           </span>
