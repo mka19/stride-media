@@ -1,0 +1,86 @@
+/**
+ * The one global stylesheet the components need.
+ *
+ * Framer code components can't ship a .css file, so `injectStrideStyles()`
+ * adds the keyframes once per page, guarded by an id so repeated component
+ * mounts (and Framer's canvas re-renders) never stack duplicates. The preview
+ * harness gets the same rules from src/index.css instead.
+ */
+const STYLE_ID = "stride-global-styles";
+const FONT_ID = "stride-fonts";
+
+/** One family, four weights. */
+export const strideFontHref =
+  "https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
+
+export const strideKeyframes = `
+/* Lenis owns smooth scrolling; the native one would fight it. */
+html { scroll-behavior: auto; }
+
+/* Base size is the body token, so inherited text is on the scale too. */
+body {
+  font-family: "Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: clamp(16px, 15.00px + 0.2083vw, 19px);
+  line-height: 1.6;
+}
+/*
+ * Side and section padding step at the spec's breakpoints. Inline styles
+ * cannot carry media queries, so the steps live here and every section reads
+ * them through layout.pad / layout.section.
+ */
+:root { --stride-pad: 24px; --stride-section: 64px; }
+@media (min-width: 769px)  { :root { --stride-pad: 48px; --stride-section: 96px; } }
+@media (min-width: 1440px) { :root { --stride-pad: 72px; --stride-section: 128px; } }
+@media (min-width: 1920px) { :root { --stride-pad: 96px; --stride-section: 160px; } }
+
+@keyframes stride-drift {
+  0%   { transform: scale(1.06) translate3d(0, 0, 0); }
+  50%  { transform: scale(1.16) translate3d(-2.5%, -2%, 0); }
+  100% { transform: scale(1.06) translate3d(0, 0, 0); }
+}
+.stride-drift { animation: stride-drift 26s ease-in-out infinite; }
+
+/* The "scroll for more" chevron: a slow breath, never a bounce. */
+@keyframes stride-pulse {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
+.stride-pulse { animation: stride-pulse 2.2s ease-in-out infinite; }
+
+/* Continuous rotations stay linear so they never visibly speed up or slow. */
+@keyframes stride-spin { to { transform: rotate(360deg); } }
+.stride-spin { animation: stride-spin 20s linear infinite; }
+
+/* Ambient dots: a slow float that never resets abruptly. */
+@keyframes stride-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(14px, -22px, 0); }
+}
+.stride-float { animation-name: stride-float; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stride-drift { animation: none; }
+  .stride-pulse { animation: none; }
+  .stride-spin { animation: none; }
+  .stride-float { animation: none; }
+}
+`;
+
+export function injectStrideStyles() {
+  if (typeof document === "undefined") return;
+
+  if (!document.getElementById(FONT_ID)) {
+    const link = document.createElement("link");
+    link.id = FONT_ID;
+    link.rel = "stylesheet";
+    link.href = strideFontHref;
+    document.head.appendChild(link);
+  }
+
+  if (document.getElementById(STYLE_ID)) return;
+  const el = document.createElement("style");
+  el.id = STYLE_ID;
+  el.textContent = strideKeyframes;
+  document.head.appendChild(el);
+}
