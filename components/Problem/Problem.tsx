@@ -239,74 +239,118 @@ export default function Problem({
                     position: "absolute",
                     inset: 0,
                     display: "grid",
-                    gridTemplateColumns: "minmax(0, 6fr) minmax(0, 5fr)",
-                    alignItems: "center",
-                    gap: "clamp(32px, 5vw, 80px)",
+                    /* Three columns, as in the reference: the statement on the
+                       left, a portrait frame down the middle, the number and
+                       its supporting line on the right. */
+                    gridTemplateColumns: "minmax(0, 5fr) minmax(0, 3.4fr) minmax(0, 4fr)",
+                    alignItems: "stretch",
+                    gap: "clamp(24px, 4vw, 72px)",
                   }}
                 >
-                  <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  {/* ---- left: mark, label, parenthetical, statement ---- */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                    <div className="pb-card-line">
+                      <CardIcon index={i} />
+                    </div>
+                    <MicroLabel tone="light" className="pb-card-line">
+                      Problem
+                    </MicroLabel>
                     <div
                       className="pb-card-line"
-                      style={{ display: "flex", alignItems: "center", gap: 14 }}
+                      style={{
+                        fontFamily: font.display,
+                        fontWeight: 400,
+                        fontSize: fluid(26, 56),
+                        lineHeight: 1,
+                        letterSpacing: "-0.03em",
+                        color: color.textOnLight,
+                      }}
                     >
-                      <CardIcon index={i} />
-                      <MicroLabel tone="ruby">{card.label}</MicroLabel>
+                      {card.label}
                     </div>
                     <h3
                       className="pb-card-line"
                       style={{
                         margin: 0,
-                        maxWidth: "16ch",
+                        maxWidth: "13ch",
                         fontFamily: font.display,
-                        fontWeight: 500,
-                        fontSize: fluid(30, 62),
-                        lineHeight: 1.0,
+                        fontWeight: 600,
+                        fontSize: fluid(28, 60),
+                        lineHeight: 0.98,
                         letterSpacing: "-0.04em",
                       }}
                     >
                       {card.headline}
                     </h3>
+                  </div>
+
+                  {/* ---- centre: portrait frame with its caption ---- */}
+                  <div
+                    className="pb-card-line"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 16,
+                      minHeight: 0,
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: 340,
+                        aspectRatio: "3 / 4",
+                        maxHeight: "100%",
+                      }}
+                    >
+                      <MediaTile
+                        src={cardMedia[i]}
+                        seed={i * 5 + 11}
+                        style={{ position: "absolute", inset: 0 }}
+                      />
+                    </div>
+                    <MicroLabel tone="light">{card.caption}</MicroLabel>
+                  </div>
+
+                  {/* ---- right: the number, then its supporting line ---- */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      alignItems: "flex-end",
+                      textAlign: "right",
+                    }}
+                  >
+                    <div
+                      className="pb-num"
+                      style={{
+                        fontFamily: font.display,
+                        fontWeight: 500,
+                        fontSize: fluid(72, 176),
+                        lineHeight: 0.78,
+                        letterSpacing: "-0.05em",
+                        color: color.ruby,
+                        textShadow: `0 0 30px ${hexA(color.ruby, 0.4)}`,
+                      }}
+                    >
+                      {card.n}
+                    </div>
                     <p
                       className="pb-card-line"
                       style={{
                         margin: 0,
-                        maxWidth: "42ch",
+                        maxWidth: "34ch",
+                        paddingBottom: "6vh",
                         fontSize: fluid(14, 17),
-                        lineHeight: 1.6,
+                        lineHeight: 1.55,
                         color: color.textOnLightMuted,
                       }}
                     >
                       {card.body}
                     </p>
-                  </div>
-
-                  <div style={{ position: "relative", height: "min(60vh, 520px)" }}>
-                    <MediaTile
-                      src={cardMedia[i]}
-                      seed={i * 5 + 11}
-                      radius={4}
-                      style={{ position: "absolute", inset: 0 }}
-                    />
-                    {/* The large number, set against the image edge — same
-                        motif as How It Works and the Case Study. */}
-                    <div
-                      className="pb-num"
-                      style={{
-                        position: "absolute",
-                        left: -28,
-                        bottom: -18,
-                        fontFamily: font.display,
-                        fontSize: fluid(64, 156),
-                        fontWeight: 500,
-                        lineHeight: 0.8,
-                        letterSpacing: "-0.05em",
-                        color: color.ruby,
-                        textShadow: `0 0 28px ${hexA(color.ruby, 0.55)}, 0 0 80px ${hexA(color.ruby, 0.3)}`,
-                        pointerEvents: "none",
-                      }}
-                    >
-                      {card.n}
-                    </div>
                   </div>
                 </article>
               ))}

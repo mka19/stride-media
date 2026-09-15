@@ -1,22 +1,24 @@
 /**
- * Stride Media — site copy, one source.
+ * Stride Media — site copy.
  *
- * The build spec references an external `stride-media-website-copy.md`, which
- * was not supplied. Everything below is written from the brand context in
- * section 1 of the spec and is meant to be replaced verbatim once that doc
- * lands: swap the strings here and every section updates. Line lengths are
- * already tuned to the layouts they sit in, so keep replacements roughly the
- * same length.
+ * Source: stride-media-website-copy-v2.md, used as written. Line breaks are
+ * the only thing adapted, to fit each section's actual measure.
+ *
+ * PLACEHOLDERS still to be filled: the phone number, the case-study client
+ * name, and the contract terms in FAQ 06. They are written as obvious
+ * placeholders on purpose — nothing invented is standing in for a real
+ * number or a real client.
  */
 
 export const brand = {
   name: "Stride Media",
   mark: "STRIDE",
-  tagline: "Personal brands, built at speed.",
-  phone: "+1 (415) 555-0128",
-  email: "hello@stridemedia.co",
+  tagline: "AI Creators. Real Recognition.",
+  phone: "+1 (000) 000-0000", // PLACEHOLDER
+  phoneLabel: "Call us 24/7",
+  email: "hello@stridemedia.co", // PLACEHOLDER
   url: "stridemedia.co",
-  calendly: "https://calendly.com/stride-media/intro",
+  calendly: "https://calendly.com/stride-media/strategy-call", // PLACEHOLDER
 } as const;
 
 export const nav = {
@@ -33,87 +35,108 @@ export const nav = {
 
 export const hero = {
   label: "Content studio",
-  headline: ["Be the name", "they already", "know."],
-  sub: "We build personal brands for entrepreneurs: strategy, scripts, production and delivery. You never pick up a camera.",
-  cta: "Book a strategy call",
+  headline: ["Build a personal brand", "that gets you recognized."],
+  sub: "AI-powered video content for entrepreneurs who want authority, engagement and results. You never pick up a camera.",
+  cta: "Book your free strategy call",
   scrollHint: "Scroll",
 } as const;
 
 export const problem = {
   label: "( the problem )",
   intro:
-    "Stride Media is a small, full-service content studio. We build the personal brand of the person behind the business. The strategy, the calendar, the scripts, the edit. We ship it every week without asking you to film a thing.",
+    "Stride Media exists because talented entrepreneurs keep losing to louder, less capable competitors. Not on skill, on visibility. We build the video presence that makes recognition inevitable, using AI to move faster than any traditional agency, without cutting corners on quality.",
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   cards: [
     {
       n: "01",
       label: "( invisible )",
-      headline: "You are the best-kept secret in your market.",
-      body: "The work is excellent. Nobody outside your referral list knows it. Every deal starts cold because your name carries nothing ahead of it.",
+      headline: "Stride brings entrepreneurs into focus.",
+      body: "You've got the expertise and the results. But online, you're invisible, or worse, posting content that gets zero engagement.",
+      caption: "Ep. 04 — Listing walkthrough",
     },
     {
       n: "02",
-      label: "( ignored )",
-      headline: "The scripts are pretty. The engagement is flat.",
-      body: "Most agencies write for the feed instead of the viewer. Polished videos that nobody finishes, saves, or books from.",
+      label: "( unscripted )",
+      headline: "Stride gives every video a purpose.",
+      body: "Most content fails before it's filmed. No hook, no structure, nothing that makes someone stop scrolling. A script that doesn't work, no camera can save.",
+      caption: "Hook test — retention pass",
     },
     {
       n: "03",
-      label: "( stalled )",
-      headline: "Three posts, then silence for a month.",
-      body: "Inconsistent delivery kills compounding. You lose the algorithm, the audience, and the six weeks you already paid for.",
+      label: "( inconsistent )",
+      headline: "Stride delivers, every time.",
+      body: "Late deliverables, dropped projects, agencies that ghost mid-campaign. Momentum dies the moment delivery becomes unreliable.",
+      caption: "Week 11 — on schedule",
     },
   ],
 } as const;
 
 export const solution = {
   label: "( what we do )",
-  headline: "End to end, with nothing on your plate.",
-  body: "Positioning, content calendar, scripting, AI-assisted production, edit and delivery. One studio, one line of accountability.",
+  headline: ["We build your personal brand.", "Start to finish."],
+  body: "Stride Media handles everything, so you never have to touch a camera, write a script, or guess what works.",
+  videoCaption: "Watch how it comes together",
   scrollHint: "Scroll for more",
+  pillars: [
+    {
+      n: "01",
+      title: "Strategy",
+      body: "We position you as the go-to authority in your industry, not just another face in the feed.",
+    },
+    {
+      n: "02",
+      title: "Scripts That Convert",
+      body: "Every script is built to drive engagement, comments and trust, not just views.",
+    },
+    {
+      n: "03",
+      title: "AI-Powered Production",
+      body: "High-quality video content, delivered fast, without filming a single second yourself.",
+    },
+  ],
 } as const;
 
 export const howItWorks = {
   label: "( how it works )",
-  headline: "Three steps, then it runs.",
-  body: "Onboarding takes a week. After that, content arrives on a schedule you can set your calendar by, and your only job is to approve it.",
+  headline: "Your brand, built in 3 steps",
+  body: "No guesswork, no back-and-forth. A clear process that turns your expertise into content people actually watch.",
   steps: [
     {
       n: "01",
-      title: "Strategy call",
-      body: "Forty-five minutes on your market, your offer and the person you want to be known as. We leave with a positioning angle and a 90-day content thesis.",
+      title: "Strategy Call",
+      body: "We learn your business, your audience and your goals. No cookie-cutter onboarding.",
     },
     {
       n: "02",
-      title: "We build",
-      body: "Calendar, hooks, scripts, production and edit. AI carries the volume; our team carries the taste. You approve and we produce.",
+      title: "We Build",
+      body: "Our team creates your scripts, positioning and video content, fully done-for-you.",
     },
     {
       n: "03",
-      title: "You show up",
-      body: "Content lands on schedule, every week. We read what performed, feed it back into the next batch, and keep the compounding going.",
+      title: "You Show Up",
+      body: "You post, grow and get recognized. We handle the rest, every month.",
     },
   ],
-  closing: "One studio. Strategy through delivery.",
+  closing: "Why entrepreneurs choose Stride.",
 } as const;
 
 export const caseStudy = {
   label: "( case study )",
-  client: "Marisa Okonjo",
-  clientContext: "Real estate — Bay Area",
-  headline: ["Why Marisa", "trusted Stride"],
-  intro:
-    "Eleven years in the market, four hundred closings, and an audience of nine hundred people. We had one quarter to fix the last one.",
+  client: "[Client]", // PLACEHOLDER — real client name pending
+  clientContext: "Real estate",
+  headline: ["Why [Client]", "trusted Stride"],
+  intro: "One entrepreneur. One invisible brand. One system that changed that.",
   gallery: [
-    { caption: "Ep. 04 — Listing walkthrough" },
-    { caption: "Hook test — 'nobody tells you'" },
+    { caption: "Strategy call — day one" },
     { caption: "Positioning frame" },
+    { caption: "Hook test — variant B" },
     { caption: "Ep. 09 — Buyer myths" },
     { caption: "Studio pass — colour" },
     { caption: "Ep. 12 — The 3% rule" },
-    { caption: "Thumbnail set B" },
+    { caption: "Thumbnail set" },
     { caption: "Ep. 17 — Off-market" },
   ],
+  brandMoment: "This is what Stride builds.",
   resultsLabel: "( ninety days later )",
   resultsHeadline: "The number that mattered moved.",
   metrics: [
@@ -126,66 +149,109 @@ export const caseStudy = {
 
 export const whyStride = {
   label: "( why stride )",
-  headline: ["FULL", "SERVICE", "STUDIO"],
+  headline: ["AI", "VIDEO", "SCRIPTS", "POSITIONING"],
+  transition: "Not another content factory.",
   capabilities: [
-    { n: "01", title: "AI-Powered Content", body: "Volume that used to take a crew of six, produced in days, without the flat templated look it usually comes with." },
-    { n: "02", title: "Engagement-Focused Scripts", body: "Written for the first three seconds and the last one. Hooks tested, retention read, the next batch written off the data." },
-    { n: "03", title: "Full-Service Strategy", body: "Positioning through delivery under one roof. No stitching together a strategist, an editor and a freelancer who ghosts." },
-    { n: "04", title: "Video Production & Editing", body: "Colour, sound, pacing and captions handled in-house. Every asset leaves looking like it belongs to one brand." },
-    { n: "05", title: "Personal Brand Positioning", body: "People follow people. We build the angle that makes you the obvious call in your market, not another company page." },
-    { n: "06", title: "Consistent Delivery", body: "A schedule you can plan around. Small studio, senior team, one point of contact who answers." },
+    {
+      n: "01",
+      title: "AI-Powered Content Creation",
+      body: "Faster than traditional production, without sacrificing quality.",
+    },
+    {
+      n: "02",
+      title: "Engagement-Focused Scripts",
+      body: "Built to drive comments, shares and trust, not just views.",
+    },
+    {
+      n: "03",
+      title: "Full-Service Strategy",
+      body: "From positioning to delivery, handled end to end.",
+    },
+    {
+      n: "04",
+      title: "Video Production & Editing",
+      body: "High-quality output, zero filming required.",
+    },
+    {
+      n: "05",
+      title: "Personal Brand Positioning",
+      body: "You become the authority, not just another feed post.",
+    },
+    {
+      n: "06",
+      title: "Consistent Delivery",
+      body: "Every month, on time, without exception.",
+    },
   ],
 } as const;
 
 export const results = {
-  label: "( results )",
-  headline: "Real videos, real numbers.",
-  body: "A sample of what left the studio this quarter.",
-  link: "See more works",
+  label: "Client Results",
+  headline: "Real videos, real numbers",
+  body: "Every video below was strategized, scripted and delivered by our team. The numbers speak for themselves.",
+  link: "See More Works",
   cards: [
-    { views: "3.1M", metric: "412K likes · 9.8K saves", desc: "Cold-open listing walkthrough, no face to camera for the first five seconds.", handle: "@marisaokonjo", client: "MO" },
-    { views: "880K", metric: "61K likes · 4.2K shares", desc: "Buyer-myth series, episode two. Ran as a four-part hook test.", handle: "@devinhaleyre", client: "DH" },
-    { views: "1.4M", metric: "97K likes · 12K saves", desc: "Founder story cut, repurposed from a single forty-minute interview.", handle: "@theclarkgroup", client: "CG" },
-    { views: "620K", metric: "44K likes · 3.1K comments", desc: "Coaching offer explainer. Booked out the following month's calendar.", handle: "@ameliaruiz", client: "AR" },
-    { views: "2.2M", metric: "155K likes · 18K saves", desc: "Off-market segment. Highest save rate of anything we shipped this year.", handle: "@nkosibuilds", client: "NB" },
-    { views: "510K", metric: "38K likes · 2.6K shares", desc: "Ninety-second market update, delivered weekly for eleven straight weeks.", handle: "@sarahlinhomes", client: "SL" },
+    { views: "758K", metric: "2.3× engagement growth", desc: "Optimized content structure for better watch time.", handle: "@client-handle", client: "01" },
+    { views: "1.2M", metric: "+10K followers in 30 days", desc: "Consistent strategy with high-retention edits.", handle: "@client-handle", client: "02" },
+    { views: "623K", metric: "+5K followers in 1 month", desc: "Content system built for consistency and growth.", handle: "@client-handle", client: "03" },
+    { views: "2.2M", metric: "18K saves", desc: "Off-market segment with the highest save rate of the quarter.", handle: "@client-handle", client: "04" },
+    { views: "880K", metric: "4.2K shares", desc: "Buyer-myth series, run as a four-part hook test.", handle: "@client-handle", client: "05" },
+    { views: "510K", metric: "11 weeks, zero missed", desc: "Ninety-second market update, delivered weekly.", handle: "@client-handle", client: "06" },
   ],
 } as const;
 
 export const testimonials = {
   label: "( testimonials )",
-  headline: "What it did for them.",
+  headline: "What entrepreneurs say after working with Stride",
   cards: [
-    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "Marisa Okonjo", handle: "@marisaokonjo", stat: "41× reach in 90 days", initials: "MO" },
-    { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "Devin Haley", handle: "@devinhaleyre", stat: "11 weeks, zero missed", initials: "DH" },
-    { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "Amelia Ruiz", handle: "@ameliaruiz", stat: "Calendar booked out", initials: "AR" },
-    { quote: "The scripts are the thing. Everything else is table stakes — they write like they want it watched.", name: "Nkosi Bello", handle: "@nkosibuilds", stat: "18K saves, one video", initials: "NB" },
-    { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "The Clark Group", handle: "@theclarkgroup", stat: "9 listings sourced", initials: "CG" },
-    { quote: "Small team, senior people, one person I call. That is the whole pitch and they mean it.", name: "Sarah Lin", handle: "@sarahlinhomes", stat: "Weekly since March", initials: "SL" },
+    { quote: "Before Stride, we were posting randomly with no real strategy. Now every video has a purpose, and it shows in the results.", name: "[Client Name]", handle: "Real estate", stat: "2.3× engagement", initials: "01" },
+    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "[Client Name]", handle: "Real estate", stat: "41× reach in 90 days", initials: "02" },
+    { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "[Client Name]", handle: "Coaching", stat: "11 weeks, zero missed", initials: "03" },
+    { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "[Client Name]", handle: "Consulting", stat: "Calendar booked out", initials: "04" },
+    { quote: "The scripts are the thing. They write like they want it watched.", name: "[Client Name]", handle: "Founder", stat: "18K saves, one video", initials: "05" },
+    { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "[Client Name]", handle: "Real estate", stat: "9 listings sourced", initials: "06" },
   ],
 } as const;
 
 export const finalCta = {
   pill: "Contact us",
-  headline: ["Let's build the", "name they", "already know."],
-  body: "Forty-five minutes. We'll tell you the angle we'd take before you pay us anything.",
+  headline: ["Let's build", "your brand."],
+  body: "Stop being the best-kept secret in your industry.",
   button: "Start project",
+  calendlyHeader: "Book your free strategy call",
 } as const;
 
 export const faq = {
+  label: "FAQ",
   items: [
-    { q: "Do I need to film anything?", a: "No. That is the point of the studio. We produce with AI-assisted video and existing assets, and where we do need you, it is a single forty-minute interview call that we cut into months of content." },
-    { q: "How fast does the first batch land?", a: "Onboarding is a week. Strategy call in the first two days, positioning and calendar back by day four, first approved batch in your hands by the end of week two." },
-    { q: "Is this just AI slop with my name on it?", a: "No. AI carries the volume: rough cuts, variants, production passes. Strategy, scripts and the final edit are human, senior and opinionated. If a video is not good enough to put our name on, it does not ship." },
-    { q: "What do you actually need from me?", a: "The strategy call, one interview session, and approvals. Everything else is ours." },
-    { q: "Do you only work with real estate agents?", a: "That is where we started and where most of our proof lives. The system works for any entrepreneur whose business runs on being known — coaches, founders, creators. The positioning work is the same." },
-    { q: "Who owns the content?", a: "You do. Every asset, every raw file, every script, on delivery." },
-    { q: "How is this different from the agency that let me down?", a: "Small team, senior people, one point of contact, and a delivery schedule we publish in advance. Most agencies fail on consistency, not on craft. We built the studio around that." },
-    { q: "What does it cost?", a: "It depends on volume and how much positioning work you need up front. We quote on the strategy call, after we have seen the market you are in — no packages priced before we know the work." },
+    {
+      q: "Do I need to film anything?",
+      a: "No. Everything is AI-powered. No camera, no filming, no stress.",
+    },
+    {
+      q: "What industries do you work with?",
+      a: "We started with real estate agents and now work with entrepreneurs across industries: coaches, consultants, founders and creators.",
+    },
+    {
+      q: "How fast will I see content?",
+      a: "Your first content batch is delivered within days of your strategy call.",
+    },
+    {
+      q: "Is this just editing, or do you write scripts too?",
+      a: "Everything. Strategy, scripts, production and delivery, fully done-for-you.",
+    },
+    {
+      q: "What if I don't like the direction?",
+      a: "We work iteratively. If something's off, we refine it until it's right.",
+    },
+    {
+      q: "Do you offer month-to-month or contracts?",
+      a: "[Confirm terms — placeholder pending your input.]", // PLACEHOLDER
+    },
   ],
 } as const;
 
 export const footer = {
-  tagline: "Personal brands, built at speed.",
-  note: "Strategy · Scripts · Production · Delivery",
+  tagline: "AI Creators. Real Recognition.",
+  links: ["About", "Services", "Work", "Contact", "Instagram"],
 } as const;

@@ -192,90 +192,84 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Layer 5 — asymmetric headline block (phase 2/3) */}
+        {/* Layer 5 — centred headline block, Google Flow style (phase 2/3) */}
         <div
           className="hero-copy"
           style={{
             position: "relative",
             height: "100%",
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 7fr) minmax(0, 5fr)",
-            alignItems: "end",
-            gap: 40,
-            padding: `0 ${layout.pad} clamp(56px, 9vh, 104px)`,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            gap: 28,
+            padding: `0 ${layout.pad}`,
             pointerEvents: "none",
           }}
         >
-          <div>
-            {/* The subtle glow that sits behind the headline, not on it. */}
-            <div
-              className="hero-glow"
-              aria-hidden="true"
-              style={{
-                position: "absolute",
-                left: "6%",
-                bottom: "14%",
-                width: "48vw",
-                height: "38vh",
-                opacity: 0,
-                filter: "blur(80px)",
-                background: `radial-gradient(60% 60% at 40% 50%, ${hexA(color.ruby, 0.5)} 0%, transparent 70%)`,
-                pointerEvents: "none",
-              }}
-            />
-            <h1
-              style={{
-                position: "relative",
-                margin: 0,
-                fontFamily: font.display,
-                fontWeight: 500,
-                fontSize: fluid(42, 124),
-                lineHeight: 0.92,
-                letterSpacing: "-0.042em",
-              }}
-            >
-              {heroCopy.headline.map((line, i) => (
-                <span key={i} style={{ display: "block", overflow: "hidden" }}>
-                  <span
-                    className="hero-line-inner"
-                    style={{
-                      display: "block",
-                      textShadow: i === heroCopy.headline.length - 1 ? glow.textSoft : undefined,
-                      color: i === heroCopy.headline.length - 1 ? color.textOnDark : undefined,
-                    }}
-                  >
-                    {line}
-                  </span>
-                </span>
-              ))}
-            </h1>
-          </div>
-
+          {/* The glow sits behind the headline, not on it. */}
           <div
+            className="hero-glow"
+            aria-hidden="true"
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 26,
-              paddingBottom: 10,
-              pointerEvents: "auto",
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "min(920px, 80vw)",
+              height: "44vh",
+              opacity: 0,
+              filter: "blur(90px)",
+              background: `radial-gradient(50% 50% at 50% 50%, ${hexA(color.ruby, 0.45)} 0%, transparent 70%)`,
+              pointerEvents: "none",
+            }}
+          />
+
+          <h1
+            style={{
+              position: "relative",
+              margin: 0,
+              maxWidth: "17ch",
+              fontFamily: font.display,
+              fontWeight: 500,
+              fontSize: fluid(38, 104),
+              lineHeight: 0.98,
+              letterSpacing: "-0.042em",
+              textWrap: "balance",
             }}
           >
-            <p
-              className="hero-tail"
-              style={{
-                margin: 0,
-                maxWidth: 380,
-                fontSize: fluid(14, 17),
-                lineHeight: 1.55,
-                color: color.textOnDarkMuted,
-              }}
-            >
-              {heroCopy.sub}
-            </p>
-            <div className="hero-tail">
-              <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
-            </div>
+            {heroCopy.headline.map((line, i) => (
+              <span key={i} style={{ display: "block", overflow: "hidden" }}>
+                <span
+                  className="hero-line-inner"
+                  style={{
+                    display: "block",
+                    textShadow: i === heroCopy.headline.length - 1 ? glow.textSoft : undefined,
+                  }}
+                >
+                  {line}
+                </span>
+              </span>
+            ))}
+          </h1>
+
+          <p
+            className="hero-tail"
+            style={{
+              position: "relative",
+              margin: 0,
+              maxWidth: "54ch",
+              fontSize: fluid(14, 18),
+              lineHeight: 1.55,
+              color: color.textOnDarkMuted,
+            }}
+          >
+            {heroCopy.sub}
+          </p>
+
+          <div className="hero-tail" style={{ position: "relative", pointerEvents: "auto" }}>
+            <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
           </div>
         </div>
 

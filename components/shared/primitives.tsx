@@ -57,16 +57,22 @@ export function StrideMark({
 export function MicroLabel({
   children,
   tone = "dark",
+  className,
   style,
 }: {
   children: ReactNode;
   /** Which surface the label sits on. */
   tone?: "dark" | "light" | "ruby";
+  className?: string;
   style?: CSSProperties;
 }) {
   const c =
     tone === "ruby" ? color.ruby : tone === "light" ? color.textOnLightMuted : color.textOnDarkMuted;
-  return <div style={{ ...microLabel, color: c, ...style }}>{children}</div>;
+  return (
+    <div className={className} style={{ ...microLabel, color: c, ...style }}>
+      {children}
+    </div>
+  );
 }
 
 /* ------------------------------------------------------------------ *
