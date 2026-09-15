@@ -204,7 +204,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             inset: 0,
             display: "flex",
             flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center",
+            textAlign: "center",
             padding: `0 ${layout.pad}`,
             color: color.textOnLight,
           }}
@@ -249,7 +251,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           style={{
             position: "absolute",
             left: layout.pad,
+            right: layout.pad,
             bottom: layout.section,
+            textAlign: "center",
             ...typeScale.bodyLg,
             color: hexA(color.textOnDark, 0.5),
           }}

@@ -39,7 +39,6 @@ export default function Hero({
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
-      const frame = q(".hero-frame")[0] as HTMLElement;
       const lines = q(".hero-line-inner");
 
       // The headline emerges from where the object was rather than sliding
@@ -75,8 +74,10 @@ export default function Hero({
         .to(q(".hero-intro"), { opacity: 0, y: -20, duration: 0.25 }, 0.05)
         .to(q(".hero-hint"), { opacity: 0, duration: 0.2 }, 0.05);
 
-      // Subtle parallax on the mosaic as the hero hands off to the Problem.
-      gsap.to(frame, {
+      // Parallax on the mosaic itself, not on the sticky frame. Moving the
+      // frame lifted it clear of the section's own bottom edge and left a
+      // band of bare background showing under it at the hand-off.
+      gsap.to(q(".hero-mosaic"), {
         yPercent: -6,
         ease: "none",
         scrollTrigger: { trigger: root, start: "bottom bottom", end: "bottom top", scrub: true },
