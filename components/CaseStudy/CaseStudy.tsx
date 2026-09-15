@@ -49,9 +49,11 @@ export default function CaseStudy({
     // Two to a row, four rows deep. The field is taller than the frame on
     // purpose: the sheet travels up through it, so the lower rows are still
     // below the fold when the first ones are being read.
-    x: [4, 52, 30, 74, 8, 56, 34, 78][i % 8],
-    y: [0, 6, 52, 58, 104, 110, 156, 162][i % 8],
-    w: [24, 22, 25, 23, 22, 25, 24, 23][i % 8],
+    // Every plate's right edge stays inside the frame — one of them used to
+    // sit at 78% with a 23% width and hung over the edge for its whole pass.
+    x: [4, 62, 6, 60, 3, 64, 5, 61][i % 8],
+    y: [0, 6, 58, 64, 116, 122, 174, 180][i % 8],
+    w: [28, 26, 29, 27, 26, 29, 28, 27][i % 8],
   }));
 
   const rootRef = useGsapContext(
@@ -146,8 +148,10 @@ export default function CaseStudy({
 
       tl.fromTo(
         sheet,
-        { xPercent: 70, yPercent: 130 },
-        { xPercent: -90, yPercent: -170, ease: "none", duration: span },
+        // A shorter crossing than the field is tall, so each plate spends
+        // real time inside the frame rather than sweeping straight through.
+        { xPercent: 26, yPercent: 62 },
+        { xPercent: -30, yPercent: -152, ease: "none", duration: span },
         GALLERY_IN,
       ).set(sheet, { opacity: 1 }, GALLERY_IN);
 
@@ -274,6 +278,7 @@ export default function CaseStudy({
             style={{
               ...typeScale.numberXl,
               fontSize: typeScale.h1.fontSize,
+              lineHeight: typeScale.h1.lineHeight,
               ...numberGradient,
               textShadow: `0 0 28px ${hexA(color.accent, 0.45)}`,
               // The tally rewrites this node every frame; a tabular figure

@@ -206,19 +206,19 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
           {/* The one size off the type scale on purpose: these letters span
               the viewport, so they track its width instead of capping at
               display-xl's 120px. */}
-          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw" }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: "11.7vw" }}>
             F
           </span>
           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
             Answers to key questions
           </span>
-          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw" }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: "11.7vw" }}>
             A
           </span>
           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
             All you need to know
           </span>
-          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw" }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: "11.7vw" }}>
             Q
           </span>
         </div>

@@ -56,13 +56,20 @@ export const typeScale = {
   /**
    * Six tokens, and every size on the site comes from one of them.
    *
-   * Leading and tracking follow one rule rather than being set per token:
-   * the larger the type, the tighter both get. Display sits at 1.08 and
-   * −0.03em, headlines at 1.12 and −0.025em, working headlines at 1.2 and
-   * −0.015em, running text at 1.6 and −0.005em. Small caps go the other way,
-   * opening up to +0.1em because letters that size need air to be read.
+   * Leading is set in pixels, not as a ratio, and scales with the type: the
+   * pair given for the desktop end is carried down to the phone end at the
+   * same proportion, so a headline has the same colour on a 390 screen as on
+   * a 1920 one.
    *
-   * Weights: medium (500), regular (400), light (300). Nothing heavier.
+   *   display  96 / 102     h1  54 / 62     h3  26 / 32
+   *   number  115 / 120     body 18 / 24    eyebrow 12 / 15
+   *
+   * Tracking is −2px on everything that is set at a headline size or larger.
+   * Running text takes a fraction of that, and the small caps go the other
+   * way: −2px on a 12px uppercase label would close the letters up until the
+   * word could not be read.
+   *
+   * Weights: medium (500) for statements, regular (400) for everything else.
    */
 
   /** Hero headline, Why Stride's stacked words, the marquee. */
@@ -70,48 +77,48 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(40, 96),
     fontWeight: 500,
-    lineHeight: 1.08,
-    letterSpacing: "-0.03em",
+    lineHeight: fluid(43, 102),
+    letterSpacing: "-2px",
   },
   /** Every section and sub-section headline, and the About statement. */
   h1: {
     fontFamily: SANS,
-    fontSize: fluid(32, 58),
+    fontSize: fluid(32, 54),
     fontWeight: 500,
-    lineHeight: 1.12,
-    letterSpacing: "-0.025em",
+    lineHeight: fluid(37, 62),
+    letterSpacing: "-2px",
   },
   /** Card headlines, questions, stats — the working headline size. */
   h3: {
     fontFamily: SANS,
     fontSize: fluid(20, 26),
-    fontWeight: 500,
-    lineHeight: 1.2,
-    letterSpacing: "-0.015em",
+    fontWeight: 400,
+    lineHeight: fluid(25, 32),
+    letterSpacing: "-2px",
   },
   /** Oversized numerals: 01/02/03 and the case-study metrics. */
   numberXl: {
     fontFamily: SANS,
-    fontSize: fluid(56, 116),
+    fontSize: fluid(56, 115),
     fontWeight: 500,
-    lineHeight: 1.0,
-    letterSpacing: "-0.035em",
+    lineHeight: fluid(58, 120),
+    letterSpacing: "-2px",
   },
   /** All running text. */
   bodyLg: {
     fontFamily: SANS,
     fontSize: fluid(15, 18),
     fontWeight: 400,
-    lineHeight: 1.6,
-    letterSpacing: "-0.005em",
+    lineHeight: fluid(20, 24),
+    letterSpacing: "-0.2px",
   },
   /** Every small label: eyebrows, nav, captions, meta. */
   eyebrow: {
     fontFamily: SANS,
     fontSize: fluid(11, 12),
     fontWeight: 400,
-    lineHeight: 1.5,
-    letterSpacing: "0.1em",
+    lineHeight: fluid(14, 15),
+    letterSpacing: "1.2px",
     textTransform: "uppercase" as const,
   },
 } as const;
@@ -167,7 +174,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B48";
+export const BUILD = "B53";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

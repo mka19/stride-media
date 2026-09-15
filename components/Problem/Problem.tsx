@@ -127,19 +127,27 @@ export default function Problem({
           // of nothing in the middle of the section.
           tl.fromTo(
             card,
-            { opacity: 0, y: 28 },
-            { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
+            { opacity: 0, scale: 0.93, y: 34 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.07, ease: "power3.out" },
             0.47,
           );
         } else {
           // Everything swaps together: icon, label, headline, portrait and
           // number. Staggering the parts makes a state look like it is
           // assembling rather than like the slot changing its contents.
-          tl.to(cards[i - 1], { opacity: 0, y: -20, duration: 0.05, ease: "power2.in" }, at).fromTo(
+          // The outgoing state expands as it goes, and is completely gone
+          // before the next one starts arriving — they used to cross for two
+          // percent of the section, which is enough to read as two cards in
+          // the slot at once.
+          tl.to(
+            cards[i - 1],
+            { opacity: 0, scale: 1.32, y: -34, duration: 0.06, ease: "power2.in" },
+            at,
+          ).fromTo(
             card,
-            { opacity: 0, y: 28 },
-            { opacity: 1, y: 0, duration: 0.06, ease: "power3.out" },
-            at + 0.03,
+            { opacity: 0, scale: 0.93, y: 34 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.07, ease: "power3.out" },
+            at + 0.07,
           );
         }
 
@@ -175,8 +183,8 @@ export default function Problem({
       });
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
-      gsap.set(q(".pb-card"), { opacity: 0 });
-      gsap.set(q(".pb-card")[0], { opacity: 1 });
+      gsap.set(q(".pb-card"), { opacity: 0, scale: 1, transformOrigin: "50% 50%" });
+      gsap.set(q(".pb-card")[0], { opacity: 1, scale: 1 });
       surface.current?.setTone("light");
     },
   );
@@ -336,8 +344,7 @@ export default function Problem({
                 style={{
                   margin: 0,
                   flex: 1,
-                  ...typeScale.h1,
-                  fontSize: fluid(28, 72),
+                  ...typeScale.h3,
                 }}
               >
                 {copy.introLines.map((line, i) => (
@@ -366,7 +373,7 @@ export default function Problem({
                   style={{
                     ...typeScale.eyebrow,
                     fontWeight: 400,
-                    lineHeight: 1.9,
+                    lineHeight: fluid(19, 22),
                     color: color.textOnDarkMuted,
                   }}
                 >
@@ -475,6 +482,7 @@ export default function Problem({
                         // count: at the full h1 the line ran past the column
                         // rule below it and took three lines to do it.
                         fontSize: fluid(26, 44),
+                        lineHeight: fluid(31, 50),
                         maxWidth: "100%",
                         textWrap: "balance",
                       }}
