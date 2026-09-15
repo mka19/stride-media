@@ -287,6 +287,11 @@ export default function Problem({
                     position: "absolute",
                     left: 0,
                     right: 0,
+                    /* The resting state is in the markup, not left to script.
+                       Rendered without the scroll timeline — a static render,
+                       or Framer's canvas — all three states would otherwise
+                       paint at once, on top of each other. */
+                    opacity: i === 0 ? 1 : 0,
                     display: "grid",
                     /* Tablet drops to two rows — statement, then portrait
                        beside the number — rather than three narrow columns. */

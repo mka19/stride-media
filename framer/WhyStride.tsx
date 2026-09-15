@@ -239,8 +239,13 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           }}
         >
           <div style={{ position: "relative", width: "min(420px, 34vw)", minHeight: 220 }}>
-            {copy.capabilities.map((cap) => (
-              <div key={cap.n} className="ws-cap" style={{ position: "absolute", inset: 0 }}>
+            {copy.capabilities.map((cap, i) => (
+              <div
+                key={cap.n}
+                className="ws-cap"
+                // Stacked in one box: only the first rests visible.
+                style={{ position: "absolute", inset: 0, opacity: i === 0 ? 1 : 0 }}
+              >
                 {capability(cap)}
               </div>
             ))}

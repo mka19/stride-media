@@ -271,7 +271,7 @@ export default function CaseStudy({
         <div
           className="cs-warm"
           aria-hidden="true"
-          style={{ position: "absolute", inset: 0, background: color.warmNeutral }}
+          style={{ position: "absolute", inset: 0, opacity: 0, background: color.warmNeutral }}
         />
 
         {/* ---- the collage, travelling bottom-right to upper-left ---- */}
@@ -333,6 +333,8 @@ export default function CaseStudy({
           style={{
             position: "absolute",
             inset: 0,
+            // A full-frame chapter: it must not cover the gallery at rest.
+            opacity: 0,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
