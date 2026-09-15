@@ -1,9 +1,9 @@
-import { gsap, ScrollTrigger, useGsapContext } from "../shared/gsap";
+import { gsap, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { useEffect, useRef } from "react";
 import { howItWorks as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { Grain, StrideMark } from "../shared/primitives";
+import { MediaTile } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import FieldTexture from "./FieldTexture";
 import RevealText from "../shared/RevealText";
@@ -11,17 +11,23 @@ import RevealText from "../shared/RevealText";
 /**
  * How It Works — anubischain.ai reference.
  *
- *   1. Light intro panel: eyebrow, headline, supporting paragraph.
- *   2. A glowing dark flash with the mark revealed inside it — the chapter
- *      break between the intro and the steps.
- *   3. Pinned step sequence over the network texture: 01, 02, 03 arrive one
- *      at a time as the scroll continues.
- *   4. Closing panel: the mark turning slowly, closing line beneath it.
+ *   1. Intro panel: eyebrow, headline, supporting paragraph.
+ *   2. A pinned flight: footage behind the whole section pushes forward as
+ *      the scroll advances, and each step arrives small and grows toward the
+ *      viewer before passing them, so the section reads as moving further in
+ *      rather than as three slides changing.
  *
  * Below the tablet breakpoint the pin is dropped and the four beats become
  * ordinary stacked blocks, with the flash reduced to a plain crossfade.
  */
-export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: string }) {
+export default function HowItWorks({
+  /** Footage behind the flight; falls back to a generated fill. */
+  backgroundSrc,
+  scrollLength = "380vh",
+}: {
+  backgroundSrc?: string;
+  scrollLength?: string;
+}) {
   const surface = useRef<SurfaceHandle | null>(null);
   const bp = useBreakpoint();
   const stacked = bp === "mobile";
@@ -31,10 +37,9 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
       const q = gsap.utils.selector(root);
 
       gsap.set(q(".hw-intro-item"), { opacity: 0, y: 20 });
-      gsap.set(q(".hw-flash"), { opacity: 0 });
-      gsap.set(q(".hw-flash-mark"), { opacity: 0, scale: 0.7 });
       gsap.set(q(".hw-steps"), { opacity: 0 });
-      gsap.set(q(".hw-step"), { opacity: 0, y: 15 });
+      // Each step waits far off, small, and comes toward the viewer.
+      gsap.set(q(".hw-step"), { opacity: 0, scale: 0.45, transformOrigin: "50% 50%" });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -42,58 +47,53 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
           start: "top top",
           end: "bottom bottom",
           scrub: 0.6,
-          // Intro and steps are light; the flash and closing panel are dark.
-          onUpdate: (self) => {
-            const p = self.progress;
-            surface.current?.setTone(p > 0.2 && p < 0.3 ? "dark" : "light");
-          },
+          onUpdate: (self) => surface.current?.setTone(self.progress > 0.2 ? "dark" : "light"),
         },
       });
 
-      // 1. intro
-      tl.to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.06, stagger: 0.02 }, 0.02)
-        .to(q(".hw-intro"), { opacity: 0, duration: 0.04 }, 0.2)
+      // The footage pushes forward for the whole pin, so the ground under
+      // the steps is always still moving in — that continuous push is what
+      // makes the section read as travel rather than as slides.
+      tl.fromTo(
+        q(".hw-flight"),
+        { scale: 1 },
+        { scale: 1.75, ease: "none", duration: 1 },
+        0,
+      );
 
-        // 3. the steps, one at a time
-        .to(q(".hw-steps"), { opacity: 1, duration: 0.03 }, 0.28);
+      // 1. intro clears
+      tl.to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.05, stagger: 0.02 }, 0.02)
+        .to(q(".hw-intro"), { opacity: 0, duration: 0.06 }, 0.18)
+        .to(q(".hw-steps"), { opacity: 1, duration: 0.05 }, 0.2);
 
-      // 2. The flash is a fixed ~700ms burst fired at the checkpoint, not a
-      // scrubbed tween: scrubbing would tie its length to how fast the
-      // visitor happens to be scrolling, and the spec calls for a quick
-      // chapter break of a set duration.
-      const flash = gsap
-        .timeline({ paused: true })
-        .to(q(".hw-flash"), { opacity: 1, duration: 0.12, ease: "power2.out" })
-        .to(q(".hw-flash-mark"), { opacity: 1, scale: 1, duration: 0.18, ease: "power2.out" }, 0.06)
-        .to(q(".hw-flash-mark"), { opacity: 0, scale: 1.25, duration: 0.2, ease: "power2.in" }, 0.36)
-        .to(q(".hw-flash"), { opacity: 0, duration: 0.18, ease: "power2.in" }, 0.5);
-
-      ScrollTrigger.create({
-        trigger: root,
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: (self) => {
-          const inWindow = self.progress > 0.2 && self.progress < 0.3;
-          if (inWindow && !flash.isActive() && flash.progress() === 0) flash.play(0);
-          if (!inWindow && flash.progress() === 1) flash.progress(0).pause();
-        },
-      });
-
+      // 2. the steps fly toward the viewer and past
       const steps = q(".hw-step");
+      const first = 0.26;
+      const span = (0.98 - first) / steps.length;
       steps.forEach((step, i) => {
-        const at = 0.3 + i * 0.22;
-        tl.to(step, { opacity: 1, y: 0, duration: 0.05, ease: "power2.out" }, at);
-        // They share the same centre, so the previous one clears out.
-        if (i > 0) tl.to(steps[i - 1], { opacity: 0, y: -15, duration: 0.05 }, at);
+        const at = first + i * span;
+        tl.fromTo(
+          step,
+          { opacity: 0, scale: 0.45 },
+          { opacity: 1, scale: 1, duration: span * 0.55, ease: "power2.out" },
+          at,
+        );
+        // Past the viewer: it keeps growing as it fades, so it reads as the
+        // camera going through it rather than the text simply leaving.
+        if (i < steps.length - 1) {
+          tl.to(
+            step,
+            { opacity: 0, scale: 1.9, duration: span * 0.45, ease: "power2.in" },
+            at + span * 0.6,
+          );
+        }
       });
-
     },
     [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".hw-intro-item, .hw-step"), { opacity: 1, y: 0 });
+      gsap.set(q(".hw-intro-item, .hw-step"), { opacity: 1, y: 0, scale: 1 });
       gsap.set(q(".hw-steps"), { opacity: 1 });
-      gsap.set(q(".hw-flash"), { opacity: 0 });
     },
   );
 
@@ -183,7 +183,7 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
     >
       {tag(step.n, step.tag)}
       <h3 style={{ margin: 0, ...typeScale.h1 }}>{step.title}</h3>
-      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}>{step.body}</p>
+      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{step.body}</p>
     </div>
   ));
 
@@ -253,10 +253,23 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
             justifyContent: "center",
             gap: space.xxl,
             padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
-            color: color.textOnLight,
+            color: color.textOnDark,
+            overflow: "hidden",
           }}
         >
-          <FieldTexture breakpoint={bp} tone="light" />
+          {/* The footage, pushing forward for the length of the pin. */}
+          <div className="hw-flight" style={{ position: "absolute", inset: 0, willChange: "transform" }}>
+            <MediaTile src={backgroundSrc} seed={19} style={{ position: "absolute", inset: 0 }} />
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: `radial-gradient(70% 70% at 50% 50%, ${hexA(color.black, 0.45)} 0%, ${hexA(color.black, 0.88)} 100%)`,
+              }}
+            />
+          </div>
+          <FieldTexture breakpoint={bp} tone="dark" />
           {/* Every step occupies the same centre, so the sequence reads as
               one panel changing rather than a column scrolling past. */}
           <div style={{ position: "relative", display: "grid" }}>
@@ -265,23 +278,6 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
                 {step}
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* ---- the chapter-break flash ---- */}
-        <div
-          className="hw-flash"
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "grid",
-            placeItems: "center",
-            background: `radial-gradient(60% 60% at 50% 50%, ${hexA(color.accent, 0.55)} 0%, ${color.black} 72%)`,
-          }}
-        >
-          <Grain opacity={0.2} />
-          <div className="hw-flash-mark" style={{ position: "relative", lineHeight: 0 }}>
-            <StrideMark size={180} glowing />
           </div>
         </div>
 
