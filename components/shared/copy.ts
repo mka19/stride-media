@@ -254,6 +254,24 @@ export const faq = {
 } as const;
 
 export const footer = {
+  wordmark: "Stride",
   tagline: "AI Creators. Real Recognition.",
-  links: ["About", "Services", "Work", "Contact", "Instagram"],
+  /** Numbered, down the left. */
+  nav: [
+    { n: "01", label: "Home", href: "#top" },
+    { n: "02", label: "What We Do", href: "#what-we-do" },
+    { n: "03", label: "Work", href: "#results" },
+    { n: "04", label: "Contact", href: "#contact" },
+  ],
+  /** Right-hand column. */
+  socials: [
+    { label: "Instagram", href: "#" }, // PLACEHOLDER
+    { label: "YouTube", href: "#" }, // PLACEHOLDER
+    { label: "TikTok", href: "#" }, // PLACEHOLDER
+    { label: "LinkedIn", href: "#" }, // PLACEHOLDER
+  ],
+  rights: "all rights reserved",
+  basedLabel: "Based in",
+  basedIn: "[City]", // PLACEHOLDER
+  legal: ["Terms & conditions", "Privacy policy"],
 } as const;

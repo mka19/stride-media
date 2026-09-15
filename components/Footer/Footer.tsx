@@ -1,41 +1,53 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
-import { color, hexA, layout, space, typeScale } from "../shared/theme";
-import { Grain } from "../shared/primitives";
-import MarkEtching from "./MarkEtching";
+import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
+import { Grain, MediaTile } from "../shared/primitives";
 import { useBreakpoint, detailFor } from "../shared/responsive";
+import Wordmark from "./Wordmark";
 
 /**
- * Footer — sondaven.com reference.
+ * Footer — Clipfolio reference.
  *
- * The mark is the visual anchor, scaled up and set centre with dots drifting
- * around it. Brand name, contact and links sit beneath, arriving just behind
- * the illustration.
+ * Full-bleed footage behind the whole block, numbered links down the left,
+ * social links down the right, and the wordmark filling the width beneath
+ * them, coming apart into blocks wherever the cursor crosses it. The meta
+ * row sits along the bottom edge.
  */
-export default function Footer() {
+export default function Footer({
+  /** Cinematic footage behind the footer; falls back to a generated fill. */
+  backgroundSrc,
+}: {
+  backgroundSrc?: string;
+}) {
   const bp = useBreakpoint();
-  const detail = detailFor(bp);
-  const markSize = bp === "mobile" ? 150 : bp === "tablet" ? 240 : 360;
-  const dots = Math.round(18 * detail);
+  const stacked = bp === "mobile";
+  const dots = Math.round(14 * detailFor(bp));
 
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".ft-mark"), { opacity: 0, scale: 0.9 });
       gsap.set(q(".ft-item"), { opacity: 0, y: 16 });
+      gsap.set(q(".ft-word"), { opacity: 0, scale: 0.96 });
 
       gsap
         .timeline({ scrollTrigger: { trigger: root, start: "top 80%" } })
-        .to(q(".ft-mark"), { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" })
-        .to(q(".ft-item"), { opacity: 1, y: 0, duration: 0.5, stagger: 0.15 }, 0.15);
+        .to(q(".ft-item"), { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 })
+        .to(q(".ft-word"), { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, 0.15);
     },
-    [],
+    [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".ft-mark"), { opacity: 1, scale: 1 });
       gsap.set(q(".ft-item"), { opacity: 1, y: 0 });
+      gsap.set(q(".ft-word"), { opacity: 1, scale: 1 });
     },
   );
+
+  const linkStyle = {
+    ...typeScale.bodyLg,
+    color: color.textOnDarkMuted,
+    textDecoration: "none",
+    transition: `color 400ms ${ease.out}`,
+  };
 
   return (
     <footer
@@ -45,14 +57,22 @@ export default function Footer() {
         background: color.black,
         color: color.textOnDark,
         fontFamily: typeScale.body.fontFamily,
-        padding: `${layout.section} ${layout.pad}`,
         overflow: "hidden",
-        textAlign: "center",
       }}
     >
-      <Grain opacity={0.14} />
+      {/* ---- footage behind everything ---- */}
+      <MediaTile src={backgroundSrc} seed={31} style={{ position: "absolute", inset: 0 }} />
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `linear-gradient(180deg, ${hexA(color.black, 0.72)} 0%, ${hexA(color.black, 0.5)} 45%, ${hexA(color.black, 0.88)} 100%)`,
+        }}
+      />
+      <Grain opacity={0.16} />
 
-      {/* drifting dots around the anchor */}
+      {/* drifting dots, as before */}
       <div aria-hidden="true" style={{ position: "absolute", inset: 0 }}>
         {Array.from({ length: dots }, (_, i) => (
           <span
@@ -60,14 +80,14 @@ export default function Footer() {
             className="stride-float"
             style={{
               position: "absolute",
-              left: `${(i * 37) % 96}%`,
-              top: `${(i * 53) % 88}%`,
+              left: `${(i * 41) % 96}%`,
+              top: `${(i * 57) % 88}%`,
               width: 2 + (i % 3),
               height: 2 + (i % 3),
               borderRadius: "50%",
-              background: hexA(color.ruby, 0.4),
-              animationDelay: `${-i * 1.7}s`,
-              animationDuration: `${14 + (i % 5) * 3}s`,
+              background: hexA(color.ruby, 0.45),
+              animationDelay: `${-i * 1.9}s`,
+              animationDuration: `${15 + (i % 5) * 3}s`,
             }}
           />
         ))}
@@ -78,61 +98,99 @@ export default function Footer() {
           position: "relative",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          gap: space.xl,
+          gap: layout.section,
+          padding: `${layout.section} ${layout.pad} ${space.xl}px`,
+          minHeight: stacked ? undefined : "86vh",
+          justifyContent: "space-between",
         }}
       >
-        <div className="ft-mark" style={{ lineHeight: 0 }}>
-          <MarkEtching size={markSize} breakpoint={bp} />
-        </div>
-
-        <h2 className="ft-item" style={{ margin: 0, ...typeScale.h2 }}>
-          {brand.name}
-        </h2>
-
-        <p className="ft-item" style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
-          {copy.tagline}
-        </p>
-
+        {/* ---- links: numbered left, social right ---- */}
         <div
-          className="ft-item"
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
+            display: "grid",
+            gridTemplateColumns: stacked ? "1fr 1fr" : "auto auto",
+            justifyContent: "space-between",
             gap: space.xl,
-            ...typeScale.labelSm,
           }}
         >
-          {copy.links.map((link) => (
-            <a
-              key={link}
-              href="#top"
-              style={{ color: color.textOnDarkMuted, textDecoration: "none" }}
-            >
-              {link}
-            </a>
-          ))}
+          <nav
+            className="ft-item"
+            aria-label="Footer"
+            style={{ display: "flex", flexDirection: "column", gap: space.s }}
+          >
+            {copy.nav.map((item) => (
+              <a
+                key={item.n}
+                href={item.href}
+                style={{ ...linkStyle, display: "flex", gap: space.s }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
+              >
+                <span style={{ ...typeScale.labelSm, color: color.ruby }}>{item.n}</span>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <nav
+            className="ft-item"
+            aria-label="Social"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: space.s,
+              textAlign: stacked ? "left" : "right",
+            }}
+          >
+            {copy.socials.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                style={linkStyle}
+                onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
         </div>
 
+        {/* ---- the wordmark, dissolving under the cursor ---- */}
+        <div className="ft-word">
+          <Wordmark text={copy.wordmark} height={stacked ? 96 : 240} />
+        </div>
+
+        {/* ---- meta row ---- */}
         <div
           className="ft-item"
           style={{
             display: "flex",
             flexWrap: "wrap",
-            justifyContent: "center",
-            gap: space.xl,
+            justifyContent: "space-between",
+            gap: space.md,
+            paddingTop: space.lg,
+            borderTop: `1px solid ${color.hairlineOnDark}`,
             ...typeScale.labelSm,
             color: color.textOnDarkMuted,
           }}
         >
-          <a href={`tel:${brand.phone}`} style={{ color: "inherit", textDecoration: "none" }}>
-            {brand.phone}
-          </a>
+          <span>
+            @{brand.url.replace(/\..*$/, "")} — {copy.rights}
+          </span>
+          <span>
+            {copy.basedLabel} {copy.basedIn}
+          </span>
           <a href={`mailto:${brand.email}`} style={{ color: "inherit", textDecoration: "none" }}>
             {brand.email}
           </a>
-          <span>{brand.url}</span>
+          <span style={{ display: "flex", gap: space.md }}>
+            {copy.legal.map((item) => (
+              <a key={item} href="#top" style={{ color: "inherit", textDecoration: "none" }}>
+                {item}
+              </a>
+            ))}
+          </span>
         </div>
       </div>
     </footer>
