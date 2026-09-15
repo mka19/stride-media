@@ -187,10 +187,10 @@ export const caseStudy = {
     "Listings sourced from the feed, with no cold outreach.",
   ],
   metrics: [
-    { value: "41", suffix: "×", label: "Reach, month one to month three" },
+    { value: "41", suffix: "×", label: "Reach in ninety days" },
     { value: "2.4", suffix: "M", label: "Views across the quarter" },
-    { value: "68", suffix: "", label: "Inbound conversations from content" },
-    { value: "9", suffix: "", label: "Listings sourced, no cold outreach" },
+    { value: "68", suffix: "", label: "Inbound conversations" },
+    { value: "9", suffix: "", label: "Listings sourced" },
   ],
 } as const;
 

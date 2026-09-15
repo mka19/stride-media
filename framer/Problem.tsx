@@ -47,6 +47,13 @@ export default function Problem({
       const q = gsap.utils.selector(root);
       const cards = q(".pb-card");
 
+      // The plate is 16:9 at min(430px, 48vh) tall, so what it takes to
+      // cover the frame is known without measuring anything.
+      const plateH = Math.min(430, window.innerHeight * 0.48);
+      const plateW = (plateH * 16) / 9;
+      const coverScale =
+        Math.max(window.innerWidth / plateW, window.innerHeight / plateH) * 1.06;
+
       // The statement resolves by opacity, not by a gradient: the words are
       // white throughout and simply come up from dim to full as the reading
       // reaches them. A clipped fill was a second colour laid over the type;
@@ -148,26 +155,24 @@ export default function Problem({
             tl.to(
               leavingMedia,
               {
-                // Enough to cover the frame from wherever the plate sits.
-                scale: () => {
-                  const r = leavingMedia.getBoundingClientRect();
-                  const base = gsap.getProperty(leavingMedia, "scaleX") as number;
-                  const w = r.width / (base || 1);
-                  const h = r.height / (base || 1);
-                  return Math.max(window.innerWidth / w, window.innerHeight / h) * 1.04;
-                },
-                duration: 0.07,
+                // Computed from the plate's own layout rule rather than from
+                // a live measurement: a function value read the rect while
+                // the push-in tween still had the plate part-scaled, so it
+                // divided the cover factor by a scale that was about to be
+                // undone and the plate barely grew.
+                scale: coverScale,
+                duration: 0.09,
                 ease: "power2.inOut",
               },
               at,
-            ).to(leavingMedia, { opacity: 0, duration: 0.025 }, at + 0.05);
+            ).to(leavingMedia, { opacity: 0, duration: 0.03 }, at + 0.07);
           }
 
-          tl.to(leaving, { opacity: 0, duration: 0.01 }, at + 0.075).fromTo(
+          tl.to(leaving, { opacity: 0, duration: 0.01 }, at + 0.1).fromTo(
             card,
             { opacity: 0, y: 34 },
             { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
-            at + 0.085,
+            at + 0.11,
           );
         }
 
@@ -278,7 +283,7 @@ export default function Problem({
               <h3 style={{ margin: 0, ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}>
                 {card.headline}
               </h3>
-              <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4" }}>
+              <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
                 <MediaTile
                   src={cardMedia[i]}
                   seed={i * 5 + 11}
@@ -518,7 +523,10 @@ export default function Problem({
                     gridTemplateColumns: bp === "tablet" ? "1fr 1fr" : "1fr auto 1fr",
                     gap: layout.gutter,
                     alignItems: "center",
-                    height: "min(520px, 54vh)",
+                    // Shorter, because the plate is landscape now: at the old height a
+                    // 16:9 frame took most of the row's width and squeezed the
+                    // two text columns either side of it.
+                    height: "min(430px, 48vh)",
                   }}
                 >
                   {/* ---- left: icon, eyebrow, sub-label, headline ---- */}
@@ -573,7 +581,7 @@ export default function Problem({
                       style={{
                         position: "relative",
                         height: "100%",
-                        aspectRatio: "3 / 4",
+                        aspectRatio: "16 / 9",
                         // The portrait settles out of a push-in across the
                         // card's hold; without the clip it would bleed past
                         // its own frame as it scales.

@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { caseStudy as copy } from "./copy";
-import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
+import { color, ease, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
 import { Grain, MediaTile, MicroLabel } from "./primitives";
 import GradientRevealText from "./GradientRevealText";
 import HoverBadge from "./HoverBadge";
@@ -212,7 +212,7 @@ export default function CaseStudy({
         )
 
         // 6. and count up to their value once they are in place
-        .call(countUp, undefined, 0.78)
+        .call(countUp, undefined, GALLERY_OUT + 0.1)
 
         // A held tail so the finished chapter is readable before the section
         // hands over, and so the positions above stay a fixed share of the
@@ -302,9 +302,18 @@ export default function CaseStudy({
             background: hexA(color.textOnLight, 0.035),
             border: `1px solid ${hexA(color.textOnLight, 0.08)}`,
             textAlign: "left",
+            transition: `background 480ms ${ease.out}, border-color 480ms ${ease.out}`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = `linear-gradient(160deg, ${hexA(color.accent, 0.14)} 0%, ${hexA(color.accentBright, 0.05)} 55%, transparent 100%)`;
+            e.currentTarget.style.borderColor = hexA(color.accent, 0.35);
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = hexA(color.textOnLight, 0.035);
+            e.currentTarget.style.borderColor = hexA(color.textOnLight, 0.08);
           }}
         >
-          <div style={{ ...typeScale.h3, color: color.textOnLight }}>{m.label}</div>
+          <div style={{ ...typeScale.h3, color: color.textOnLight, maxWidth: "14ch" }}>{m.label}</div>
 
           <div
             style={{

@@ -250,20 +250,20 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
 function AmbientShapes() {
   return (
     <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-      {[0, 1, 2, 3, 4].map((i) => (
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
         <span
           key={i}
           className="stride-float"
           style={{
             position: "absolute",
-            left: `${8 + i * 19}%`,
-            top: `${18 + ((i * 37) % 60)}%`,
+            left: `${6 + ((i * 23) % 88)}%`,
+            top: `${12 + ((i * 41) % 74)}%`,
             width: 6 + (i % 3) * 4,
             height: 6 + (i % 3) * 4,
             borderRadius: "50%",
             background: hexA(color.accent, 0.35),
-            animationDelay: `${-i * 3.5}s`,
-            animationDuration: `${16 + i * 4}s`,
+            animationDelay: `${-i * 4.5}s`,
+            animationDuration: `${34 + i * 6}s`,
           }}
         />
       ))}

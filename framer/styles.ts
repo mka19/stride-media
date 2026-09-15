@@ -60,17 +60,23 @@ body {
 
 /* Ambient dots: a slow float that never resets abruptly. */
 @keyframes stride-float {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50%      { transform: translate3d(14px, -22px, 0); }
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(26px, -34px, 0); }
+  50%  { transform: translate3d(48px, -8px, 0); }
+  75%  { transform: translate3d(18px, 28px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
 }
 .stride-float { animation-name: stride-float; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
 
-@media (prefers-reduced-motion: reduce) {
-  .stride-drift { animation: none; }
-  .stride-pulse { animation: none; }
-  .stride-spin { animation: none; }
-  .stride-float { animation: none; }
-}
+/*
+ * No reduced-motion block here.
+ *
+ * The scroll sequences stopped following the OS setting a while ago, because
+ * following it silently removed a whole chapter and piled every pinned
+ * section on top of itself. This stylesheet kept following it, so on a
+ * machine with the setting on the ambient drift froze while everything
+ * around it moved — the JS override cannot reach a media query.
+ */
 `;
 
 export function injectStrideStyles() {
