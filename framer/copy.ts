@@ -142,6 +142,9 @@ export const caseStudy = {
     { caption: "Ep. 17 — Off-market" },
   ],
   brandMoment: "This is what Stride builds.",
+  /** The hover badge over each gallery plate. */
+  hoverTop: "View",
+  hoverMain: "case study",
   resultsLabel: "( ninety days later )",
   resultsHeadline: "The number that mattered moved.",
   metrics: [

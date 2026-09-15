@@ -5,6 +5,7 @@ import { caseStudy as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import ScrambleText from "../shared/ScrambleText";
+import HoverBadge from "../shared/HoverBadge";
 import { useBreakpoint } from "../shared/responsive";
 
 /**
@@ -306,6 +307,7 @@ export default function CaseStudy({
                 >
                   {plate.caption}
                 </figcaption>
+                <HoverBadge top={copy.hoverTop}>{copy.hoverMain}</HoverBadge>
               </div>
             </figure>
           ))}
