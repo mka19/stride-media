@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { problem as copy } from "./copy";
-import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
+import { color, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
 import { Grain, MediaTile, MicroLabel } from "./primitives";
 import { useBreakpoint, useStacked } from "./responsive";
 
@@ -247,7 +247,7 @@ export default function Problem({
               <CardIcon index={i} />
               <MicroLabel tone="light">Problem</MicroLabel>
               <div style={{ ...typeScale.h3 }}>{card.label}</div>
-              <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+              <h3 style={{ margin: 0, ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}>
                 {card.headline}
               </h3>
               <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4" }}>
@@ -303,59 +303,94 @@ export default function Problem({
           />
           <Grain opacity={0.18} />
 
-          {/* The About statement: trionn.com's treatment — display type set
-              wide and left-aligned, with the label held out at the margin,
-              and the lines resolving one after another. It leaves before the
-              ground changes. */}
+          {/* The About chapter — trionn.com's layout: the label held out at
+              the far left margin, the statement running nearly the full
+              width above a hairline, and two small blocks beneath it, the
+              left one in caps and the right one in sentence case. */}
           <div
             className="pb-statement"
             style={{
               position: "absolute",
               inset: 0,
               display: "flex",
-              alignItems: "center",
-              gap: space.xxl,
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: space.hh,
               padding: `0 ${layout.pad}`,
               color: color.textOnDark,
             }}
           >
-            <span
-              style={{
-                ...typeScale.eyebrow,
-                color: color.textOnDarkMuted,
-                flex: "0 0 auto",
-                alignSelf: "flex-start",
-                paddingTop: "0.6em",
-              }}
-            >
-              {copy.label}
-            </span>
-            {/* Display size, not body: this is the studio's statement, and at
-                body size it read as a caption floating in an empty frame. */}
-            <p
-              style={{
-                margin: 0,
-                flex: 1,
-                maxWidth: "min(1500px, 84vw)",
-                ...typeScale.h1,
-              }}
-            >
-              {copy.introLines.map((line, i) => (
-                <span
-                  key={i}
-                  className="pb-line"
+            <div style={{ display: "flex", alignItems: "flex-start", gap: space.hh }}>
+              <span
+                style={{
+                  ...typeScale.eyebrow,
+                  fontWeight: 400,
+                  color: color.textOnDarkMuted,
+                  flex: "0 0 auto",
+                  paddingTop: "0.9em",
+                  width: "8ch",
+                }}
+              >
+                {copy.label}
+              </span>
+              <p
+                style={{
+                  margin: 0,
+                  flex: 1,
+                  ...typeScale.h1,
+                  fontSize: fluid(28, 72),
+                }}
+              >
+                {copy.introLines.map((line, i) => (
+                  <span
+                    key={i}
+                    className="pb-line"
+                    style={{ display: "block", paddingBottom: "0.1em" }}
+                  >
+                    {line}
+                  </span>
+                ))}
+              </p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: space.xl }}>
+              <div style={{ height: 1, background: color.hairlineOnDark }} />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: space.hh,
+                }}
+              >
+                <div
                   style={{
-                    display: "block",
-                    // The fill is clipped to the glyphs, and a line box tighter
-                    // than the type crops descenders when it is — the extra
-                    // room is what keeps the tail of a g inside the box.
-                    paddingBottom: "0.14em",
+                    ...typeScale.eyebrow,
+                    fontWeight: 400,
+                    lineHeight: 1.9,
+                    color: color.textOnDarkMuted,
                   }}
                 >
-                  {line}
-                </span>
-              ))}
-            </p>
+                  {copy.aboutCaps.map((line) => (
+                    <span key={line} style={{ display: "block" }}>
+                      {line}
+                    </span>
+                  ))}
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    ...typeScale.bodyLg,
+                    fontSize: fluid(13, 15),
+                    color: color.textOnDarkMuted,
+                    maxWidth: "44ch",
+                    textAlign: "left",
+                  }}
+                >
+                  {copy.aboutMission}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -433,7 +468,18 @@ export default function Problem({
                     <CardIcon index={i} />
                     <MicroLabel tone="light">Problem</MicroLabel>
                     <div style={{ ...typeScale.h3 }}>{card.label}</div>
-                    <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+                    <h3
+                      style={{
+                        margin: 0,
+                        ...typeScale.h1,
+                        // Sized to its own column rather than to a character
+                        // count: at the full h1 the line ran past the column
+                        // rule below it and took three lines to do it.
+                        fontSize: fluid(26, 44),
+                        maxWidth: "100%",
+                        textWrap: "balance",
+                      }}
+                    >
                       {card.headline}
                     </h3>
                   </div>
@@ -495,7 +541,9 @@ export default function Problem({
                       style={{
                         ...typeScale.numberXl,
                         ...numberGradient,
-                        textShadow: `0 0 30px ${hexA(color.accent, 0.4)}`,
+                        // No halo. The glow behind the figure bled across the
+                        // column as a pale smear and read as a stray layer
+                        // rather than as light.
                         willChange: "transform",
                       }}
                     >

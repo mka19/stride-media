@@ -81,12 +81,11 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                   ...typeScale.eyebrow,
                   color: color.accent,
                   minWidth: 64,
-                  letterSpacing: "0.08em",
                 }}
               >
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span style={{ ...typeScale.h3, flex: 1, letterSpacing: "0.02em" }}>{item.q}</span>
+              <span style={{ ...typeScale.h3, flex: 1 }}>{item.q}</span>
               <span
                 aria-hidden="true"
                 style={{
@@ -166,7 +165,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
           padding: `${layout.section} ${layout.pad}`,
         }}
       >
-        <h2 style={{ margin: 0, ...typeScale.h1, letterSpacing: "0.12em" }}>{copy.label}</h2>
+        <h2 style={{ margin: 0, ...typeScale.h1 }}>{copy.label}</h2>
         {list}
       </section>
     );
@@ -207,19 +206,19 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
           {/* The one size off the type scale on purpose: these letters span
               the viewport, so they track its width instead of capping at
               display-xl's 120px. */}
-          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: 0.9 }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw" }}>
             F
           </span>
           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
             Answers to key questions
           </span>
-          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: 0.9 }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw" }}>
             A
           </span>
           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
             All you need to know
           </span>
-          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: 0.9 }}>
+          <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw" }}>
             Q
           </span>
         </div>

@@ -132,7 +132,7 @@ export default function Nav({
         }}
       >
         <StrideMark size={24} glowing />
-        <span style={{ ...typeScale.eyebrow, fontWeight: 600, letterSpacing: "0.18em" }}>
+        <span style={{ ...typeScale.eyebrow, fontWeight: 500 }}>
           {brand.mark}
         </span>
       </a>

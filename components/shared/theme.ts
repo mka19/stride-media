@@ -53,42 +53,54 @@ export const font = {
  * component spreads the token and adds nothing but colour.
  */
 export const typeScale = {
-  /** Hero headline, Why Stride's stacked words. */
+  /**
+   * Six tokens, and every size on the site comes from one of them.
+   *
+   * Leading and tracking follow one rule rather than being set per token:
+   * the larger the type, the tighter both get. Display sits at 1.08 and
+   * −0.03em, headlines at 1.12 and −0.025em, working headlines at 1.2 and
+   * −0.015em, running text at 1.6 and −0.005em. Small caps go the other way,
+   * opening up to +0.1em because letters that size need air to be read.
+   *
+   * Weights: medium (500), regular (400), light (300). Nothing heavier.
+   */
+
+  /** Hero headline, Why Stride's stacked words, the marquee. */
   displayLg: {
     fontFamily: SANS,
-    fontSize: fluid(44, 104),
-    fontWeight: 600,
-    lineHeight: 0.94,
-    letterSpacing: "-0.042em",
+    fontSize: fluid(40, 96),
+    fontWeight: 500,
+    lineHeight: 1.08,
+    letterSpacing: "-0.03em",
   },
-  /** Every section and sub-section headline. */
+  /** Every section and sub-section headline, and the About statement. */
   h1: {
     fontFamily: SANS,
-    fontSize: fluid(34, 60),
-    fontWeight: 600,
-    lineHeight: 1.0,
-    letterSpacing: "-0.035em",
+    fontSize: fluid(32, 58),
+    fontWeight: 500,
+    lineHeight: 1.12,
+    letterSpacing: "-0.025em",
   },
   /** Card headlines, questions, stats — the working headline size. */
   h3: {
     fontFamily: SANS,
-    fontSize: fluid(21, 28),
-    fontWeight: 600,
-    lineHeight: 1.15,
-    letterSpacing: "-0.02em",
+    fontSize: fluid(20, 26),
+    fontWeight: 500,
+    lineHeight: 1.2,
+    letterSpacing: "-0.015em",
   },
   /** Oversized numerals: 01/02/03 and the case-study metrics. */
   numberXl: {
     fontFamily: SANS,
-    fontSize: fluid(64, 132),
-    fontWeight: 600,
-    lineHeight: 0.8,
-    letterSpacing: "-0.05em",
+    fontSize: fluid(56, 116),
+    fontWeight: 500,
+    lineHeight: 1.0,
+    letterSpacing: "-0.035em",
   },
   /** All running text. */
   bodyLg: {
     fontFamily: SANS,
-    fontSize: fluid(16, 19),
+    fontSize: fluid(15, 18),
     fontWeight: 400,
     lineHeight: 1.6,
     letterSpacing: "-0.005em",
@@ -96,10 +108,10 @@ export const typeScale = {
   /** Every small label: eyebrows, nav, captions, meta. */
   eyebrow: {
     fontFamily: SANS,
-    fontSize: fluid(12, 13),
-    fontWeight: 600,
-    lineHeight: 1.3,
-    letterSpacing: "0.08em",
+    fontSize: fluid(11, 12),
+    fontWeight: 400,
+    lineHeight: 1.5,
+    letterSpacing: "0.1em",
     textTransform: "uppercase" as const,
   },
 } as const;
@@ -143,7 +155,7 @@ export const numberGradient = {
   // Same reason as the swept headlines: a clipped fill is painted only inside
   // the box, and numberXl's 0.8 line-height leaves the glyph hanging out of it.
   paddingBottom: "0.1em",
-  backgroundImage: `linear-gradient(104deg, ${color.accent} 0%, ${color.accentBright} 52%, #E4DBFF 100%)`,
+  backgroundImage: `linear-gradient(104deg, ${color.accent} 0%, ${color.accentBright} 100%)`,
   WebkitBackgroundClip: "text",
   backgroundClip: "text",
   color: "transparent",
@@ -155,7 +167,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B44";
+export const BUILD = "B48";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

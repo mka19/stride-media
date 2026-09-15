@@ -41,7 +41,7 @@ export const hero = {
   /** The proof row above the headline. */
   proofCount: "115+",
   proofLabel: "happy clients",
-  headline: ["Build a personal brand", "that gets you recognized."],
+  headline: ["BUILD A BRAND", "THAT GETS RECOGNIZED"],
   sub: "AI-powered video content for entrepreneurs who want authority, engagement and results. You never pick up a camera.",
   cta: "Book your free strategy call",
   scrollHint: "Scroll",
@@ -66,18 +66,22 @@ export const problem = {
     "traditional agency, without cutting corners on quality.",
   ],
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
+  /** The two blocks under the rule, left and right. */
+  aboutCaps: ["WE BUILD FOR RECOGNITION", "STRATEGY FIRST, CRAFT ALWAYS,", "SHIPPED EVERY MONTH."],
+  aboutMission:
+    "Our mission is to make expertise impossible to ignore, with video that earns attention instead of buying it.",
   cards: [
     {
       n: "01",
       label: "Invisible",
-      headline: "Stride brings entrepreneurs into focus.",
+      headline: "Stride brings you into focus.",
       body: "You've got the expertise and the results. But online, you're invisible, or worse, posting content that gets zero engagement.",
       caption: "Ep. 04 — Listing walkthrough",
     },
     {
       n: "02",
       label: "Unscripted",
-      headline: "Stride gives every video a purpose.",
+      headline: "Stride gives video a purpose.",
       body: "Most content fails before it's filmed. No hook, no structure, nothing that makes someone stop scrolling. A script that doesn't work, no camera can save.",
       caption: "Hook test — retention pass",
     },

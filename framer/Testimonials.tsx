@@ -121,17 +121,17 @@ export default function Testimonials() {
             background: color.accent,
             color: "#fff",
             ...typeScale.eyebrow,
-            fontWeight: 600,
+            fontWeight: 500,
           }}
         >
           {t.initials}
         </span>
-        <span style={{ ...typeScale.eyebrow, fontWeight: 600 }}>{t.name}</span>
+        <span style={{ ...typeScale.eyebrow, fontWeight: 500 }}>{t.name}</span>
       </div>
       <p style={{ margin: 0, ...typeScale.bodyLg }}>“{t.quote}”</p>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space.s }}>
         <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
-        <span style={{ ...typeScale.h3, fontWeight: 600, ...numberGradient }}>{t.stat}</span>
+        <span style={{ ...typeScale.h3, fontWeight: 500, ...numberGradient }}>{t.stat}</span>
       </div>
     </>
   );

@@ -245,7 +245,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           }}
         >
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.displayLg, lineHeight: 0.9 }}>
+          <h2 style={{ margin: 0, ...typeScale.displayLg }}>
             {copy.headline.map((w) => (
               <span key={w} style={{ display: "block" }}>
                 {w}
@@ -321,7 +321,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             {copy.label}
           </MicroLabel>
           {copy.headline.map((word) => (
-            <div key={word} className="ws-word" style={{ ...typeScale.displayLg, lineHeight: 0.88 }}>
+            <div key={word} className="ws-word" style={{ ...typeScale.displayLg }}>
               {/* Each letter stays its own span because the scatter needs
                   them individually. The letters themselves simply arrive —
                   a decode on top of the scatter was two effects on one word. */}

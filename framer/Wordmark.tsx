@@ -57,7 +57,7 @@ export default function Wordmark({
     let inside = false;
     let intensity = 0;
 
-    const FONT = '600 100px "Familjen Grotesk", Helvetica, Arial, sans-serif';
+    const FONT = '500 100px "Familjen Grotesk", Helvetica, Arial, sans-serif';
 
     const render = () => {
       const octx = off?.getContext("2d");
@@ -75,7 +75,7 @@ export default function Wordmark({
       const byHeight = h / 0.76;
       const size = Math.max(12, Math.min(byWidth, byHeight));
 
-      octx.font = `600 ${size}px "Familjen Grotesk", Helvetica, Arial, sans-serif`;
+      octx.font = `500 ${size}px "Familjen Grotesk", Helvetica, Arial, sans-serif`;
       octx.textBaseline = "middle";
       octx.textAlign = "center";
       octx.fillStyle = color.textOnDark;

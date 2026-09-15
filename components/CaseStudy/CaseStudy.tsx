@@ -46,9 +46,12 @@ export default function CaseStudy({
   const plates = copy.gallery.map((item, i) => ({
     ...item,
     src: gallery[i],
-    x: [3, 34, 68, 16, 46, 74, 6, 40][i % 8],
-    y: [3, 3, 3, 38, 38, 38, 73, 73][i % 8],
-    w: [16, 18, 15, 17, 14, 18, 16, 15][i % 8],
+    // Two to a row, four rows deep. The field is taller than the frame on
+    // purpose: the sheet travels up through it, so the lower rows are still
+    // below the fold when the first ones are being read.
+    x: [4, 52, 30, 74, 8, 56, 34, 78][i % 8],
+    y: [0, 6, 52, 58, 104, 110, 156, 162][i % 8],
+    w: [24, 22, 25, 23, 22, 25, 24, 23][i % 8],
   }));
 
   const rootRef = useGsapContext(
@@ -57,8 +60,8 @@ export default function CaseStudy({
 
       // The gallery owns this slice of the scroll and nothing else overlaps
       // it, so the plates are gone before the results chapter is readable.
-      const GALLERY_IN = 0.4;
-      const GALLERY_OUT = 0.66;
+      const GALLERY_IN = 0.34;
+      const GALLERY_OUT = 0.74;
 
       // The line is already in place under the curtain — the slats retracting
       // are what reveals it. Fading it up underneath would be two reveals of
@@ -71,6 +74,7 @@ export default function CaseStudy({
       // first time the chapter is reached. Running it on the scrub instead
       // would make the numbers walk backwards whenever the visitor scrolls
       // up, which reads as a glitch rather than a tally.
+      const plateEls = q(".cs-plate") as HTMLElement[];
       const digits = q(".cs-num") as HTMLElement[];
       digits.forEach((node) => {
         node.textContent = (0).toFixed(Number(node.dataset.dec ?? 0));
@@ -101,7 +105,7 @@ export default function CaseStudy({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: 1,
           onUpdate: (self) =>
             surface.current?.setTone(self.progress < 0.34 ? "light" : "dark"),
         },
@@ -138,19 +142,29 @@ export default function CaseStudy({
       // timeline of its own, which is why plates were still travelling across
       // the headline and the numbers.
       const sheet = q(".cs-sheet");
+      const span = GALLERY_OUT - GALLERY_IN;
+
       tl.fromTo(
         sheet,
-        { xPercent: 90, yPercent: 120 },
-        {
-          xPercent: -110,
-          yPercent: -150,
-          ease: "none",
-          duration: GALLERY_OUT - GALLERY_IN,
-        },
+        { xPercent: 70, yPercent: 130 },
+        { xPercent: -90, yPercent: -170, ease: "none", duration: span },
         GALLERY_IN,
-      )
-        .fromTo(sheet, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out" }, GALLERY_IN)
-        .to(sheet, { opacity: 0, duration: 0.05, ease: "power1.in" }, GALLERY_OUT - 0.05);
+      ).set(sheet, { opacity: 1 }, GALLERY_IN);
+
+      // Each plate arrives on its own beat as the sheet carries it up, rather
+      // than the whole collage appearing at once. Their positions are fixed
+      // relative to each other, so arriving one at a time costs nothing in
+      // overlap — only the moment of arrival is staggered.
+      const each = span / Math.max(1, plateEls.length);
+      plateEls.forEach((plate, i) => {
+        const at = GALLERY_IN + i * each * 0.82;
+        tl.fromTo(
+          plate,
+          { opacity: 0, scale: 0.9, y: 40 },
+          { opacity: 1, scale: 1, y: 0, duration: each * 1.1, ease: "power2.out" },
+          at,
+        ).to(plate, { opacity: 0, duration: each * 0.7, ease: "power1.in" }, at + each * 3.4);
+      });
 
       // 3. the collage clears, and only then does the metrics chapter open
       tl
@@ -186,6 +200,7 @@ export default function CaseStudy({
       gsap.set(q(".cs-white"), { opacity: 0 });
       slats.current?.setProgress(1);
       gsap.set(q(".cs-sheet"), { opacity: 1 });
+      gsap.set(q(".cs-plate"), { opacity: 1, scale: 1, y: 0 });
     },
   );
 

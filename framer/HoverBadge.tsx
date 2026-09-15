@@ -86,7 +86,6 @@ export default function HoverBadge({
             style={{
               ...typeScale.eyebrow,
               textTransform: "none",
-              letterSpacing: "0.01em",
               fontStyle: "italic",
               fontWeight: 400,
               opacity: 0.8,
@@ -95,7 +94,7 @@ export default function HoverBadge({
             {top}
           </span>
         )}
-        <span style={{ ...typeScale.h3, lineHeight: 1.05, maxWidth: size - 28 }}>{children}</span>
+        <span style={{ ...typeScale.h3, maxWidth: size - 28 }}>{children}</span>
       </div>
     </div>
   );

@@ -87,7 +87,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
             gap: space.s,
             marginTop: space.sm,
             ...typeScale.eyebrow,
-            fontWeight: 600,
+            fontWeight: 500,
             color: color.accent,
             textDecoration: "none",
           }}
@@ -270,7 +270,7 @@ function ResultCard({
             background: hexA(color.black, 0.55),
             border: `1px solid ${hexA("#FFFFFF", 0.3)}`,
             ...typeScale.eyebrow,
-            fontWeight: 600,
+            fontWeight: 500,
             color: color.textOnDark,
           }}
         >
@@ -284,7 +284,7 @@ function ResultCard({
             left: space.md,
             bottom: space.md,
             ...typeScale.h3,
-            fontWeight: 600,
+            fontWeight: 500,
             color: color.textOnDark,
             textShadow: `0 2px 18px ${hexA(color.black, 0.8)}`,
           }}

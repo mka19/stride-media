@@ -162,7 +162,7 @@ export function GlowButton({
     cursor: "pointer",
     textDecoration: "none",
     ...typeScale.eyebrow,
-    fontWeight: 600,
+    fontWeight: 500,
     background: solid ? color.accent : "transparent",
     color: solid ? "#fff" : color.textOnDark,
     boxShadow: solid ? glow.box : `inset 0 0 0 1px ${color.hairlineOnDark}`,
