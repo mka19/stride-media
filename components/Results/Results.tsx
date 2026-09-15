@@ -1,3 +1,4 @@
+import { useEffect, useRef, type ReactNode } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
@@ -46,30 +47,37 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         overflow: "hidden",
       }}
     >
-      {/* ---- header ---- */}
+      {/* ---- header, centred above the row ---- */}
       <div
         style={{
           display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          gap: space.xl,
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          gap: rhythm.eyebrowToHeadline,
           padding: `0 ${layout.pad}`,
           marginBottom: rhythm.headerToContent,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 640 }}>
-          <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.h2 }}>{copy.headline}</h2>
-          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{copy.body}</p>
-        </div>
-
+        <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+        <h2 style={{ margin: 0, ...typeScale.h2 }}>{copy.headline}</h2>
+        <p
+          style={{
+            margin: 0,
+            maxWidth: 640,
+            ...typeScale.bodyLg,
+            color: color.textOnDarkMuted,
+          }}
+        >
+          {copy.body}
+        </p>
         <a
           href="#contact"
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: space.s,
+            marginTop: space.sm,
             ...typeScale.labelSm,
             fontWeight: 600,
             color: color.ruby,
@@ -81,21 +89,134 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         </a>
       </div>
 
-      {/* ---- the row ---- */}
-      <div
-        style={{
-          display: "flex",
-          gap: layout.gutter,
-          overflowX: "auto",
-          scrollSnapType: "x mandatory",
-          padding: `0 ${layout.pad} ${space.lg}`,
-        }}
-      >
-        {copy.cards.map((card, i) => (
-          <ResultCard key={card.views + card.handle} card={card} src={clips[i]} seed={i} width={cardWidth} />
-        ))}
-      </div>
+      {/* ---- the ticker ---- */}
+      <Ticker>
+        {/* The set is rendered twice so the wrap is seamless: when the first
+            copy has travelled its full width, the offset resets to zero and
+            the second copy is already sitting exactly where it left off. */}
+        {[0, 1].map((copyIndex) =>
+          copy.cards.map((card, i) => (
+            <ResultCard
+              key={`${copyIndex}-${card.views}-${card.handle}`}
+              card={card}
+              src={clips[i]}
+              seed={i}
+              width={cardWidth}
+            />
+          )),
+        )}
+      </Ticker>
     </section>
+  );
+}
+
+/**
+ * A row that drifts continuously and can be thrown by hand.
+ *
+ * The drift is a transform driven from the animation frame rather than the
+ * element's scrollLeft, so dragging and the idle motion share one position
+ * and never fight each other. Dragging sets the offset directly and hands
+ * back a little velocity on release; the drift resumes from wherever the
+ * throw settles. It halts under prefers-reduced-motion and while a pointer
+ * is held down.
+ */
+function Ticker({ children }: { children: ReactNode }) {
+  const viewport = useRef<HTMLDivElement | null>(null);
+  const track = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = track.current;
+    const view = viewport.current;
+    if (!el || !view) return;
+
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+    let offset = 0;
+    let velocity = 0;
+    let dragging = false;
+    let lastX = 0;
+    let lastT = 0;
+    let raf = 0;
+    let prev = performance.now();
+
+    // One full set is half the track, since the set is rendered twice.
+    const span = () => el.scrollWidth / 2 || 1;
+
+    const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(64, now - prev) / 1000;
+      prev = now;
+
+      if (!dragging) {
+        // A throw decays into the steady drift rather than stopping dead.
+        velocity *= Math.pow(0.0015, dt);
+        const drift = reduced ? 0 : 34; // px per second
+        offset += (drift + velocity) * dt;
+      }
+
+      const s = span();
+      offset = ((offset % s) + s) % s;
+      el.style.transform = `translate3d(${-offset}px, 0, 0)`;
+    };
+    raf = requestAnimationFrame(frame);
+
+    const onDown = (e: PointerEvent) => {
+      dragging = true;
+      velocity = 0;
+      lastX = e.clientX;
+      lastT = performance.now();
+      view.setPointerCapture(e.pointerId);
+      view.style.cursor = "grabbing";
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const now = performance.now();
+      const dt = Math.max(1, now - lastT);
+      offset -= dx;
+      velocity = (-dx / dt) * 1000;
+      lastX = e.clientX;
+      lastT = now;
+    };
+    const onUp = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      view.releasePointerCapture(e.pointerId);
+      view.style.cursor = "grab";
+    };
+
+    view.addEventListener("pointerdown", onDown);
+    view.addEventListener("pointermove", onMove);
+    view.addEventListener("pointerup", onUp);
+    view.addEventListener("pointercancel", onUp);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      view.removeEventListener("pointerdown", onDown);
+      view.removeEventListener("pointermove", onMove);
+      view.removeEventListener("pointerup", onUp);
+      view.removeEventListener("pointercancel", onUp);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={viewport}
+      style={{
+        overflow: "hidden",
+        cursor: "grab",
+        touchAction: "pan-y",
+        paddingLeft: layout.pad,
+        paddingBottom: space.lg,
+      }}
+    >
+      <div
+        ref={track}
+        style={{ display: "flex", gap: layout.gutter, width: "max-content", willChange: "transform" }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -118,10 +239,10 @@ function ResultCard({
       className="rs-card"
       style={{
         flex: `0 0 ${typeof width === "number" ? `${width}px` : width}`,
-        scrollSnapAlign: "start",
         display: "flex",
         flexDirection: "column",
         gap: space.s,
+        userSelect: "none",
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh" }}>

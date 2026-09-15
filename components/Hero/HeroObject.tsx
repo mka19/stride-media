@@ -49,11 +49,14 @@ export default function HeroObject({
   handleRef,
   className,
   breakpoint = "desktop",
+  pointerTracking = true,
 }: {
   handleRef: React.MutableRefObject<HeroObjectHandle | null>;
   className?: string;
   /** Drives vertex and particle counts — phones get a fraction of them. */
   breakpoint?: Breakpoint;
+  /** Follow the pointer: the mark turns toward it as the cursor crosses. */
+  pointerTracking?: boolean;
 }) {
   const mountRef = useRef<HTMLDivElement | null>(null);
 
@@ -313,6 +316,19 @@ export default function HeroObject({
     let eased = 0;
     handleRef.current = { setProgress: (p) => (progress = p) };
 
+    // Pointer parallax: the mark turns toward the cursor. Tracked on the
+    // window rather than the canvas, since the canvas sits behind the copy
+    // and takes no pointer events itself.
+    let pointerX = 0;
+    let pointerY = 0;
+    let swayX = 0;
+    let swayY = 0;
+    const onPointer = (e: PointerEvent) => {
+      pointerX = (e.clientX / window.innerWidth) * 2 - 1;
+      pointerY = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    if (pointerTracking) window.addEventListener("pointermove", onPointer, { passive: true });
+
     // THREE.Clock is deprecated; elapsed time comes straight from the
     // animation frame instead.
     const t0 = performance.now();
@@ -328,11 +344,16 @@ export default function HeroObject({
       solidMat.opacity = 1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45);
       solidMat.visible = solidMat.opacity > 0.01;
 
+      // Damped toward the pointer so the mark follows the cursor without
+      // snapping to it, and keeps drifting when the pointer is still.
+      swayX += (pointerX * 0.55 - swayX) * 0.045;
+      swayY += (pointerY * 0.3 - swayY) * 0.045;
+
       // Sway, not spin. The ring is a flat circle, so an accumulating Y
       // rotation eventually turns it edge-on and it stops reading as a ring;
       // oscillating keeps the mark three-quarter-on the whole time.
-      solid.rotation.y = Math.sin(t * 0.2) * 0.42;
-      solid.rotation.x = Math.sin(t * 0.15) * 0.12;
+      solid.rotation.y = Math.sin(t * 0.2) * 0.3 + swayX;
+      solid.rotation.x = Math.sin(t * 0.15) * 0.1 + swayY;
       solid.position.y = Math.sin(t * 0.5) * 0.06 + eased * 0.35;
       // Shrinking as it goes hands the centre of the screen to the headline.
       const shrink = 1 - eased * 0.3;
@@ -359,6 +380,7 @@ export default function HeroObject({
 
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
       handleRef.current = null;
       [chevron, bar, core, ring, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
@@ -370,7 +392,7 @@ export default function HeroObject({
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
     };
-  }, [handleRef, breakpoint]);
+  }, [handleRef, breakpoint, pointerTracking]);
 
   return <div ref={mountRef} className={className} style={{ width: "100%", height: "100%" }} />;
 }
