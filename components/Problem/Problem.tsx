@@ -177,9 +177,9 @@ export default function Problem({
                   maxWidth: "26ch",
                   fontFamily: font.display,
                   fontWeight: 400,
-                  fontSize: fluid(22, 42),
-                  lineHeight: 1.32,
-                  letterSpacing: "-0.015em",
+                  fontSize: fluid(22, 40),
+                  lineHeight: 1.34,
+                  letterSpacing: "-0.022em",
                 }}
               >
                 {words.map((w, i) => (
@@ -258,10 +258,10 @@ export default function Problem({
                         margin: 0,
                         maxWidth: "16ch",
                         fontFamily: font.display,
-                        fontWeight: 400,
-                        fontSize: fluid(30, 66),
-                        lineHeight: 1.02,
-                        letterSpacing: "-0.025em",
+                        fontWeight: 500,
+                        fontSize: fluid(30, 62),
+                        lineHeight: 1.0,
+                        letterSpacing: "-0.04em",
                       }}
                     >
                       {card.headline}
@@ -296,9 +296,10 @@ export default function Problem({
                         left: -28,
                         bottom: -18,
                         fontFamily: font.display,
-                        fontSize: fluid(68, 168),
+                        fontSize: fluid(64, 156),
+                        fontWeight: 500,
                         lineHeight: 0.8,
-                        letterSpacing: "-0.04em",
+                        letterSpacing: "-0.05em",
                         color: color.ruby,
                         textShadow: `0 0 28px ${hexA(color.ruby, 0.55)}, 0 0 80px ${hexA(color.ruby, 0.3)}`,
                         pointerEvents: "none",

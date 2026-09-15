@@ -228,10 +228,10 @@ export default function Hero({
                 position: "relative",
                 margin: 0,
                 fontFamily: font.display,
-                fontWeight: 400,
-                fontSize: fluid(44, 132),
-                lineHeight: 0.96,
-                letterSpacing: "-0.025em",
+                fontWeight: 500,
+                fontSize: fluid(42, 124),
+                lineHeight: 0.92,
+                letterSpacing: "-0.042em",
               }}
             >
               {heroCopy.headline.map((line, i) => (

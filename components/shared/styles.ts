@@ -7,6 +7,11 @@
  * harness gets the same rules from src/index.css instead.
  */
 const STYLE_ID = "stride-global-styles";
+const FONT_ID = "stride-fonts";
+
+/** Familjen Grotesk + Martian Mono, the two free faces in Trionn's stack. */
+export const strideFontHref =
+  "https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Martian+Mono:wght@300..600&display=swap";
 
 export const strideKeyframes = `
 @keyframes stride-drift {
@@ -23,6 +28,15 @@ export const strideKeyframes = `
 
 export function injectStrideStyles() {
   if (typeof document === "undefined") return;
+
+  if (!document.getElementById(FONT_ID)) {
+    const link = document.createElement("link");
+    link.id = FONT_ID;
+    link.rel = "stylesheet";
+    link.href = strideFontHref;
+    document.head.appendChild(link);
+  }
+
   if (document.getElementById(STYLE_ID)) return;
   const el = document.createElement("style");
   el.id = STYLE_ID;

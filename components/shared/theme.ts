@@ -33,18 +33,24 @@ export const glow = {
   boxStrong: `0 0 0 1px ${hexA(color.rubyBright, 0.8)}, 0 0 32px ${hexA(color.rubyBright, 0.55)}, 0 0 96px ${hexA(color.ruby, 0.3)}`,
 } as const;
 
+/*
+ * Trionn's own stack: Neue Haas Grotesk for text, Familjen Grotesk, and
+ * Martian Mono for labels. Neue Haas is commercial, so it leads the sans
+ * stack and takes over automatically if the licensed webfont is ever added;
+ * until then Familjen Grotesk carries both display and text, and both free
+ * faces load from Google Fonts in shared/styles.ts.
+ */
 export const font = {
-  /* Editorial display face with a dependable system fallback stack. */
-  display: `"Canela Deck", "Ogg", "GT Sectra", "Times New Roman", Georgia, serif`,
-  sans: `"Neue Haas Grotesk Display", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`,
-  mono: `"Söhne Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace`,
+  display: `"Familjen Grotesk", "Neue Haas Grotesk Display", "Helvetica Neue", Helvetica, Arial, sans-serif`,
+  sans: `"Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`,
+  mono: `"Martian Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace`,
 } as const;
 
 /** Micro-label used above every section headline. */
 export const microLabel = {
   fontFamily: font.mono,
-  fontSize: "11px",
-  letterSpacing: "0.22em",
+  fontSize: "10px",
+  letterSpacing: "0.12em",
   textTransform: "uppercase" as const,
   fontWeight: 500,
 };
