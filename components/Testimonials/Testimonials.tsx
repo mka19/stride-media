@@ -18,22 +18,24 @@ import { useBreakpoint } from "../shared/responsive";
  * On phones the scatter is dropped for sequential fade-ups in one column:
  * scatter physics read as drift on a narrow viewport.
  */
-export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?: string }) {
+export default function Testimonials() {
   const surface = useRef<SurfaceHandle | null>(null);
   const bp = useBreakpoint();
   const stacked = bp === "mobile";
 
   // Resting positions: a loose mosaic, deliberately not a grid, with cards
   // overlapping by a little rather than tiling.
-  // Two loose bands that clear the header above them, overlapping by a
-  // little rather than tiling.
-  const spots = [
-    { x: 3, y: 34, r: -3, z: 1 },
-    { x: 34, y: 30, r: 2, z: 3 },
-    { x: 66, y: 36, r: -2, z: 2 },
-    { x: 13, y: 60, r: 3, z: 4 },
-    { x: 43, y: 64, r: -1.5, z: 5 },
-    { x: 71, y: 58, r: 2.5, z: 3 },
+  // Resting scatter is a small transform offset per card, not a position:
+  // the layout below is a column flow, so cards can never collide no matter
+  // how tall their quote runs. Percentage spots could not know that, which
+  // is what put cards through each other and off the frame.
+  const rest = [
+    { x: -7, y: 4, r: -1.4 },
+    { x: 8, y: -5, r: 1.1 },
+    { x: -5, y: 5, r: 1.3 },
+    { x: 9, y: -4, r: -1 },
+    { x: -8, y: 5, r: 1.2 },
+    { x: 6, y: -5, r: -1.3 },
   ];
 
   const rootRef = useGsapContext(
@@ -47,7 +49,7 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root,
-          start: "top top",
+          start: "top 75%",
           end: "bottom bottom",
           scrub: 0.7,
           // will-change is a hint, not a free win: held on every card for the
@@ -61,14 +63,15 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
       });
 
       cards.forEach((card, i) => {
-        // Each card comes from its own direction, well outside the frame.
-        const fromX = gsap.utils.random([-1, 1]) * gsap.utils.random(280, 420);
-        const fromY = gsap.utils.random([-1, 1]) * gsap.utils.random(180, 260);
+        // On a phone the cards simply rise into place: a scatter from off
+        // screen reads as drift when the viewport is one column wide.
+        const fromX = stacked ? 0 : gsap.utils.random([-1, 1]) * gsap.utils.random(280, 420);
+        const fromY = stacked ? 40 : gsap.utils.random([-1, 1]) * gsap.utils.random(180, 260);
         gsap.set(card, {
           opacity: 0,
           x: fromX,
           y: fromY,
-          rotation: gsap.utils.random(-15, 15),
+          rotation: stacked ? 0 : gsap.utils.random(-15, 15),
           force3D: true,
         });
 
@@ -77,13 +80,13 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
           card,
           {
             opacity: 1,
-            x: 0,
-            y: 0,
-            rotation: Number((card as HTMLElement).dataset.rest ?? 0),
+            x: Number((card as HTMLElement).dataset.x ?? 0),
+            y: Number((card as HTMLElement).dataset.y ?? 0),
+            rotation: Number((card as HTMLElement).dataset.r ?? 0),
             duration: 1.1 / cards.length,
             // Overshoots its resting place and settles, which is what gives
             // the build-up its weight; power3.out lands flat by comparison.
-            ease: "elastic.out(1, 0.6)",
+            ease: stacked ? "power3.out" : "elastic.out(1, 0.6)",
             force3D: true,
           },
           at,
@@ -145,91 +148,48 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
     boxShadow: `0 24px 60px ${hexA("#2A2020", 0.12)}`,
   };
 
-  if (stacked) {
-    return (
-      <section
-        id="testimonials"
-        style={{
-          background: color.boneSoft,
-          color: color.textOnLight,
-          fontFamily: typeScale.bodyLg.fontFamily,
-          display: "flex",
-          flexDirection: "column",
-          gap: rhythm.headerToContent,
-          padding: `${layout.section} ${layout.pad}`,
-        }}
-      >
-        <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-        <RevealText as="h2" style={{ ...typeScale.h1 }}>
-          {copy.headline}
-        </RevealText>
-        <div style={{ display: "flex", flexDirection: "column", gap: layout.gutter }}>
-          {copy.cards.map((t) => (
-            <article key={t.initials} style={cardStyle}>
-              {card(t)}
-            </article>
-          ))}
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section
       id="testimonials"
       ref={rootRef}
       style={{
         position: "relative",
-        height: scrollLength,
         background: color.boneSoft,
+        color: color.textOnLight,
         fontFamily: typeScale.bodyLg.fontFamily,
+        padding: `${layout.section} ${layout.pad}`,
       }}
     >
-      <div
-        className="ts-frame"
-        style={{
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          overflow: "hidden",
-          color: color.textOnLight,
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: `calc(${layout.navHeight}px + ${layout.section})`,
-            left: layout.pad,
-            right: layout.pad,
-            display: "flex",
-            flexDirection: "column",
-            gap: rhythm.eyebrowToHeadline,
-            maxWidth: 640,
-          }}
-        >
+      <div className="ts-frame" style={{ display: "flex", flexDirection: "column", gap: rhythm.headerToContent }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 640 }}>
           <MicroLabel tone="ruby">{copy.label}</MicroLabel>
           <RevealText as="h2" style={{ ...typeScale.h1 }}>
             {copy.headline}
           </RevealText>
         </div>
 
-        <div style={{ position: "absolute", inset: 0 }}>
+        {/* A grid rather than CSS columns: columns balance by height, which
+            left a void at the foot and ran the cards vertically (01 above 02)
+            instead of in reading order. Rows align at the top, so the stagger
+            comes from each card's own resting offset. */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: layout.gutter,
+            alignItems: "start",
+          }}
+        >
           {copy.cards.map((t, i) => {
-            const spot = spots[i % spots.length];
+            const spot = rest[i % rest.length];
             return (
               <article
                 key={t.initials}
                 className="ts-card"
-                data-rest={spot.r}
-                style={{
-                  position: "absolute",
-                  left: `${spot.x}%`,
-                  top: `${spot.y}%`,
-                  width: 320,
-                  maxWidth: "80vw",
-                  zIndex: spot.z,
-                  ...cardStyle,
-                }}
+                data-x={spot.x}
+                data-y={spot.y}
+                data-r={spot.r}
+                style={cardStyle}
               >
                 {card(t)}
               </article>
