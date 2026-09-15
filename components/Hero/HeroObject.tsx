@@ -84,13 +84,22 @@ export default function HeroObject({
 
     const chevron = new THREE.ExtrudeGeometry(chevronShape(), extrude);
     const bar = new THREE.ExtrudeGeometry(barShape(), extrude);
+    // The chevron and bar are pulled well inside the ring. They are extruded
+    // and the ring is flat, so at any angle the extrusion's front corners
+    // project further out than their flat footprint: sized to just fit, they
+    // break through the ring as the object turns.
+    const core = mergeGeometries([chevron, bar], false)!;
+    core.scale(0.74, 0.74, 0.74);
+
     // A ring around the mark, matching the aperture in the nav logo.
     // ExtrudeGeometry is non-indexed and TorusGeometry is indexed; merging
     // needs them to agree, so the ring is flattened before it joins.
-    const ring = new THREE.TorusGeometry(1.42, 0.052, 20, 128).toNonIndexed();
-    ring.translate(0, 0, 0.21);
+    // Segment counts kept close to the chevron's vertex count: the dissolve
+    // samples this geometry, and a denser ring makes the cloud nearly all ring.
+    const ring = new THREE.TorusGeometry(1.34, 0.046, 12, 96).toNonIndexed();
+    ring.translate(0, 0, 0.155);
 
-    const markGeo = mergeGeometries([chevron, bar, ring], false)!;
+    const markGeo = mergeGeometries([core, ring], false)!;
     markGeo.center();
     markGeo.computeVertexNormals();
 
@@ -305,9 +314,11 @@ export default function HeroObject({
       solidMat.opacity = 1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45);
       solidMat.visible = solidMat.opacity > 0.01;
 
-      // Slow, unhurried rotation with a gentle wobble — never a spin.
-      solid.rotation.y = Math.sin(t * 0.22) * 0.55 + t * 0.06;
-      solid.rotation.x = Math.sin(t * 0.17) * 0.16;
+      // Sway, not spin. The ring is a flat circle, so an accumulating Y
+      // rotation eventually turns it edge-on and it stops reading as a ring;
+      // oscillating keeps the mark three-quarter-on the whole time.
+      solid.rotation.y = Math.sin(t * 0.2) * 0.42;
+      solid.rotation.x = Math.sin(t * 0.15) * 0.12;
       solid.position.y = Math.sin(t * 0.5) * 0.06 + eased * 0.35;
       rim.rotation.copy(solid.rotation);
       rim.position.copy(solid.position);
@@ -332,7 +343,9 @@ export default function HeroObject({
       cancelAnimationFrame(raf);
       ro.disconnect();
       handleRef.current = null;
-      [chevron, bar, ring, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) => g.dispose());
+      [chevron, bar, core, ring, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
+        g.dispose(),
+      );
       [solidMat, rim.material, cloud.material, dust.material, halo.material].forEach((m) =>
         (m as THREE.Material).dispose(),
       );
