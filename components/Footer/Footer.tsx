@@ -98,9 +98,13 @@ export default function Footer({
           position: "relative",
           display: "flex",
           flexDirection: "column",
-          gap: layout.section,
-          padding: `${layout.section} ${layout.pad} ${space.xl}px`,
-          minHeight: stacked ? undefined : "86vh",
+          // A full-width wordmark is ~24vw tall, which pushed the footer past
+          // the last screen and slid the link rows up under the fixed nav.
+          // The rhythm around it is tightened so the whole footer lands
+          // inside one viewport with the nav cleared.
+          gap: `${space.h}px`,
+          padding: `${space.hh}px ${layout.pad} ${space.xl}px`,
+          minHeight: stacked ? undefined : "70vh",
           justifyContent: "space-between",
         }}
       >
@@ -165,7 +169,7 @@ export default function Footer({
           className="ft-word"
           style={{ marginInline: `calc(-1 * ${layout.pad})`, width: "auto" }}
         >
-          <Wordmark text={copy.wordmark} height={stacked ? "30vw" : "24vw"} />
+          <Wordmark text={copy.wordmark} height={stacked ? "30vw" : "min(24vw, 44vh)"} />
         </div>
 
         {/* ---- meta row ---- */}
