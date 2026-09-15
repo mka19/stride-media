@@ -50,7 +50,7 @@ export default function Problem({
       // instead of as the statement being written out.
       const lines = q(".pb-line") as HTMLElement[];
       const paintLine = (el: HTMLElement, p: number) => {
-        el.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} ${p - 5}%, ${color.accent} ${p + 3}%, ${color.accent} 100%)`;
+        el.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} ${p - 11}%, ${color.accentBright} ${p}%, ${color.textOnDark} ${p + 11}%, ${color.textOnDark} 100%)`;
       };
       lines.forEach((el) => {
         el.style.webkitBackgroundClip = "text";

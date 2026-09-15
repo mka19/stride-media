@@ -22,8 +22,7 @@ export default function GradientRevealText({
   children,
   as = "div",
   tone = "dark",
-  start = "top 92%",
-  end = "top 45%",
+  start = "top 86%",
   style,
   className,
 }: {
@@ -31,16 +30,16 @@ export default function GradientRevealText({
   as?: ElementType;
   /** Which ground it sits on — decides the colour it resolves to. */
   tone?: "dark" | "light";
-  /** The sweep is tied to these two scroll points, not to a clock. */
+  /** Where the pass fires as the line comes into view. */
   start?: string;
-  end?: string;
   style?: CSSProperties;
   className?: string;
 }) {
   const final = tone === "light" ? color.textOnLight : color.textOnDark;
-  // A solid accent ahead of the sweep, not a wash: the reveal reads as a
-  // band of purple pushing across and leaving the finished colour behind it.
-  const tint = tone === "light" ? hexA(color.accent, 0.85) : color.accent;
+  // The type is its finished colour throughout. What moves is a narrow band
+  // of accent passing over it — the text is never in a second colour waiting
+  // to be resolved, which is what an unrevealed half looked like.
+  const band = tone === "light" ? hexA(color.accent, 0.9) : color.accentBright;
   const paint = useRef<((p: number) => void) | null>(null);
 
   const rootRef = useGsapContext(
@@ -49,24 +48,28 @@ export default function GradientRevealText({
       // to start and finish outside the box for the first and last letters to
       // be fully purple and fully resolved.
       const write = (p: number) => {
-        root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} ${p - 5}%, ${tint} ${p + 3}%, ${tint} 100%)`;
+        root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} ${p - 11}%, ${band} ${p}%, ${final} ${p + 11}%, ${final} 100%)`;
       };
       paint.current = write;
-      write(-24);
+      write(-18);
 
-      // Scrubbed rather than fired once: in the reference the fill resolves
-      // as the line travels up the viewport, so a half-swept headline is a
-      // state you can stop on. A timed tween finishes in a few hundred
-      // milliseconds and is over before the line has finished arriving.
-      const sweep = { p: -24 };
+      // One pass as the line arrives, not tied to the scroll. A band that
+      // tracks the scrollbar can be parked halfway across a word; a single
+      // pass on entry reads as light moving over the type and leaves it in
+      // its finished state whatever the visitor does next.
+      const sweep = { p: -18 };
       gsap.to(sweep, {
-        p: 124,
-        ease: "none",
+        p: 118,
+        duration: 1.5,
+        ease: "power1.inOut",
         onUpdate: () => write(sweep.p),
-        scrollTrigger: { trigger: root, start, end, scrub: 0.5 },
+        onComplete: () => {
+          root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} 100%)`;
+        },
+        scrollTrigger: { trigger: root, start, once: true },
       });
     },
-    [children, tone, start, end],
+    [children, tone, start],
     (root) => {
       root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} 100%)`;
     },
@@ -85,7 +88,7 @@ export default function GradientRevealText({
         // that box, get no paint, and read as cropped — the tail of a g
         // simply missing. The padding gives the box room for them.
         paddingBottom: "0.14em",
-        backgroundImage: `linear-gradient(95deg, ${final} 0%, ${final} -29%, ${tint} -21%, ${tint} 100%)`,
+        backgroundImage: `linear-gradient(95deg, ${final} 0%, ${final} 100%)`,
         WebkitBackgroundClip: "text",
         backgroundClip: "text",
         color: "transparent",

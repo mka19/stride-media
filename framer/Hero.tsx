@@ -6,6 +6,7 @@ import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "./the
 import { GlowButton, Grain, MicroLabel } from "./primitives";
 import { useBreakpoint, useCanHover } from "./responsive";
 import GradientRevealText from "./GradientRevealText";
+import SocialProof from "./SocialProof";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
 
@@ -25,9 +26,12 @@ import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
 export default function Hero({
   /** Real client footage, top-left to bottom-right; gaps render as cinematic fills. */
   tiles = [],
+  /** Client photographs for the proof row. Gaps render as tinted discs. */
+  clientFaces = [],
   scrollLength = "320vh",
 }: {
   tiles?: MosaicTile[];
+  clientFaces?: string[];
   scrollLength?: string;
 }) {
   const objectRef = useRef<HeroObjectHandle | null>(null);
@@ -244,6 +248,13 @@ export default function Hero({
             }}
           />
 
+          <SocialProof
+            className="hero-tail"
+            count={heroCopy.proofCount}
+            label={heroCopy.proofLabel}
+            faces={clientFaces}
+            style={{ marginBottom: rhythm.headlineToBody }}
+          />
           <h1
             style={{
               position: "relative",

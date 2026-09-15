@@ -38,6 +38,9 @@ export const nav = {
 
 export const hero = {
   label: "Content studio",
+  /** The proof row above the headline. */
+  proofCount: "115+",
+  proofLabel: "happy clients",
   headline: ["Build a personal brand", "that gets you recognized."],
   sub: "AI-powered video content for entrepreneurs who want authority, engagement and results. You never pick up a camera.",
   cta: "Book your free strategy call",
