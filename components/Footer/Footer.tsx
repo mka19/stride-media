@@ -1,7 +1,8 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
 import { color, hexA, layout, space, typeScale } from "../shared/theme";
-import { Grain, StrideMark } from "../shared/primitives";
+import { Grain } from "../shared/primitives";
+import MarkEtching from "./MarkEtching";
 import { useBreakpoint, detailFor } from "../shared/responsive";
 
 /**
@@ -81,8 +82,8 @@ export default function Footer() {
           gap: space.xl,
         }}
       >
-        <div className="ft-mark stride-spin" style={{ lineHeight: 0 }}>
-          <StrideMark size={markSize} glowing />
+        <div className="ft-mark" style={{ lineHeight: 0 }}>
+          <MarkEtching size={markSize} breakpoint={bp} />
         </div>
 
         <h2 className="ft-item" style={{ margin: 0, ...typeScale.h2 }}>

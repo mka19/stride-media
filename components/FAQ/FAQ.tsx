@@ -48,7 +48,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
   );
 
   const list = (
-    <div style={{ width: "100%", maxWidth: 900 }}>
+    <div style={{ width: "100%", maxWidth: 900, margin: "0 auto" }}>
       {copy.items.map((item, i) => {
         const isOpen = open === i;
         return (
@@ -68,7 +68,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                 display: "flex",
                 alignItems: "center",
                 gap: space.lg,
-                padding: `${space.lg}px 0`,
+                padding: `${space.md}px 0`,
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
@@ -76,10 +76,17 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                 color: color.textOnDark,
               }}
             >
-              <span style={{ ...typeScale.labelSm, color: color.ruby, minWidth: 32 }}>
+              <span
+                style={{
+                  ...typeScale.labelSm,
+                  color: color.ruby,
+                  minWidth: 64,
+                  letterSpacing: "0.08em",
+                }}
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span style={{ ...typeScale.h3, flex: 1 }}>{item.q}</span>
+              <span style={{ ...typeScale.h3, flex: 1, letterSpacing: "0.02em" }}>{item.q}</span>
               <span
                 aria-hidden="true"
                 style={{
@@ -128,8 +135,8 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                 <p
                   style={{
                     margin: 0,
-                    paddingBottom: space.lg,
-                    paddingLeft: 56,
+                    paddingBottom: space.md,
+                    paddingLeft: 64,
                     maxWidth: "62ch",
                     ...typeScale.bodyLg,
                     color: color.textOnDarkMuted,
@@ -186,23 +193,32 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
             position: "absolute",
             top: `calc(${layout.navHeight}px + ${layout.section})`,
             left: layout.pad,
-            width: `calc(52% - ${layout.pad})`,
+            right: layout.pad,
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
             transformOrigin: "left top",
             color: color.textOnDark,
             pointerEvents: "none",
           }}
         >
-          {copy.label.split("").map((ch, i) => (
-            <span
-              key={i}
-              className="faq-letter"
-              style={{ ...typeScale.displayXl, fontSize: "18vw", lineHeight: 0.9 }}
-            >
-              {ch}
-            </span>
-          ))}
+          {/* Letters spread across the frame with the supporting lines set
+              between them, as in the reference — not three letters alone. */}
+          <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
+            F
+          </span>
+          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
+            Answers to key questions
+          </span>
+          <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
+            A
+          </span>
+          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
+            All you need to know
+          </span>
+          <span className="faq-letter" style={{ ...typeScale.displayXl, fontSize: "11vw", lineHeight: 0.9 }}>
+            Q
+          </span>
         </div>
 
         {/* The list fills the space the letters vacate. */}
@@ -211,9 +227,12 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
             position: "absolute",
             inset: 0,
             display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
+            alignItems: "flex-start",
+            justifyContent: "center",
+            paddingTop: `calc(${layout.navHeight}px + ${layout.section} + 96px)`,
+            paddingLeft: layout.pad,
+            paddingRight: layout.pad,
+            paddingBottom: layout.section,
             color: color.textOnDark,
           }}
         >
