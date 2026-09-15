@@ -57,14 +57,23 @@ export const problem = {
    * reveals one of these at a time, so the break points are a writing
    * decision rather than whatever the measure happens to do at a given width.
    */
-  introLines: [
-    "Stride Media exists because talented entrepreneurs",
-    "keep losing to louder, less capable competitors.",
-    "Not on skill, on visibility.",
-    "We build the video presence that makes recognition",
-    "inevitable, using AI to move faster than any",
-    "traditional agency, without cutting corners on quality.",
-  ],
+  /**
+   * The About statement as a sequence: words, and the points where one of the
+   * site's own objects sits inline in the sentence. A number is an object
+   * slot; everything else is a word. Kept as one list so the reveal can walk
+   * words and objects in the order they are read.
+   */
+  introSequence: [
+    "Stride", "Media", "exists", 0, "because", "talented", "entrepreneurs",
+    "keep", "losing", "to", "louder,", 1, "less", "capable", "competitors.",
+    "Not", "on", "skill.", "On", "visibility.",
+    "We", "build", "the", "video", "presence", 2, "that", "makes",
+    "recognition", "inevitable", "\u2014", "using", "AI", "to", "move",
+    "faster", "than", "any", "traditional", "agency,", 3, "without",
+    "cutting", "corners", "on", "quality.",
+    "One", "strategy.", "One", "voice.", 4, "Shipped", "every", "month,",
+    "on", "time,", "without", "exception.",
+  ] as (string | number)[],
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   /** The two blocks under the rule, left and right. */
   aboutCaps: ["WE BUILD FOR RECOGNITION", "STRATEGY FIRST, CRAFT ALWAYS,", "SHIPPED EVERY MONTH."],

@@ -25,10 +25,13 @@ export default function Problem({
   backgroundSrc,
   /** One image per pain point, in order. */
   cardMedia = [],
+  /** Footage for the objects that sit inline in the About statement. */
+  objectMedia = [],
   scrollLength = "620vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
+  objectMedia?: string[];
   scrollLength?: string;
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
@@ -43,23 +46,13 @@ export default function Problem({
       const q = gsap.utils.selector(root);
       const cards = q(".pb-card");
 
-      // Each line sweeps on its own, one after the next, rather than one
-      // gradient running across the whole paragraph: at this measure a single
-      // sweep crosses six lines at once and reads as a wash over the block
-      // instead of as the statement being written out.
-      const lines = q(".pb-line") as HTMLElement[];
-      const paintLine = (el: HTMLElement, p: number) => {
-        el.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} ${p - 11}%, ${color.accentBright} ${p}%, ${color.textOnDark} ${p + 11}%, ${color.textOnDark} 100%)`;
-      };
-      lines.forEach((el) => {
-        el.style.webkitBackgroundClip = "text";
-        el.style.backgroundClip = "text";
-        el.style.color = "transparent";
-        el.style.webkitTextFillColor = "transparent";
-        paintLine(el, -24);
-      });
+      // The statement resolves by opacity, not by a gradient: the words are
+      // white throughout and simply come up from dim to full as the reading
+      // reaches them. A clipped fill was a second colour laid over the type;
+      // this is the type's own colour, which is what the reference does.
       gsap.set(q(".pb-light"), { opacity: 0 });
-      gsap.set(cards, { opacity: 0 });
+      gsap.set(q(".pb-word"), { opacity: 0.16 });
+      gsap.set(q(".pb-tile"), { opacity: 0.16, scale: 0.72, filter: "blur(7px)" });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -74,26 +67,32 @@ export default function Problem({
         },
       });
 
-      // --- part 1: the statement reveals, word by word --------------------
+      // --- part 1: the statement resolves, word by word -------------------
       // `amount` spreads the whole stagger over a fixed slice, so the last
-      // word always lands at 0.25 however long the copy is. A per-word value
-      // scaled with the word count and ran past the crossfade, which cut away
-      // mid-sentence.
-      const perLine = 0.23 / Math.max(1, lines.length);
-      lines.forEach((el, i) => {
-        const sweep = { p: -24 };
-        tl.to(
-          sweep,
-          {
-            p: 124,
-            duration: perLine * 1.5,
-            ease: "none",
-            onUpdate: () => paintLine(el, sweep.p),
-          },
-          0.02 + i * perLine,
-        );
-      });
-      tl.to({}, { duration: 0.01 }, 0.02)
+      // word lands at the same point however long the copy is. A per-word
+      // value scaled with the word count and ran past the ground change,
+      // which cut the sentence off mid-way.
+      //
+      // Words and objects resolve in the order they are read, spread over the
+      // whole dark chapter so the pace is the reader's.
+      tl.to(
+        q(".pb-word"),
+        { opacity: 1, duration: 0.02, ease: "none", stagger: { amount: 0.3 } },
+        0.02,
+      ).to(
+        q(".pb-tile"),
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.04,
+          ease: "power2.out",
+          stagger: { amount: 0.3 },
+        },
+        0.03,
+      );
+
+      tl
 
         // --- bridge -------------------------------------------------------
         // The statement holds from 0.25 to 0.42 before it leaves. It used to
@@ -178,9 +177,8 @@ export default function Problem({
     // place, with the statement fully legible above it.
     (root) => {
       const q = gsap.utils.selector(root);
-      (q(".pb-line") as HTMLElement[]).forEach((el) => {
-        el.style.color = color.textOnDark;
-      });
+      gsap.set(q(".pb-word"), { opacity: 1 });
+      gsap.set(q(".pb-tile"), { opacity: 1, scale: 1, filter: "none" });
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
       gsap.set(q(".pb-card"), { opacity: 0, scale: 1, transformOrigin: "50% 50%" });
@@ -310,10 +308,11 @@ export default function Problem({
           />
           <Grain opacity={0.18} />
 
-          {/* The About chapter — trionn.com's layout: the label held out at
-              the far left margin, the statement running nearly the full
-              width above a hairline, and two small blocks beneath it, the
-              left one in caps and the right one in sentence case. */}
+          {/* The About chapter — the statement runs the full measure from
+              the page margin, with the site's own objects sitting inline in
+              the sentence. Words resolve from low-opacity white to full
+              white as the chapter is read; the objects settle out of a blur
+              at the point the reading reaches them. */}
           <div
             className="pb-statement"
             style={{
@@ -322,42 +321,56 @@ export default function Problem({
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              gap: space.hh,
+              gap: space.h,
               padding: `0 ${layout.pad}`,
               color: color.textOnDark,
             }}
           >
-            <div style={{ display: "flex", alignItems: "flex-start", gap: space.hh }}>
-              <span
-                style={{
-                  ...typeScale.eyebrow,
-                  fontWeight: 400,
-                  color: color.textOnDarkMuted,
-                  flex: "0 0 auto",
-                  paddingTop: "0.9em",
-                  width: "8ch",
-                }}
-              >
-                {copy.label}
-              </span>
-              <p
-                style={{
-                  margin: 0,
-                  flex: 1,
-                  ...typeScale.h3,
-                }}
-              >
-                {copy.introLines.map((line, i) => (
+            <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{copy.label}</span>
+
+            <p
+              style={{
+                margin: 0,
+                ...typeScale.h1,
+                maxWidth: "min(1500px, 94vw)",
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                columnGap: "0.3em",
+                rowGap: "0.1em",
+              }}
+            >
+              {copy.introSequence.map((token, i) =>
+                typeof token === "number" ? (
                   <span
                     key={i}
-                    className="pb-line"
-                    style={{ display: "block", paddingBottom: "0.1em" }}
+                    className="pb-tile"
+                    aria-hidden="true"
+                    style={{
+                      position: "relative",
+                      display: "inline-block",
+                      width: "1.3em",
+                      height: "1.3em",
+                      borderRadius: "0.28em",
+                      overflow: "hidden",
+                      boxShadow: `0 0 0 1px ${hexA("#FFFFFF", 0.14)}`,
+                      willChange: "transform, filter",
+                    }}
                   >
-                    {line}
+                    <MediaTile
+                      src={objectMedia[token]}
+                      seed={token * 9 + 3}
+                      radius={0}
+                      style={{ position: "absolute", inset: 0 }}
+                    />
                   </span>
-                ))}
-              </p>
-            </div>
+                ) : (
+                  <span key={i} className="pb-word" style={{ display: "inline-block" }}>
+                    {token}
+                  </span>
+                ),
+              )}
+            </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: space.xl }}>
               <div style={{ height: 1, background: color.hairlineOnDark }} />
@@ -372,7 +385,6 @@ export default function Problem({
                 <div
                   style={{
                     ...typeScale.eyebrow,
-                    fontWeight: 400,
                     lineHeight: fluid(19, 22),
                     color: color.textOnDarkMuted,
                   }}
@@ -390,7 +402,6 @@ export default function Problem({
                     fontSize: fluid(13, 15),
                     color: color.textOnDarkMuted,
                     maxWidth: "44ch",
-                    textAlign: "left",
                   }}
                 >
                   {copy.aboutMission}

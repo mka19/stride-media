@@ -56,16 +56,16 @@ export const typeScale = {
   /**
    * Six tokens, and every size on the site comes from one of them.
    *
-   * Leading is set in pixels, not as a ratio, and scales with the type: the
-   * pair given for the desktop end is carried down to the phone end at the
-   * same proportion, so a headline has the same colour on a 390 screen as on
-   * a 1920 one.
+   * Leading is set in pixels and paired to its size, and the pair holds its
+   * proportion down to the phone end, so a headline has the same colour on a
+   * 390 screen as on a 1920 one:
    *
-   *   display  96 / 102     h1  54 / 62     h3  26 / 32
-   *   number  115 / 120     body 18 / 24    eyebrow 12 / 15
+   *   number 115/117    display 96/100    h1 54/58
+   *   h3      26/30     body     18/22    eyebrow 12/15
    *
-   * Tracking is −1px on every token, whatever the size — one value, applied
-   * without exception, including the uppercase labels.
+   * Tracking is −1px everywhere except the small labels: at 12px and under,
+   * negative tracking closes an uppercase word up until it cannot be read,
+   * so those sit at 0.
    *
    * Weights: medium (500) for statements, regular (400) for everything else.
    */
@@ -75,7 +75,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(40, 96),
     fontWeight: 500,
-    lineHeight: fluid(43, 102),
+    lineHeight: fluid(42, 100),
     letterSpacing: "-1px",
   },
   /** Every section and sub-section headline, and the About statement. */
@@ -83,7 +83,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(32, 54),
     fontWeight: 500,
-    lineHeight: fluid(37, 62),
+    lineHeight: fluid(34, 58),
     letterSpacing: "-1px",
   },
   /** Card headlines, questions, stats — the working headline size. */
@@ -91,7 +91,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(20, 26),
     fontWeight: 400,
-    lineHeight: fluid(25, 32),
+    lineHeight: fluid(23, 30),
     letterSpacing: "-1px",
   },
   /** Oversized numerals: 01/02/03 and the case-study metrics. */
@@ -99,7 +99,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(56, 115),
     fontWeight: 500,
-    lineHeight: fluid(58, 120),
+    lineHeight: fluid(57, 117),
     letterSpacing: "-1px",
   },
   /** All running text. */
@@ -107,7 +107,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(15, 18),
     fontWeight: 400,
-    lineHeight: fluid(20, 24),
+    lineHeight: fluid(18, 22),
     letterSpacing: "-1px",
   },
   /** Every small label: eyebrows, nav, captions, meta. */
@@ -116,7 +116,8 @@ export const typeScale = {
     fontSize: fluid(11, 12),
     fontWeight: 400,
     lineHeight: fluid(14, 15),
-    letterSpacing: "-1px",
+    // Nothing at this size takes negative tracking — it closes the caps up.
+    letterSpacing: "0",
     textTransform: "uppercase" as const,
   },
 } as const;
@@ -141,7 +142,7 @@ export const space = {
 /** The recurring relationships from the spec, so sections don't re-decide. */
 export const rhythm = {
   eyebrowToHeadline: space.md, // 16
-  headlineToBody: space.lg, // 24
+  headlineToBody: 36,
   bodyToCta: space.xl, // 32
   betweenCards: space.lg, // 24
   headerToContent: space.h, // 64
@@ -172,7 +173,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B54";
+export const BUILD = "B56";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;
