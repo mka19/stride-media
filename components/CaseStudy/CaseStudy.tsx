@@ -74,22 +74,29 @@ export default function CaseStudy({
       // own rate, which is what makes them overlap on the way through.
       q(".cs-plate").forEach((plate) => {
         const speed = Number((plate as HTMLElement).dataset.speed ?? 1);
-        gsap.fromTo(
-          plate,
-          { xPercent: 90 * speed, yPercent: 120 * speed, opacity: 0 },
-          {
-            xPercent: -110 * speed,
-            yPercent: -150 * speed,
-            opacity: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: root,
-              start: "top top",
-              end: "bottom bottom",
-              scrub: 0.6,
+
+        // Travel and fade are separate: tweening opacity across the whole
+        // crossing left every plate at half strength in the middle of the
+        // frame, so overlapping plates showed through each other and their
+        // captions read over whatever sat behind. The fade now happens in the
+        // first and last few percent; the plate is solid for the crossing.
+        gsap
+          .timeline({
+            scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.6 },
+          })
+          .fromTo(
+            plate,
+            { xPercent: 90 * speed, yPercent: 120 * speed },
+            {
+              xPercent: -110 * speed,
+              yPercent: -150 * speed,
+              ease: "none",
+              duration: 1,
             },
-          },
-        );
+            0,
+          )
+          .fromTo(plate, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out" }, 0)
+          .to(plate, { opacity: 0, duration: 0.05, ease: "power1.in" }, 0.95);
       });
 
       // 3. the collage clears straight into the metrics chapter
@@ -280,6 +287,8 @@ export default function CaseStudy({
                 width: plate.w,
                 maxWidth: "46vw",
                 margin: 0,
+                // Faster plates are nearer, so they stack above the slower ones.
+                zIndex: Math.round(plate.speed * 10),
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
