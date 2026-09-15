@@ -10,8 +10,7 @@ import { useBreakpoint } from "../shared/responsive";
  * Problem — sakazuki.io Philosophy reference.
  *
  *   Part 1  Pinned and dark, over a background that never moves. The
- *           statement reveals a word at a time, left-aligned at 720px in the
- *           lower third.
+ *           statement reveals a word at a time, centred at 720px.
  *   Bridge  The dark layer crossfades out as the light layer crossfades in.
  *   Part 2  Pinned and light. One card slot holds the same screen position
  *           and cycles through the three pain points at scroll checkpoints —
@@ -230,9 +229,11 @@ export default function Problem({
               inset: 0,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "flex-end",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
               gap: rhythm.eyebrowToHeadline,
-              padding: `0 ${layout.pad} 18vh`,
+              padding: `0 ${layout.pad}`,
               color: color.textOnDark,
             }}
           >
