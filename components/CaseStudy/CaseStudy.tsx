@@ -3,7 +3,7 @@ import { gsap, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { caseStudy as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { Grain, MediaTile, MicroLabel, StrideMark } from "../shared/primitives";
+import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 
 /**
@@ -49,7 +49,6 @@ export default function CaseStudy({
 
       gsap.set(q(".cs-intro-item"), { opacity: 0, y: 24, scale: 0.98 });
       gsap.set(q(".cs-warm"), { opacity: 0 });
-      gsap.set(q(".cs-brand"), { opacity: 0, scale: 0.9 });
       gsap.set(q(".cs-metrics"), { opacity: 0 });
       gsap.set(q(".cs-metric"), { opacity: 0, y: 20 });
 
@@ -93,14 +92,10 @@ export default function CaseStudy({
         );
       });
 
-      // 3. the brand moment, once the collage has cleared
-      tl.to(q(".cs-brand"), { opacity: 1, scale: 1, duration: 0.06 }, 0.66)
-        .to(q(".cs-warm"), { opacity: 0, duration: 0.06 }, 0.68)
-
-        // 4. into the metrics chapter
-        .to(q(".cs-brand"), { opacity: 0, duration: 0.05 }, 0.8)
-        .to(q(".cs-metrics"), { opacity: 1, duration: 0.05 }, 0.8)
-        .to(q(".cs-metric"), { opacity: 1, y: 0, duration: 0.06, stagger: 0.03 }, 0.84);
+      // 3. the collage clears straight into the metrics chapter
+      tl.to(q(".cs-warm"), { opacity: 0, duration: 0.06 }, 0.68)
+        .to(q(".cs-metrics"), { opacity: 1, duration: 0.06 }, 0.7)
+        .to(q(".cs-metric"), { opacity: 1, y: 0, duration: 0.07, stagger: 0.03 }, 0.76);
     },
     [stacked],
     (root) => {
@@ -236,10 +231,6 @@ export default function CaseStudy({
           ))}
         </div>
 
-        <div style={{ display: "grid", placeItems: "center", background: color.ruby, padding: layout.section }}>
-          <StrideMark size={110} stroke="#FFFFFF" />
-        </div>
-
         <div
           style={{
             display: "flex",
@@ -324,20 +315,6 @@ export default function CaseStudy({
         >
           <Grain opacity={0.2} />
           <div style={{ position: "relative" }}>{headline}</div>
-        </div>
-
-        {/* ---- the brand moment ---- */}
-        <div
-          className="cs-brand"
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "grid",
-            placeItems: "center",
-            background: color.ruby,
-          }}
-        >
-          <StrideMark size={200} stroke="#FFFFFF" />
         </div>
 
         {/* ---- the metrics chapter ---- */}
