@@ -110,7 +110,7 @@ export default function CaseStudy({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1,
+          scrub: 1.3,
           onUpdate: (self) =>
             surface.current?.setTone(self.progress < 0.34 ? "light" : "dark"),
         },
@@ -163,15 +163,19 @@ export default function CaseStudy({
 
       plateEls.forEach((plate, i) => {
         const at = GALLERY_IN + i * each;
+        // Transform and opacity only, and no scale: a scale on a scrubbed
+        // timeline re-lays out nothing but does re-rasterise the plate at a
+        // new size on every frame of the wheel, which is what made the run
+        // feel stepped rather than continuous.
         tl.fromTo(
           plate,
-          { opacity: 0, scale: 0.88, y: 56 },
-          { opacity: 1, scale: 1, y: 0, duration: each * 0.45, ease: "power3.out" },
+          { opacity: 0, y: 70, force3D: true },
+          { opacity: 1, y: 0, duration: each * 0.55, ease: "power2.out", force3D: true },
           at,
         ).to(
           plate,
-          { opacity: 0, scale: 1.08, y: -48, duration: each * 0.4, ease: "power2.in" },
-          at + each * 0.72,
+          { opacity: 0, y: -60, duration: each * 0.5, ease: "power2.in", force3D: true },
+          at + each * 0.66,
         );
       });
 

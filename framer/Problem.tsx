@@ -348,6 +348,8 @@ export default function Problem({
               // the three of them stacked together in the centre with the
               // rest of the screen empty under them.
               justifyContent: "space-between",
+              alignItems: "center",
+              textAlign: "center",
               gap: space.xl,
               padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.hh}px`,
               color: color.textOnDark,
@@ -355,18 +357,26 @@ export default function Problem({
           >
             <MicroLabel tone="accent">{copy.label}</MicroLabel>
 
-            <div style={{ flex: "1 1 auto", display: "flex", alignItems: "center" }}>
+            <div
+              style={{
+                flex: "1 1 auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
             <p
               style={{
                 margin: 0,
-                ...typeScale.h1,
+                ...typeScale.h3,
                 // A block, not a flex row: flex sizes each row to its tallest
                 // item and ignores line-height, so the object tiles set the
                 // row height and the leading went wherever they put it.
                 display: "block",
+                textAlign: "center",
                 textTransform: "uppercase",
                 fontWeight: 500,
-                maxWidth: "min(1500px, 94vw)",
+                maxWidth: "min(1000px, 86vw)",
               }}
             >
               {copy.introSequence.map((token, i) =>
@@ -411,7 +421,7 @@ export default function Problem({
             </p>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: space.xl }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: space.xl, width: "100%" }}>
               <div style={{ height: 1, background: color.hairlineOnDark }} />
               <div
                 style={{
@@ -419,6 +429,8 @@ export default function Problem({
                   justifyContent: "space-between",
                   alignItems: "flex-start",
                   gap: space.hh,
+                  textAlign: "left",
+                  width: "100%",
                 }}
               >
                 <div

@@ -2,7 +2,7 @@ import { gsap, useGsapContext } from "../shared/gsap";
 import { useEffect, useRef } from "react";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { testimonials as copy } from "../shared/copy";
-import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
+import { color, ease, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
 import { useStacked } from "../shared/responsive";
@@ -31,16 +31,10 @@ export default function Testimonials() {
   // Vertical offsets only, and small. The cards used to carry a rotation
   // each as well, which put eight different baselines on one row and read as
   // misalignment rather than as a scatter.
-  const rest = [
-    { x: 0, y: 0, r: 0 },
-    { x: 0, y: 26, r: 0 },
-    { x: 0, y: 8, r: 0 },
-    { x: 0, y: 32, r: 0 },
-    { x: 0, y: 18, r: 0 },
-    { x: 0, y: 0, r: 0 },
-    { x: 0, y: 28, r: 0 },
-    { x: 0, y: 10, r: 0 },
-  ];
+  // No resting offset at all. A per-card y offset on top of a stretched grid
+  // row moved each card off the row it had just been aligned to, which read
+  // as eight cards that had missed their marks rather than as a scatter.
+  const rest = Array.from({ length: 8 }, () => ({ x: 0, y: 0, r: 0 }));
 
   const rootRef = useGsapContext(
     (root) => {
@@ -69,8 +63,11 @@ export default function Testimonials() {
       cards.forEach((card, i) => {
         // On a phone the cards simply rise into place: a scatter from off
         // screen reads as drift when the viewport is one column wide.
-        const fromX = stacked ? 0 : (i % 2 === 0 ? -1 : 1) * (150 + (i % 3) * 40);
-        const fromY = stacked ? 40 : 90 + (i % 4) * 26;
+        // Straight up, from a little below, at a depth that varies by column.
+        // Coming in from the sides meant eight cards crossing each other's
+        // columns on the way to their own.
+        const fromX = 0;
+        const fromY = stacked ? 40 : 70 + (i % 4) * 22;
         gsap.set(card, {
           opacity: 0,
           x: fromX,
@@ -79,7 +76,7 @@ export default function Testimonials() {
           force3D: true,
         });
 
-        const at = 0.06 + i * (0.8 / cards.length);
+        const at = 0.05 + i * (0.62 / cards.length);
         tl.to(
           card,
           {
@@ -87,7 +84,7 @@ export default function Testimonials() {
             x: Number((card as HTMLElement).dataset.x ?? 0),
             y: Number((card as HTMLElement).dataset.y ?? 0),
             rotation: Number((card as HTMLElement).dataset.r ?? 0),
-            duration: 1.1 / cards.length,
+            duration: 2.2 / cards.length,
             // Not elastic. On a scrubbed timeline an overshoot oscillation
             // is driven by the wheel rather than by a clock, so every notch
             // of scroll re-enters the wobble and the whole grid reads as
@@ -152,6 +149,7 @@ export default function Testimonials() {
     border: `1px solid ${color.hairlineOnLight}`,
     borderRadius: 4,
     boxShadow: `0 24px 60px ${hexA("#0A0A0A", 0.14)}`,
+    transition: `box-shadow 420ms ${ease.out}, border-color 420ms ${ease.out}`,
   };
 
   return (
@@ -200,6 +198,14 @@ export default function Testimonials() {
                 data-y={spot.y}
                 data-r={spot.r}
                 style={{ ...cardStyle, height: "100%" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
+                  e.currentTarget.style.borderColor = hexA(color.accent, 0.4);
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = cardStyle.boxShadow;
+                  e.currentTarget.style.borderColor = color.hairlineOnLight;
+                }}
               >
                 {card(t)}
               </article>

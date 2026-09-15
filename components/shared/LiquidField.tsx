@@ -20,7 +20,7 @@ import { prefersReducedMotion } from "./gsap";
  * lose, so a quarter of the fragment work buys nothing visible.
  */
 export default function LiquidField({
-  opacity = 0.55,
+  opacity = 0.9,
   speed = 1,
   style,
   className,
@@ -89,22 +89,22 @@ export default function LiquidField({
 
         // One field displaces the next: without the warp this is smooth
         // noise drifting, with it the field folds over itself.
-        vec2 q = vec2(fbm(p + vec2(0.0, t * 0.04)), fbm(p + vec2(4.7, -t * 0.03)));
+        vec2 q = vec2(fbm(p + vec2(0.0, t * 0.16)), fbm(p + vec2(4.7, -t * 0.13)));
         vec2 r = vec2(
-          fbm(p + 2.2 * q + vec2(1.7, 9.2) + t * 0.02),
-          fbm(p + 2.2 * q + vec2(8.3, 2.8) - t * 0.017)
+          fbm(p + 3.0 * q + vec2(1.7, 9.2) + t * 0.09),
+          fbm(p + 3.0 * q + vec2(8.3, 2.8) - t * 0.075)
         );
-        float f = fbm(p + 2.6 * r);
+        float f = fbm(p + 3.4 * r);
 
-        vec3 deep   = vec3(0.043, 0.031, 0.086);
-        vec3 mid    = vec3(0.180, 0.098, 0.353);
-        vec3 bright = vec3(0.404, 0.259, 0.714);
+        vec3 deep   = vec3(0.035, 0.024, 0.078);
+        vec3 mid    = vec3(0.243, 0.129, 0.478);
+        vec3 bright = vec3(0.553, 0.373, 0.925);
 
-        vec3 col = mix(deep, mid, smoothstep(0.32, 0.78, f));
-        col = mix(col, bright, smoothstep(0.62, 0.95, f) * 0.5);
+        vec3 col = mix(deep, mid, smoothstep(0.24, 0.72, f));
+        col = mix(col, bright, smoothstep(0.55, 0.96, f) * 0.85);
 
         // Softest at the edges, so it never draws a boundary of its own.
-        float vig = smoothstep(1.25, 0.15, length(uv - 0.5));
+        float vig = smoothstep(1.55, 0.05, length(uv - 0.5));
         gl_FragColor = vec4(col, uAlpha * vig);
       }
     `;
@@ -139,8 +139,8 @@ export default function LiquidField({
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     const resize = () => {
-      const w = Math.max(1, Math.round(canvas.clientWidth * 0.5));
-      const h = Math.max(1, Math.round(canvas.clientHeight * 0.5));
+      const w = Math.max(1, Math.round(canvas.clientWidth * 0.6));
+      const h = Math.max(1, Math.round(canvas.clientHeight * 0.6));
       if (canvas.width === w && canvas.height === h) return;
       canvas.width = w;
       canvas.height = h;

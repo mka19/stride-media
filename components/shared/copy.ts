@@ -64,7 +64,7 @@ export const problem = {
    * words and objects in the order they are read.
    */
   introSequence: [
-    "Stride", "Media", "exists", 0, "because", "talented", "entrepreneurs",
+    "STRIDE", "MEDIA", "EXISTS", 0, "because", "talented", "entrepreneurs",
     "keep", "losing", "to", "louder,", 1, "less", "capable", "competitors.",
     "Not", "on", "skill.", "On", "visibility.",
     "We", "build", "the", "video", "presence", 2, "that", "makes",
@@ -307,7 +307,7 @@ export const marquee = {
 } as const;
 
 export const footer = {
-  wordmark: "Stride",
+  wordmark: "STRIDE MEDIA",
   tagline: "AI Creators. Real Recognition.",
   /** Numbered, down the left. */
   nav: [

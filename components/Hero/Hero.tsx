@@ -144,7 +144,7 @@ export default function Hero({
         {/* Layer 0b — the liquid ground. Slow and low-contrast: it gives the
             black somewhere to move without competing with anything on it. */}
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          <LiquidField opacity={0.5} speed={0.85} />
+          <LiquidField opacity={0.68} speed={1.9} />
         </div>
 
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
