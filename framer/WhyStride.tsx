@@ -72,7 +72,13 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       //    the same letter takes the same path every time rather than a new
       //    one on each rebuild.
       const letters = q(".ws-letter") as HTMLElement[];
-      const field = root.getBoundingClientRect();
+      // The frame, not the section. `root` is the whole scroll length — six
+      // viewports of it — so its centre sat far below the screen and every
+      // letter's outward vector pointed almost straight up. Normalised, that
+      // left the horizontal component at nearly nothing, which is why they
+      // rose as one clump instead of opening outward.
+      const frameEl = (q(".ws-frame")[0] as HTMLElement | undefined) ?? root;
+      const field = frameEl.getBoundingClientRect();
       const cx = field.left + field.width / 2;
       const cy = field.top + field.height / 2;
       // Far enough that the letters clear the frame rather than
@@ -94,8 +100,11 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           {
             x: (dx / len) * reach * push,
             y: (dy / len) * lift * push,
-            rotation: (dx < 0 ? -1 : 1) * (48 + (i % 5) * 26),
-            scale: 1.25,
+            rotation: (dx < 0 ? -1 : 1) * (55 + (i % 7) * 34),
+            // Varied, so the field has depth: some letters come at you and
+            // some fall away, as in the reference. A single scale read as one
+            // flat sheet of type pulling apart.
+            scale: [2.1, 0.7, 1.5, 0.9, 2.6, 1.1, 0.6, 1.8][i % 8],
             opacity: 0,
             // Long and decelerating: the old move was a tenth of the section
             // on power2.in, which snapped them off the screen.
