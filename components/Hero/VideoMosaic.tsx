@@ -47,7 +47,9 @@ export default function VideoMosaic({
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
   const cells = Array.from({ length: COLS * ROWS }, (_, i) => tiles[i] ?? {});
-  const transition = `flex-grow 900ms ${ease.out}`;
+  /* Spring, not a plain ease: the tracks overshoot their target slightly and
+     settle, which is what keeps the rebalance from reading as a snap. */
+  const transition = `flex-grow 700ms ${ease.spring}`;
 
   return (
     <div

@@ -65,6 +65,8 @@ export const layout = {
 export const ease = {
   /* Elegant, never snappy. Used for every reveal and the bento push. */
   out: "cubic-bezier(0.22, 1, 0.36, 1)",
+  /* Overshoots and settles — the bento rebalance and other spring moments. */
+  spring: "cubic-bezier(0.34, 1.42, 0.64, 1)",
   inOut: "cubic-bezier(0.65, 0, 0.35, 1)",
   gsapOut: "power3.out",
   gsapInOut: "power2.inOut",

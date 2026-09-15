@@ -320,8 +320,12 @@ export default function HeroObject({
       solid.rotation.y = Math.sin(t * 0.2) * 0.42;
       solid.rotation.x = Math.sin(t * 0.15) * 0.12;
       solid.position.y = Math.sin(t * 0.5) * 0.06 + eased * 0.35;
+      // Shrinking as it goes hands the centre of the screen to the headline.
+      const shrink = 1 - eased * 0.3;
+      solid.scale.setScalar(shrink);
       rim.rotation.copy(solid.rotation);
       rim.position.copy(solid.position);
+      rim.scale.copy(solid.scale);
       cloud.rotation.copy(solid.rotation);
       cloud.position.copy(solid.position);
 

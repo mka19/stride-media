@@ -1,6 +1,7 @@
 import Nav from "../components/Nav/Nav";
 import Hero from "../components/Hero/Hero";
 import Problem from "../components/Problem/Problem";
+import Solution from "../components/Solution/Solution";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so each
@@ -15,9 +16,10 @@ export default function App() {
       <Nav />
       <Hero />
       <Problem />
+      <Solution />
       {/* Placeholder runway for the section that comes next. */}
       <section
-        id="what-we-do"
+        id="how-it-works"
         style={{
           height: "120vh",
           background: "#0B0807",
@@ -30,7 +32,7 @@ export default function App() {
           textTransform: "uppercase",
         }}
       >
-        next up — solution section
+        next up — how it works
       </section>
     </>
   );

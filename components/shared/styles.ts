@@ -21,8 +21,16 @@ export const strideKeyframes = `
 }
 .stride-drift { animation: stride-drift 26s ease-in-out infinite; }
 
+/* The "scroll for more" chevron: a slow breath, never a bounce. */
+@keyframes stride-pulse {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
+.stride-pulse { animation: stride-pulse 2.2s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   .stride-drift { animation: none; }
+  .stride-pulse { animation: none; }
 }
 `;
 

@@ -43,7 +43,7 @@ export default function Problem({
 
       gsap.set(q(".pb-word"), { opacity: 0.12 });
       gsap.set(q(".pb-light"), { opacity: 0, scale: 1.04 });
-      gsap.set(cards, { opacity: 0 });
+      gsap.set(cards, { opacity: 0, y: 0 });
       gsap.set(cards[0], { opacity: 1 });
       gsap.set(q(".pb-aside"), { opacity: 0, y: 16 });
 
@@ -75,25 +75,16 @@ export default function Problem({
       cards.forEach((card, i) => {
         const at = start + i * span;
         if (i > 0) {
-          tl.to(cards[i - 1], { opacity: 0, duration: 0.05, ease: "power1.inOut" }, at)
-            .fromTo(
-              card,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.06, ease: "power1.inOut" },
-              at + 0.01,
-            )
-            .fromTo(
-              card.querySelectorAll(".pb-card-line"),
-              { y: 26, opacity: 0 },
-              { y: 0, opacity: 1, duration: 0.07, stagger: 0.015, ease: "power2.out" },
-              at + 0.015,
-            )
-            .fromTo(
-              card.querySelector(".pb-num"),
-              { yPercent: 40, opacity: 0 },
-              { yPercent: 0, opacity: 1, duration: 0.08, ease: "power2.out" },
-              at + 0.015,
-            );
+          // Icon, label, headline, image and number all swap at once: the old
+          // card fades out while the new one fades in and rises a few pixels.
+          // Staggering the parts makes one state look like it is assembling
+          // rather than like the slot changing its contents.
+          tl.to(cards[i - 1], { opacity: 0, duration: 0.05, ease: "power2.inOut" }, at).fromTo(
+            card,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.05, ease: "power2.out" },
+            at + 0.012,
+          );
         }
         // Progress ticks track whichever card owns the slot.
         tl.to(q(`.pb-tick-${i}`), { scaleX: 1, duration: span * 0.9, ease: "none" }, at);
