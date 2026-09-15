@@ -8,7 +8,7 @@ import { detailFor, type Breakpoint } from "../shared/responsive";
  * The hero's 3D element — Anubis-Chain treatment, Stride's own form.
  *
  * A sculpted, bevel-extruded version of the Stride mark (chevron inside a
- * ring), lit as a soft gradient solid with a ruby rim rather than rendered as
+ * ring), lit as a soft gradient solid with an accent rim rather than rendered as
  * a wireframe or a faceted rock: dimensional, glowing, slowly rotating, with
  * dust drifting around it. A point cloud sampled from the same geometry
  * handles phase 2 — as `progress` climbs, the solid fades while the cloud
@@ -77,8 +77,8 @@ export default function HeroObject({
     const camera = new THREE.PerspectiveCamera(36, mount.clientWidth / mount.clientHeight, 0.1, 100);
     camera.position.set(0, 0, 6.4);
 
-    const ruby = new THREE.Color(color.rubyBright);
-    const deep = new THREE.Color(color.rubyDeep);
+    const accent = new THREE.Color(color.accentBright);
+    const deep = new THREE.Color(color.accentDeep);
 
     // --- the mark, as a single solid ------------------------------------
     const detail = detailFor(breakpoint);
@@ -120,7 +120,7 @@ export default function HeroObject({
 
     const solidMat = new THREE.MeshStandardMaterial({
       color: deep.clone().multiplyScalar(1.5),
-      emissive: ruby.clone().multiplyScalar(0.22),
+      emissive: accent.clone().multiplyScalar(0.22),
       metalness: 0.35,
       roughness: 0.34,
       transparent: true,
@@ -129,23 +129,23 @@ export default function HeroObject({
     const solid = new THREE.Mesh(markGeo, solidMat);
     scene.add(solid);
 
-    // Lighting: a cool key from the upper left, ruby fill from the right, so
+    // Lighting: a cool key from the upper left, accent fill from the right, so
     // the extrusion reads as a soft gradient rather than a flat silhouette.
-    scene.add(new THREE.AmbientLight(ruby, 0.35));
+    scene.add(new THREE.AmbientLight(accent, 0.35));
     const key = new THREE.DirectionalLight(0xfff0f2, 2.6);
     key.position.set(-3, 4, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(ruby, 3.2);
+    const fill = new THREE.DirectionalLight(accent, 3.2);
     fill.position.set(4, -2, 2);
     scene.add(fill);
-    const back = new THREE.PointLight(ruby, 18, 12);
+    const back = new THREE.PointLight(accent, 18, 12);
     back.position.set(0, 0, -3);
     scene.add(back);
 
     const uniforms = {
       uTime: { value: 0 },
       uProgress: { value: 0 },
-      uRuby: { value: ruby },
+      uAccent: { value: accent },
     };
 
     // --- neon rim ---------------------------------------------------------
@@ -170,13 +170,13 @@ export default function HeroObject({
           }
         `,
         fragmentShader: /* glsl */ `
-          uniform vec3 uRuby;
+          uniform vec3 uAccent;
           uniform float uProgress;
           varying vec3 vNormalW;
           varying vec3 vViewDir;
           void main() {
             float fres = pow(1.0 - abs(dot(normalize(vNormalW), normalize(vViewDir))), 2.2);
-            gl_FragColor = vec4(uRuby, fres * 0.8 * (1.0 - smoothstep(0.0, 0.45, uProgress)));
+            gl_FragColor = vec4(uAccent, fres * 0.8 * (1.0 - smoothstep(0.0, 0.45, uProgress)));
           }
         `,
       }),
@@ -223,13 +223,13 @@ export default function HeroObject({
           }
         `,
         fragmentShader: /* glsl */ `
-          uniform vec3 uRuby;
+          uniform vec3 uAccent;
           varying float vFade;
           void main() {
             vec2 c = gl_PointCoord - 0.5;
             float d = length(c);
             if (d > 0.5) discard;
-            gl_FragColor = vec4(uRuby, (1.0 - smoothstep(0.1, 0.5, d)) * vFade * 0.85);
+            gl_FragColor = vec4(uAccent, (1.0 - smoothstep(0.1, 0.5, d)) * vFade * 0.85);
           }
         `,
       }),
@@ -274,13 +274,13 @@ export default function HeroObject({
           }
         `,
         fragmentShader: /* glsl */ `
-          uniform vec3 uRuby;
+          uniform vec3 uAccent;
           uniform float uProgress;
           varying float vA;
           void main() {
             vec2 c = gl_PointCoord - 0.5;
             if (length(c) > 0.5) discard;
-            gl_FragColor = vec4(uRuby, vA * (1.0 - smoothstep(0.2, 0.8, uProgress)));
+            gl_FragColor = vec4(uAccent, vA * (1.0 - smoothstep(0.2, 0.8, uProgress)));
           }
         `,
       }),
@@ -297,13 +297,13 @@ export default function HeroObject({
         blending: THREE.AdditiveBlending,
         vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
         fragmentShader: /* glsl */ `
-          uniform vec3 uRuby;
+          uniform vec3 uAccent;
           uniform float uProgress;
           varying vec2 vUv;
           void main() {
             float d = length(vUv - 0.5) * 2.0;
             float a = pow(1.0 - clamp(d, 0.0, 1.0), 3.0) * 0.34;
-            gl_FragColor = vec4(uRuby, a * (1.0 - smoothstep(0.1, 0.75, uProgress)));
+            gl_FragColor = vec4(uAccent, a * (1.0 - smoothstep(0.1, 0.75, uProgress)));
           }
         `,
       }),

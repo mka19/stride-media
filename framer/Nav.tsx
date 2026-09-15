@@ -11,7 +11,7 @@ import { subscribeSurface, toneAt, type Tone } from "./surface";
  * A thin hairline runs the full width along the bottom of the bar, divided
  * into one segment per section link. Every segment starts empty and is only
  * ever filled by scroll progress; the wordmark has no segment at all. As the visitor scrolls through the section
- * an item points at, that item's segment fills left to right in ruby; when
+ * an item points at, that item's segment fills left to right in the accent;
  * the next section takes over, the previous segment stays complete and the
  * next one starts. Each label carries a small hollow dot marker, and a short
  * tick sits at the left edge of every segment.
@@ -238,7 +238,7 @@ export default function Nav({
               display: "block",
               height: "100%",
               width: "100%",
-              background: color.ruby,
+              background: color.accent,
               transformOrigin: "left center",
               transform: `scaleX(${pageProgress})`,
             }}
@@ -325,8 +325,8 @@ function Segment({
         style={{
           position: "absolute",
           inset: 0,
-          background: color.ruby,
-          boxShadow: active ? `0 0 10px ${hexA(color.ruby, 0.9)}` : "none",
+          background: color.accent,
+          boxShadow: active ? `0 0 10px ${hexA(color.accent, 0.9)}` : "none",
           transformOrigin: "left center",
           transform: `scaleX(${fill})`,
           /* The active segment tracks scroll directly — easing it would
@@ -338,7 +338,7 @@ function Segment({
   );
 }
 
-/** Small hollow marker before each label; lights ruby once its section is live. */
+/** Small hollow marker before each label; lights up once its section is live. */
 function Dot({ lit, ink }: { lit: boolean; ink: string }) {
   return (
     <span
@@ -348,9 +348,9 @@ function Dot({ lit, ink }: { lit: boolean; ink: string }) {
         height: 5,
         flexShrink: 0,
         borderRadius: "50%",
-        border: `1px solid ${lit ? color.ruby : hexA(ink, 0.4)}`,
-        background: lit ? color.ruby : "transparent",
-        boxShadow: lit ? `0 0 8px ${hexA(color.ruby, 0.8)}` : "none",
+        border: `1px solid ${lit ? color.accent : hexA(ink, 0.4)}`,
+        background: lit ? color.accent : "transparent",
+        boxShadow: lit ? `0 0 8px ${hexA(color.accent, 0.8)}` : "none",
         transition: `all 400ms ${ease.out}`,
       }}
     />

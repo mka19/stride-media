@@ -128,8 +128,8 @@ export default function Hero({
             position: "absolute",
             inset: 0,
             background: `
-              radial-gradient(120% 80% at 50% 42%, ${hexA(color.rubyDeep, 0.38)} 0%, transparent 62%),
-              radial-gradient(90% 60% at 12% 105%, ${hexA(color.ruby, 0.18)} 0%, transparent 70%),
+              radial-gradient(120% 80% at 50% 42%, ${hexA(color.accentDeep, 0.38)} 0%, transparent 62%),
+              radial-gradient(90% 60% at 12% 105%, ${hexA(color.accent, 0.18)} 0%, transparent 70%),
               linear-gradient(180deg, ${color.black} 0%, ${color.ink} 55%, ${color.black} 100%)
             `,
           }}
@@ -192,7 +192,7 @@ export default function Hero({
             padding: `16vh ${layout.pad} 18vh`,
           }}
         >
-          <MicroLabel tone="ruby">{heroCopy.label}</MicroLabel>
+          <MicroLabel tone="accent">{heroCopy.label}</MicroLabel>
           <div
             style={{
               ...typeScale.bodyLg,
@@ -234,7 +234,7 @@ export default function Hero({
               height: "44vh",
               opacity: 0,
               filter: "blur(90px)",
-              background: `radial-gradient(50% 50% at 50% 50%, ${hexA(color.ruby, 0.45)} 0%, transparent 70%)`,
+              background: `radial-gradient(50% 50% at 50% 50%, ${hexA(color.accent, 0.45)} 0%, transparent 70%)`,
               pointerEvents: "none",
             }}
           />
@@ -309,7 +309,7 @@ export default function Hero({
             style={{
               width: 1,
               height: 48,
-              background: `linear-gradient(180deg, ${hexA(color.ruby, 0.9)}, transparent)`,
+              background: `linear-gradient(180deg, ${hexA(color.accent, 0.9)}, transparent)`,
               transition: `opacity 400ms ${ease.out}`,
             }}
           />

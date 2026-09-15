@@ -106,7 +106,7 @@ export default function VideoMosaic({
                     position: "absolute",
                     inset: 0,
                     boxShadow: isHovered
-                      ? `0 0 0 1px ${hexA(color.ruby, 0.55)}, 0 18px 60px ${hexA(color.black, 0.6)}`
+                      ? `0 0 0 1px ${hexA(color.accent, 0.55)}, 0 18px 60px ${hexA(color.black, 0.6)}`
                       : "none",
                     transition: `box-shadow 700ms ${ease.out}`,
                   }}

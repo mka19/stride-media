@@ -120,7 +120,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       className={className}
       style={{ display: "flex", flexDirection: "column", gap: space.s, maxWidth: "34ch" }}
     >
-      <MicroLabel tone="ruby">{cap.n}</MicroLabel>
+      <MicroLabel tone="accent">{cap.n}</MicroLabel>
       <h3 style={{ margin: 0, ...typeScale.h3, color: color.textOnDark }}>{cap.title}</h3>
       <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{cap.body}</p>
     </div>
@@ -140,7 +140,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             padding: `${layout.section} ${layout.pad}`,
           }}
         >
-          <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+          <MicroLabel tone="accent">{copy.label}</MicroLabel>
           <h2 style={{ margin: 0, ...typeScale.displayLg, lineHeight: 0.9 }}>
             {copy.headline.map((w) => (
               <span key={w} style={{ display: "block" }}>
@@ -212,7 +212,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             color: color.textOnLight,
           }}
         >
-          <MicroLabel tone="ruby" style={{ marginBottom: rhythm.eyebrowToHeadline }}>
+          <MicroLabel tone="accent" style={{ marginBottom: rhythm.eyebrowToHeadline }}>
             {copy.label}
           </MicroLabel>
           {copy.headline.map((word) => (

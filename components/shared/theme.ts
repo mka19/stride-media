@@ -5,32 +5,32 @@
  */
 
 export const color = {
-  /* Warm rich black — the base. Never a cold blue-black. */
-  black: "#0B0807",
-  ink: "#120D0C",
-  inkSoft: "#1A1312",
-  /* Light surfaces used by Problem pt.2, How It Works intro, Why Stride, Testimonials */
-  bone: "#F4F0EA",
-  boneSoft: "#EAE4DB",
-  warmNeutral: "#D8CEC2",
-  /* Ruby / crimson accent */
-  ruby: "#E01535",
-  rubyBright: "#FF2E4D",
-  rubyDeep: "#8E0A20",
-  textOnDark: "#F6F1EC",
-  textOnDarkMuted: "rgba(246,241,236,0.56)",
-  textOnLight: "#141010",
-  textOnLightMuted: "rgba(20,16,16,0.56)",
-  hairlineOnDark: "rgba(246,241,236,0.14)",
-  hairlineOnLight: "rgba(20,16,16,0.14)",
+  /* Neutral black and grey ground — no warmth in the base. */
+  black: "#080808",
+  ink: "#111111",
+  inkSoft: "#1A1A1A",
+  /* Light surfaces: Problem part 2, How It Works, Testimonials */
+  bone: "#FFFFFF",
+  boneSoft: "#F4F4F5",
+  warmNeutral: "#E4E4E7",
+  /* Purple accent */
+  accent: "#7C3AED",
+  accentBright: "#A78BFA",
+  accentDeep: "#4C1D95",
+  textOnDark: "#FFFFFF",
+  textOnDarkMuted: "rgba(255, 255, 255, 0.58)",
+  textOnLight: "#0A0A0A",
+  textOnLightMuted: "rgba(10, 10, 10, 0.58)",
+  hairlineOnDark: "rgba(255, 255, 255, 0.14)",
+  hairlineOnLight: "rgba(10, 10, 10, 0.14)",
 } as const;
 
 /** Neon treatment for CTAs, stat numbers, hover states, hero headline. */
 export const glow = {
-  text: `0 0 18px ${hexA(color.ruby, 0.55)}, 0 0 54px ${hexA(color.ruby, 0.28)}`,
-  textSoft: `0 0 28px ${hexA(color.ruby, 0.32)}`,
-  box: `0 0 0 1px ${hexA(color.ruby, 0.5)}, 0 0 24px ${hexA(color.ruby, 0.35)}, 0 0 70px ${hexA(color.ruby, 0.18)}`,
-  boxStrong: `0 0 0 1px ${hexA(color.rubyBright, 0.8)}, 0 0 32px ${hexA(color.rubyBright, 0.55)}, 0 0 96px ${hexA(color.ruby, 0.3)}`,
+  text: `0 0 18px ${hexA(color.accent, 0.55)}, 0 0 54px ${hexA(color.accent, 0.28)}`,
+  textSoft: `0 0 28px ${hexA(color.accent, 0.32)}`,
+  box: `0 0 0 1px ${hexA(color.accent, 0.5)}, 0 0 24px ${hexA(color.accent, 0.35)}, 0 0 70px ${hexA(color.accent, 0.18)}`,
+  boxStrong: `0 0 0 1px ${hexA(color.accentBright, 0.8)}, 0 0 32px ${hexA(color.accentBright, 0.55)}, 0 0 96px ${hexA(color.accent, 0.3)}`,
 } as const;
 
 /*

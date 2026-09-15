@@ -80,7 +80,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
               <span
                 style={{
                   ...typeScale.eyebrow,
-                  color: color.ruby,
+                  color: color.accent,
                   minWidth: 64,
                   letterSpacing: "0.08em",
                 }}
@@ -106,7 +106,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                     left: 0,
                     width: 16,
                     height: 1,
-                    background: color.ruby,
+                    background: color.accent,
                   }}
                 />
                 <span
@@ -116,7 +116,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                     top: 0,
                     width: 1,
                     height: 16,
-                    background: color.ruby,
+                    background: color.accent,
                   }}
                 />
               </span>
@@ -262,7 +262,7 @@ function AmbientShapes() {
             width: 6 + (i % 3) * 4,
             height: 6 + (i % 3) * 4,
             borderRadius: "50%",
-            background: hexA(color.ruby, 0.35),
+            background: hexA(color.accent, 0.35),
             animationDelay: `${-i * 3.5}s`,
             animationDuration: `${16 + i * 4}s`,
           }}

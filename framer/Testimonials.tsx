@@ -119,7 +119,7 @@ export default function Testimonials() {
             borderRadius: "50%",
             display: "grid",
             placeItems: "center",
-            background: color.ruby,
+            background: color.accent,
             color: "#fff",
             ...typeScale.eyebrow,
             fontWeight: 600,
@@ -132,7 +132,7 @@ export default function Testimonials() {
       <p style={{ margin: 0, ...typeScale.bodyLg }}>“{t.quote}”</p>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space.s }}>
         <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
-        <span style={{ ...typeScale.h3, fontWeight: 700, color: color.ruby }}>{t.stat}</span>
+        <span style={{ ...typeScale.h3, fontWeight: 700, color: color.accent }}>{t.stat}</span>
       </div>
     </>
   );
@@ -145,7 +145,7 @@ export default function Testimonials() {
     background: color.bone,
     border: `1px solid ${color.hairlineOnLight}`,
     borderRadius: 4,
-    boxShadow: `0 24px 60px ${hexA("#2A2020", 0.12)}`,
+    boxShadow: `0 24px 60px ${hexA("#0A0A0A", 0.14)}`,
   };
 
   return (
@@ -162,7 +162,7 @@ export default function Testimonials() {
     >
       <div className="ts-frame" style={{ display: "flex", flexDirection: "column", gap: rhythm.headerToContent }}>
         <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 640 }}>
-          <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+          <MicroLabel tone="accent">{copy.label}</MicroLabel>
           <RevealText as="h2" style={{ ...typeScale.h1 }}>
             {copy.headline}
           </RevealText>

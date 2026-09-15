@@ -60,7 +60,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
           marginBottom: rhythm.headerToContent,
         }}
       >
-        <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+        <MicroLabel tone="accent">{copy.label}</MicroLabel>
         <RevealText as="h2" style={{ ...typeScale.h1 }}>
           {copy.headline}
         </RevealText>
@@ -83,7 +83,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
             marginTop: space.sm,
             ...typeScale.eyebrow,
             fontWeight: 600,
-            color: color.ruby,
+            color: color.accent,
             textDecoration: "none",
           }}
         >
@@ -288,7 +288,7 @@ function ResultCard({
         </div>
       </div>
 
-      <div style={{ ...typeScale.eyebrow, color: color.ruby }}>{card.metric}</div>
+      <div style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>
       <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{card.desc}</p>
       <div
         style={{

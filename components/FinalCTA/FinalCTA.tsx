@@ -91,7 +91,7 @@ export default function FinalCTA({
             }}
           >
             <span
-              style={{ width: 6, height: 6, borderRadius: "50%", background: color.ruby }}
+              style={{ width: 6, height: 6, borderRadius: "50%", background: color.accent }}
               aria-hidden="true"
             />
             <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
@@ -166,7 +166,7 @@ export default function FinalCTA({
             borderRadius: 4,
           }}
         >
-          <MicroLabel tone="ruby">{copy.calendlyHeader}</MicroLabel>
+          <MicroLabel tone="accent">{copy.calendlyHeader}</MicroLabel>
           {ready ? (
             <iframe
               title={copy.calendlyHeader}
@@ -201,7 +201,7 @@ export default function FinalCTA({
               </span>
               <span style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "36ch" }}>
                 Add the real scheduling link and set calendlyReady in copy.ts. The embed is
-                pre-themed to the site: ruby primary, warm black ground.
+                pre-themed to the site: purple primary, black ground.
               </span>
               <GlowButton href={calendly}>{copy.calendlyHeader}</GlowButton>
             </div>

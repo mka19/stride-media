@@ -13,7 +13,7 @@ import { injectStrideStyles } from "./styles";
  */
 export function StrideMark({
   size = 40,
-  stroke = color.ruby,
+  stroke = color.accent,
   glowing = false,
   style,
 }: {
@@ -62,12 +62,12 @@ export function MicroLabel({
 }: {
   children: ReactNode;
   /** Which surface the label sits on. */
-  tone?: "dark" | "light" | "ruby";
+  tone?: "dark" | "light" | "accent";
   className?: string;
   style?: CSSProperties;
 }) {
   const c =
-    tone === "ruby" ? color.ruby : tone === "light" ? color.textOnLightMuted : color.textOnDarkMuted;
+    tone === "accent" ? color.accent : tone === "light" ? color.textOnLightMuted : color.textOnDarkMuted;
   return (
     <div className={className} style={{ ...microLabel, color: c, ...style }}>
       {children}
@@ -124,7 +124,7 @@ export function GlowButton({
     textDecoration: "none",
     ...typeScale.eyebrow,
     fontWeight: 600,
-    background: solid ? color.ruby : "transparent",
+    background: solid ? color.accent : "transparent",
     color: solid ? "#fff" : color.textOnDark,
     boxShadow: solid ? glow.box : `inset 0 0 0 1px ${color.hairlineOnDark}`,
     transition: `box-shadow 520ms ${ease.out}, transform 520ms ${ease.out}, background 520ms ${ease.out}`,
@@ -132,9 +132,9 @@ export function GlowButton({
   };
 
   const hoverIn = (el: HTMLElement) => {
-    el.style.boxShadow = solid ? glow.boxStrong : `inset 0 0 0 1px ${hexA(color.ruby, 0.6)}, ${glow.textSoft}`;
+    el.style.boxShadow = solid ? glow.boxStrong : `inset 0 0 0 1px ${hexA(color.accent, 0.6)}, ${glow.textSoft}`;
     el.style.transform = "translateY(-2px)";
-    if (!solid) el.style.background = hexA(color.ruby, 0.08);
+    if (!solid) el.style.background = hexA(color.accent, 0.08);
   };
   const hoverOut = (el: HTMLElement) => {
     el.style.boxShadow = base.boxShadow as string;
@@ -243,13 +243,14 @@ export function MediaTile({
   }, [play, src]);
 
   // Golden-angle hue walk keeps neighbouring tiles distinct but related.
-  const hue = (12 + seed * 37.5) % 360;
-  const warm = hue > 40 && hue < 300 ? 348 : hue; // pull strays back toward ruby
+  const hue = (262 + seed * 37.5) % 360;
+  // Strays get pulled back toward the accent rather than drifting off-brand.
+  const violet = hue > 300 || hue < 220 ? 262 : hue;
   const fallback: CSSProperties = {
     backgroundImage: `
-      radial-gradient(120% 90% at ${20 + ((seed * 23) % 60)}% ${15 + ((seed * 31) % 50)}%, ${hexA(color.rubyBright, 0.5)} 0%, transparent 55%),
-      radial-gradient(100% 120% at ${70 - ((seed * 17) % 50)}% ${85 - ((seed * 13) % 45)}%, hsla(${warm}, 62%, 42%, 0.45) 0%, transparent 60%),
-      linear-gradient(${140 + ((seed * 47) % 80)}deg, ${color.ink} 0%, ${color.rubyDeep} 130%)
+      radial-gradient(120% 90% at ${20 + ((seed * 23) % 60)}% ${15 + ((seed * 31) % 50)}%, ${hexA(color.accentBright, 0.5)} 0%, transparent 55%),
+      radial-gradient(100% 120% at ${70 - ((seed * 17) % 50)}% ${85 - ((seed * 13) % 45)}%, hsla(${violet}, 62%, 46%, 0.45) 0%, transparent 60%),
+      linear-gradient(${140 + ((seed * 47) % 80)}deg, ${color.ink} 0%, ${color.accentDeep} 130%)
     `,
     backgroundColor: color.ink,
   };

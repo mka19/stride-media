@@ -86,7 +86,7 @@ export default function Footer({
               width: 2 + (i % 3),
               height: 2 + (i % 3),
               borderRadius: "50%",
-              background: hexA(color.ruby, 0.45),
+              background: hexA(color.accent, 0.45),
               animationDelay: `${-i * 1.9}s`,
               animationDuration: `${15 + (i % 5) * 3}s`,
             }}
@@ -127,7 +127,7 @@ export default function Footer({
                 onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
                 onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
               >
-                <span style={{ ...typeScale.eyebrow, color: color.ruby }}>{item.n}</span>
+                <span style={{ ...typeScale.eyebrow, color: color.accent }}>{item.n}</span>
                 {item.label}
               </a>
             ))}

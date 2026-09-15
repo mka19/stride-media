@@ -155,7 +155,7 @@ export default function Problem({
               color: color.textOnDark,
             }}
           >
-            <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+            <MicroLabel tone="accent">{copy.label}</MicroLabel>
             <p style={{ margin: 0, ...typeScale.bodyLg }}>{copy.intro}</p>
           </div>
         </div>
@@ -185,7 +185,7 @@ export default function Problem({
                   style={{ position: "absolute", inset: 0 }}
                 />
               </div>
-              <div style={{ ...typeScale.numberXl, color: color.ruby }}>{card.n}</div>
+              <div style={{ ...typeScale.numberXl, color: color.accent }}>{card.n}</div>
               <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}>
                 {card.body}
               </p>
@@ -237,7 +237,7 @@ export default function Problem({
               color: color.textOnDark,
             }}
           >
-            <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+            <MicroLabel tone="accent">{copy.label}</MicroLabel>
             <p style={{ margin: 0, maxWidth: 720, ...typeScale.bodyLg }}>
               {words.map((w, i) => (
                 <span key={i} className="pb-word" style={{ display: "inline-block" }}>
@@ -348,8 +348,8 @@ export default function Problem({
                     <div
                       style={{
                         ...typeScale.numberXl,
-                        color: color.ruby,
-                        textShadow: `0 0 30px ${hexA(color.ruby, 0.4)}`,
+                        color: color.accent,
+                        textShadow: `0 0 30px ${hexA(color.accent, 0.4)}`,
                       }}
                     >
                       {card.n}
@@ -386,7 +386,7 @@ export default function Problem({
                     style={{
                       position: "absolute",
                       inset: 0,
-                      background: color.ruby,
+                      background: color.accent,
                       transformOrigin: "left center",
                       transform: "scaleX(0)",
                     }}
@@ -411,7 +411,7 @@ function CardIcon({ index }: { index: number }) {
     height: 22,
     viewBox: "0 0 24 24",
     fill: "none",
-    stroke: color.ruby,
+    stroke: color.accent,
     strokeWidth: 1.4,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,

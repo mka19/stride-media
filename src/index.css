@@ -23,7 +23,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  background: #0B0807;
+  background: #080808;
 }
 
 /* Base size is the body token, so inherited text is on the scale too. */

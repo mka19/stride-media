@@ -15,7 +15,7 @@ import { useBreakpoint } from "./responsive";
  *      bottom-right to upper-left, each image on its own depth so they
  *      overlap rather than travelling as one block. Captions counter nothing
  *      — the images are never rotated — so they stay readable.
- *   3. The gallery clears and the mark lands on a solid ruby card.
+ *   3. The gallery clears into the metrics chapter.
  *   4. The metrics chapter arrives on a new ground.
  *
  * On phones the diagonal parallax is dropped for a swipeable row, since
@@ -136,7 +136,7 @@ export default function CaseStudy({
         maxWidth: 900,
       }}
     >
-      <MicroLabel tone="ruby" className="cs-intro-item">
+      <MicroLabel tone="accent" className="cs-intro-item">
         {copy.label}
       </MicroLabel>
       <h2 className="cs-intro-item" style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>
@@ -181,8 +181,8 @@ export default function CaseStudy({
             style={{
               ...typeScale.numberXl,
               fontSize: typeScale.h1.fontSize,
-              color: color.ruby,
-              textShadow: `0 0 28px ${hexA(color.ruby, 0.45)}`,
+              color: color.accent,
+              textShadow: `0 0 28px ${hexA(color.accent, 0.45)}`,
             }}
           >
             {m.value}
@@ -247,7 +247,7 @@ export default function CaseStudy({
             padding: `${layout.section} ${layout.pad}`,
           }}
         >
-          <MicroLabel tone="ruby">{copy.resultsLabel}</MicroLabel>
+          <MicroLabel tone="accent">{copy.resultsLabel}</MicroLabel>
           <h3 style={{ margin: 0, ...typeScale.h1 }}>{copy.resultsHeadline}</h3>
           {metrics}
         </div>
@@ -320,7 +320,7 @@ export default function CaseStudy({
             display: "grid",
             placeItems: "center",
             padding: `0 ${layout.pad}`,
-            background: `radial-gradient(70% 55% at 50% 45%, ${hexA(color.rubyDeep, 0.5)} 0%, ${color.black} 72%)`,
+            background: `radial-gradient(70% 55% at 50% 45%, ${hexA(color.accentDeep, 0.5)} 0%, ${color.black} 72%)`,
           }}
         >
           <Grain opacity={0.2} />
@@ -344,7 +344,7 @@ export default function CaseStudy({
         >
           <Grain opacity={0.14} />
           <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline }}>
-            <MicroLabel tone="ruby">{copy.resultsLabel}</MicroLabel>
+            <MicroLabel tone="accent">{copy.resultsLabel}</MicroLabel>
             <h3 style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>{copy.resultsHeadline}</h3>
           </div>
           <div style={{ position: "relative" }}>{metrics}</div>

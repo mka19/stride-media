@@ -98,7 +98,7 @@ export default function FieldTexture({
           const dy = (dots[i].y - dots[j].y) * h;
           const dist = Math.hypot(dx, dy);
           if (dist > 160) continue;
-          ctx.strokeStyle = hexA(color.ruby, 0.09 * (1 - dist / 160));
+          ctx.strokeStyle = hexA(color.accent, 0.09 * (1 - dist / 160));
           ctx.beginPath();
           ctx.moveTo(dots[i].x * w, dots[i].y * h);
           ctx.lineTo(dots[j].x * w, dots[j].y * h);
@@ -168,7 +168,7 @@ export default function FieldTexture({
         ctx.fill();
         ctx.stroke();
         // The step number, riding the chunk.
-        ctx.fillStyle = hexA(color.ruby, alpha * 0.85);
+        ctx.fillStyle = hexA(color.accent, alpha * 0.85);
         ctx.font = `600 ${Math.max(7, size * 0.34)}px "Familjen Grotesk", Helvetica, Arial, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";

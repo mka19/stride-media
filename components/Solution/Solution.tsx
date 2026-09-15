@@ -161,7 +161,7 @@ export default function Solution({
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: rhythm.headlineToBody }}>
-          <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+          <MicroLabel tone="accent">{copy.label}</MicroLabel>
           <h2 style={{ margin: 0, ...typeScale.h1 }}>
             {copy.headline.map((line, i) => (
               <span key={i} style={{ display: "block" }}>
@@ -190,7 +190,7 @@ export default function Solution({
             {copy.scrollHint}
           </MicroLabel>
           <svg className="stride-pulse" width="18" height="11" viewBox="0 0 18 11" fill="none" aria-hidden="true">
-            <path d="M1 1L9 9L17 1" stroke={color.ruby} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M1 1L9 9L17 1" stroke={color.accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
 
@@ -206,7 +206,7 @@ export default function Solution({
                 borderTop: `1px solid ${color.hairlineOnDark}`,
               }}
             >
-              <MicroLabel tone="ruby">{pillar.n}</MicroLabel>
+              <MicroLabel tone="accent">{pillar.n}</MicroLabel>
               <h3 style={{ margin: 0, ...typeScale.h3 }}>{pillar.title}</h3>
               <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
                 {pillar.body}
@@ -289,7 +289,7 @@ export default function Solution({
               maxWidth: "min(620px, 52vw)",
             }}
           >
-            <MicroLabel tone="ruby" className="sol-intro">
+            <MicroLabel tone="accent" className="sol-intro">
               {copy.label}
             </MicroLabel>
             <h2
@@ -339,7 +339,7 @@ export default function Solution({
                   borderTop: `1px solid ${color.hairlineOnDark}`,
                 }}
               >
-                <MicroLabel tone="ruby">{pillar.n}</MicroLabel>
+                <MicroLabel tone="accent">{pillar.n}</MicroLabel>
                 <h3
                   style={{
                     margin: 0,
@@ -391,7 +391,7 @@ export default function Solution({
           >
             <path
               d="M1 1L9 9L17 1"
-              stroke={color.ruby}
+              stroke={color.accent}
               strokeWidth="1.6"
               strokeLinecap="round"
               strokeLinejoin="round"

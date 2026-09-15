@@ -116,8 +116,8 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
           ...typeScale.eyebrow,
           fontWeight: 600,
           padding: `${space.xs}px ${space.sm}px`,
-          color: color.ruby,
-          border: `1px solid ${hexA(color.ruby, 0.5)}`,
+          color: color.accent,
+          border: `1px solid ${hexA(color.accent, 0.5)}`,
         }}
       >
         {n}
@@ -128,14 +128,14 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
           display: "inline-flex",
           alignItems: "center",
           padding: `${space.xs}px ${space.s}px`,
-          background: color.ruby,
+          background: color.accent,
           color: "#fff",
         }}
       >
         {label}
       </span>
-      <span style={{ width: 3, background: hexA(color.ruby, 0.55) }} />
-      <span style={{ width: 3, background: hexA(color.ruby, 0.3) }} />
+      <span style={{ width: 3, background: hexA(color.accent, 0.55) }} />
+      <span style={{ width: 3, background: hexA(color.accent, 0.3) }} />
     </span>
   );
 
@@ -274,7 +274,7 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
             inset: 0,
             display: "grid",
             placeItems: "center",
-            background: `radial-gradient(60% 60% at 50% 50%, ${hexA(color.ruby, 0.55)} 0%, ${color.black} 72%)`,
+            background: `radial-gradient(60% 60% at 50% 50%, ${hexA(color.accent, 0.55)} 0%, ${color.black} 72%)`,
           }}
         >
           <Grain opacity={0.2} />
