@@ -1,5 +1,6 @@
 import Nav from "../components/Nav/Nav";
 import Hero from "../components/Hero/Hero";
+import Problem from "../components/Problem/Problem";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so each
@@ -13,10 +14,10 @@ export default function App() {
     <>
       <Nav />
       <Hero />
-      {/* Placeholder runway so the Hero's hand-off and the nav's progress
-          underlines can be exercised before the Problem section exists. */}
+      <Problem />
+      {/* Placeholder runway for the section that comes next. */}
       <section
-        id="problem"
+        id="what-we-do"
         style={{
           height: "120vh",
           background: "#0B0807",
@@ -29,7 +30,7 @@ export default function App() {
           textTransform: "uppercase",
         }}
       >
-        next up — problem section
+        next up — solution section
       </section>
     </>
   );

@@ -34,7 +34,7 @@ export const nav = {
 export const hero = {
   label: "Content studio",
   headline: ["Be the name", "they already", "know."],
-  sub: "We build personal brands for entrepreneurs — strategy, scripts, production and delivery. You never pick up a camera.",
+  sub: "We build personal brands for entrepreneurs: strategy, scripts, production and delivery. You never pick up a camera.",
   cta: "Book a strategy call",
   scrollHint: "Scroll",
 } as const;
@@ -42,7 +42,7 @@ export const hero = {
 export const problem = {
   label: "( the problem )",
   intro:
-    "Stride Media is a small, full-service content studio. We build the personal brand of the person behind the business — the strategy, the calendar, the scripts, the edit — and we ship it every week without asking you to film a thing.",
+    "Stride Media is a small, full-service content studio. We build the personal brand of the person behind the business. The strategy, the calendar, the scripts, the edit. We ship it every week without asking you to film a thing.",
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   cards: [
     {
@@ -55,7 +55,7 @@ export const problem = {
       n: "02",
       label: "( ignored )",
       headline: "The scripts are pretty. The engagement is flat.",
-      body: "Most agencies write for the feed, not for the viewer. Polished videos that nobody finishes, nobody saves, and nobody books from.",
+      body: "Most agencies write for the feed instead of the viewer. Polished videos that nobody finishes, saves, or books from.",
     },
     {
       n: "03",
@@ -68,15 +68,15 @@ export const problem = {
 
 export const solution = {
   label: "( what we do )",
-  headline: "End to end. Nothing on your plate.",
-  body: "Positioning, content calendar, scripting, AI-assisted production, edit and delivery — one studio, one line of accountability.",
+  headline: "End to end, with nothing on your plate.",
+  body: "Positioning, content calendar, scripting, AI-assisted production, edit and delivery. One studio, one line of accountability.",
   scrollHint: "Scroll for more",
 } as const;
 
 export const howItWorks = {
   label: "( how it works )",
-  headline: "Three steps. Then it just runs.",
-  body: "Onboarding takes a week. After that, content arrives on a schedule you can set your calendar by — and your only job is to approve it.",
+  headline: "Three steps, then it runs.",
+  body: "Onboarding takes a week. After that, content arrives on a schedule you can set your calendar by, and your only job is to approve it.",
   steps: [
     {
       n: "01",
@@ -86,7 +86,7 @@ export const howItWorks = {
     {
       n: "02",
       title: "We build",
-      body: "Calendar, hooks, scripts, production and edit. AI carries the volume; our team carries the taste. You approve, you don't produce.",
+      body: "Calendar, hooks, scripts, production and edit. AI carries the volume; our team carries the taste. You approve and we produce.",
     },
     {
       n: "03",
@@ -103,7 +103,7 @@ export const caseStudy = {
   clientContext: "Real estate — Bay Area",
   headline: ["Why Marisa", "trusted Stride"],
   intro:
-    "Eleven years in the market, four hundred closings, and an audience of nine hundred people. We had one quarter to fix the second number.",
+    "Eleven years in the market, four hundred closings, and an audience of nine hundred people. We had one quarter to fix the last one.",
   gallery: [
     { caption: "Ep. 04 — Listing walkthrough" },
     { caption: "Hook test — 'nobody tells you'" },
@@ -128,7 +128,7 @@ export const whyStride = {
   label: "( why stride )",
   headline: ["FULL", "SERVICE", "STUDIO"],
   capabilities: [
-    { n: "01", title: "AI-Powered Content", body: "Volume that used to take a crew of six, produced in days — without the flat, templated look it usually comes with." },
+    { n: "01", title: "AI-Powered Content", body: "Volume that used to take a crew of six, produced in days, without the flat templated look it usually comes with." },
     { n: "02", title: "Engagement-Focused Scripts", body: "Written for the first three seconds and the last one. Hooks tested, retention read, the next batch written off the data." },
     { n: "03", title: "Full-Service Strategy", body: "Positioning through delivery under one roof. No stitching together a strategist, an editor and a freelancer who ghosts." },
     { n: "04", title: "Video Production & Editing", body: "Colour, sound, pacing and captions handled in-house. Every asset leaves looking like it belongs to one brand." },
@@ -176,7 +176,7 @@ export const faq = {
   items: [
     { q: "Do I need to film anything?", a: "No. That is the point of the studio. We produce with AI-assisted video and existing assets, and where we do need you, it is a single forty-minute interview call that we cut into months of content." },
     { q: "How fast does the first batch land?", a: "Onboarding is a week. Strategy call in the first two days, positioning and calendar back by day four, first approved batch in your hands by the end of week two." },
-    { q: "Is this just AI slop with my name on it?", a: "No. AI carries the volume — rough cuts, variants, production passes. Strategy, scripts and the final edit are human, senior and opinionated. If a video is not good enough to put our name on, it does not ship." },
+    { q: "Is this just AI slop with my name on it?", a: "No. AI carries the volume: rough cuts, variants, production passes. Strategy, scripts and the final edit are human, senior and opinionated. If a video is not good enough to put our name on, it does not ship." },
     { q: "What do you actually need from me?", a: "The strategy call, one interview session, and approvals. Everything else is ours." },
     { q: "Do you only work with real estate agents?", a: "That is where we started and where most of our proof lives. The system works for any entrepreneur whose business runs on being known — coaches, founders, creators. The positioning work is the same." },
     { q: "Who owns the content?", a: "You do. Every asset, every raw file, every script, on delivery." },
