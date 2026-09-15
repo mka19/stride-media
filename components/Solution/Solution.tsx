@@ -54,15 +54,32 @@ export default function Solution({
       const placeFrame = () => {
         const stageBox = stage.getBoundingClientRect();
         const headBox = head.getBoundingClientRect();
-        const top = Math.max(headBox.bottom - stageBox.top + space.xxl, stageBox.height * 0.3);
+
+        // Fit a real 16:9 plate into what is left between the header and the
+        // bottom of the frame. Fixed percentage insets produced a letterbox
+        // strip: the header's height set the top edge and the percentages set
+        // the rest, so the aspect was whatever happened to be left over.
+        const top = headBox.bottom - stageBox.top + space.xxl;
+        const availH = stageBox.height - top - space.hh;
+        const availW = stageBox.width * 0.72;
+
+        let h = Math.max(160, availH);
+        let w = (h * 16) / 9;
+        if (w > availW) {
+          w = availW;
+          h = (w * 9) / 16;
+        }
+
+        const left = (stageBox.width - w) / 2;
         gsap.set(frame, {
-          top,
-          left: stageBox.width * 0.22,
-          right: stageBox.width * 0.22,
-          bottom: stageBox.height * 0.14,
+          top: top + Math.max(0, (availH - h) / 2),
+          left,
+          right: left,
+          bottom: stageBox.height - (top + Math.max(0, (availH - h) / 2) + h),
           borderRadius: 10,
         });
       };
+
       placeFrame();
 
       // The section is visible from the moment it rises into the viewport,

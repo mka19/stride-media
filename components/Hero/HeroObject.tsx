@@ -313,11 +313,13 @@ export default function HeroObject({
     let eased = 0;
     handleRef.current = { setProgress: (p) => (progress = p) };
 
-    const clock = new THREE.Clock();
+    // THREE.Clock is deprecated; elapsed time comes straight from the
+    // animation frame instead.
+    const t0 = performance.now();
     let raf = 0;
-    const tick = () => {
+    const tick = (now: number = performance.now()) => {
       raf = requestAnimationFrame(tick);
-      const t = clock.getElapsedTime();
+      const t = (now - t0) / 1000;
 
       // Damp toward the scroll value so fast scrolls still dissolve smoothly.
       eased += (progress - eased) * 0.09;

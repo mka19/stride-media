@@ -38,9 +38,14 @@ export const strideKeyframes = `
 }
 .stride-pulse { animation: stride-pulse 2.2s ease-in-out infinite; }
 
+/* Continuous rotations stay linear so they never visibly speed up or slow. */
+@keyframes stride-spin { to { transform: rotate(360deg); } }
+.stride-spin { animation: stride-spin 20s linear infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   .stride-drift { animation: none; }
   .stride-pulse { animation: none; }
+  .stride-spin { animation: none; }
 }
 `;
 
