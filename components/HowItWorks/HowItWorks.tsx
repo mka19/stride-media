@@ -3,9 +3,9 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { useEffect, useRef } from "react";
 import { howItWorks as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { Grain, MicroLabel, StrideMark } from "../shared/primitives";
+import { Grain, StrideMark } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
-import ParticleField from "./ParticleField";
+import FieldTexture from "./FieldTexture";
 
 /**
  * How It Works — anubischain.ai reference.
@@ -84,8 +84,8 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
       steps.forEach((step, i) => {
         const at = 0.34 + i * 0.13;
         tl.to(step, { opacity: 1, y: 0, duration: 0.05, ease: "power2.out" }, at);
-        // Earlier steps stay on screen but recede, so the active one leads.
-        if (i > 0) tl.to(steps[i - 1], { opacity: 0.32, duration: 0.05 }, at);
+        // They share the same centre, so the previous one clears out.
+        if (i > 0) tl.to(steps[i - 1], { opacity: 0, y: -15, duration: 0.05 }, at);
       });
 
       // 4. closing panel
@@ -113,6 +113,37 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
     };
   }, [rootRef, stacked]);
 
+  /** The reference's tag: the number in its own box, the label beside it. */
+  const tag = (n: string, label: string) => (
+    <span style={{ display: "inline-flex", alignItems: "stretch", gap: 2 }}>
+      <span
+        style={{
+          ...typeScale.labelSm,
+          fontWeight: 600,
+          padding: `${space.xs}px ${space.sm}px`,
+          color: color.ruby,
+          border: `1px solid ${hexA(color.ruby, 0.5)}`,
+        }}
+      >
+        {n}
+      </span>
+      <span
+        style={{
+          ...typeScale.eyebrow,
+          display: "inline-flex",
+          alignItems: "center",
+          padding: `${space.xs}px ${space.s}px`,
+          background: color.ruby,
+          color: "#fff",
+        }}
+      >
+        {label}
+      </span>
+      <span style={{ width: 3, background: hexA(color.ruby, 0.55) }} />
+      <span style={{ width: 3, background: hexA(color.ruby, 0.3) }} />
+    </span>
+  );
+
   const intro = (
     <div
       className="hw-intro"
@@ -126,9 +157,7 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
         margin: "0 auto",
       }}
     >
-      <MicroLabel tone="ruby" className="hw-intro-item">
-        {copy.label}
-      </MicroLabel>
+      <span className="hw-intro-item">{tag("//", "How it works")}</span>
       <h2 className="hw-intro-item" style={{ margin: 0, ...typeScale.h1 }}>
         {copy.headline}
       </h2>
@@ -146,17 +175,18 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
       key={step.n}
       className="hw-step"
       style={{
-        display: "grid",
-        gridTemplateColumns: stacked ? "1fr" : "auto 1fr",
-        gap: stacked ? space.md : space.xxl,
-        alignItems: "start",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        gap: rhythm.headlineToBody,
+        maxWidth: 720,
+        margin: "0 auto",
       }}
     >
-      <div style={{ ...typeScale.numberXl, color: color.ruby, lineHeight: 0.8 }}>{step.n}</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: space.md, maxWidth: "46ch" }}>
-        <h3 style={{ margin: 0, ...typeScale.h2 }}>{step.title}</h3>
-        <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}>{step.body}</p>
-      </div>
+      {tag(step.n, step.tag)}
+      <h3 style={{ margin: 0, ...typeScale.h1 }}>{step.title}</h3>
+      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}>{step.body}</p>
     </div>
   ));
 
@@ -199,7 +229,7 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
             padding: `${layout.section} ${layout.pad}`,
           }}
         >
-          <ParticleField breakpoint={bp} tone="light" />
+          <FieldTexture breakpoint={bp} tone="light" />
           <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: layout.section }}>
             {stepList}
           </div>
@@ -262,17 +292,15 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
             color: color.textOnLight,
           }}
         >
-          <ParticleField breakpoint={bp} tone="light" />
-          <div
-            style={{
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              gap: space.h,
-              maxWidth: 1000,
-            }}
-          >
-            {stepList}
+          <FieldTexture breakpoint={bp} tone="light" />
+          {/* Every step occupies the same centre, so the sequence reads as
+              one panel changing rather than a column scrolling past. */}
+          <div style={{ position: "relative", display: "grid" }}>
+            {stepList.map((step, i) => (
+              <div key={i} style={{ gridArea: "1 / 1" }}>
+                {step}
+              </div>
+            ))}
           </div>
         </div>
 

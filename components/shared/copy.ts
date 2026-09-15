@@ -105,16 +105,19 @@ export const howItWorks = {
   steps: [
     {
       n: "01",
+      tag: "Call",
       title: "Strategy Call",
       body: "We learn your business, your audience and your goals. No cookie-cutter onboarding.",
     },
     {
       n: "02",
+      tag: "Build",
       title: "We Build",
       body: "Our team creates your scripts, positioning and video content, fully done-for-you.",
     },
     {
       n: "03",
+      tag: "Publish",
       title: "You Show Up",
       body: "You post, grow and get recognized. We handle the rest, every month.",
     },
