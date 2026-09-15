@@ -38,16 +38,18 @@ export default function GradientRevealText({
   className?: string;
 }) {
   const final = tone === "light" ? color.textOnLight : color.textOnDark;
-  const tint = hexA(color.accent, tone === "light" ? 0.42 : 0.55);
+  // A solid accent ahead of the sweep, not a wash: the reveal reads as a
+  // band of purple pushing across and leaving the finished colour behind it.
+  const tint = tone === "light" ? hexA(color.accent, 0.85) : color.accent;
   const paint = useRef<((p: number) => void) | null>(null);
 
   const rootRef = useGsapContext(
     (root) => {
-      // −24 → 124 rather than 0 → 100: the soft edge is 20% wide, so the
-      // sweep has to start and finish outside the box for the first and last
-      // letters to be fully tinted and fully resolved.
+      // −24 → 124 rather than 0 → 100: the edge has width, so the sweep has
+      // to start and finish outside the box for the first and last letters to
+      // be fully purple and fully resolved.
       const write = (p: number) => {
-        root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} ${p - 14}%, ${tint} ${p + 6}%, ${tint} 100%)`;
+        root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} ${p - 5}%, ${tint} ${p + 3}%, ${tint} 100%)`;
       };
       paint.current = write;
       write(-24);
@@ -78,7 +80,12 @@ export default function GradientRevealText({
       style: {
         ...style,
         margin: 0,
-        backgroundImage: `linear-gradient(95deg, ${final} 0%, ${final} -38%, ${tint} -18%, ${tint} 100%)`,
+        // The fill is clipped to the glyphs and painted only inside the
+        // element's box. At a line-height under 1 the descenders hang outside
+        // that box, get no paint, and read as cropped — the tail of a g
+        // simply missing. The padding gives the box room for them.
+        paddingBottom: "0.14em",
+        backgroundImage: `linear-gradient(95deg, ${final} 0%, ${final} -29%, ${tint} -21%, ${tint} 100%)`,
         WebkitBackgroundClip: "text",
         backgroundClip: "text",
         color: "transparent",

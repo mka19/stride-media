@@ -85,19 +85,28 @@ export default function HowItWorks({
       const span = (0.98 - first) / steps.length;
       steps.forEach((step, i) => {
         const at = first + i * span;
+
         tl.fromTo(
           step,
           { opacity: 0, scale: 0.45 },
-          { opacity: 1, scale: 1, duration: span * 0.55, ease: "power2.out" },
+          { opacity: 1, scale: 1, duration: span * 0.4, ease: "power2.out" },
           at,
         );
+
         // Past the viewer: it keeps growing as it fades, so it reads as the
         // camera going through it rather than the text simply leaving.
+        //
+        // The exit finishes at 0.96 of the step's own slice, and the next
+        // step does not start until 1.0 — they used to run together, with
+        // one step still expanding across the screen while the next was
+        // already legible on top of it. It also goes much further now:
+        // stopping at 1.9 read as a zoom, where carrying on past the frame
+        // reads as passing through the words.
         if (i < steps.length - 1) {
           tl.to(
             step,
-            { opacity: 0, scale: 1.9, duration: span * 0.45, ease: "power2.in" },
-            at + span * 0.6,
+            { opacity: 0, scale: 3.4, duration: span * 0.41, ease: "power2.in" },
+            at + span * 0.55,
           );
         }
       });

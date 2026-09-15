@@ -35,16 +35,21 @@ export default function CaseStudy({
   const slats = useRef<SlatHandle | null>(null);
   const stacked = useStacked();
 
-  // Each plate gets its own lane and speed so the collage travels as a spread
-  // rather than a single sheet.
+  // Three staggered rows, sized and spaced so no two plates ever touch, and
+  // all of them travelling at the same rate.
+  //
+  // They used to each have their own speed, which is what made them overlap:
+  // a faster plate catches a slower one and crosses it. Their positions are
+  // fixed relative to each other now and the whole arrangement moves as one
+  // sheet, so what is laid out clear stays clear for the whole crossing.
+  // Widths are a share of the frame and the rows are far enough apart that
+  // even a 21:9 viewport, where a plate is at its tallest, leaves a gap.
   const plates = copy.gallery.map((item, i) => ({
     ...item,
     src: gallery[i],
-    x: [8, 62, 30, 78, 14, 48, 70, 24][i % 8],
-    y: [18, 8, 52, 38, 74, 64, 22, 88][i % 8],
-    // Spacing doc: gallery plates vary between 240 and 480 wide.
-    w: [320, 240, 480, 280, 400, 260, 360, 300][i % 8],
-    speed: [1, 1.5, 0.8, 1.7, 1.2, 0.65, 1.35, 0.95][i % 8],
+    x: [3, 34, 68, 16, 46, 74, 6, 40][i % 8],
+    y: [3, 3, 3, 38, 38, 38, 73, 73][i % 8],
+    w: [16, 18, 15, 17, 14, 18, 16, 15][i % 8],
   }));
 
   const rootRef = useGsapContext(
@@ -53,8 +58,8 @@ export default function CaseStudy({
 
       // The gallery owns this slice of the scroll and nothing else overlaps
       // it, so the plates are gone before the results chapter is readable.
-      const GALLERY_IN = 0.32;
-      const GALLERY_OUT = 0.64;
+      const GALLERY_IN = 0.4;
+      const GALLERY_OUT = 0.66;
 
       // The line is already in place under the curtain — the slats retracting
       // are what reveals it. Fading it up underneath would be two reveals of
@@ -99,7 +104,7 @@ export default function CaseStudy({
           end: "bottom bottom",
           scrub: 0.6,
           onUpdate: (self) =>
-            surface.current?.setTone(self.progress < 0.28 ? "light" : "dark"),
+            surface.current?.setTone(self.progress < 0.34 ? "light" : "dark"),
         },
       });
 
@@ -111,7 +116,7 @@ export default function CaseStudy({
         curtain,
         {
           p: 1,
-          duration: 0.2,
+          duration: 0.22,
           ease: "none",
           onUpdate: () => slats.current?.setProgress(curtain.p),
         },
@@ -120,8 +125,10 @@ export default function CaseStudy({
 
         // 2. The line leaves and the ground turns over: white to black, which
         //    is the ground the plates travel across.
-        .to(q(".cs-intro"), { opacity: 0, duration: 0.06 }, 0.24)
-        .to(q(".cs-white"), { opacity: 0, duration: 0.08, ease: "power2.inOut" }, 0.24);
+        .to(q(".cs-intro"), { opacity: 0, duration: 0.06 }, 0.3)
+        // The curtain finishes at 0.24 and the ground waits until 0.3, so the
+        // last bar is gone before the white starts going anywhere.
+        .to(q(".cs-white"), { opacity: 0, duration: 0.08, ease: "power2.inOut" }, 0.3);
 
       // Every plate crosses the frame bottom-right to upper-left, each at its
       // own rate, which is what makes them overlap on the way through.
@@ -131,33 +138,20 @@ export default function CaseStudy({
       // before the metrics chapter starts. It used to run the full scroll on a
       // timeline of its own, which is why plates were still travelling across
       // the headline and the numbers.
-      q(".cs-plate").forEach((plate) => {
-        const speed = Number((plate as HTMLElement).dataset.speed ?? 1);
-
-        // Travel and fade are separate: tweening opacity across the whole
-        // crossing left every plate at half strength in the middle of the
-        // frame, so overlapping plates showed through each other and their
-        // captions read over whatever sat behind. The fade happens in the
-        // first and last few percent; the plate is solid for the crossing.
-        tl.fromTo(
-          plate,
-          { xPercent: 90 * speed, yPercent: 120 * speed },
-          {
-            xPercent: -110 * speed,
-            yPercent: -150 * speed,
-            ease: "none",
-            duration: GALLERY_OUT - GALLERY_IN,
-          },
-          GALLERY_IN,
-        )
-          .fromTo(
-            plate,
-            { opacity: 0 },
-            { opacity: 1, duration: 0.04, ease: "power1.out" },
-            GALLERY_IN,
-          )
-          .to(plate, { opacity: 0, duration: 0.04, ease: "power1.in" }, GALLERY_OUT - 0.04);
-      });
+      const sheet = q(".cs-sheet");
+      tl.fromTo(
+        sheet,
+        { xPercent: 90, yPercent: 120 },
+        {
+          xPercent: -110,
+          yPercent: -150,
+          ease: "none",
+          duration: GALLERY_OUT - GALLERY_IN,
+        },
+        GALLERY_IN,
+      )
+        .fromTo(sheet, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out" }, GALLERY_IN)
+        .to(sheet, { opacity: 0, duration: 0.05, ease: "power1.in" }, GALLERY_OUT - 0.05);
 
       // 3. the collage clears, and only then does the metrics chapter open
       tl
@@ -192,7 +186,7 @@ export default function CaseStudy({
       gsap.set(q(".cs-metrics"), { opacity: 1 });
       gsap.set(q(".cs-white"), { opacity: 0 });
       slats.current?.setProgress(1);
-      gsap.set(q(".cs-plate"), { opacity: 1 });
+      gsap.set(q(".cs-sheet"), { opacity: 1 });
     },
   );
 
@@ -366,20 +360,22 @@ export default function CaseStudy({
 
         {/* ---- the collage, travelling bottom-right to upper-left ---- */}
         <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-          {plates.map((plate) => (
+          {/* One sheet, moved as a single element. Translating each plate by
+              its own percentage moved them different distances, because a
+              percentage translate is a share of the element's own width and
+              the plates are different sizes — which is what put them back on
+              top of each other however carefully they were laid out. */}
+          <div className="cs-sheet" style={{ position: "absolute", inset: 0, opacity: 0 }}>
+            {plates.map((plate) => (
             <figure
               key={plate.caption}
               className="cs-plate"
-              data-speed={plate.speed}
               style={{
                 position: "absolute",
                 left: `${plate.x}%`,
                 top: `${plate.y}%`,
-                width: plate.w,
-                maxWidth: "46vw",
+                width: `${plate.w}%`,
                 margin: 0,
-                // Faster plates are nearer, so they stack above the slower ones.
-                zIndex: Math.round(plate.speed * 10),
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
@@ -398,8 +394,9 @@ export default function CaseStudy({
                 </figcaption>
                 <HoverBadge top={copy.hoverTop}>{copy.hoverMain}</HoverBadge>
               </div>
-            </figure>
-          ))}
+              </figure>
+            ))}
+          </div>
         </div>
 
         {/* ---- the line, uncovered by the slats ---- */}

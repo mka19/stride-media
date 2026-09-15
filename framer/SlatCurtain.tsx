@@ -70,11 +70,16 @@ export default function SlatCurtain({
         const d = Math.abs((x + w / (count * 2)) / w - 0.5) * 2;
         // Centre first, edges last, with enough jitter that the opening edge
         // is ragged instead of a clean arc.
-        const start = d * 0.52 + hash(i, 1) * 0.3;
+        //
+        // start + span never exceeds 1. They used to sum to as much as 1.34,
+        // so the slowest columns were still part-closed when the curtain
+        // reached the end of its travel and bars were left standing at the
+        // edges of the frame while the ground beneath them changed.
+        const start = d * 0.45 + hash(i, 1) * 0.2;
         cols.push({
           x,
           start,
-          span: 0.22 + hash(i, 2) * 0.3,
+          span: 0.3 + hash(i, 2) * 0.05,
           fromTop: 0.35 + hash(i, 3) * 0.3,
         });
       }

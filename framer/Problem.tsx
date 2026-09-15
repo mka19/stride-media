@@ -44,12 +44,21 @@ export default function Problem({
       const q = gsap.utils.selector(root);
       const cards = q(".pb-card");
 
-      const statement = q(".pb-statement-text")[0] as HTMLElement | undefined;
-      const paintStatement = (p: number) => {
-        if (!statement) return;
-        statement.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} ${p - 14}%, ${hexA(color.accent, 0.55)} ${p + 6}%, ${hexA(color.accent, 0.55)} 100%)`;
+      // Each line sweeps on its own, one after the next, rather than one
+      // gradient running across the whole paragraph: at this measure a single
+      // sweep crosses six lines at once and reads as a wash over the block
+      // instead of as the statement being written out.
+      const lines = q(".pb-line") as HTMLElement[];
+      const paintLine = (el: HTMLElement, p: number) => {
+        el.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} ${p - 5}%, ${color.accent} ${p + 3}%, ${color.accent} 100%)`;
       };
-      paintStatement(-24);
+      lines.forEach((el) => {
+        el.style.webkitBackgroundClip = "text";
+        el.style.backgroundClip = "text";
+        el.style.color = "transparent";
+        el.style.webkitTextFillColor = "transparent";
+        paintLine(el, -24);
+      });
       gsap.set(q(".pb-light"), { opacity: 0 });
       gsap.set(cards, { opacity: 0 });
 
@@ -71,12 +80,21 @@ export default function Problem({
       // word always lands at 0.25 however long the copy is. A per-word value
       // scaled with the word count and ran past the crossfade, which cut away
       // mid-sentence.
-      const sweep = { p: -24 };
-      tl.to(
-        sweep,
-        { p: 124, duration: 0.23, ease: "none", onUpdate: () => paintStatement(sweep.p) },
-        0.02,
-      )
+      const perLine = 0.23 / Math.max(1, lines.length);
+      lines.forEach((el, i) => {
+        const sweep = { p: -24 };
+        tl.to(
+          sweep,
+          {
+            p: 124,
+            duration: perLine * 1.5,
+            ease: "none",
+            onUpdate: () => paintLine(el, sweep.p),
+          },
+          0.02 + i * perLine,
+        );
+      });
+      tl.to({}, { duration: 0.01 }, 0.02)
 
         // --- bridge -------------------------------------------------------
         // The statement holds from 0.25 to 0.42 before it leaves. It used to
@@ -153,10 +171,9 @@ export default function Problem({
     // place, with the statement fully legible above it.
     (root) => {
       const q = gsap.utils.selector(root);
-      const statement = q(".pb-statement-text")[0] as HTMLElement | undefined;
-      if (statement) {
-        statement.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} 100%)`;
-      }
+      (q(".pb-line") as HTMLElement[]).forEach((el) => {
+        el.style.color = color.textOnDark;
+      });
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
       gsap.set(q(".pb-card"), { opacity: 0 });
@@ -286,44 +303,58 @@ export default function Problem({
           />
           <Grain opacity={0.18} />
 
-          {/* The statement, centred. It leaves before the ground changes. */}
+          {/* The About statement: trionn.com's treatment — display type set
+              wide and left-aligned, with the label held out at the margin,
+              and the lines resolving one after another. It leaves before the
+              ground changes. */}
           <div
             className="pb-statement"
             style={{
               position: "absolute",
               inset: 0,
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              gap: rhythm.eyebrowToHeadline,
+              gap: space.xxl,
               padding: `0 ${layout.pad}`,
               color: color.textOnDark,
             }}
           >
-            <MicroLabel tone="accent">{copy.label}</MicroLabel>
-            {/* h3 rather than body: this is the section's statement, not a
-                supporting paragraph, and at body size it read as a caption
-                floating in the middle of an empty frame. */}
-            <p
-              className="pb-statement-text"
+            <span
               style={{
-                margin: 0,
-                maxWidth: 720,
-                ...typeScale.h3,
-                // The fill resolves left to right as the section opens, the
-                // same treatment the headlines use. It replaces a word-by-word
-                // opacity stagger, which read as the sentence assembling
-                // itself rather than as the statement arriving.
-                backgroundImage: `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} -38%, ${hexA(color.accent, 0.55)} -18%, ${hexA(color.accent, 0.55)} 100%)`,
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-                WebkitTextFillColor: "transparent",
+                ...typeScale.eyebrow,
+                color: color.textOnDarkMuted,
+                flex: "0 0 auto",
+                alignSelf: "flex-start",
+                paddingTop: "0.6em",
               }}
             >
-              {copy.intro}
+              {copy.label}
+            </span>
+            {/* Display size, not body: this is the studio's statement, and at
+                body size it read as a caption floating in an empty frame. */}
+            <p
+              style={{
+                margin: 0,
+                flex: 1,
+                maxWidth: "min(1500px, 84vw)",
+                ...typeScale.h1,
+              }}
+            >
+              {copy.introLines.map((line, i) => (
+                <span
+                  key={i}
+                  className="pb-line"
+                  style={{
+                    display: "block",
+                    // The fill is clipped to the glyphs, and a line box tighter
+                    // than the type crops descenders when it is — the extra
+                    // room is what keeps the tail of a g inside the box.
+                    paddingBottom: "0.14em",
+                  }}
+                >
+                  {line}
+                </span>
+              ))}
             </p>
           </div>
         </div>
@@ -376,11 +407,15 @@ export default function Problem({
                     opacity: i === 0 ? 1 : 0,
                     display: "grid",
                     /* Tablet drops to two rows — statement, then portrait
-                       beside the number — rather than three narrow columns. */
-                    gridTemplateColumns: bp === "tablet" ? "1fr 1fr" : "40% 30% 30%",
+                       beside the number — rather than three narrow columns.
+                       On desktop the outer columns are equal and the portrait
+                       takes exactly the width its aspect ratio needs, so the
+                       plate sits on the centre line of the screen rather than
+                       wherever a 40/30/30 split happened to leave it. */
+                    gridTemplateColumns: bp === "tablet" ? "1fr 1fr" : "1fr auto 1fr",
                     gap: layout.gutter,
                     alignItems: "center",
-                    height: "min(520px, 58vh)",
+                    height: "min(520px, 54vh)",
                   }}
                 >
                   {/* ---- left: icon, eyebrow, sub-label, headline ---- */}
@@ -388,8 +423,11 @@ export default function Problem({
                     style={{
                       display: "flex",
                       flexDirection: "column",
+                      justifyContent: "center",
                       gap: rhythm.eyebrowToHeadline,
                       gridColumn: bp === "tablet" ? "1 / -1" : undefined,
+                      height: "100%",
+                      minWidth: 0,
                     }}
                   >
                     <CardIcon index={i} />
@@ -409,6 +447,9 @@ export default function Problem({
                       justifyContent: "center",
                       gap: space.md,
                       height: "100%",
+                      // No stretching: the column is as wide as the plate, and
+                      // the plate is as wide as its own aspect ratio allows.
+                      minWidth: 0,
                     }}
                   >
                     <div

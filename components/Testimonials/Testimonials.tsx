@@ -131,7 +131,7 @@ export default function Testimonials() {
       <p style={{ margin: 0, ...typeScale.bodyLg }}>“{t.quote}”</p>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space.s }}>
         <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
-        <span style={{ ...typeScale.h3, fontWeight: 700, ...numberGradient }}>{t.stat}</span>
+        <span style={{ ...typeScale.h3, fontWeight: 600, ...numberGradient }}>{t.stat}</span>
       </div>
     </>
   );

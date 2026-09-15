@@ -81,7 +81,7 @@ export const typeScale = {
   numberXl: {
     fontFamily: SANS,
     fontSize: fluid(64, 132),
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 0.8,
     letterSpacing: "-0.05em",
   },
@@ -140,6 +140,9 @@ export const rhythm = {
  * from the glyph outline, so the accent glow survives the transparent fill.
  */
 export const numberGradient = {
+  // Same reason as the swept headlines: a clipped fill is painted only inside
+  // the box, and numberXl's 0.8 line-height leaves the glyph hanging out of it.
+  paddingBottom: "0.1em",
   backgroundImage: `linear-gradient(104deg, ${color.accent} 0%, ${color.accentBright} 52%, #E4DBFF 100%)`,
   WebkitBackgroundClip: "text",
   backgroundClip: "text",
@@ -152,7 +155,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B40";
+export const BUILD = "B43";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

@@ -284,7 +284,7 @@ function ResultCard({
             left: space.md,
             bottom: space.md,
             ...typeScale.h3,
-            fontWeight: 700,
+            fontWeight: 600,
             color: color.textOnDark,
             textShadow: `0 2px 18px ${hexA(color.black, 0.8)}`,
           }}

@@ -25,6 +25,7 @@ export const brand = {
 
 export const nav = {
   items: [
+    { id: "about", label: "About" },
     { id: "problem", label: "Problem" },
     { id: "what-we-do", label: "What We Do" },
     { id: "how-it-works", label: "How It Works" },
@@ -44,9 +45,23 @@ export const hero = {
 } as const;
 
 export const problem = {
-  label: "The problem",
+  /** The dark opening chapter is the studio's About statement. */
+  label: "About",
   intro:
     "Stride Media exists because talented entrepreneurs keep losing to louder, less capable competitors. Not on skill, on visibility. We build the video presence that makes recognition inevitable, using AI to move faster than any traditional agency, without cutting corners on quality.",
+  /**
+   * The same statement, broken where it should break. The pinned chapter
+   * reveals one of these at a time, so the break points are a writing
+   * decision rather than whatever the measure happens to do at a given width.
+   */
+  introLines: [
+    "Stride Media exists because talented entrepreneurs",
+    "keep losing to louder, less capable competitors.",
+    "Not on skill, on visibility.",
+    "We build the video presence that makes recognition",
+    "inevitable, using AI to move faster than any",
+    "traditional agency, without cutting corners on quality.",
+  ],
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   cards: [
     {

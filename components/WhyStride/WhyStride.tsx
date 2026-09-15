@@ -57,25 +57,54 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         .to(q(".ws-dark"), { opacity: 1, duration: 0.05 }, 0.17)
         .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.05 }, 0.17);
 
-      // 3. the letters scatter, each to its own offset and rotation
-      const letters = q(".ws-letter");
-      letters.forEach((letter) => {
+      // 3. The letters scatter — trionn.com's services reveal: they are
+      //    thrown right out of the frame, turning as they go.
+      //
+      //    The direction is not random. Each letter leaves along the line
+      //    from the middle of the block through its own position, so the
+      //    whole word opens outward from its centre and nothing crosses
+      //    anything else on the way out. Random offsets read as noise; this
+      //    reads as the word being pushed apart, which is the difference
+      //    between the two references.
+      //
+      //    Everything derives from the letter's own index and position, so
+      //    the same letter takes the same path every time rather than a new
+      //    one on each rebuild.
+      const letters = q(".ws-letter") as HTMLElement[];
+      const field = root.getBoundingClientRect();
+      const cx = field.left + field.width / 2;
+      const cy = field.top + field.height / 2;
+      const reach = Math.min(window.innerWidth * 0.52, 980);
+      const lift = Math.min(window.innerHeight * 0.46, 520);
+
+      letters.forEach((letter, i) => {
+        const box = letter.getBoundingClientRect();
+        const dx = box.left + box.width / 2 - cx;
+        const dy = box.top + box.height / 2 - cy;
+        const len = Math.hypot(dx, dy) || 1;
+        // A floor on the radius so a letter sitting near the centre still
+        // gets thrown somewhere rather than barely moving.
+        const push = 0.45 + 0.55 * Math.min(1, len / (field.width * 0.42));
+
         tl.to(
           letter,
           {
-            x: gsap.utils.random(-320, 320),
-            y: gsap.utils.random(-220, 220),
-            rotation: gsap.utils.random(-25, 25),
+            x: (dx / len) * reach * push,
+            y: (dy / len) * lift * push,
+            rotation: (dx < 0 ? -1 : 1) * (48 + (i % 5) * 26),
+            scale: 1.25,
             opacity: 0,
-            duration: 0.09,
-            ease: "power2.in",
+            // Long and decelerating: the old move was a tenth of the section
+            // on power2.in, which snapped them off the screen.
+            duration: 0.22,
+            ease: "power2.out",
           },
-          0.26 + Math.random() * 0.03,
+          0.24 + (i % 4) * 0.012,
         );
       });
 
       // 4. the object arrives and stays
-      tl.to(q(".ws-object"), { opacity: 1, scale: 1, duration: 0.07, ease: "power2.out" }, 0.36);
+      tl.to(q(".ws-object"), { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out" }, 0.44);
 
       // 5. the capability labels, crossfading with a slight overlap so there
       //    is never a blank gap between them
@@ -93,7 +122,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".ws-word, .ws-letter"), { opacity: 1, x: 0, y: 0, rotation: 0 });
+      gsap.set(q(".ws-word, .ws-letter"), { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1 });
       gsap.set(q(".ws-dark, .ws-object"), { opacity: 1, scale: 1 });
       gsap.set(q(".ws-cap"), { opacity: 1, x: 0 });
     },

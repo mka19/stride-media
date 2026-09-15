@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { color, layout, space, typeScale } from "./theme";
+import { color, space, typeScale } from "./theme";
 import { prefersReducedMotion } from "./gsap";
 
 /**
@@ -15,7 +15,9 @@ import { prefersReducedMotion } from "./gsap";
  */
 export default function Marquee({
   items,
-  speed = 60,
+  // Slow. A ticker this size reads as a moving headline, not a news crawl,
+  // and at 60px/s the words were gone before they were read.
+  speed = 26,
   direction = -1,
 }: {
   items: readonly string[];
@@ -72,8 +74,11 @@ export default function Marquee({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: layout.gutter,
-                  paddingRight: layout.gutter,
+                  // Generous air either side of the separator: the words and
+                  // the mark between them were running together at the old
+                  // gutter-width spacing.
+                  gap: space.hh,
+                  paddingRight: space.hh,
                   ...typeScale.displayLg,
                   color: color.textOnDark,
                   textTransform: "uppercase",
@@ -81,7 +86,7 @@ export default function Marquee({
                 }}
               >
                 {item}
-                <span style={{ color: color.accent }}>·</span>
+                <span style={{ color: color.accent, opacity: 0.8 }}>+</span>
               </span>
             ))}
           </div>
