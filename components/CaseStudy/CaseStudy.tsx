@@ -6,6 +6,7 @@ import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from ".
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
 import HoverBadge from "../shared/HoverBadge";
+import SlatCurtain, { type SlatHandle } from "../shared/SlatCurtain";
 import { useStacked } from "../shared/responsive";
 
 /**
@@ -30,6 +31,7 @@ export default function CaseStudy({
   scrollLength?: string;
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
+  const slats = useRef<SlatHandle | null>(null);
   const stacked = useStacked();
 
   // Each plate gets its own lane and speed so the collage travels as a spread
@@ -50,11 +52,12 @@ export default function CaseStudy({
 
       // The gallery owns this slice of the scroll and nothing else overlaps
       // it, so the plates are gone before the results chapter is readable.
-      const GALLERY_IN = 0.14;
-      const GALLERY_OUT = 0.62;
+      const GALLERY_IN = 0.32;
+      const GALLERY_OUT = 0.64;
 
-      gsap.set(q(".cs-intro-item"), { opacity: 0, y: 24, scale: 0.98 });
-      gsap.set(q(".cs-warm"), { opacity: 0 });
+      // The line is already in place under the curtain — the slats retracting
+      // are what reveals it. Fading it up underneath would be two reveals of
+      // the same words.
       gsap.set(q(".cs-metrics"), { opacity: 0 });
       gsap.set(q(".cs-results-head"), { opacity: 0, y: 30 });
       gsap.set(q(".cs-metric"), { opacity: 0, y: 64 });
@@ -95,16 +98,29 @@ export default function CaseStudy({
           end: "bottom bottom",
           scrub: 0.6,
           onUpdate: (self) =>
-            surface.current?.setTone(self.progress > 0.16 && self.progress < 0.62 ? "light" : "dark"),
+            surface.current?.setTone(self.progress < 0.28 ? "light" : "dark"),
         },
       });
 
-      // 1. the dark intro
-      tl.to(q(".cs-intro-item"), { opacity: 1, y: 0, scale: 1, duration: 0.06, stagger: 0.02 }, 0.02)
-        .to(q(".cs-intro"), { opacity: 0, duration: 0.05 }, 0.14)
+      // 1. The screen is covered in slats over a white ground. They pull back
+      //    from the middle outward and the line is left standing in the
+      //    clearing — sondaven.com's reveal.
+      const curtain = { p: 0 };
+      tl.to(
+        curtain,
+        {
+          p: 1,
+          duration: 0.2,
+          ease: "none",
+          onUpdate: () => slats.current?.setProgress(curtain.p),
+        },
+        0.02,
+      )
 
-        // 2. warm ground for the gallery
-        .to(q(".cs-warm"), { opacity: 1, duration: 0.06 }, 0.14);
+        // 2. The line leaves and the ground turns over: white to black, which
+        //    is the ground the plates travel across.
+        .to(q(".cs-intro"), { opacity: 0, duration: 0.06 }, 0.24)
+        .to(q(".cs-white"), { opacity: 0, duration: 0.08, ease: "power2.inOut" }, 0.24);
 
       // Every plate crosses the frame bottom-right to upper-left, each at its
       // own rate, which is what makes them overlap on the way through.
@@ -143,7 +159,7 @@ export default function CaseStudy({
       });
 
       // 3. the collage clears, and only then does the metrics chapter open
-      tl.to(q(".cs-warm"), { opacity: 0, duration: 0.06 }, GALLERY_OUT)
+      tl
         .to(q(".cs-metrics"), { opacity: 1, duration: 0.05 }, GALLERY_OUT + 0.02)
 
         // 4. the headline lands in the centre of the empty frame
@@ -172,7 +188,9 @@ export default function CaseStudy({
     (root) => {
       const q = gsap.utils.selector(root);
       gsap.set(q(".cs-intro-item, .cs-metric, .cs-results-head"), { opacity: 1, y: 0, scale: 1 });
-      gsap.set(q(".cs-metrics, .cs-warm"), { opacity: 1 });
+      gsap.set(q(".cs-metrics"), { opacity: 1 });
+      gsap.set(q(".cs-white"), { opacity: 0 });
+      slats.current?.setProgress(1);
       gsap.set(q(".cs-plate"), { opacity: 1 });
     },
   );
@@ -199,19 +217,19 @@ export default function CaseStudy({
         maxWidth: 900,
       }}
     >
-      <MicroLabel tone="accent" className="cs-intro-item">
+      <MicroLabel tone="light" className="cs-intro-item">
         {copy.label}
       </MicroLabel>
-      <h2 className="cs-intro-item" style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>
+      <h2 className="cs-intro-item" style={{ margin: 0, ...typeScale.h1 }}>
         {copy.headline.map((line, i) => (
-          <GradientRevealText key={i} as="span" tone="dark" style={{ display: "block" }}>
+          <GradientRevealText key={i} as="span" tone="light" style={{ display: "block" }}>
             {line}
           </GradientRevealText>
         ))}
       </h2>
       <p
         className="cs-intro-item"
-        style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "48ch" }}
+        style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "48ch" }}
       >
         {copy.intro}
       </p>
@@ -338,11 +356,11 @@ export default function CaseStudy({
       }}
     >
       <div className="cs-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
-        {/* ---- warm ground for the gallery ---- */}
+        {/* ---- the opening ground: white, and it goes to black on scroll ---- */}
         <div
-          className="cs-warm"
+          className="cs-white"
           aria-hidden="true"
-          style={{ position: "absolute", inset: 0, opacity: 0, background: color.warmNeutral }}
+          style={{ position: "absolute", inset: 0, background: color.bone }}
         />
 
         {/* ---- the collage, travelling bottom-right to upper-left ---- */}
@@ -383,7 +401,7 @@ export default function CaseStudy({
           ))}
         </div>
 
-        {/* ---- dark intro ---- */}
+        {/* ---- the line, uncovered by the slats ---- */}
         <div
           className="cs-intro"
           style={{
@@ -392,11 +410,18 @@ export default function CaseStudy({
             display: "grid",
             placeItems: "center",
             padding: `0 ${layout.pad}`,
-            background: `radial-gradient(70% 55% at 50% 45%, ${hexA(color.accentDeep, 0.5)} 0%, ${color.black} 72%)`,
+            color: color.textOnLight,
           }}
         >
-          <Grain opacity={0.2} />
           <div style={{ position: "relative" }}>{headline}</div>
+        </div>
+
+        {/* ---- the slat curtain over it, retracting centre-out ---- */}
+        <div
+          className="cs-curtain"
+          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+        >
+          <SlatCurtain handleRef={slats} color={color.black} />
         </div>
 
         {/* ---- the metrics chapter ---- */}
