@@ -4,6 +4,7 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { testimonials as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MicroLabel } from "../shared/primitives";
+import RevealText from "../shared/RevealText";
 import { useBreakpoint } from "../shared/responsive";
 
 /**
@@ -135,7 +136,9 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
         }}
       >
         <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-        <h2 style={{ margin: 0, ...typeScale.h2 }}>{copy.headline}</h2>
+        <RevealText as="h2" style={{ ...typeScale.h2 }}>
+          {copy.headline}
+        </RevealText>
         <div style={{ display: "flex", flexDirection: "column", gap: layout.gutter }}>
           {copy.cards.map((t) => (
             <article key={t.initials} style={cardStyle}>
@@ -181,7 +184,9 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
           }}
         >
           <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.h2 }}>{copy.headline}</h2>
+          <RevealText as="h2" style={{ ...typeScale.h2 }}>
+            {copy.headline}
+          </RevealText>
         </div>
 
         <div style={{ position: "absolute", inset: 0 }}>

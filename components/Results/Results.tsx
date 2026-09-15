@@ -5,6 +5,7 @@ import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { ArrowIcon, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
+import RevealText from "../shared/RevealText";
 
 /**
  * Results / Proof — clipcut.framer.ai reference.
@@ -60,7 +61,9 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         }}
       >
         <MicroLabel tone="ruby">{copy.label}</MicroLabel>
-        <h2 style={{ margin: 0, ...typeScale.h2 }}>{copy.headline}</h2>
+        <RevealText as="h2" style={{ ...typeScale.h2 }}>
+          {copy.headline}
+        </RevealText>
         <p
           style={{
             margin: 0,

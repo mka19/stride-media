@@ -6,6 +6,7 @@ import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, StrideMark } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import FieldTexture from "./FieldTexture";
+import RevealText from "../shared/RevealText";
 
 /**
  * How It Works — anubischain.ai reference.
@@ -152,9 +153,9 @@ export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: 
       }}
     >
       <span className="hw-intro-item">{tag("//", "How it works")}</span>
-      <h2 className="hw-intro-item" style={{ margin: 0, ...typeScale.h1 }}>
+      <RevealText as="h2" className="hw-intro-item" style={{ ...typeScale.h1 }}>
         {copy.headline}
-      </h2>
+      </RevealText>
       <p
         className="hw-intro-item"
         style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted }}

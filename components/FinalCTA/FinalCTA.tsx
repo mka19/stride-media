@@ -2,6 +2,7 @@ import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, finalCta as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
+import RevealText from "../shared/RevealText";
 import { useBreakpoint } from "../shared/responsive";
 
 /**
@@ -98,16 +99,18 @@ export default function FinalCTA({
             </MicroLabel>
           </div>
 
-          <h2
-            className="cta-item"
-            style={{ position: "relative", margin: `${rhythm.eyebrowToHeadline}px 0 0`, ...typeScale.h1 }}
-          >
-            {copy.headline.map((line) => (
-              <span key={line} style={{ display: "block" }}>
+          <div style={{ position: "relative", marginTop: rhythm.eyebrowToHeadline }}>
+            {copy.headline.map((line, i) => (
+              <RevealText
+                key={line}
+                as="h2"
+                delay={i * 0.06}
+                style={{ ...typeScale.h1, display: "block" }}
+              >
                 {line}
-              </span>
+              </RevealText>
             ))}
-          </h2>
+          </div>
 
           <p
             className="cta-item"
