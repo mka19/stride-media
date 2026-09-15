@@ -38,7 +38,8 @@ export default function CaseStudy({
     src: gallery[i],
     x: [8, 62, 30, 78, 14, 48, 70, 24][i % 8],
     y: [18, 8, 52, 38, 74, 64, 22, 88][i % 8],
-    w: [300, 240, 380, 260, 340, 220, 300, 280][i % 8],
+    // Spacing doc: gallery plates vary between 240 and 480 wide.
+    w: [320, 240, 480, 280, 400, 260, 360, 300][i % 8],
     speed: [1, 1.5, 0.8, 1.7, 1.2, 0.65, 1.35, 0.95][i % 8],
   }));
 

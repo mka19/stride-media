@@ -19,6 +19,8 @@ export const brand = {
   email: "hello@stridemedia.co", // PLACEHOLDER
   url: "stridemedia.co",
   calendly: "https://calendly.com/stride-media/strategy-call", // PLACEHOLDER
+  /** Flip to true once the Calendly link above is the real one. */
+  calendlyReady: false,
 } as const;
 
 export const nav = {

@@ -1,4 +1,4 @@
-import { gsap, useGsapContext } from "../shared/gsap";
+import { gsap, ScrollTrigger, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { useEffect, useRef } from "react";
 import { howItWorks as copy } from "../shared/copy";
@@ -55,14 +55,30 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
       tl.to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.06, stagger: 0.02 }, 0.02)
         .to(q(".hw-intro"), { opacity: 0, duration: 0.04 }, 0.2)
 
-        // 2. the flash: glow blooms, the mark shows inside it, then it clears
-        .to(q(".hw-flash"), { opacity: 1, duration: 0.03 }, 0.2)
-        .to(q(".hw-flash-mark"), { opacity: 1, scale: 1, duration: 0.03 }, 0.22)
-        .to(q(".hw-flash-mark"), { opacity: 0, scale: 1.25, duration: 0.03 }, 0.26)
-        .to(q(".hw-flash"), { opacity: 0, duration: 0.04 }, 0.28)
-
         // 3. the steps, one at a time
         .to(q(".hw-steps"), { opacity: 1, duration: 0.03 }, 0.28);
+
+      // 2. The flash is a fixed ~700ms burst fired at the checkpoint, not a
+      // scrubbed tween: scrubbing would tie its length to how fast the
+      // visitor happens to be scrolling, and the spec calls for a quick
+      // chapter break of a set duration.
+      const flash = gsap
+        .timeline({ paused: true })
+        .to(q(".hw-flash"), { opacity: 1, duration: 0.12, ease: "power2.out" })
+        .to(q(".hw-flash-mark"), { opacity: 1, scale: 1, duration: 0.18, ease: "power2.out" }, 0.06)
+        .to(q(".hw-flash-mark"), { opacity: 0, scale: 1.25, duration: 0.2, ease: "power2.in" }, 0.36)
+        .to(q(".hw-flash"), { opacity: 0, duration: 0.18, ease: "power2.in" }, 0.5);
+
+      ScrollTrigger.create({
+        trigger: root,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          const inWindow = self.progress > 0.2 && self.progress < 0.3;
+          if (inWindow && !flash.isActive() && flash.progress() === 0) flash.play(0);
+          if (!inWindow && flash.progress() === 1) flash.progress(0).pause();
+        },
+      });
 
       const steps = q(".hw-step");
       steps.forEach((step, i) => {
@@ -160,7 +176,7 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
       </div>
       <p
         className="hw-close-line"
-        style={{ margin: 0, ...typeScale.h2, color: color.textOnDark, maxWidth: "20ch" }}
+        style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDark, maxWidth: "34ch" }}
       >
         {copy.closing}
       </p>

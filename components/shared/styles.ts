@@ -42,10 +42,18 @@ export const strideKeyframes = `
 @keyframes stride-spin { to { transform: rotate(360deg); } }
 .stride-spin { animation: stride-spin 20s linear infinite; }
 
+/* Ambient dots: a slow float that never resets abruptly. */
+@keyframes stride-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(14px, -22px, 0); }
+}
+.stride-float { animation-name: stride-float; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   .stride-drift { animation: none; }
   .stride-pulse { animation: none; }
   .stride-spin { animation: none; }
+  .stride-float { animation: none; }
 }
 `;
 

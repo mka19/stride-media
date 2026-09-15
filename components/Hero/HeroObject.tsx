@@ -286,7 +286,7 @@ export default function HeroObject({
 
     // A wide, dim halo behind the mark so the glow spills onto the page.
     const halo = new THREE.Mesh(
-      new THREE.PlaneGeometry(11, 11),
+      new THREE.PlaneGeometry(5.2, 5.2),
       new THREE.ShaderMaterial({
         uniforms,
         transparent: true,
@@ -305,7 +305,7 @@ export default function HeroObject({
         `,
       }),
     );
-    halo.position.z = -2.2;
+    halo.position.z = -1.2;
     scene.add(halo);
 
     // --- loop -------------------------------------------------------------

@@ -139,8 +139,8 @@ export default function Hero({
           <VideoMosaic
             tiles={tiles}
             interactive={interactive && canHover}
-            columns={bp === "mobile" ? 1 : bp === "tablet" ? 3 : 5}
-            rows={bp === "mobile" ? 1 : bp === "tablet" ? 2 : 3}
+            columns={bp === "mobile" ? 1 : bp === "tablet" ? 6 : 12}
+            rows={bp === "mobile" ? 1 : bp === "tablet" ? 3 : 5}
           />
         </div>
 
@@ -307,7 +307,7 @@ export default function Hero({
             className="stride-scroll-line"
             style={{
               width: 1,
-              height: 46,
+              height: 48,
               background: `linear-gradient(180deg, ${hexA(color.ruby, 0.9)}, transparent)`,
               transition: `opacity 400ms ${ease.out}`,
             }}

@@ -4,13 +4,17 @@ import Problem from "../components/Problem/Problem";
 import Solution from "../components/Solution/Solution";
 import HowItWorks from "../components/HowItWorks/HowItWorks";
 import CaseStudy from "../components/CaseStudy/CaseStudy";
+import WhyStride from "../components/WhyStride/WhyStride";
+import Results from "../components/Results/Results";
+import Testimonials from "../components/Testimonials/Testimonials";
+import FinalCTA from "../components/FinalCTA/FinalCTA";
+import FAQ from "../components/FAQ/FAQ";
+import Footer from "../components/Footer/Footer";
 
 /**
- * Preview harness. Not part of the Framer deliverable — it exists so each
- * code component can be developed and checked in a real browser at real
- * scroll lengths before being pasted into Framer.
- *
- * Sections are added here as they are built; Nav and Hero are the first pass.
+ * Preview harness. Not part of the Framer deliverable — it exists so the
+ * code components can be developed and checked in a real browser at real
+ * scroll lengths before being pasted into Framer, in the locked order.
  */
 export default function App() {
   return (
@@ -21,23 +25,12 @@ export default function App() {
       <Solution />
       <HowItWorks />
       <CaseStudy />
-      {/* Placeholder runway for the sections still to come. */}
-      <section
-        id="results"
-        style={{
-          height: "120vh",
-          background: "#0B0807",
-          color: "rgba(246,241,236,0.4)",
-          display: "grid",
-          placeItems: "center",
-          fontFamily: "ui-monospace, monospace",
-          fontSize: 12,
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-        }}
-      >
-        next — why stride · results · testimonials · cta · faq · footer
-      </section>
+      <WhyStride />
+      <Results />
+      <Testimonials />
+      <FinalCTA />
+      <FAQ />
+      <Footer />
     </>
   );
 }
