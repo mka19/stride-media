@@ -37,7 +37,6 @@ export default function Hero({
   const canHover = useCanHover();
   // The object steps down with the viewport; the mosaic's push needs a real
   // pointer, so on touch it becomes a single quiet backdrop instead.
-  const objectSize = bp === "mobile" ? "40vmin" : bp === "tablet" ? "58vmin" : "min(600px, 66vw)";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -172,7 +171,10 @@ export default function Hero({
             justifyContent: "center",
           }}
         >
-          <div style={{ width: objectSize, height: objectSize }}>
+          {/* The canvas fills the frame. It used to be a square the size of
+              the mark, which clipped the dissolve — the particles travel
+              outward and stopped dead at the box's edges. */}
+          <div style={{ position: "absolute", inset: 0 }}>
             <HeroObject handleRef={objectRef} breakpoint={bp} />
           </div>
         </div>

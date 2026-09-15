@@ -75,7 +75,26 @@ export default function HeroObject({
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, mount.clientWidth / mount.clientHeight, 0.1, 100);
-    camera.position.set(0, 0, 6.4);
+
+    /**
+     * How many pixels tall the mark should read as.
+     *
+     * The canvas used to be a square box the size of the mark, which clipped
+     * the dissolve: the particles travel outward and simply stopped at the
+     * box's edges, so the scatter happened inside a visible rectangle. The
+     * canvas now fills the frame, and the camera pulls back in proportion to
+     * how much taller the frame is than the mark, so the mark itself stays
+     * the size it was while the particles have the whole frame to cross.
+     */
+    const markPx = () => {
+      const vmin = Math.min(window.innerWidth, window.innerHeight);
+      if (breakpoint === "mobile") return vmin * 0.4;
+      if (breakpoint === "tablet") return vmin * 0.58;
+      return Math.min(600, window.innerWidth * 0.66);
+    };
+    const zScale = () => Math.max(1, mount.clientHeight / Math.max(1, markPx()));
+
+    camera.position.set(0, 0, 6.4 * zScale());
 
     const accent = new THREE.Color(color.accentBright);
     const deep = new THREE.Color(color.accentDeep);
@@ -237,13 +256,16 @@ export default function HeroObject({
     scene.add(cloud);
 
     // --- dust -------------------------------------------------------------
+    const dustSpread = zScale() * 1.15;
     // The drifting specks in the Anubis reference, warm rather than green.
     const dustCount = Math.round(220 * detail);
     const dustPos = new Float32Array(dustCount * 3);
     const dustSeed = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
-      dustPos[i * 3] = (Math.random() - 0.5) * 11;
-      dustPos[i * 3 + 1] = (Math.random() - 0.5) * 7;
+      // Spread with the frame rather than with the old square, so the specks
+      // reach the corners instead of ending in a block in the middle.
+      dustPos[i * 3] = (Math.random() - 0.5) * 11 * dustSpread;
+      dustPos[i * 3 + 1] = (Math.random() - 0.5) * 7 * dustSpread;
       dustPos[i * 3 + 2] = (Math.random() - 0.5) * 5 - 1;
       dustSeed[i * 3] = Math.random();
       dustSeed[i * 3 + 1] = Math.random();
@@ -364,7 +386,7 @@ export default function HeroObject({
       cloud.rotation.copy(solid.rotation);
       cloud.position.copy(solid.position);
 
-      camera.position.z = 6.4 + eased * 1.6;
+      camera.position.z = (6.4 + eased * 1.6) * zScale();
       renderer.render(scene, camera);
     };
     tick();
