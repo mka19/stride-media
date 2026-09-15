@@ -1,5 +1,5 @@
 import Lenis from "lenis";
-import { gsap, ScrollTrigger } from "./gsap";
+import { gsap, ScrollTrigger, prefersReducedMotion } from "./gsap";
 
 /**
  * Smooth scroll.
@@ -27,7 +27,7 @@ const NAV_OFFSET = 88;
 
 export function initSmoothScroll(): () => void {
   if (typeof window === "undefined") return () => {};
-  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return () => {};
+  if (prefersReducedMotion()) return () => {};
 
   const lenis = new Lenis({
     duration: 1.2,

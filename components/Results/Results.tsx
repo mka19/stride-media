@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { gsap, useGsapContext } from "../shared/gsap";
+import { gsap, useGsapContext, prefersReducedMotion } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { ArrowIcon, MediaTile, MicroLabel } from "../shared/primitives";
@@ -136,7 +136,7 @@ function Ticker({ children }: { children: ReactNode }) {
     const view = viewport.current;
     if (!el || !view) return;
 
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
 
     let offset = 0;
     let velocity = 0;

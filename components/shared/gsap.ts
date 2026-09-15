@@ -22,9 +22,37 @@ if (typeof window !== "undefined" && !registered) {
 
 export { gsap, ScrollTrigger };
 
+/**
+ * An explicit override for the reduced-motion preference, read once from
+ * `?motion=on` / `?motion=off` and then remembered for the tab.
+ *
+ * Windows turns "Animation effects" off by default on a lot of machines, and
+ * Edge and Chrome report that as `prefers-reduced-motion: reduce` — which
+ * switched off every scroll sequence on this site at once and made the whole
+ * build look broken rather than calm. Honouring the setting is still the
+ * default; this only exists so the site can be demonstrated on a machine that
+ * has it on without asking anyone to go and change their OS settings.
+ */
+function motionOverride(): boolean | null {
+  try {
+    const param = new URLSearchParams(window.location.search).get("motion");
+    if (param === "on" || param === "off") {
+      window.sessionStorage.setItem("stride-motion", param);
+      return param === "on";
+    }
+    const saved = window.sessionStorage.getItem("stride-motion");
+    if (saved === "on" || saved === "off") return saved === "on";
+  } catch {
+    // Private mode, or storage blocked: fall through to the OS preference.
+  }
+  return null;
+}
+
 /** True when the visitor has asked for reduced motion, or we're server-side. */
 export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return true;
+  const forced = motionOverride();
+  if (forced !== null) return !forced;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 

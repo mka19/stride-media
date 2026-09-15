@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { color, hexA } from "../shared/theme";
 import { detailFor, type Breakpoint } from "../shared/responsive";
+import { prefersReducedMotion } from "../shared/gsap";
 
 /**
  * The texture behind the step sequence: a drifting dot network, hairline
@@ -25,7 +26,7 @@ export default function FieldTexture({
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     const detail = detailFor(breakpoint);
     const dpr = Math.min(window.devicePixelRatio, 2);
     const ink = tone === "light" ? color.textOnLight : color.textOnDark;

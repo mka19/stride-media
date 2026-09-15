@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { color, layout, space, typeScale } from "./theme";
+import { prefersReducedMotion } from "./gsap";
 
 /**
  * A strip of oversized text travelling continuously between two hairlines —
@@ -28,7 +29,7 @@ export default function Marquee({
   useEffect(() => {
     const el = track.current;
     if (!el) return;
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
 
     let offset = 0;
     let prev = performance.now();

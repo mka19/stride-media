@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { color } from "../shared/theme";
+import { prefersReducedMotion } from "../shared/gsap";
 
 /**
  * The footer wordmark, drawn to canvas so it can come apart under the
@@ -38,7 +39,7 @@ export default function Wordmark({
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     const dpr = Math.min(window.devicePixelRatio, 2);
 
     let w = 0;

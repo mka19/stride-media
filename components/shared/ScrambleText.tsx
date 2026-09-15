@@ -1,6 +1,7 @@
 import { createElement, useEffect, useRef, useState } from "react";
 import type { CSSProperties, ElementType } from "react";
 import { useInView } from "./useInView";
+import { prefersReducedMotion } from "./gsap";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&/<>*+";
 
@@ -45,7 +46,7 @@ export default function ScrambleText({
   useEffect(() => {
     if (!started) return;
 
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion()) {
       setShown(children);
       return;
     }
