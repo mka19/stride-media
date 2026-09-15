@@ -12,7 +12,12 @@
 @media (min-width: 1440px) { :root { --stride-pad: 72px; --stride-section: 128px; } }
 @media (min-width: 1920px) { :root { --stride-pad: 96px; --stride-section: 160px; } }
 
-html { scroll-behavior: smooth; }
+/* Lenis owns smooth scrolling. The native version fights it for the same
+   gesture, so it stays off except where Lenis stands down. */
+html { scroll-behavior: auto; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 
 html, body, #root {
   margin: 0;

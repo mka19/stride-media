@@ -14,6 +14,9 @@ export const strideFontHref =
   "https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
 
 export const strideKeyframes = `
+/* Lenis owns smooth scrolling; the native one would fight it. */
+html { scroll-behavior: auto; }
+
 /* Base size is the body token, so inherited text is on the scale too. */
 body {
   font-family: "Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont,
