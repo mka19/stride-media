@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { caseStudy as copy } from "../shared/copy";
-import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
+import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import ScrambleText from "../shared/ScrambleText";
 import HoverBadge from "../shared/HoverBadge";
@@ -248,7 +248,7 @@ export default function CaseStudy({
             style={{
               ...typeScale.numberXl,
               fontSize: typeScale.h1.fontSize,
-              color: color.accent,
+              ...numberGradient,
               textShadow: `0 0 28px ${hexA(color.accent, 0.45)}`,
               // The tally rewrites this node every frame; a tabular figure
               // keeps the column from jittering as the digits change.

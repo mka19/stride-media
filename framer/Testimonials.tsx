@@ -2,7 +2,7 @@ import { gsap, useGsapContext } from "./gsap";
 import { useEffect, useRef } from "react";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { testimonials as copy } from "./copy";
-import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
+import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
 import { MicroLabel } from "./primitives";
 import RevealText from "./RevealText";
 import { useBreakpoint } from "./responsive";
@@ -132,7 +132,7 @@ export default function Testimonials() {
       <p style={{ margin: 0, ...typeScale.bodyLg }}>“{t.quote}”</p>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space.s }}>
         <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
-        <span style={{ ...typeScale.h3, fontWeight: 700, color: color.accent }}>{t.stat}</span>
+        <span style={{ ...typeScale.h3, fontWeight: 700, ...numberGradient }}>{t.stat}</span>
       </div>
     </>
   );

@@ -130,6 +130,23 @@ export const rhythm = {
   headerToContent: space.h, // 64
 } as const;
 
+/**
+ * Big numerals are filled with a gradient rather than a flat accent, so a
+ * figure reads as lit from one side instead of as a block of colour. Applied
+ * to the stat numbers, the numbered card marks and the metric tallies.
+ *
+ * `WebkitTextFillColor` is what actually clears the glyph in WebKit; `color`
+ * alone leaves the text painted over the gradient. A text-shadow still draws
+ * from the glyph outline, so the accent glow survives the transparent fill.
+ */
+export const numberGradient = {
+  backgroundImage: `linear-gradient(104deg, ${color.accent} 0%, ${color.accentBright} 52%, #E4DBFF 100%)`,
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+} as const;
+
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;
 

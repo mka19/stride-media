@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
-import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
+import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 
@@ -227,7 +227,7 @@ export default function Problem({
                   style={{ position: "absolute", inset: 0 }}
                 />
               </div>
-              <div style={{ ...typeScale.numberXl, color: color.accent }}>{card.n}</div>
+              <div style={{ ...typeScale.numberXl, ...numberGradient }}>{card.n}</div>
               <p
                 style={{
                   margin: 0,
@@ -429,7 +429,7 @@ export default function Problem({
                       className="pb-number"
                       style={{
                         ...typeScale.numberXl,
-                        color: color.accent,
+                        ...numberGradient,
                         textShadow: `0 0 30px ${hexA(color.accent, 0.4)}`,
                         willChange: "transform",
                       }}
