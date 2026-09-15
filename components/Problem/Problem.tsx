@@ -43,9 +43,9 @@ export default function Problem({
 
       gsap.set(q(".pb-word"), { opacity: 0.12 });
       gsap.set(q(".pb-light"), { opacity: 0, scale: 1.04 });
-      gsap.set(cards, { opacity: 0, y: 0 });
+      gsap.set(cards, { opacity: 0, yPercent: -50, top: "50%" });
       gsap.set(cards[0], { opacity: 1 });
-      gsap.set(q(".pb-aside"), { opacity: 0, y: 16 });
+      // The centring transform is now GSAP's, so drop the CSS one it replaced.
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -60,9 +60,16 @@ export default function Problem({
       });
 
       // --- part 1: paragraph reveals, word by word ----------------------
-      tl.to(q(".pb-word"), { opacity: 1, duration: 0.5, stagger: 0.02, ease: "none" }, 0.02)
-        .to(q(".pb-aside"), { opacity: 1, y: 0, duration: 0.12 }, 0.26)
-        // --- crossfade into part 2 --------------------------------------
+      // `amount` spreads the whole stagger across a fixed slice of the
+      // timeline, so the last word always lands at 0.25 no matter how many
+      // words the copy has. A per-word `each` scaled with the word count and
+      // ran long, which cut to part 2 mid-sentence.
+      tl.to(
+        q(".pb-word"),
+        { opacity: 1, duration: 0.05, stagger: { amount: 0.18 }, ease: "none" },
+        0.02,
+      )
+        // --- crossfade into part 2, only once the statement is complete ---
         .to(q(".pb-dark"), { opacity: 0, duration: 0.1 }, 0.34)
         .to(q(".pb-light"), { opacity: 1, scale: 1, duration: 0.12 }, 0.34);
 
@@ -79,10 +86,12 @@ export default function Problem({
           // card fades out while the new one fades in and rises a few pixels.
           // Staggering the parts makes one state look like it is assembling
           // rather than like the slot changing its contents.
+          // yPercent, not y: the card is centred with a translateY(-50%), and
+          // GSAP writes its own transform, so the rise has to be relative.
           tl.to(cards[i - 1], { opacity: 0, duration: 0.05, ease: "power2.inOut" }, at).fromTo(
             card,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.05, ease: "power2.out" },
+            { opacity: 0, yPercent: -48 },
+            { opacity: 1, yPercent: -50, duration: 0.05, ease: "power2.out" },
             at + 0.012,
           );
         }
@@ -96,7 +105,6 @@ export default function Problem({
       // shown; the other two are reachable as static content below it.
       const q = gsap.utils.selector(root);
       gsap.set(q(".pb-word"), { opacity: 1 });
-      gsap.set(q(".pb-aside"), { opacity: 1, y: 0 });
       gsap.set(q(".pb-card"), { opacity: 1, position: "relative" });
       gsap.set(q(".pb-light"), { opacity: 1, scale: 1 });
       gsap.set(q(".pb-dark"), { opacity: 1 });
@@ -150,16 +158,16 @@ export default function Problem({
             style={{
               position: "relative",
               height: "100%",
-              display: "grid",
-              gridTemplateColumns: "minmax(0, 8fr) minmax(0, 4fr)",
-              /* The statement sits in the lower third, over the background. */
-              alignContent: "end",
-              gap: space.xxl,
-              padding: `0 ${layout.pad} 18vh`,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: `0 ${layout.pad}`,
               color: color.textOnDark,
             }}
           >
-            <div>
+            <div style={{ maxWidth: 720 }}>
               <MicroLabel tone="ruby" style={{ marginBottom: rhythm.eyebrowToHeadline }}>
                 {copy.label}
               </MicroLabel>
@@ -179,19 +187,6 @@ export default function Problem({
               </p>
             </div>
 
-            <div
-              className="pb-aside"
-              style={{
-                alignSelf: "end",
-                maxWidth: 300,
-                ...typeScale.body,
-                color: color.textOnDarkMuted,
-                borderLeft: `1px solid ${color.hairlineOnDark}`,
-                paddingLeft: space.lg,
-              }}
-            >
-              {copy.introAside}
-            </div>
           </div>
         </div>
 
@@ -216,19 +211,32 @@ export default function Problem({
             }}
           >
             {/* The slot. Every state stacks here and swaps in place. */}
-            <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
+            <div
+              style={{
+                position: "relative",
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               {copy.cards.map((card, i) => (
                 <article
                   key={card.n}
                   className="pb-card"
                   style={{
                     position: "absolute",
-                    inset: 0,
+                    left: 0,
+                    right: 0,
+                    top: "50%",
+                    /* A composed block rather than a viewport-tall spread: the
+                       columns align to the portrait's height. */
+                    height: "min(560px, 62vh)",
                     display: "grid",
                     /* Three columns, as in the reference: the statement on the
                        left, a portrait frame down the middle, the number and
                        its supporting line on the right. */
-                    gridTemplateColumns: "40% 30% 30%",
+                    gridTemplateColumns: "35% 30% 35%",
                     alignItems: "stretch",
                     gap: space.lg,
                   }}
@@ -272,15 +280,15 @@ export default function Problem({
                       justifyContent: "center",
                       gap: space.md,
                       minHeight: 0,
+                      height: "100%",
                     }}
                   >
                     <div
                       style={{
                         position: "relative",
-                        width: "100%",
-                        maxWidth: 340,
+                        height: "100%",
                         aspectRatio: "3 / 4",
-                        maxHeight: "100%",
+                        maxWidth: "100%",
                       }}
                     >
                       <MediaTile
@@ -319,7 +327,6 @@ export default function Problem({
                       style={{
                         margin: 0,
                         maxWidth: "34ch",
-                        paddingBottom: "6vh",
                         ...typeScale.body,
                         color: color.textOnLightMuted,
                       }}

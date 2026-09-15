@@ -8,7 +8,8 @@ import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
  * Sticky nav — designxhand.com/experience reference, locked.
  *
  * A thin hairline runs the full width along the bottom of the bar, divided
- * into one segment per nav item. As the visitor scrolls through the section
+ * into one segment per section link. Every segment starts empty and is only
+ * ever filled by scroll progress; the wordmark has no segment at all. As the visitor scrolls through the section
  * an item points at, that item's segment fills left to right in ruby; when
  * the next section takes over, the previous segment stays complete and the
  * next one starts. Each label carries a small hollow dot marker, and a short
@@ -107,7 +108,7 @@ export default function Nav({
         transition: `background 600ms ${ease.out}, color 600ms ${ease.out}`,
       }}
     >
-      {/* Wordmark cell — its segment is solid, the anchor the rest reads from. */}
+      {/* Wordmark. No underline: the fill treatment belongs to section links. */}
       <a
         href="#top"
         style={{
@@ -124,7 +125,6 @@ export default function Nav({
         <span style={{ ...typeScale.labelSm, fontWeight: 600, letterSpacing: "0.18em" }}>
           {brand.mark}
         </span>
-        <Segment fill={1} active={false} tick={false} width="58%" hairline={hairline} />
       </a>
 
       <nav

@@ -39,31 +39,65 @@ export default function Solution({
       gsap.set(q(".sol-pillar"), { opacity: 0, y: 34 });
       gsap.set(q(".sol-scrim"), { opacity: 0 });
 
+      // The contained frame starts below the header rather than at a fixed
+      // percentage: the header's height depends on the viewport and the copy,
+      // and a guessed percentage put the plate through the headline.
+      const frame = q(".sol-frame")[0] as HTMLElement;
+      const head = q(".sol-head")[0] as HTMLElement;
+      const stage = q(".sol-stage")[0] as HTMLElement;
+
+      const placeFrame = () => {
+        const stageBox = stage.getBoundingClientRect();
+        const headBox = head.getBoundingClientRect();
+        const top = Math.max(headBox.bottom - stageBox.top + space.xxl, stageBox.height * 0.3);
+        gsap.set(frame, {
+          top,
+          left: stageBox.width * 0.22,
+          right: stageBox.width * 0.22,
+          bottom: stageBox.height * 0.14,
+          borderRadius: 10,
+        });
+      };
+      placeFrame();
+
       // The section is visible from the moment it rises into the viewport,
       // well before it pins. This entry pass covers that stretch, so the
       // video arrives softly instead of appearing at the pin.
       gsap
         .timeline({
-          scrollTrigger: { trigger: root, start: "top bottom", end: "top top", scrub: 0.7 },
+          scrollTrigger: {
+            trigger: root,
+            start: "top bottom",
+            end: "top top",
+            scrub: 0.7,
+            invalidateOnRefresh: true,
+            onRefresh: placeFrame,
+          },
         })
         .to(q(".sol-stage"), { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, 0)
         .to(q(".sol-intro"), { opacity: 1, y: 0, duration: 0.4, stagger: 0.06 }, 0.3);
 
       // Everything from here happens while the frame is pinned.
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.7 },
+        scrollTrigger: {
+          trigger: root,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.7,
+          invalidateOnRefresh: true,
+        },
       });
 
       // 1. The frame grows to full bleed. Insets and radius animate together
       //    so the corners release exactly as the edges reach the viewport.
       tl.to(q(".sol-intro"), { opacity: 0, y: -24, duration: 0.1 }, 0.06)
         .to(
-          q(".sol-frame"),
+          frame,
           {
-            top: "0%",
-            left: "0%",
-            right: "0%",
-            bottom: "0%",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             borderRadius: 0,
             duration: 0.3,
             ease: "power2.inOut",
@@ -86,7 +120,7 @@ export default function Solution({
       gsap.set(q(".sol-intro, .sol-pillar"), { opacity: 1, y: 0 });
       gsap.set(q(".sol-stage"), { opacity: 1, scale: 1 });
       gsap.set(q(".sol-scrim"), { opacity: 1 });
-      gsap.set(q(".sol-frame"), { top: "0%", left: "0%", right: "0%", bottom: "0%", borderRadius: 0 });
+      gsap.set(q(".sol-frame"), { top: 0, left: 0, right: 0, bottom: 0, borderRadius: 0 });
     },
   );
 
@@ -109,9 +143,10 @@ export default function Solution({
             className="sol-frame"
             style={{
               position: "absolute",
-              /* Starting frame: a landscape plate sitting clear of the
-                 header above it, roughly 16:9 at desktop widths. */
-              top: "32%",
+              /* Fallback only — the real insets are measured on mount and on
+                 every ScrollTrigger refresh, so the plate always clears the
+                 header whatever the viewport does to it. */
+              top: "38%",
               left: "22%",
               right: "22%",
               bottom: "14%",
@@ -152,6 +187,7 @@ export default function Solution({
           }}
         >
           <div
+            className="sol-head"
             style={{
               display: "flex",
               flexDirection: "column",
