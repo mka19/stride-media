@@ -48,12 +48,25 @@ function motionOverride(): boolean | null {
   return null;
 }
 
-/** True when the visitor has asked for reduced motion, or we're server-side. */
+/**
+ * True when the scroll choreography should be skipped.
+ *
+ * This deliberately does NOT follow the OS setting on its own. Windows ships
+ * with "Animation effects" off on a lot of machines and Edge reports that as
+ * `prefers-reduced-motion: reduce`, so following it silently meant a large
+ * share of visitors — the owner of this site included — got a page where the
+ * Problem's dark statement chapter never rendered at all and every pinned
+ * section painted all of its states on top of each other. That is not a calm
+ * version of the design; it is a broken one.
+ *
+ * Motion is on unless it is turned off explicitly, with `?motion=off`, which
+ * is remembered for the tab. Honouring the OS preference again is a matter of
+ * making each static fallback lay its section out correctly first — until
+ * then, the fallback is worse than the animation it replaces.
+ */
 export function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined" || !window.matchMedia) return true;
-  const forced = motionOverride();
-  if (forced !== null) return !forced;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window === "undefined") return true;
+  return motionOverride() === false;
 }
 
 /**
