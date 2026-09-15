@@ -20,7 +20,7 @@ import FieldTexture from "./FieldTexture";
  * Below the tablet breakpoint the pin is dropped and the four beats become
  * ordinary stacked blocks, with the flash reduced to a plain crossfade.
  */
-export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: string }) {
+export default function HowItWorks({ scrollLength = "380vh" }: { scrollLength?: string }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const bp = useBreakpoint();
   const stacked = bp === "mobile";
@@ -34,8 +34,6 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
       gsap.set(q(".hw-flash-mark"), { opacity: 0, scale: 0.7 });
       gsap.set(q(".hw-steps"), { opacity: 0 });
       gsap.set(q(".hw-step"), { opacity: 0, y: 15 });
-      gsap.set(q(".hw-close"), { opacity: 0 });
-      gsap.set(q(".hw-close-line"), { opacity: 0, y: 16 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -46,7 +44,7 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
           // Intro and steps are light; the flash and closing panel are dark.
           onUpdate: (self) => {
             const p = self.progress;
-            surface.current?.setTone(p > 0.2 && p < 0.3 ? "dark" : p > 0.78 ? "dark" : "light");
+            surface.current?.setTone(p > 0.2 && p < 0.3 ? "dark" : "light");
           },
         },
       });
@@ -82,22 +80,18 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
 
       const steps = q(".hw-step");
       steps.forEach((step, i) => {
-        const at = 0.34 + i * 0.13;
+        const at = 0.3 + i * 0.22;
         tl.to(step, { opacity: 1, y: 0, duration: 0.05, ease: "power2.out" }, at);
         // They share the same centre, so the previous one clears out.
         if (i > 0) tl.to(steps[i - 1], { opacity: 0, y: -15, duration: 0.05 }, at);
       });
 
-      // 4. closing panel
-      tl.to(q(".hw-steps"), { opacity: 0, duration: 0.04 }, 0.78)
-        .to(q(".hw-close"), { opacity: 1, duration: 0.05 }, 0.78)
-        .to(q(".hw-close-line"), { opacity: 1, y: 0, duration: 0.05 }, 0.84);
     },
     [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".hw-intro-item, .hw-step, .hw-close-line"), { opacity: 1, y: 0 });
-      gsap.set(q(".hw-steps, .hw-close"), { opacity: 1 });
+      gsap.set(q(".hw-intro-item, .hw-step"), { opacity: 1, y: 0 });
+      gsap.set(q(".hw-steps"), { opacity: 1 });
       gsap.set(q(".hw-flash"), { opacity: 0 });
     },
   );
@@ -190,29 +184,6 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
     </div>
   ));
 
-  const closing = (
-    <div
-      className="hw-close-inner"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: space.xxl,
-        textAlign: "center",
-      }}
-    >
-      <div className="stride-spin" style={{ lineHeight: 0 }}>
-        <StrideMark size={stacked ? 96 : 190} glowing />
-      </div>
-      <p
-        className="hw-close-line"
-        style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDark, maxWidth: "34ch" }}
-      >
-        {copy.closing}
-      </p>
-    </div>
-  );
-
   if (stacked) {
     return (
       <section
@@ -233,16 +204,6 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
           <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: layout.section }}>
             {stepList}
           </div>
-        </div>
-        <div
-          style={{
-            position: "relative",
-            background: color.black,
-            padding: `${layout.section} ${layout.pad}`,
-          }}
-        >
-          <Grain opacity={0.16} />
-          <div style={{ position: "relative" }}>{closing}</div>
         </div>
       </section>
     );
@@ -321,21 +282,6 @@ export default function HowItWorks({ scrollLength = "480vh" }: { scrollLength?: 
           </div>
         </div>
 
-        {/* ---- closing panel ---- */}
-        <div
-          className="hw-close"
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "grid",
-            placeItems: "center",
-            background: color.black,
-            padding: `0 ${layout.pad}`,
-          }}
-        >
-          <Grain opacity={0.16} />
-          <div style={{ position: "relative" }}>{closing}</div>
-        </div>
       </div>
     </section>
   );
