@@ -6,6 +6,12 @@
 
 * { box-sizing: border-box; }
 
+/* Side and section padding step at the spec's breakpoints. */
+:root { --stride-pad: 24px; --stride-section: 64px; }
+@media (min-width: 769px)  { :root { --stride-pad: 48px; --stride-section: 96px; } }
+@media (min-width: 1440px) { :root { --stride-pad: 72px; --stride-section: 128px; } }
+@media (min-width: 1920px) { :root { --stride-pad: 96px; --stride-section: 160px; } }
+
 html { scroll-behavior: smooth; }
 
 html, body, #root {

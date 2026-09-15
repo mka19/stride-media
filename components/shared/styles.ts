@@ -9,11 +9,21 @@
 const STYLE_ID = "stride-global-styles";
 const FONT_ID = "stride-fonts";
 
-/** Familjen Grotesk + Martian Mono, the two free faces in Trionn's stack. */
+/** One family, four weights. */
 export const strideFontHref =
-  "https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Martian+Mono:wght@300..600&display=swap";
+  "https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
 
 export const strideKeyframes = `
+/*
+ * Side and section padding step at the spec's breakpoints. Inline styles
+ * cannot carry media queries, so the steps live here and every section reads
+ * them through layout.pad / layout.section.
+ */
+:root { --stride-pad: 24px; --stride-section: 64px; }
+@media (min-width: 769px)  { :root { --stride-pad: 48px; --stride-section: 96px; } }
+@media (min-width: 1440px) { :root { --stride-pad: 72px; --stride-section: 128px; } }
+@media (min-width: 1920px) { :root { --stride-pad: 96px; --stride-section: 160px; } }
+
 @keyframes stride-drift {
   0%   { transform: scale(1.06) translate3d(0, 0, 0); }
   50%  { transform: scale(1.16) translate3d(-2.5%, -2%, 0); }

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGsapContext } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
-import { color, ease, fluid, font, glow, hexA, layout } from "../shared/theme";
+import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
@@ -101,7 +101,7 @@ export default function Hero({
         height: scrollLength,
         background: color.black,
         color: color.textOnDark,
-        fontFamily: font.sans,
+        fontFamily: typeScale.body.fontFamily,
       }}
     >
       <div
@@ -177,16 +177,15 @@ export default function Hero({
                owns the middle of the screen in phase 1. */
             justifyContent: "space-between",
             pointerEvents: "none",
-            padding: "16vh 24px 18vh",
+            padding: `16vh ${layout.pad} 18vh`,
           }}
         >
           <MicroLabel tone="ruby">{heroCopy.label}</MicroLabel>
           <div
             style={{
-              fontSize: 15,
-              letterSpacing: "0.01em",
+              ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
-              maxWidth: 420,
+              maxWidth: 640,
               textAlign: "center",
             }}
           >
@@ -205,7 +204,7 @@ export default function Hero({
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
-            gap: 28,
+            gap: rhythm.headlineToBody,
             padding: `0 ${layout.pad}`,
             pointerEvents: "none",
           }}
@@ -233,11 +232,7 @@ export default function Hero({
               position: "relative",
               margin: 0,
               maxWidth: "17ch",
-              fontFamily: font.display,
-              fontWeight: 500,
-              fontSize: fluid(38, 104),
-              lineHeight: 0.98,
-              letterSpacing: "-0.042em",
+              ...typeScale.displayXl,
               textWrap: "balance",
             }}
           >
@@ -261,16 +256,18 @@ export default function Hero({
             style={{
               position: "relative",
               margin: 0,
-              maxWidth: "54ch",
-              fontSize: fluid(14, 18),
-              lineHeight: 1.55,
+              maxWidth: 640,
+              ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
             }}
           >
             {heroCopy.sub}
           </p>
 
-          <div className="hero-tail" style={{ position: "relative", pointerEvents: "auto" }}>
+          <div
+            className="hero-tail"
+            style={{ position: "relative", pointerEvents: "auto", marginTop: space.sm }}
+          >
             <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
           </div>
         </div>
@@ -281,23 +278,17 @@ export default function Hero({
           style={{
             position: "absolute",
             left: "50%",
-            bottom: 28,
+            bottom: space.xxl,
             transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 10,
+            gap: space.s,
             pointerEvents: "none",
           }}
         >
           <span
-            style={{
-              fontFamily: font.mono,
-              fontSize: 10,
-              letterSpacing: "0.24em",
-              textTransform: "uppercase",
-              color: color.textOnDarkMuted,
-            }}
+            style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}
           >
             {heroCopy.scrollHint}
           </span>

@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
-import { color, ease, font, glow, hexA, microLabel } from "./theme";
+import { color, ease, glow, hexA, microLabel, space, typeScale } from "./theme";
 import { injectStrideStyles } from "./styles";
 
 /* ------------------------------------------------------------------ *
@@ -113,16 +113,17 @@ export function GlowButton({
   const base: CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
-    gap: 10,
-    padding: "16px 28px",
+    justifyContent: "center",
+    gap: space.s,
+    /* 56px tall, 32px of horizontal padding — identical on every CTA. */
+    height: 56,
+    padding: `0 ${space.xl}px`,
     borderRadius: 999,
     border: "none",
     cursor: "pointer",
     textDecoration: "none",
-    fontFamily: font.sans,
-    fontSize: 14,
-    fontWeight: 500,
-    letterSpacing: "0.01em",
+    ...typeScale.labelSm,
+    fontWeight: 600,
     background: solid ? color.ruby : "transparent",
     color: solid ? "#fff" : color.textOnDark,
     boxShadow: solid ? glow.box : `inset 0 0 0 1px ${color.hairlineOnDark}`,
@@ -292,10 +293,9 @@ export function MediaTile({
         <div
           style={{
             position: "absolute",
-            left: 12,
-            bottom: 10,
-            ...microLabel,
-            fontSize: 9,
+            left: space.s,
+            bottom: space.s,
+            ...typeScale.labelSm,
             color: hexA("#FFFFFF", 0.7),
             textShadow: "0 1px 8px rgba(0,0,0,0.6)",
           }}

@@ -1,7 +1,7 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { useInView } from "../shared/useInView";
 import { solution as copy } from "../shared/copy";
-import { color, fluid, font, hexA, layout } from "../shared/theme";
+import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MediaTile, MicroLabel } from "../shared/primitives";
 
 /**
@@ -99,7 +99,7 @@ export default function Solution({
         height: scrollLength,
         background: color.black,
         color: color.textOnDark,
-        fontFamily: font.sans,
+        fontFamily: typeScale.body.fontFamily,
       }}
     >
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
@@ -147,11 +147,18 @@ export default function Solution({
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            padding: `clamp(96px, 13vh, 150px) ${layout.pad} clamp(48px, 7vh, 88px)`,
+            padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
             pointerEvents: "none",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: 22, maxWidth: "min(620px, 52vw)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: rhythm.headlineToBody,
+              maxWidth: "min(620px, 52vw)",
+            }}
+          >
             <MicroLabel tone="ruby" className="sol-intro">
               {copy.label}
             </MicroLabel>
@@ -159,11 +166,7 @@ export default function Solution({
               className="sol-intro"
               style={{
                 margin: 0,
-                fontFamily: font.display,
-                fontWeight: 500,
-                fontSize: fluid(30, 68),
-                lineHeight: 0.98,
-                letterSpacing: "-0.04em",
+                ...typeScale.h2,
               }}
             >
               {copy.headline.map((line, i) => (
@@ -177,8 +180,7 @@ export default function Solution({
               style={{
                 margin: 0,
                 maxWidth: "46ch",
-                fontSize: fluid(14, 17),
-                lineHeight: 1.6,
+                ...typeScale.bodyLg,
                 color: color.textOnDarkMuted,
               }}
             >
@@ -191,7 +193,7 @@ export default function Solution({
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "clamp(20px, 3vw, 56px)",
+              gap: space.lg,
               alignItems: "start",
             }}
           >
@@ -202,8 +204,8 @@ export default function Solution({
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: 12,
-                  paddingTop: 20,
+                  gap: space.s,
+                  paddingTop: space.lg,
                   borderTop: `1px solid ${color.hairlineOnDark}`,
                 }}
               >
@@ -211,11 +213,7 @@ export default function Solution({
                 <h3
                   style={{
                     margin: 0,
-                    fontFamily: font.display,
-                    fontWeight: 500,
-                    fontSize: fluid(19, 28),
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.03em",
+                    ...typeScale.h3,
                   }}
                 >
                   {pillar.title}
@@ -224,8 +222,7 @@ export default function Solution({
                   style={{
                     margin: 0,
                     maxWidth: "34ch",
-                    fontSize: fluid(13, 15),
-                    lineHeight: 1.6,
+                    ...typeScale.body,
                     color: color.textOnDarkMuted,
                   }}
                 >
@@ -242,12 +239,12 @@ export default function Solution({
           style={{
             position: "absolute",
             left: "50%",
-            bottom: 34,
+            bottom: space.xxl,
             transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 10,
+            gap: space.s,
             pointerEvents: "none",
           }}
         >

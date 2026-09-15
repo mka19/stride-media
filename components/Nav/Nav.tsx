@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { brand, nav as navCopy } from "../shared/copy";
-import { color, ease, font, hexA, layout, microLabel } from "../shared/theme";
+import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { GlowButton, StrideMark } from "../shared/primitives";
 import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
 
@@ -26,7 +26,7 @@ import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
  */
 export default function Nav({
   /** Height of the bar; the underline segments sit on its bottom edge. */
-  height = 68,
+  height = layout.navHeight,
 }: {
   height?: number;
 }) {
@@ -85,6 +85,7 @@ export default function Nav({
   const inkMuted = light ? color.textOnLightMuted : color.textOnDarkMuted;
   const hairline = light ? color.hairlineOnLight : color.hairlineOnDark;
 
+  // Nav links sit 32px apart; the underline segments tile the bar beneath them.
   return (
     <header
       style={{
@@ -98,7 +99,7 @@ export default function Nav({
         alignItems: "stretch",
         paddingLeft: layout.pad,
         paddingRight: layout.pad,
-        fontFamily: font.sans,
+        fontFamily: typeScale.labelSm.fontFamily,
         color: ink,
         background: lifted ? hexA(light ? color.bone : color.black, light ? 0.78 : 0.7) : "transparent",
         backdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
@@ -113,14 +114,14 @@ export default function Nav({
           position: "relative",
           display: "flex",
           alignItems: "center",
-          gap: 11,
-          paddingRight: 48,
+          gap: space.s,
+          paddingRight: space.xxl,
           textDecoration: "none",
           color: "inherit",
         }}
       >
         <StrideMark size={24} glowing />
-        <span style={{ ...microLabel, fontFamily: font.sans, fontSize: 13, letterSpacing: "0.18em" }}>
+        <span style={{ ...typeScale.labelSm, fontWeight: 600, letterSpacing: "0.18em" }}>
           {brand.mark}
         </span>
         <Segment fill={1} active={false} tick={false} width="58%" hairline={hairline} />
@@ -144,11 +145,10 @@ export default function Nav({
                 minWidth: 0,
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
-                paddingLeft: 18,
+                gap: space.s,
+                paddingLeft: space.md,
                 textDecoration: "none",
-                fontSize: 13,
-                letterSpacing: "0.01em",
+                ...typeScale.labelSm,
                 whiteSpace: "nowrap",
                 color: active ? ink : inkMuted,
                 transition: `color 400ms ${ease.out}`,
@@ -166,8 +166,10 @@ export default function Nav({
         })}
       </nav>
 
-      <div style={{ position: "relative", display: "flex", alignItems: "center", paddingLeft: 24 }}>
-        <GlowButton href="#contact" style={{ padding: "11px 20px" }}>
+      <div
+        style={{ position: "relative", display: "flex", alignItems: "center", paddingLeft: space.xl }}
+      >
+        <GlowButton href="#contact">
           {navCopy.cta}
         </GlowButton>
         <Segment fill={0} active={false} hairline={hairline} />

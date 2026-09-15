@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
-import { color, ease, fluid, font, hexA, layout } from "../shared/theme";
+import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 
 /**
@@ -123,7 +123,7 @@ export default function Problem({
         position: "relative",
         height: scrollLength,
         background: color.black,
-        fontFamily: font.sans,
+        fontFamily: typeScale.body.fontFamily,
       }}
     >
       <div className="pb-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
@@ -152,25 +152,22 @@ export default function Problem({
               height: "100%",
               display: "grid",
               gridTemplateColumns: "minmax(0, 8fr) minmax(0, 4fr)",
-              alignContent: "center",
-              gap: 48,
-              padding: `0 ${layout.pad}`,
+              /* The statement sits in the lower third, over the background. */
+              alignContent: "end",
+              gap: space.xxl,
+              padding: `0 ${layout.pad} 18vh`,
               color: color.textOnDark,
             }}
           >
             <div>
-              <MicroLabel tone="ruby" style={{ marginBottom: 34 }}>
+              <MicroLabel tone="ruby" style={{ marginBottom: rhythm.eyebrowToHeadline }}>
                 {copy.label}
               </MicroLabel>
               <p
                 style={{
                   margin: 0,
-                  maxWidth: "26ch",
-                  fontFamily: font.display,
-                  fontWeight: 400,
-                  fontSize: fluid(22, 40),
-                  lineHeight: 1.34,
-                  letterSpacing: "-0.022em",
+                  maxWidth: 720,
+                  ...typeScale.bodyLg,
                 }}
               >
                 {words.map((w, i) => (
@@ -186,13 +183,11 @@ export default function Problem({
               className="pb-aside"
               style={{
                 alignSelf: "end",
-                paddingBottom: "12vh",
                 maxWidth: 300,
-                fontSize: fluid(13, 15),
-                lineHeight: 1.6,
+                ...typeScale.body,
                 color: color.textOnDarkMuted,
                 borderLeft: `1px solid ${color.hairlineOnDark}`,
-                paddingLeft: 20,
+                paddingLeft: space.lg,
               }}
             >
               {copy.introAside}
@@ -217,7 +212,7 @@ export default function Problem({
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              padding: `clamp(90px, 12vh, 140px) ${layout.pad} clamp(60px, 9vh, 96px)`,
+              padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
             }}
           >
             {/* The slot. Every state stacks here and swaps in place. */}
@@ -233,13 +228,13 @@ export default function Problem({
                     /* Three columns, as in the reference: the statement on the
                        left, a portrait frame down the middle, the number and
                        its supporting line on the right. */
-                    gridTemplateColumns: "minmax(0, 5fr) minmax(0, 3.4fr) minmax(0, 4fr)",
+                    gridTemplateColumns: "40% 30% 30%",
                     alignItems: "stretch",
-                    gap: "clamp(24px, 4vw, 72px)",
+                    gap: space.lg,
                   }}
                 >
                   {/* ---- left: mark, label, parenthetical, statement ---- */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline }}>
                     <div className="pb-card-line">
                       <CardIcon index={i} />
                     </div>
@@ -249,11 +244,7 @@ export default function Problem({
                     <div
                       className="pb-card-line"
                       style={{
-                        fontFamily: font.display,
-                        fontWeight: 400,
-                        fontSize: fluid(26, 56),
-                        lineHeight: 1,
-                        letterSpacing: "-0.03em",
+                        ...typeScale.h3,
                         color: color.textOnLight,
                       }}
                     >
@@ -264,11 +255,7 @@ export default function Problem({
                       style={{
                         margin: 0,
                         maxWidth: "13ch",
-                        fontFamily: font.display,
-                        fontWeight: 600,
-                        fontSize: fluid(28, 60),
-                        lineHeight: 0.98,
-                        letterSpacing: "-0.04em",
+                        ...typeScale.h1,
                       }}
                     >
                       {card.headline}
@@ -283,7 +270,7 @@ export default function Problem({
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      gap: 16,
+                      gap: space.md,
                       minHeight: 0,
                     }}
                   >
@@ -302,7 +289,9 @@ export default function Problem({
                         style={{ position: "absolute", inset: 0 }}
                       />
                     </div>
-                    <MicroLabel tone="light">{card.caption}</MicroLabel>
+                    <span style={{ ...typeScale.labelSm, color: color.textOnLightMuted }}>
+                      {card.caption}
+                    </span>
                   </div>
 
                   {/* ---- right: the number, then its supporting line ---- */}
@@ -318,11 +307,7 @@ export default function Problem({
                     <div
                       className="pb-num"
                       style={{
-                        fontFamily: font.display,
-                        fontWeight: 500,
-                        fontSize: fluid(72, 176),
-                        lineHeight: 0.78,
-                        letterSpacing: "-0.05em",
+                        ...typeScale.numberXl,
                         color: color.ruby,
                         textShadow: `0 0 30px ${hexA(color.ruby, 0.4)}`,
                       }}
@@ -335,8 +320,7 @@ export default function Problem({
                         margin: 0,
                         maxWidth: "34ch",
                         paddingBottom: "6vh",
-                        fontSize: fluid(14, 17),
-                        lineHeight: 1.55,
+                        ...typeScale.body,
                         color: color.textOnLightMuted,
                       }}
                     >
@@ -348,7 +332,7 @@ export default function Problem({
             </div>
 
             {/* Which of the three states is on screen. */}
-            <div style={{ display: "flex", gap: 10, marginTop: 34 }}>
+            <div style={{ display: "flex", gap: space.s, marginTop: space.xl }}>
               {copy.cards.map((card, i) => (
                 <div
                   key={card.n}

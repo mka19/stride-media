@@ -34,32 +34,140 @@ export const glow = {
 } as const;
 
 /*
- * Trionn's own stack: Neue Haas Grotesk for text, Familjen Grotesk, and
- * Martian Mono for labels. Neue Haas is commercial, so it leads the sans
- * stack and takes over automatically if the licensed webfont is ever added;
- * until then Familjen Grotesk carries both display and text, and both free
- * faces load from Google Fonts in shared/styles.ts.
+ * One family for everything, weight does the differentiation. Familjen
+ * Grotesk is the free face from Trionn's own stack; Neue Haas Grotesk is
+ * commercial, so it leads and takes over automatically if the licensed
+ * webfont is ever added.
  */
+const SANS = `"Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`;
+
 export const font = {
-  display: `"Familjen Grotesk", "Neue Haas Grotesk Display", "Helvetica Neue", Helvetica, Arial, sans-serif`,
-  sans: `"Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`,
-  mono: `"Martian Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace`,
+  sans: SANS,
+  /** Kept as an alias so nothing has to special-case display type. */
+  display: SANS,
 } as const;
 
-/** Micro-label used above every section headline. */
-export const microLabel = {
-  fontFamily: font.mono,
-  fontSize: "10px",
-  letterSpacing: "0.12em",
-  textTransform: "uppercase" as const,
-  fontWeight: 500,
-};
+/**
+ * Type scale. Every size on the site comes from this table — no one-off
+ * values. Each token carries its own weight, leading and tracking, so a
+ * component spreads the token and adds nothing but colour.
+ */
+export const typeScale = {
+  displayXl: {
+    fontFamily: SANS,
+    fontSize: fluid(48, 120),
+    fontWeight: 700,
+    lineHeight: 0.94,
+    letterSpacing: "-0.042em",
+  },
+  displayLg: {
+    fontFamily: SANS,
+    fontSize: fluid(40, 88),
+    fontWeight: 700,
+    lineHeight: 0.96,
+    letterSpacing: "-0.04em",
+  },
+  h1: {
+    fontFamily: SANS,
+    fontSize: fluid(36, 64),
+    fontWeight: 600,
+    lineHeight: 1.0,
+    letterSpacing: "-0.035em",
+  },
+  h2: {
+    fontFamily: SANS,
+    fontSize: fluid(28, 44),
+    fontWeight: 600,
+    lineHeight: 1.06,
+    letterSpacing: "-0.03em",
+  },
+  h3: {
+    fontFamily: SANS,
+    fontSize: fluid(22, 28),
+    fontWeight: 600,
+    lineHeight: 1.15,
+    letterSpacing: "-0.02em",
+  },
+  numberXl: {
+    fontFamily: SANS,
+    fontSize: fluid(72, 140),
+    fontWeight: 700,
+    lineHeight: 0.8,
+    letterSpacing: "-0.05em",
+  },
+  bodyLg: {
+    fontFamily: SANS,
+    fontSize: fluid(17, 20),
+    fontWeight: 400,
+    lineHeight: 1.55,
+    letterSpacing: "-0.005em",
+  },
+  body: {
+    fontFamily: SANS,
+    fontSize: fluid(15, 16),
+    fontWeight: 400,
+    lineHeight: 1.6,
+    letterSpacing: "0",
+  },
+  eyebrow: {
+    fontFamily: SANS,
+    fontSize: fluid(12, 13),
+    fontWeight: 600,
+    lineHeight: 1.2,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase" as const,
+  },
+  labelSm: {
+    fontFamily: SANS,
+    fontSize: fluid(13, 14),
+    fontWeight: 500,
+    lineHeight: 1.3,
+    letterSpacing: "0",
+  },
+} as const;
+
+/**
+ * Spacing steps. Nothing on the site uses a gap outside this set.
+ */
+export const space = {
+  xs: 4,
+  sm: 8,
+  s: 12,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+  h: 64,
+  hh: 96,
+  hhh: 128,
+  max: 160,
+} as const;
+
+/** The recurring relationships from the spec, so sections don't re-decide. */
+export const rhythm = {
+  eyebrowToHeadline: space.md, // 16
+  headlineToBody: space.lg, // 24
+  bodyToCta: space.xl, // 32
+  betweenCards: space.lg, // 24
+  headerToContent: space.h, // 64
+} as const;
+
+/** Micro-label above section headlines — the eyebrow token, nothing else. */
+export const microLabel = typeScale.eyebrow;
 
 /** Wide grid — 96px page padding at 1920. Clamps down gracefully on phones. */
+/*
+ * Side and vertical padding step at the breakpoints in the spec rather than
+ * scaling continuously, so they are defined as custom properties in
+ * shared/styles.ts and read from here. The fallbacks are the mobile values.
+ */
 export const layout = {
-  pad: "clamp(20px, 5vw, 96px)",
+  pad: "var(--stride-pad, 24px)",
+  section: "var(--stride-section, 64px)",
   maxWidth: "1728px",
-  section: "clamp(96px, 12vh, 180px)",
+  gutter: 24,
+  columns: 12,
+  navHeight: 88,
 } as const;
 
 export const ease = {
