@@ -41,15 +41,36 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
       const q = gsap.utils.selector(root);
       const cards = q(".ts-card");
 
+      // One scrubbed timeline for every card, so they share a single
+      // scroll-driven clock instead of drifting apart. Nothing here touches
+      // layout: only transform and opacity, which stay on the compositor.
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.7 },
+        scrollTrigger: {
+          trigger: root,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.7,
+          // will-change is a hint, not a free win: held on every card for the
+          // life of the page it keeps six layers promoted for nothing, so it
+          // goes on while the section is live and comes off when it is not.
+          onToggle: ({ isActive }) =>
+            cards.forEach((card) => {
+              (card as HTMLElement).style.willChange = isActive ? "transform" : "auto";
+            }),
+        },
       });
 
       cards.forEach((card, i) => {
         // Each card comes from its own direction, well outside the frame.
         const fromX = gsap.utils.random([-1, 1]) * gsap.utils.random(280, 420);
         const fromY = gsap.utils.random([-1, 1]) * gsap.utils.random(180, 260);
-        gsap.set(card, { opacity: 0, x: fromX, y: fromY, rotation: gsap.utils.random(-15, 15) });
+        gsap.set(card, {
+          opacity: 0,
+          x: fromX,
+          y: fromY,
+          rotation: gsap.utils.random(-15, 15),
+          force3D: true,
+        });
 
         const at = 0.06 + i * (0.8 / cards.length);
         tl.to(
@@ -59,8 +80,11 @@ export default function Testimonials({ scrollLength = "420vh" }: { scrollLength?
             x: 0,
             y: 0,
             rotation: Number((card as HTMLElement).dataset.rest ?? 0),
-            duration: 0.6 / cards.length,
-            ease: "power2.out",
+            duration: 1.1 / cards.length,
+            // Overshoots its resting place and settles, which is what gives
+            // the build-up its weight; power3.out lands flat by comparison.
+            ease: "elastic.out(1, 0.6)",
+            force3D: true,
           },
           at,
         );

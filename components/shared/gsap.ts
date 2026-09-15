@@ -14,6 +14,9 @@ import { useLayoutEffect, useRef, type RefObject } from "react";
 let registered = false;
 if (typeof window !== "undefined" && !registered) {
   gsap.registerPlugin(ScrollTrigger);
+  // Mobile browsers fire resize as the URL bar hides and shows, which
+  // recalculates every trigger mid-scroll and makes pinned sections jump.
+  ScrollTrigger.config({ ignoreMobileResize: true });
   registered = true;
 }
 
