@@ -1,7 +1,7 @@
 import { addPropertyControls, ControlType } from "framer"
 import { gsap, useGsapContext } from "./gsap";
 import { brand, footer as copy } from "./copy";
-import { color, ease, hexA, layout, space, typeScale } from "./theme";
+import { BUILD, color, ease, hexA, layout, space, typeScale } from "./theme";
 import { Grain, MediaTile } from "./primitives";
 import { useBreakpoint, detailFor } from "./responsive";
 import Wordmark from "./Wordmark";
@@ -188,7 +188,8 @@ export default function Footer({
           }}
         >
           <span>
-            @{brand.url.replace(/\..*$/, "")} — {copy.rights}
+            @{brand.url.replace(/\..*$/, "")} — {copy.rights}{" "}
+            <span style={{ color: color.accent }}>{BUILD}</span>
           </span>
           <span>
             {copy.basedLabel} {copy.basedIn}

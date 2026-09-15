@@ -147,6 +147,13 @@ export const numberGradient = {
   WebkitTextFillColor: "transparent",
 } as const;
 
+/**
+ * Bumped on every publish. It is printed in the footer meta row so a stale
+ * cached copy can be identified from the page itself rather than argued
+ * about — a single HTML file served from one URL caches hard.
+ */
+export const BUILD = "B35";
+
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;
 

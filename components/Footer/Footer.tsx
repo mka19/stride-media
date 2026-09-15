@@ -1,6 +1,6 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
-import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
+import { BUILD, color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile } from "../shared/primitives";
 import { useBreakpoint, detailFor } from "../shared/responsive";
 import Wordmark from "./Wordmark";
@@ -187,7 +187,8 @@ export default function Footer({
           }}
         >
           <span>
-            @{brand.url.replace(/\..*$/, "")} — {copy.rights}
+            @{brand.url.replace(/\..*$/, "")} — {copy.rights}{" "}
+            <span style={{ color: color.accent }}>{BUILD}</span>
           </span>
           <span>
             {copy.basedLabel} {copy.basedIn}
