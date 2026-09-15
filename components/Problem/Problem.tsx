@@ -2,28 +2,29 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
-import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
+import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
+import { useBreakpoint } from "../shared/responsive";
 
 /**
  * Problem — sakazuki.io Philosophy reference.
  *
- * One sticky frame, two parts, driven by a single scrubbed timeline:
+ *   Part 1  Pinned and dark, over a background that never moves. The
+ *           statement reveals a word at a time, left-aligned at 720px in the
+ *           lower third.
+ *   Bridge  The dark layer crossfades out as the light layer crossfades in.
+ *   Part 2  Pinned and light. One card slot holds the same screen position
+ *           and cycles through the three pain points at scroll checkpoints —
+ *           icon, label, headline, portrait and number all swap together,
+ *           the incoming state rising ~10px as it fades in.
  *
- *   Part 1  Dark panel over a cinematic background that never moves. The
- *           intro paragraph reveals a word at a time as the visitor scrolls.
- *   Part 2  Crossfade to a light card. The card is one slot that cycles
- *           through the three pain points in place — the icon, the label, the
- *           headline, the image and the big 01/02/03 all swap inside the same
- *           frame rather than scrolling past as three separate sections.
- *
- * The numbered motif here (01/02/03, hairline ticks) is the same language as
- * How It Works and the Case Study.
+ * Columns are 40 / 30 / 30: statement, portrait, number and description.
  */
+
 export default function Problem({
-  /** Cinematic background for part 1; falls back to a generated fill. */
+  /** Cinematic footage for part 1. Falls back to a generated fill. */
   backgroundSrc,
-  /** One image per pain-point card, in order. */
+  /** One image per pain point, in order. */
   cardMedia = [],
   scrollLength = "460vh",
 }: {
@@ -32,9 +33,12 @@ export default function Problem({
   scrollLength?: string;
 }) {
   const words = copy.intro.split(" ");
-  // The nav flips to its light treatment when part 2 takes over, so this
-  // section publishes its own tone rather than leaving the nav to guess.
   const surface = useRef<SurfaceHandle | null>(null);
+  const bp = useBreakpoint();
+  // Pinning is what janks on real phone hardware, and a cycling slot is
+  // disorienting on a small screen, so below tablet the section becomes
+  // ordinary sequential scroll instead of a shortened version of the pin.
+  const stacked = bp === "mobile";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -42,10 +46,9 @@ export default function Problem({
       const cards = q(".pb-card");
 
       gsap.set(q(".pb-word"), { opacity: 0.12 });
-      gsap.set(q(".pb-light"), { opacity: 0, scale: 1.04 });
-      gsap.set(cards, { opacity: 0, yPercent: -50, top: "50%" });
+      gsap.set(q(".pb-light"), { opacity: 0 });
+      gsap.set(cards, { opacity: 0 });
       gsap.set(cards[0], { opacity: 1 });
-      // The centring transform is now GSAP's, so drop the CSS one it replaced.
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -53,61 +56,57 @@ export default function Problem({
           start: "top top",
           end: "bottom bottom",
           scrub: 0.6,
+          invalidateOnRefresh: true,
           // Hand the nav its tone at the crossfade's midpoint, so the bar
-          // changes with the background rather than before or after it.
-          onUpdate: (self) => surface.current?.setTone(self.progress > 0.39 ? "light" : "dark"),
+          // turns with the ground rather than before or after it.
+          onUpdate: (self) => surface.current?.setTone(self.progress > 0.36 ? "light" : "dark"),
         },
       });
 
-      // --- part 1: paragraph reveals, word by word ----------------------
-      // `amount` spreads the whole stagger across a fixed slice of the
-      // timeline, so the last word always lands at 0.25 no matter how many
-      // words the copy has. A per-word `each` scaled with the word count and
-      // ran long, which cut to part 2 mid-sentence.
+      // --- part 1: the statement reveals, word by word --------------------
+      // `amount` spreads the whole stagger over a fixed slice, so the last
+      // word always lands at 0.25 however long the copy is. A per-word value
+      // scaled with the word count and ran past the crossfade, which cut away
+      // mid-sentence.
       tl.to(
         q(".pb-word"),
         { opacity: 1, duration: 0.05, stagger: { amount: 0.18 }, ease: "none" },
         0.02,
       )
-        // --- crossfade into part 2, only once the statement is complete ---
-        .to(q(".pb-dark"), { opacity: 0, duration: 0.1 }, 0.34)
-        .to(q(".pb-light"), { opacity: 1, scale: 1, duration: 0.12 }, 0.34);
 
-      // --- part 2: one slot, three states -------------------------------
-      // Each card holds the slot for an equal share of the remaining scroll,
-      // handing over with a short overlap so the swap reads as a change of
-      // content, not a change of section.
-      const start = 0.46;
+        // --- bridge: a straight crossfade between the two layers -----------
+        .to(q(".pb-dark"), { opacity: 0, duration: 0.06 }, 0.32)
+        .to(q(".pb-light"), { opacity: 1, duration: 0.06 }, 0.32);
+
+      // --- part 2: one slot, three states at even checkpoints -------------
+      const start = 0.44;
       const span = (1 - start) / cards.length;
       cards.forEach((card, i) => {
         const at = start + i * span;
         if (i > 0) {
-          // Icon, label, headline, image and number all swap at once: the old
-          // card fades out while the new one fades in and rises a few pixels.
-          // Staggering the parts makes one state look like it is assembling
-          // rather than like the slot changing its contents.
-          // yPercent, not y: the card is centred with a translateY(-50%), and
-          // GSAP writes its own transform, so the rise has to be relative.
-          tl.to(cards[i - 1], { opacity: 0, duration: 0.05, ease: "power2.inOut" }, at).fromTo(
+          // Everything swaps together: icon, label, headline, portrait and
+          // number. Staggering the parts makes a state look like it is
+          // assembling rather than like the slot changing its contents.
+          tl.to(cards[i - 1], { opacity: 0, duration: 0.04, ease: "power2.inOut" }, at).fromTo(
             card,
-            { opacity: 0, yPercent: -48 },
-            { opacity: 1, yPercent: -50, duration: 0.05, ease: "power2.out" },
-            at + 0.012,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.04, ease: "power2.out" },
+            at + 0.01,
           );
         }
-        // Progress ticks track whichever card owns the slot.
         tl.to(q(`.pb-tick-${i}`), { scaleX: 1, duration: span * 0.9, ease: "none" }, at);
       });
     },
     [],
+    // Reduced motion: the light card, its first state and the portrait in
+    // place, with the statement fully legible above it.
     (root) => {
-      // Reduced motion: the paragraph is fully legible and the first card is
-      // shown; the other two are reachable as static content below it.
       const q = gsap.utils.selector(root);
       gsap.set(q(".pb-word"), { opacity: 1 });
-      gsap.set(q(".pb-card"), { opacity: 1, position: "relative" });
-      gsap.set(q(".pb-light"), { opacity: 1, scale: 1 });
-      gsap.set(q(".pb-dark"), { opacity: 1 });
+      gsap.set(q(".pb-light"), { opacity: 1 });
+      gsap.set(q(".pb-dark"), { opacity: 0 });
+      gsap.set(q(".pb-card"), { opacity: 0 });
+      gsap.set(q(".pb-card")[0], { opacity: 1 });
       surface.current?.setTone("light");
     },
   );
@@ -123,6 +122,79 @@ export default function Problem({
     };
   }, [rootRef]);
 
+  if (stacked) {
+    return (
+      <section
+        id="problem"
+        style={{
+          background: color.bone,
+          color: color.textOnLight,
+          fontFamily: typeScale.body.fontFamily,
+        }}
+      >
+        {/* Part 1 — a normal block over the background, no pin, no reveal. */}
+        <div style={{ position: "relative", background: color.black }}>
+          <MediaTile src={backgroundSrc} seed={7} style={{ position: "absolute", inset: 0 }} />
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: `linear-gradient(180deg, ${hexA(color.black, 0.8)} 0%, ${hexA(color.black, 0.88)} 100%)`,
+            }}
+          />
+          <Grain opacity={0.18} />
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              gap: rhythm.eyebrowToHeadline,
+              padding: `${layout.section} ${layout.pad}`,
+              color: color.textOnDark,
+            }}
+          >
+            <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+            <p style={{ margin: 0, ...typeScale.bodyLg }}>{copy.intro}</p>
+          </div>
+        </div>
+
+        {/* Part 2 — three full-width cards in reading order. */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: layout.section,
+            padding: `${layout.section} ${layout.pad}`,
+          }}
+        >
+          {copy.cards.map((card, i) => (
+            <article
+              key={card.n}
+              style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline }}
+            >
+              <CardIcon index={i} />
+              <MicroLabel tone="light">Problem</MicroLabel>
+              <div style={{ ...typeScale.h3 }}>{card.label}</div>
+              <h3 style={{ margin: 0, ...typeScale.h1 }}>{card.headline}</h3>
+              <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4" }}>
+                <MediaTile
+                  src={cardMedia[i]}
+                  seed={i * 5 + 11}
+                  style={{ position: "absolute", inset: 0 }}
+                />
+              </div>
+              <div style={{ ...typeScale.numberXl, color: color.ruby }}>{card.n}</div>
+              <p style={{ margin: 0, ...typeScale.body, color: color.textOnLightMuted }}>
+                {card.body}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id="problem"
@@ -134,63 +206,49 @@ export default function Problem({
         fontFamily: typeScale.body.fontFamily,
       }}
     >
-      <div className="pb-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
-        {/* ---------------- part 1 — dark, fixed background ------------- */}
+      <div
+        className="pb-frame"
+        style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}
+      >
+        {/* ---------------- part 1 — dark, fixed background ---------------- */}
         <div className="pb-dark" style={{ position: "absolute", inset: 0 }}>
-          <MediaTile
-            src={backgroundSrc}
-            seed={7}
-            style={{ position: "absolute", inset: 0 }}
-          />
-          {/* The paragraph sits over the image but behind its own veil, so the
-              footage stays visible through the type. */}
+          <MediaTile src={backgroundSrc} seed={7} style={{ position: "absolute", inset: 0 }} />
           <div
             aria-hidden="true"
             style={{
               position: "absolute",
               inset: 0,
-              background: `linear-gradient(180deg, ${hexA(color.black, 0.78)} 0%, ${hexA(color.black, 0.44)} 45%, ${hexA(color.black, 0.85)} 100%)`,
+              background: `linear-gradient(180deg, ${hexA(color.black, 0.78)} 0%, ${hexA(color.black, 0.5)} 45%, ${hexA(color.black, 0.85)} 100%)`,
             }}
           />
           <Grain opacity={0.18} />
 
+          {/* The statement: 720px, left-aligned, in the lower third. */}
           <div
             style={{
-              position: "relative",
-              height: "100%",
+              position: "absolute",
+              inset: 0,
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              padding: `0 ${layout.pad}`,
+              justifyContent: "flex-end",
+              gap: rhythm.eyebrowToHeadline,
+              padding: `0 ${layout.pad} 18vh`,
               color: color.textOnDark,
             }}
           >
-            <div style={{ maxWidth: 720 }}>
-              <MicroLabel tone="ruby" style={{ marginBottom: rhythm.eyebrowToHeadline }}>
-                {copy.label}
-              </MicroLabel>
-              <p
-                style={{
-                  margin: 0,
-                  maxWidth: 720,
-                  ...typeScale.bodyLg,
-                }}
-              >
-                {words.map((w, i) => (
-                  <span key={i} className="pb-word" style={{ display: "inline-block" }}>
-                    {w}
-                    {i < words.length - 1 ? " " : ""}
-                  </span>
-                ))}
-              </p>
-            </div>
-
+            <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+            <p style={{ margin: 0, maxWidth: 720, ...typeScale.bodyLg }}>
+              {words.map((w, i) => (
+                <span key={i} className="pb-word" style={{ display: "inline-block" }}>
+                  {w}
+                  {i < words.length - 1 ? "\u00A0" : ""}
+                </span>
+              ))}
+            </p>
           </div>
         </div>
 
-        {/* ---------------- part 2 — light cycling card ----------------- */}
+        {/* ---------------- part 2 — light, cycling card ------------------- */}
         <div
           className="pb-light"
           style={{
@@ -228,69 +286,42 @@ export default function Problem({
                     position: "absolute",
                     left: 0,
                     right: 0,
-                    top: "50%",
-                    /* A composed block rather than a viewport-tall spread: the
-                       columns align to the portrait's height. */
-                    height: "min(560px, 62vh)",
                     display: "grid",
-                    /* Three columns, as in the reference: the statement on the
-                       left, a portrait frame down the middle, the number and
-                       its supporting line on the right. */
-                    gridTemplateColumns: "35% 30% 35%",
-                    alignItems: "stretch",
-                    gap: space.lg,
+                    /* Tablet drops to two rows — statement, then portrait
+                       beside the number — rather than three narrow columns. */
+                    gridTemplateColumns: bp === "tablet" ? "1fr 1fr" : "40% 30% 30%",
+                    gap: layout.gutter,
+                    alignItems: "center",
+                    height: "min(520px, 58vh)",
                   }}
                 >
-                  {/* ---- left: mark, label, parenthetical, statement ---- */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline }}>
-                    <div className="pb-card-line">
-                      <CardIcon index={i} />
-                    </div>
-                    <MicroLabel tone="light" className="pb-card-line">
-                      Problem
-                    </MicroLabel>
-                    <div
-                      className="pb-card-line"
-                      style={{
-                        ...typeScale.h3,
-                        color: color.textOnLight,
-                      }}
-                    >
-                      {card.label}
-                    </div>
-                    <h3
-                      className="pb-card-line"
-                      style={{
-                        margin: 0,
-                        maxWidth: "13ch",
-                        ...typeScale.h1,
-                      }}
-                    >
-                      {card.headline}
-                    </h3>
+                  {/* ---- left: icon, eyebrow, sub-label, headline ---- */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: rhythm.eyebrowToHeadline,
+                      gridColumn: bp === "tablet" ? "1 / -1" : undefined,
+                    }}
+                  >
+                    <CardIcon index={i} />
+                    <MicroLabel tone="light">Problem</MicroLabel>
+                    <div style={{ ...typeScale.h3 }}>{card.label}</div>
+                    <h3 style={{ margin: 0, maxWidth: "13ch", ...typeScale.h1 }}>{card.headline}</h3>
                   </div>
 
-                  {/* ---- centre: portrait frame with its caption ---- */}
+                  {/* ---- centre: the portrait and its caption ---- */}
                   <div
-                    className="pb-card-line"
                     style={{
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
                       gap: space.md,
-                      minHeight: 0,
                       height: "100%",
                     }}
                   >
-                    <div
-                      style={{
-                        position: "relative",
-                        height: "100%",
-                        aspectRatio: "3 / 4",
-                        maxWidth: "100%",
-                      }}
-                    >
+                    <div style={{ position: "relative", height: "100%", aspectRatio: "3 / 4" }}>
                       <MediaTile
                         src={cardMedia[i]}
                         seed={i * 5 + 11}
@@ -302,7 +333,7 @@ export default function Problem({
                     </span>
                   </div>
 
-                  {/* ---- right: the number, then its supporting line ---- */}
+                  {/* ---- right: the number, then its description ---- */}
                   <div
                     style={{
                       display: "flex",
@@ -310,10 +341,10 @@ export default function Problem({
                       justifyContent: "space-between",
                       alignItems: "flex-end",
                       textAlign: "right",
+                      height: "100%",
                     }}
                   >
                     <div
-                      className="pb-num"
                       style={{
                         ...typeScale.numberXl,
                         color: color.ruby,
@@ -323,7 +354,6 @@ export default function Problem({
                       {card.n}
                     </div>
                     <p
-                      className="pb-card-line"
                       style={{
                         margin: 0,
                         maxWidth: "34ch",
@@ -371,8 +401,8 @@ export default function Problem({
 }
 
 /**
- * A small mark per pain point — invisible, ignored, stalled. Drawn rather
- * than pulled from an icon set so they share the site's hairline weight.
+ * A mark per pain point — invisible, unscripted, inconsistent. Drawn rather
+ * than pulled from an icon set so they carry the site's hairline weight.
  */
 function CardIcon({ index }: { index: number }) {
   const common = {
@@ -384,7 +414,6 @@ function CardIcon({ index }: { index: number }) {
     strokeWidth: 1.4,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    style: { transition: `opacity 400ms ${ease.out}` },
   };
 
   if (index === 0) {
@@ -398,14 +427,14 @@ function CardIcon({ index }: { index: number }) {
     );
   }
   if (index === 1) {
-    // Ignored — a flat signal.
+    // Unscripted — a flat signal with nothing to catch on.
     return (
       <svg {...common}>
         <path d="M2 17h4l3-9 3 13 3-8h7" />
       </svg>
     );
   }
-  // Stalled — a broken cadence.
+  // Inconsistent — a broken cadence.
   return (
     <svg {...common}>
       <path d="M3 6h5M12 6h3M19 6h2M3 12h2M9 12h9M3 18h7M14 18h7" />

@@ -16,8 +16,6 @@ import { color, ease, hexA } from "../shared/theme";
 
 export type MosaicTile = { src?: string; caption?: string };
 
-const COLS = 5;
-const ROWS = 3;
 
 /** Weights: hovered track expands, its immediate neighbours take the hit. */
 function weight(index: number, hovered: number | null) {
@@ -34,6 +32,8 @@ export default function VideoMosaic({
   interactive = true,
   opacity = 1,
   gap = 8,
+  columns = 5,
+  rows = 3,
 }: {
   /** Real client footage when available; empty entries render as cinematic fills. */
   tiles?: MosaicTile[];
@@ -43,10 +43,13 @@ export default function VideoMosaic({
   interactive?: boolean;
   opacity?: number;
   gap?: number;
+  /** Tablet thins the grid; a phone gets a single quiet backdrop tile. */
+  columns?: number;
+  rows?: number;
 }) {
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
-  const cells = Array.from({ length: COLS * ROWS }, (_, i) => tiles[i] ?? {});
+  const cells = Array.from({ length: columns * rows }, (_, i) => tiles[i] ?? {});
   /* Spring, not a plain ease: the tracks overshoot their target slightly and
      settle, which is what keeps the rebalance from reading as a snap. */
   const transition = `flex-grow 700ms ${ease.spring}`;
@@ -66,7 +69,7 @@ export default function VideoMosaic({
         pointerEvents: interactive ? "auto" : "none",
       }}
     >
-      {Array.from({ length: ROWS }, (_, row) => (
+      {Array.from({ length: rows }, (_, row) => (
         <div
           key={row}
           style={{
@@ -78,8 +81,8 @@ export default function VideoMosaic({
             transition,
           }}
         >
-          {Array.from({ length: COLS }, (_, col) => {
-            const i = row * COLS + col;
+          {Array.from({ length: columns }, (_, col) => {
+            const i = row * columns + col;
             const isHovered = hover?.col === col && hover?.row === row;
             return (
               <div

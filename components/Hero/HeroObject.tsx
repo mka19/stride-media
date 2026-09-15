@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { color } from "../shared/theme";
+import { detailFor, type Breakpoint } from "../shared/responsive";
 
 /**
  * The hero's 3D element — Anubis-Chain treatment, Stride's own form.
@@ -47,9 +48,12 @@ function barShape() {
 export default function HeroObject({
   handleRef,
   className,
+  breakpoint = "desktop",
 }: {
   handleRef: React.MutableRefObject<HeroObjectHandle | null>;
   className?: string;
+  /** Drives vertex and particle counts — phones get a fraction of them. */
+  breakpoint?: Breakpoint;
 }) {
   const mountRef = useRef<HTMLDivElement | null>(null);
 
@@ -58,7 +62,8 @@ export default function HeroObject({
     if (!mount) return;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Capping DPR matters more than anything else for battery on phones.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, breakpoint === "mobile" ? 1.5 : 2));
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
@@ -73,13 +78,15 @@ export default function HeroObject({
     const deep = new THREE.Color(color.rubyDeep);
 
     // --- the mark, as a single solid ------------------------------------
+    const detail = detailFor(breakpoint);
+
     const extrude: THREE.ExtrudeGeometryOptions = {
       depth: 0.42,
       bevelEnabled: true,
       bevelThickness: 0.07,
       bevelSize: 0.06,
-      bevelSegments: 6,
-      curveSegments: 24,
+      bevelSegments: Math.max(2, Math.round(6 * detail)),
+      curveSegments: Math.max(8, Math.round(24 * detail)),
     };
 
     const chevron = new THREE.ExtrudeGeometry(chevronShape(), extrude);
@@ -96,7 +103,12 @@ export default function HeroObject({
     // needs them to agree, so the ring is flattened before it joins.
     // Segment counts kept close to the chevron's vertex count: the dissolve
     // samples this geometry, and a denser ring makes the cloud nearly all ring.
-    const ring = new THREE.TorusGeometry(1.34, 0.046, 12, 96).toNonIndexed();
+    const ring = new THREE.TorusGeometry(
+      1.34,
+      0.046,
+      Math.max(6, Math.round(12 * detail)),
+      Math.max(36, Math.round(96 * detail)),
+    ).toNonIndexed();
     ring.translate(0, 0, 0.155);
 
     const markGeo = mergeGeometries([core, ring], false)!;
@@ -223,7 +235,7 @@ export default function HeroObject({
 
     // --- dust -------------------------------------------------------------
     // The drifting specks in the Anubis reference, warm rather than green.
-    const dustCount = 220;
+    const dustCount = Math.round(220 * detail);
     const dustPos = new Float32Array(dustCount * 3);
     const dustSeed = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
@@ -356,7 +368,7 @@ export default function HeroObject({
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
     };
-  }, [handleRef]);
+  }, [handleRef, breakpoint]);
 
   return <div ref={mountRef} className={className} style={{ width: "100%", height: "100%" }} />;
 }

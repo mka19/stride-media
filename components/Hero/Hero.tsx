@@ -3,6 +3,7 @@ import { gsap, ScrollTrigger, useGsapContext } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
+import { useBreakpoint, useCanHover } from "../shared/responsive";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
 
@@ -29,6 +30,11 @@ export default function Hero({
 }) {
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const [interactive, setInteractive] = useState(false);
+  const bp = useBreakpoint();
+  const canHover = useCanHover();
+  // The object steps down with the viewport; the mosaic's push needs a real
+  // pointer, so on touch it becomes a single quiet backdrop instead.
+  const objectSize = bp === "mobile" ? "40vmin" : bp === "tablet" ? "58vmin" : "min(600px, 66vw)";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -130,7 +136,12 @@ export default function Hero({
 
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
         <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
-          <VideoMosaic tiles={tiles} interactive={interactive} />
+          <VideoMosaic
+            tiles={tiles}
+            interactive={interactive && canHover}
+            columns={bp === "mobile" ? 1 : bp === "tablet" ? 3 : 5}
+            rows={bp === "mobile" ? 1 : bp === "tablet" ? 2 : 3}
+          />
         </div>
 
         {/* Layer 2 — veil that keeps type legible over moving footage */}
@@ -157,8 +168,8 @@ export default function Hero({
             justifyContent: "center",
           }}
         >
-          <div style={{ width: "min(600px, 66vw)", height: "min(600px, 62vh)" }}>
-            <HeroObject handleRef={objectRef} />
+          <div style={{ width: objectSize, height: objectSize }}>
+            <HeroObject handleRef={objectRef} breakpoint={bp} />
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { useInView } from "../shared/useInView";
+import { useBreakpoint } from "../shared/responsive";
 import { solution as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MediaTile, MicroLabel } from "../shared/primitives";
@@ -28,6 +29,10 @@ export default function Solution({
 }) {
   // The reel starts once the section is half on screen, and only then.
   const { ref: stageRef, inView } = useInView<HTMLDivElement>({ threshold: 0.5 }, false);
+  const bp = useBreakpoint();
+  // A scroll-driven expand to full screen is excessive on a phone: the reel
+  // is simply a fixed plate that plays when it comes into view.
+  const stacked = bp === "mobile";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -123,6 +128,78 @@ export default function Solution({
       gsap.set(q(".sol-frame"), { top: 0, left: 0, right: 0, bottom: 0, borderRadius: 0 });
     },
   );
+
+  if (stacked) {
+    return (
+      <section
+        id="what-we-do"
+        style={{
+          background: color.black,
+          color: color.textOnDark,
+          fontFamily: typeScale.body.fontFamily,
+          display: "flex",
+          flexDirection: "column",
+          gap: rhythm.headerToContent,
+          padding: `${layout.section} ${layout.pad}`,
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.headlineToBody }}>
+          <MicroLabel tone="ruby">{copy.label}</MicroLabel>
+          <h2 style={{ margin: 0, ...typeScale.h2 }}>
+            {copy.headline.map((line, i) => (
+              <span key={i} style={{ display: "block" }}>
+                {line}
+              </span>
+            ))}
+          </h2>
+          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{copy.body}</p>
+        </div>
+
+        <div ref={stageRef} style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
+          <MediaTile
+            src={videoSrc}
+            poster={poster}
+            seed={4}
+            play={inView}
+            radius={10}
+            style={{ position: "absolute", inset: 0 }}
+          />
+        </div>
+
+        <div
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: space.s }}
+        >
+          <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
+            {copy.scrollHint}
+          </MicroLabel>
+          <svg className="stride-pulse" width="18" height="11" viewBox="0 0 18 11" fill="none" aria-hidden="true">
+            <path d="M1 1L9 9L17 1" stroke={color.ruby} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: layout.section }}>
+          {copy.pillars.map((pillar) => (
+            <div
+              key={pillar.n}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: space.s,
+                paddingTop: space.lg,
+                borderTop: `1px solid ${color.hairlineOnDark}`,
+              }}
+            >
+              <MicroLabel tone="ruby">{pillar.n}</MicroLabel>
+              <h3 style={{ margin: 0, ...typeScale.h3 }}>{pillar.title}</h3>
+              <p style={{ margin: 0, ...typeScale.body, color: color.textOnDarkMuted }}>
+                {pillar.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

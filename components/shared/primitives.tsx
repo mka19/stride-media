@@ -273,6 +273,9 @@ export function MediaTile({
           loop
           playsInline
           preload="metadata"
+          // Nothing below the fold decodes until it is near the viewport.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...({ loading: "lazy" } as any)}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
         />
       ) : (

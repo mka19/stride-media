@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useBreakpoint } from "../shared/responsive";
 import { brand, nav as navCopy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { GlowButton, StrideMark } from "../shared/primitives";
@@ -35,6 +36,10 @@ export default function Nav({
   const [progress, setProgress] = useState(0);
   const [lifted, setLifted] = useState(false);
   const [tone, setTone] = useState<Tone>("dark");
+  const [pageProgress, setPageProgress] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const bp = useBreakpoint();
+  const isMobile = bp === "mobile";
 
   useEffect(() => {
     let frame = 0;
@@ -62,6 +67,11 @@ export default function Nav({
       setActiveIndex(found);
       setProgress(found === -1 ? 0 : ratio);
       setTone(toneAt(height / 2));
+
+      // Collapsed nav has no per-section underlines to read, so the page's
+      // own progress takes their place as a bar across the top.
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setPageProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
     };
 
     const onScroll = () => {
@@ -130,7 +140,12 @@ export default function Nav({
       <nav
         className="stride-nav-links"
         aria-label="Sections"
-        style={{ display: "flex", alignItems: "stretch", flex: 1, minWidth: 0 }}
+        style={{
+          display: isMobile ? "none" : "flex",
+          alignItems: "stretch",
+          flex: 1,
+          minWidth: 0,
+        }}
       >
         {navCopy.items.map((item, i) => {
           const done = activeIndex > i;
@@ -146,7 +161,7 @@ export default function Nav({
                 display: "flex",
                 alignItems: "center",
                 gap: space.s,
-                paddingLeft: space.md,
+                paddingLeft: bp === "tablet" ? space.s : space.md,
                 textDecoration: "none",
                 ...typeScale.labelSm,
                 whiteSpace: "nowrap",
@@ -167,13 +182,101 @@ export default function Nav({
       </nav>
 
       <div
-        style={{ position: "relative", display: "flex", alignItems: "center", paddingLeft: space.xl }}
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          marginLeft: "auto",
+          paddingLeft: space.xl,
+        }}
       >
-        <GlowButton href="#contact">
-          {navCopy.cta}
-        </GlowButton>
-        <Segment fill={0} active={false} hairline={hairline} />
+        {isMobile ? (
+          <button
+            type="button"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            style={{
+              display: "grid",
+              gap: 5,
+              width: 44,
+              height: 44,
+              padding: space.s,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              alignContent: "center",
+            }}
+          >
+            <span style={{ height: 1.5, background: ink, transition: `background 600ms ${ease.out}` }} />
+            <span style={{ height: 1.5, background: ink, transition: `background 600ms ${ease.out}` }} />
+          </button>
+        ) : (
+          <>
+            <GlowButton href="#contact">{navCopy.cta}</GlowButton>
+            <Segment fill={0} active={false} hairline={hairline} />
+          </>
+        )}
       </div>
+
+      {/* Collapsed nav: the whole page's progress, since the per-section
+          underlines are not on screen to read. */}
+      {isMobile && (
+        <span
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 2,
+            background: hairline,
+          }}
+        >
+          <span
+            style={{
+              display: "block",
+              height: "100%",
+              width: "100%",
+              background: color.ruby,
+              transformOrigin: "left center",
+              transform: `scaleX(${pageProgress})`,
+            }}
+          />
+        </span>
+      )}
+
+      {/* Mobile menu panel */}
+      {isMobile && menuOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: height,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: light ? color.bone : color.black,
+            display: "flex",
+            flexDirection: "column",
+            gap: space.lg,
+            padding: `${space.xl}px ${layout.pad}`,
+          }}
+        >
+          {navCopy.items.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              onClick={() => setMenuOpen(false)}
+              style={{ ...typeScale.h3, color: ink, textDecoration: "none" }}
+            >
+              {item.label}
+            </a>
+          ))}
+          <GlowButton href="#contact" style={{ marginTop: space.md, alignSelf: "flex-start" }}>
+            {navCopy.cta}
+          </GlowButton>
+        </div>
+      )}
     </header>
   );
 }
