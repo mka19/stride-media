@@ -127,27 +127,47 @@ export default function Problem({
           // of nothing in the middle of the section.
           tl.fromTo(
             card,
-            { opacity: 0, scale: 0.93, y: 34 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.07, ease: "power3.out" },
+            { opacity: 0, y: 34 },
+            { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
             0.47,
           );
         } else {
           // Everything swaps together: icon, label, headline, portrait and
           // number. Staggering the parts makes a state look like it is
           // assembling rather than like the slot changing its contents.
-          // The outgoing state expands as it goes, and is completely gone
-          // before the next one starts arriving — they used to cross for two
-          // percent of the section, which is enough to read as two cards in
-          // the slot at once.
-          tl.to(
-            cards[i - 1],
-            { opacity: 0, scale: 1.32, y: -34, duration: 0.06, ease: "power2.in" },
-            at,
-          ).fromTo(
+          // Only the plate expands. The card's text leaves on its own and
+          // the portrait grows out of its frame until it covers the screen,
+          // so the state hands over through the footage rather than by the
+          // whole composition scaling — type included — toward the viewer.
+          const leaving = cards[i - 1];
+          const leavingMedia = leaving.querySelector(".pb-media") as HTMLElement | null;
+
+          tl.to(leaving.querySelectorAll(".pb-text"), { opacity: 0, duration: 0.035 }, at);
+
+          if (leavingMedia) {
+            tl.to(
+              leavingMedia,
+              {
+                // Enough to cover the frame from wherever the plate sits.
+                scale: () => {
+                  const r = leavingMedia.getBoundingClientRect();
+                  const base = gsap.getProperty(leavingMedia, "scaleX") as number;
+                  const w = r.width / (base || 1);
+                  const h = r.height / (base || 1);
+                  return Math.max(window.innerWidth / w, window.innerHeight / h) * 1.04;
+                },
+                duration: 0.07,
+                ease: "power2.inOut",
+              },
+              at,
+            ).to(leavingMedia, { opacity: 0, duration: 0.025 }, at + 0.05);
+          }
+
+          tl.to(leaving, { opacity: 0, duration: 0.01 }, at + 0.075).fromTo(
             card,
-            { opacity: 0, scale: 0.93, y: 34 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.07, ease: "power3.out" },
-            at + 0.07,
+            { opacity: 0, y: 34 },
+            { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
+            at + 0.085,
           );
         }
 
@@ -182,8 +202,10 @@ export default function Problem({
       gsap.set(q(".pb-tile"), { opacity: 1, scale: 1, filter: "none" });
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
-      gsap.set(q(".pb-card"), { opacity: 0, scale: 1, transformOrigin: "50% 50%" });
-      gsap.set(q(".pb-card")[0], { opacity: 1, scale: 1 });
+      gsap.set(q(".pb-card"), { opacity: 0 });
+      gsap.set(q(".pb-media"), { transformOrigin: "50% 50%" });
+      gsap.set(q(".pb-text"), { opacity: 1 });
+      gsap.set(q(".pb-card")[0], { opacity: 1 });
       surface.current?.setTone("light");
     },
   );
@@ -321,24 +343,30 @@ export default function Problem({
               inset: 0,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
-              gap: space.h,
-              padding: `0 ${layout.pad}`,
+              // Label at the top, statement in the middle of what is left,
+              // the two small blocks on the floor of the frame — rather than
+              // the three of them stacked together in the centre with the
+              // rest of the screen empty under them.
+              justifyContent: "space-between",
+              gap: space.xl,
+              padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.hh}px`,
               color: color.textOnDark,
             }}
           >
-            <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{copy.label}</span>
+            <MicroLabel tone="accent">{copy.label}</MicroLabel>
 
+            <div style={{ flex: "1 1 auto", display: "flex", alignItems: "center" }}>
             <p
               style={{
                 margin: 0,
                 ...typeScale.h1,
+                // A block, not a flex row: flex sizes each row to its tallest
+                // item and ignores line-height, so the object tiles set the
+                // row height and the leading went wherever they put it.
+                display: "block",
+                textTransform: "uppercase",
+                fontWeight: 500,
                 maxWidth: "min(1500px, 94vw)",
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                columnGap: "0.3em",
-                rowGap: "0.1em",
               }}
             >
               {copy.introSequence.map((token, i) =>
@@ -350,10 +378,15 @@ export default function Problem({
                     style={{
                       position: "relative",
                       display: "inline-block",
-                      width: "1.3em",
-                      height: "1.3em",
-                      borderRadius: "0.28em",
+                      width: "0.92em",
+                      height: "0.92em",
+                      margin: "0 0.16em",
+                      borderRadius: "0.2em",
                       overflow: "hidden",
+                      // Sat on the text's own baseline band, so it rides the
+                      // line rather than pushing the row taller than the
+                      // leading allows for.
+                      verticalAlign: "-0.12em",
                       boxShadow: `0 0 0 1px ${hexA("#FFFFFF", 0.14)}`,
                       willChange: "transform, filter",
                     }}
@@ -366,12 +399,17 @@ export default function Problem({
                     />
                   </span>
                 ) : (
-                  <span key={i} className="pb-word" style={{ display: "inline-block" }}>
+                  <span
+                    key={i}
+                    className="pb-word"
+                    style={{ display: "inline-block", marginRight: "0.26em" }}
+                  >
                     {token}
                   </span>
                 ),
               )}
             </p>
+            </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: space.xl }}>
               <div style={{ height: 1, background: color.hairlineOnDark }} />
@@ -473,6 +511,7 @@ export default function Problem({
                 >
                   {/* ---- left: icon, eyebrow, sub-label, headline ---- */}
                   <div
+                    className="pb-text"
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -542,6 +581,7 @@ export default function Problem({
 
                   {/* ---- right: the number, then its description ---- */}
                   <div
+                    className="pb-text"
                     style={{
                       display: "flex",
                       flexDirection: "column",

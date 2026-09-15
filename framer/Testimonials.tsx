@@ -28,13 +28,18 @@ export default function Testimonials() {
   // the layout below is a column flow, so cards can never collide no matter
   // how tall their quote runs. Percentage spots could not know that, which
   // is what put cards through each other and off the frame.
+  // Vertical offsets only, and small. The cards used to carry a rotation
+  // each as well, which put eight different baselines on one row and read as
+  // misalignment rather than as a scatter.
   const rest = [
-    { x: -7, y: 4, r: -1.4 },
-    { x: 8, y: -5, r: 1.1 },
-    { x: -5, y: 5, r: 1.3 },
-    { x: 9, y: -4, r: -1 },
-    { x: -8, y: 5, r: 1.2 },
-    { x: 6, y: -5, r: -1.3 },
+    { x: 0, y: 0, r: 0 },
+    { x: 0, y: 26, r: 0 },
+    { x: 0, y: 8, r: 0 },
+    { x: 0, y: 32, r: 0 },
+    { x: 0, y: 18, r: 0 },
+    { x: 0, y: 0, r: 0 },
+    { x: 0, y: 28, r: 0 },
+    { x: 0, y: 10, r: 0 },
   ];
 
   const rootRef = useGsapContext(
@@ -64,13 +69,13 @@ export default function Testimonials() {
       cards.forEach((card, i) => {
         // On a phone the cards simply rise into place: a scatter from off
         // screen reads as drift when the viewport is one column wide.
-        const fromX = stacked ? 0 : gsap.utils.random([-1, 1]) * gsap.utils.random(280, 420);
-        const fromY = stacked ? 40 : gsap.utils.random([-1, 1]) * gsap.utils.random(180, 260);
+        const fromX = stacked ? 0 : (i % 2 === 0 ? -1 : 1) * (150 + (i % 3) * 40);
+        const fromY = stacked ? 40 : 90 + (i % 4) * 26;
         gsap.set(card, {
           opacity: 0,
           x: fromX,
           y: fromY,
-          rotation: stacked ? 0 : gsap.utils.random(-15, 15),
+          rotation: 0,
           force3D: true,
         });
 
@@ -83,9 +88,11 @@ export default function Testimonials() {
             y: Number((card as HTMLElement).dataset.y ?? 0),
             rotation: Number((card as HTMLElement).dataset.r ?? 0),
             duration: 1.1 / cards.length,
-            // Overshoots its resting place and settles, which is what gives
-            // the build-up its weight; power3.out lands flat by comparison.
-            ease: stacked ? "power3.out" : "elastic.out(1, 0.6)",
+            // Not elastic. On a scrubbed timeline an overshoot oscillation
+            // is driven by the wheel rather than by a clock, so every notch
+            // of scroll re-enters the wobble and the whole grid reads as
+            // jerky. A flat deceleration is what stays smooth on a scrub.
+            ease: "power3.out",
             force3D: true,
           },
           at,
@@ -174,9 +181,13 @@ export default function Testimonials() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            // A fixed four across rather than auto-fit: auto-fit re-flows at
+            // every width and the run of eight landed as 3 + 3 + 2 with a
+            // hole in it. Rows stretch, so every card in a row is the same
+            // height and the type sits on one baseline.
+            gridTemplateColumns: stacked ? "1fr" : "repeat(4, 1fr)",
             gap: layout.gutter,
-            alignItems: "start",
+            alignItems: "stretch",
           }}
         >
           {copy.cards.map((t, i) => {
@@ -188,7 +199,7 @@ export default function Testimonials() {
                 data-x={spot.x}
                 data-y={spot.y}
                 data-r={spot.r}
-                style={cardStyle}
+                style={{ ...cardStyle, height: "100%" }}
               >
                 {card(t)}
               </article>

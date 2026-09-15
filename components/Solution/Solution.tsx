@@ -195,9 +195,39 @@ export default function Solution({
         <div
           style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: space.s }}
         >
-          <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
-            {copy.scrollHint}
-          </MicroLabel>
+          {/* Two ways on: take the film in full, or keep going. */}
+          <div style={{ display: "flex", alignItems: "center", gap: space.s, pointerEvents: "auto" }}>
+            <button
+              type="button"
+              onClick={() => {
+                const v = stageRef.current?.querySelector("video");
+                if (v?.requestFullscreen) void v.requestFullscreen();
+                else v?.play();
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: space.sm,
+                height: 40,
+                padding: `0 ${space.md}px`,
+                borderRadius: 8,
+                cursor: "pointer",
+                border: "none",
+                background: color.boneSoft,
+                color: color.textOnLight,
+                ...typeScale.eyebrow,
+                fontWeight: 500,
+              }}
+            >
+              <svg width="11" height="12" viewBox="0 0 11 12" aria-hidden="true">
+                <path d="M0 0l11 6-11 6V0z" fill="currentColor" />
+              </svg>
+              {copy.watchFull}
+            </button>
+            <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
+              {copy.scrollHint}
+            </MicroLabel>
+          </div>
           <svg className="stride-pulse" width="18" height="11" viewBox="0 0 18 11" fill="none" aria-hidden="true">
             <path d="M1 1L9 9L17 1" stroke={color.accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -390,9 +420,39 @@ export default function Solution({
             pointerEvents: "none",
           }}
         >
-          <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
-            {copy.scrollHint}
-          </MicroLabel>
+          {/* Two ways on: take the film in full, or keep going. */}
+          <div style={{ display: "flex", alignItems: "center", gap: space.s, pointerEvents: "auto" }}>
+            <button
+              type="button"
+              onClick={() => {
+                const v = stageRef.current?.querySelector("video");
+                if (v?.requestFullscreen) void v.requestFullscreen();
+                else v?.play();
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: space.sm,
+                height: 40,
+                padding: `0 ${space.md}px`,
+                borderRadius: 8,
+                cursor: "pointer",
+                border: "none",
+                background: color.boneSoft,
+                color: color.textOnLight,
+                ...typeScale.eyebrow,
+                fontWeight: 500,
+              }}
+            >
+              <svg width="11" height="12" viewBox="0 0 11 12" aria-hidden="true">
+                <path d="M0 0l11 6-11 6V0z" fill="currentColor" />
+              </svg>
+              {copy.watchFull}
+            </button>
+            <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
+              {copy.scrollHint}
+            </MicroLabel>
+          </div>
           <svg
             className="stride-pulse"
             width="18"

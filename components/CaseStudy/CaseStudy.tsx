@@ -32,6 +32,7 @@ export default function CaseStudy({
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const slats = useRef<SlatHandle | null>(null);
+  const slatsOut = useRef<SlatHandle | null>(null);
   const stacked = useStacked();
 
   // Three staggered rows, sized and spaced so no two plates ever touch, and
@@ -51,9 +52,11 @@ export default function CaseStudy({
     // below the fold when the first ones are being read.
     // Every plate's right edge stays inside the frame — one of them used to
     // sit at 78% with a 23% width and hung over the edge for its whole pass.
-    x: [4, 62, 6, 60, 3, 64, 5, 61][i % 8],
-    y: [0, 6, 58, 64, 116, 122, 174, 180][i % 8],
-    w: [28, 26, 29, 27, 26, 29, 28, 27][i % 8],
+    // A diagonal walk: each plate sits off the last one's corner, so the
+    // next always arrives across from the one leaving rather than beside it.
+    x: [8, 52, 14, 58, 6, 50, 16, 54][i % 8],
+    y: [10, 38, 44, 12, 30, 52, 8, 36][i % 8],
+    w: 34,
   }));
 
   const rootRef = useGsapContext(
@@ -143,37 +146,52 @@ export default function CaseStudy({
       // before the metrics chapter starts. It used to run the full scroll on a
       // timeline of its own, which is why plates were still travelling across
       // the headline and the numbers.
+      // One plate at a time, each arriving diagonally across from the one
+      // going. The sheet used to carry all eight past the frame together,
+      // which meant four or five were on screen at once and none of them
+      // was the subject.
       const sheet = q(".cs-sheet");
       const span = GALLERY_OUT - GALLERY_IN;
+      const each = span / plateEls.length;
 
-      tl.fromTo(
+      tl.set(sheet, { opacity: 1 }, GALLERY_IN).fromTo(
         sheet,
-        // A shorter crossing than the field is tall, so each plate spends
-        // real time inside the frame rather than sweeping straight through.
-        { xPercent: 26, yPercent: 62 },
-        { xPercent: -30, yPercent: -152, ease: "none", duration: span },
+        { xPercent: 4, yPercent: 6 },
+        { xPercent: -4, yPercent: -6, ease: "none", duration: span },
         GALLERY_IN,
-      ).set(sheet, { opacity: 1 }, GALLERY_IN);
+      );
 
-      // Each plate arrives on its own beat as the sheet carries it up, rather
-      // than the whole collage appearing at once. Their positions are fixed
-      // relative to each other, so arriving one at a time costs nothing in
-      // overlap — only the moment of arrival is staggered.
-      const each = span / Math.max(1, plateEls.length);
       plateEls.forEach((plate, i) => {
-        const at = GALLERY_IN + i * each * 0.82;
+        const at = GALLERY_IN + i * each;
         tl.fromTo(
           plate,
-          { opacity: 0, scale: 0.9, y: 40 },
-          { opacity: 1, scale: 1, y: 0, duration: each * 1.1, ease: "power2.out" },
+          { opacity: 0, scale: 0.88, y: 56 },
+          { opacity: 1, scale: 1, y: 0, duration: each * 0.45, ease: "power3.out" },
           at,
-        ).to(plate, { opacity: 0, duration: each * 0.7, ease: "power1.in" }, at + each * 3.4);
+        ).to(
+          plate,
+          { opacity: 0, scale: 1.08, y: -48, duration: each * 0.4, ease: "power2.in" },
+          at + each * 0.72,
+        );
       });
 
-      // 3. the collage clears, and only then does the metrics chapter open
-      tl
-        .to(q(".cs-metrics"), { opacity: 1, duration: 0.05 }, GALLERY_OUT + 0.02)
+      // 3. the collage clears, and only then does the metrics chapter open —
+      //    behind the same curtain the section opened with, so the two ends
+      //    of it are the same device rather than two different transitions.
+      const curtainOut = { p: 0 };
+      tl.set(q(".cs-metrics"), { opacity: 1 }, GALLERY_OUT).to(
+        curtainOut,
+        {
+          p: 1,
+          duration: 0.16,
+          ease: "none",
+          onUpdate: () => slatsOut.current?.setProgress(curtainOut.p),
+        },
+        GALLERY_OUT,
+      );
 
+      tl
+        
         // 4. the headline lands in the centre of the empty frame
         .to(
           q(".cs-results-head"),
@@ -203,6 +221,7 @@ export default function CaseStudy({
       gsap.set(q(".cs-metrics"), { opacity: 1 });
       gsap.set(q(".cs-white"), { opacity: 0 });
       slats.current?.setProgress(1);
+      slatsOut.current?.setProgress(1);
       gsap.set(q(".cs-sheet"), { opacity: 1 });
       gsap.set(q(".cs-plate"), { opacity: 1, scale: 1, y: 0 });
     },
@@ -253,36 +272,39 @@ export default function CaseStudy({
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: stacked ? "1fr 1fr" : "repeat(4, 1fr)",
+        gridTemplateColumns: stacked ? "1fr" : "repeat(4, 1fr)",
         gap: layout.gutter,
         width: "100%",
         maxWidth: 1200,
         margin: "0 auto",
       }}
     >
-      {copy.metrics.map((m) => (
+      {copy.metrics.map((m, i) => (
         <div
           key={m.label}
           className="cs-metric"
           style={{
+            // A panel per figure: label at the head, the number set large
+            // under it, and the sentence on the floor of the card, so the
+            // three read as three registers rather than as a stack.
             display: "flex",
             flexDirection: "column",
-            alignItems: stacked ? "flex-start" : "center",
-            textAlign: stacked ? "left" : "center",
-            gap: space.s,
-            paddingTop: space.lg,
-            borderTop: `1px solid ${color.hairlineOnDark}`,
+            justifyContent: "space-between",
+            gap: space.h,
+            minHeight: 300,
+            padding: `${space.lg}px`,
+            borderRadius: 12,
+            background: hexA(color.textOnLight, 0.035),
+            border: `1px solid ${hexA(color.textOnLight, 0.08)}`,
+            textAlign: "left",
           }}
         >
+          <div style={{ ...typeScale.h3, color: color.textOnLight }}>{m.label}</div>
+
           <div
             style={{
               ...typeScale.numberXl,
-              fontSize: typeScale.h1.fontSize,
-              lineHeight: typeScale.h1.lineHeight,
               ...numberGradient,
-              textShadow: `0 0 28px ${hexA(color.accent, 0.45)}`,
-              // The tally rewrites this node every frame; a tabular figure
-              // keeps the column from jittering as the digits change.
               fontVariantNumeric: "tabular-nums",
             }}
           >
@@ -291,7 +313,10 @@ export default function CaseStudy({
             </span>
             {m.suffix}
           </div>
-          <div style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{m.label}</div>
+
+          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "26ch" }}>
+            {copy.metricNotes?.[i] ?? ""}
+          </p>
         </div>
       ))}
     </div>
@@ -350,7 +375,7 @@ export default function CaseStudy({
             padding: `${layout.section} ${layout.pad}`,
           }}
         >
-          <MicroLabel tone="accent">{copy.resultsLabel}</MicroLabel>
+          <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
           <h3 style={{ margin: 0, ...typeScale.h1 }}>{copy.resultsHeadline}</h3>
           {metrics}
         </div>
@@ -456,11 +481,11 @@ export default function CaseStudy({
             textAlign: "center",
             gap: rhythm.headerToContent,
             padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
-            background: color.ink,
-            color: color.textOnDark,
+            background: color.bone,
+            color: color.textOnLight,
           }}
         >
-          <Grain opacity={0.14} />
+          <Grain opacity={0.08} />
           <div
             style={{
               position: "relative",
@@ -475,12 +500,20 @@ export default function CaseStudy({
             </MicroLabel>
             <h3
               className="cs-results-head"
-              style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}
+              style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch", textWrap: "balance", color: color.textOnLight }}
             >
               {copy.resultsHeadline}
             </h3>
           </div>
           <div style={{ position: "relative", width: "100%" }}>{metrics}</div>
+
+          {/* The same curtain again, opening onto the numbers. */}
+          <div
+            className="cs-curtain-out"
+            style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+          >
+            <SlatCurtain handleRef={slatsOut} color={color.black} />
+          </div>
         </div>
       </div>
     </section>

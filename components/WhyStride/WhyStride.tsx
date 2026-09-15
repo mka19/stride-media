@@ -115,7 +115,10 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       });
 
       // 4. the object arrives and stays
-      tl.to(q(".ws-object"), { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out" }, 0.44);
+      tl.to(q(".ws-object"), { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out" }, 0.44)
+        // The label has done its job by the time the object is there; leaving
+        // it sat on top of the mark.
+        .to(q(".ws-label"), { opacity: 0, duration: 0.04 }, 0.44);
 
       // 5. The services arrive in pairs, one card either side of the object.
       //    Each pair slides in from its own edge, holds while it is read,
@@ -328,7 +331,11 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             color: color.textOnLight,
           }}
         >
-          <MicroLabel tone="accent" style={{ marginBottom: rhythm.eyebrowToHeadline }}>
+          <MicroLabel
+            className="ws-label"
+            tone="accent"
+            style={{ marginBottom: rhythm.eyebrowToHeadline }}
+          >
             {copy.label}
           </MicroLabel>
           {copy.headline.map((word) => (

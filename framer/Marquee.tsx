@@ -15,9 +15,9 @@ import { prefersReducedMotion } from "./gsap";
  */
 export default function Marquee({
   items,
-  // Slow. A ticker this size reads as a moving headline, not a news crawl,
-  // and at 60px/s the words were gone before they were read.
-  speed = 26,
+  // A moving headline rather than a news crawl, but not so slow that it
+  // reads as stalled.
+  speed = 46,
   direction = -1,
 }: {
   items: readonly string[];
@@ -37,17 +37,66 @@ export default function Marquee({
     let prev = performance.now();
     let raf = 0;
 
+    // Drag state. A throw hands its velocity to the loop and it decays back
+    // into the steady travel, so letting go does not stop the strip dead.
+    let dragging = false;
+    let lastX = 0;
+    let throwV = 0;
+    const view = el.parentElement as HTMLElement | null;
+
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(64, now - prev) / 1000;
       prev = now;
       const span = el.scrollWidth / 2 || 1;
-      offset = (offset + speed * dt) % span;
+
+      if (!dragging) {
+        offset += speed * dt - throwV * direction * dt;
+        throwV *= 0.94;
+        if (Math.abs(throwV) < 1) throwV = 0;
+      }
+      // Wrap in both directions: a drag can push the offset negative, and a
+      // bare modulo leaves that as a negative translate and a visible gap.
+      offset = ((offset % span) + span) % span;
       el.style.transform = `translate3d(${direction * offset}px, 0, 0)`;
     };
     raf = requestAnimationFrame(frame);
 
-    return () => cancelAnimationFrame(raf);
+    const onDown = (e: PointerEvent) => {
+      dragging = true;
+      lastX = e.clientX;
+      throwV = 0;
+      view?.setPointerCapture(e.pointerId);
+      if (view) view.style.cursor = "grabbing";
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      offset -= dx * direction;
+      throwV = dx * 12;
+      const span = el.scrollWidth / 2 || 1;
+      offset = ((offset % span) + span) % span;
+      el.style.transform = `translate3d(${direction * offset}px, 0, 0)`;
+    };
+    const onUp = (e: PointerEvent) => {
+      dragging = false;
+      view?.releasePointerCapture?.(e.pointerId);
+      if (view) view.style.cursor = "grab";
+    };
+
+    view?.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      view?.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
   }, [speed, direction, items]);
 
   return (
@@ -56,6 +105,9 @@ export default function Marquee({
       style={{
         position: "relative",
         overflow: "hidden",
+        cursor: "grab",
+        touchAction: "pan-y",
+        userSelect: "none",
         background: color.black,
         borderTop: `1px solid ${color.hairlineOnDark}`,
         borderBottom: `1px solid ${color.hairlineOnDark}`,
@@ -86,7 +138,12 @@ export default function Marquee({
                 }}
               >
                 {item}
-                <span style={{ color: color.accent, opacity: 0.8 }}>+</span>
+                <span
+                  className="stride-spin"
+                  style={{ color: color.accent, opacity: 0.85, display: "inline-block" }}
+                >
+                  +
+                </span>
               </span>
             ))}
           </div>

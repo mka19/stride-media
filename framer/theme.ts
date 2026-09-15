@@ -60,7 +60,7 @@ export const typeScale = {
    * proportion down to the phone end, so a headline has the same colour on a
    * 390 screen as on a 1920 one:
    *
-   *   number 115/117    display 96/100    h1 54/58
+   *   number 115/117    display 96/100    h1 64/72
    *   h3      26/30     body     18/22    eyebrow 12/15
    *
    * Tracking is −1px everywhere except the small labels: at 12px and under,
@@ -81,9 +81,9 @@ export const typeScale = {
   /** Every section and sub-section headline, and the About statement. */
   h1: {
     fontFamily: SANS,
-    fontSize: fluid(32, 54),
+    fontSize: fluid(36, 64),
     fontWeight: 500,
-    lineHeight: fluid(34, 58),
+    lineHeight: fluid(41, 72),
     letterSpacing: "-1px",
   },
   /** Card headlines, questions, stats — the working headline size. */
@@ -173,7 +173,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B57";
+export const BUILD = "B62";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

@@ -110,6 +110,7 @@ export const solution = {
   body: "Stride Media handles everything, so you never have to touch a camera, write a script, or guess what works.",
   videoCaption: "Watch how it comes together",
   scrollHint: "Scroll for more",
+  watchFull: "Watch full video",
   pillars: [
     {
       n: "01",
@@ -178,6 +179,13 @@ export const caseStudy = {
   hoverMain: "case study",
   resultsLabel: "Ninety days later",
   resultsHeadline: "The number that mattered moved.",
+  /** The sentence on the floor of each metric card. */
+  metricNotes: [
+    "Reach from month one to month three, on the same posting cadence.",
+    "Views across the quarter, from a standing start.",
+    "Inbound conversations that began with a piece of content.",
+    "Listings sourced from the feed, with no cold outreach.",
+  ],
   metrics: [
     { value: "41", suffix: "×", label: "Reach, month one to month three" },
     { value: "2.4", suffix: "M", label: "Views across the quarter" },
@@ -249,6 +257,8 @@ export const testimonials = {
     { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "[Client Name]", handle: "Consulting", stat: "Calendar booked out", initials: "04" },
     { quote: "The scripts are the thing. They write like they want it watched.", name: "[Client Name]", handle: "Founder", stat: "18K saves, one video", initials: "05" },
     { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "[Client Name]", handle: "Real estate", stat: "9 listings sourced", initials: "06" },
+    { quote: "We stopped guessing what to post. There is a plan, and the plan is working.", name: "[Client Name]", handle: "Fitness", stat: "4× saves per post", initials: "07" },
+    { quote: "The first batch landed in five days. Two of them are still my best performing videos.", name: "[Client Name]", handle: "Property", stat: "5 days to first batch", initials: "08" },
   ],
 } as const;
 

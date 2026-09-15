@@ -142,15 +142,24 @@ export default function HowItWorks({
         margin: "0 auto",
       }}
     >
-      <MicroLabel className="hw-intro-item">How it works</MicroLabel>
-      <GradientRevealText
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: rhythm.eyebrowToHeadline,
+        }}
+      >
+        <MicroLabel className="hw-intro-item">How it works</MicroLabel>
+        <GradientRevealText
         as="h2"
         tone="light"
         className="hw-intro-item"
         style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}
       >
         {copy.headline}
-      </GradientRevealText>
+        </GradientRevealText>
+      </div>
       <p
         className="hw-intro-item"
         style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "52ch" }}
@@ -171,15 +180,28 @@ export default function HowItWorks({
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
+        // Two different relationships, two different gaps: a label sits
+        // close to what it labels, and body copy stands off its headline.
+        // One gap for both put the label as far from the title as the
+        // paragraph was.
         gap: rhythm.headlineToBody,
         maxWidth: 720,
         margin: "0 auto",
       }}
     >
-      <MicroLabel number={step.n}>{step.tag}</MicroLabel>
-      <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
-        {step.title}
-      </h3>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: rhythm.eyebrowToHeadline,
+        }}
+      >
+        <MicroLabel number={step.n}>{step.tag}</MicroLabel>
+        <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+          {step.title}
+        </h3>
+      </div>
       <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{step.body}</p>
     </div>
   ));

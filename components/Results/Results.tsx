@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { gsap, useGsapContext, prefersReducedMotion } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { ArrowIcon, MediaTile, MicroLabel } from "../shared/primitives";
+import { GlowButton, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
 import GradientRevealText from "../shared/GradientRevealText";
@@ -78,22 +78,11 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         >
           {copy.body}
         </p>
-        <a
-          href="#contact"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: space.s,
-            marginTop: space.sm,
-            ...typeScale.eyebrow,
-            fontWeight: 500,
-            color: color.accent,
-            textDecoration: "none",
-          }}
-        >
+        {/* The same plate as every other call to action on the site — a
+            coloured text link here read as a different kind of control. */}
+        <GlowButton href="#contact" style={{ marginTop: space.sm }}>
           {copy.link}
-          <ArrowIcon />
-        </a>
+        </GlowButton>
       </div>
 
       {/* ---- the ticker ---- */}
@@ -164,6 +153,20 @@ function Ticker({ children }: { children: ReactNode }) {
       const s = span();
       offset = ((offset % s) + s) % s;
       el.style.transform = `translate3d(${-offset}px, 0, 0)`;
+
+      // Curve the row away at both edges: each card is turned and pushed
+      // back in proportion to how far it sits from the middle of the
+      // viewport, so the centre of the run is the largest and the ends fall
+      // away into the dark rather than being cut off by a hard edge.
+      const mid = view.clientWidth / 2;
+      for (const card of el.children as HTMLCollectionOf<HTMLElement>) {
+        const r = card.getBoundingClientRect();
+        const viewBox = view.getBoundingClientRect();
+        const t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - viewBox.left - mid) / mid));
+        const a = Math.abs(t);
+        card.style.transform = `perspective(1500px) rotateY(${-t * 34}deg) translateZ(${-a * 210}px) scale(${1 - a * 0.1})`;
+        card.style.opacity = String(1 - a * 0.35);
+      }
     };
     raf = requestAnimationFrame(frame);
 
@@ -213,13 +216,20 @@ function Ticker({ children }: { children: ReactNode }) {
         overflow: "hidden",
         cursor: "grab",
         touchAction: "pan-y",
-        paddingLeft: layout.pad,
+        perspective: 1500,
         paddingBottom: space.lg,
       }}
     >
       <div
         ref={track}
-        style={{ display: "flex", gap: layout.gutter, width: "max-content", willChange: "transform" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: layout.gutter,
+          width: "max-content",
+          transformStyle: "preserve-3d",
+          willChange: "transform",
+        }}
       >
         {children}
       </div>
@@ -250,6 +260,8 @@ function ResultCard({
         flexDirection: "column",
         gap: space.s,
         userSelect: "none",
+        transformStyle: "preserve-3d",
+        willChange: "transform, opacity",
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh" }}>

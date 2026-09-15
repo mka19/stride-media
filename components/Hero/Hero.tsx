@@ -6,6 +6,7 @@ import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useCanHover } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 import SocialProof from "../shared/SocialProof";
+import LiquidField from "../shared/LiquidField";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
 
@@ -139,6 +140,12 @@ export default function Hero({
             `,
           }}
         />
+
+        {/* Layer 0b — the liquid ground. Slow and low-contrast: it gives the
+            black somewhere to move without competing with anything on it. */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+          <LiquidField opacity={0.5} speed={0.85} />
+        </div>
 
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
         <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
