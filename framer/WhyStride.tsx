@@ -5,7 +5,6 @@ import { registerSurface, type SurfaceHandle } from "./surface";
 import { whyStride as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { Grain, MicroLabel } from "./primitives";
-import ScrambleText from "./ScrambleText";
 import { useBreakpoint, useStacked } from "./responsive";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 
@@ -218,13 +217,12 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           </MicroLabel>
           {copy.headline.map((word) => (
             <div key={word} className="ws-word" style={{ ...typeScale.displayLg, lineHeight: 0.88 }}>
-              {/* Each letter stays its own span: the scatter needs them
-                  individually, and the decode runs before that. */}
+              {/* Each letter stays its own span because the scatter needs
+                  them individually. The letters themselves simply arrive —
+                  a decode on top of the scatter was two effects on one word. */}
               {word.split("").map((ch, i) => (
                 <span key={i} className="ws-letter" style={{ display: "inline-block" }}>
-                  <ScrambleText as="span" settle={420} stagger={30}>
-                    {ch}
-                  </ScrambleText>
+                  {ch}
                 </span>
               ))}
             </div>

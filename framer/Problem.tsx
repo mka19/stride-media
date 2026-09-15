@@ -32,7 +32,6 @@ export default function Problem({
   cardMedia?: string[];
   scrollLength?: string;
 }) {
-  const words = copy.intro.split(" ");
   const surface = useRef<SurfaceHandle | null>(null);
   const bp = useBreakpoint();
   // Pinning is what janks on real phone hardware, and a cycling slot is
@@ -45,7 +44,12 @@ export default function Problem({
       const q = gsap.utils.selector(root);
       const cards = q(".pb-card");
 
-      gsap.set(q(".pb-word"), { opacity: 0.12 });
+      const statement = q(".pb-statement-text")[0] as HTMLElement | undefined;
+      const paintStatement = (p: number) => {
+        if (!statement) return;
+        statement.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} ${p - 14}%, ${hexA(color.accent, 0.55)} ${p + 6}%, ${hexA(color.accent, 0.55)} 100%)`;
+      };
+      paintStatement(-24);
       gsap.set(q(".pb-light"), { opacity: 0 });
       gsap.set(cards, { opacity: 0 });
 
@@ -67,9 +71,10 @@ export default function Problem({
       // word always lands at 0.25 however long the copy is. A per-word value
       // scaled with the word count and ran past the crossfade, which cut away
       // mid-sentence.
+      const sweep = { p: -24 };
       tl.to(
-        q(".pb-word"),
-        { opacity: 1, duration: 0.05, stagger: { amount: 0.18 }, ease: "none" },
+        sweep,
+        { p: 124, duration: 0.23, ease: "none", onUpdate: () => paintStatement(sweep.p) },
         0.02,
       )
 
@@ -148,7 +153,10 @@ export default function Problem({
     // place, with the statement fully legible above it.
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".pb-word"), { opacity: 1 });
+      const statement = q(".pb-statement-text")[0] as HTMLElement | undefined;
+      if (statement) {
+        statement.style.backgroundImage = `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} 100%)`;
+      }
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
       gsap.set(q(".pb-card"), { opacity: 0 });
@@ -298,13 +306,24 @@ export default function Problem({
             {/* h3 rather than body: this is the section's statement, not a
                 supporting paragraph, and at body size it read as a caption
                 floating in the middle of an empty frame. */}
-            <p style={{ margin: 0, maxWidth: 720, ...typeScale.h3 }}>
-              {words.map((w, i) => (
-                <span key={i} className="pb-word" style={{ display: "inline-block" }}>
-                  {w}
-                  {i < words.length - 1 ? "\u00A0" : ""}
-                </span>
-              ))}
+            <p
+              className="pb-statement-text"
+              style={{
+                margin: 0,
+                maxWidth: 720,
+                ...typeScale.h3,
+                // The fill resolves left to right as the section opens, the
+                // same treatment the headlines use. It replaces a word-by-word
+                // opacity stagger, which read as the sentence assembling
+                // itself rather than as the statement arriving.
+                backgroundImage: `linear-gradient(95deg, ${color.textOnDark} 0%, ${color.textOnDark} -38%, ${hexA(color.accent, 0.55)} -18%, ${hexA(color.accent, 0.55)} 100%)`,
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              {copy.intro}
             </p>
           </div>
         </div>

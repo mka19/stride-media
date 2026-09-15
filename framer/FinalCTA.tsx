@@ -3,7 +3,7 @@ import { gsap, useGsapContext } from "./gsap";
 import { brand, finalCta as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { GlowButton, Grain, MicroLabel } from "./primitives";
-import ScrambleText from "./ScrambleText";
+import GradientRevealText from "./GradientRevealText";
 import { useBreakpoint, useStacked } from "./responsive";
 
 /**
@@ -102,15 +102,14 @@ export default function FinalCTA({
 
           <div style={{ position: "relative", marginTop: rhythm.eyebrowToHeadline }}>
             {copy.headline.map((line) => (
-              <ScrambleText
+              <GradientRevealText
                 key={line}
                 as="h2"
-                stagger={32}
-                settle={480}
+                tone="dark"
                 style={{ ...typeScale.h1, display: "block", margin: 0 }}
               >
                 {line}
-              </ScrambleText>
+              </GradientRevealText>
             ))}
           </div>
 

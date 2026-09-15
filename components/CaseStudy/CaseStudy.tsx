@@ -4,7 +4,7 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { caseStudy as copy } from "../shared/copy";
 import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
-import ScrambleText from "../shared/ScrambleText";
+import GradientRevealText from "../shared/GradientRevealText";
 import HoverBadge from "../shared/HoverBadge";
 import { useStacked } from "../shared/responsive";
 
@@ -204,9 +204,9 @@ export default function CaseStudy({
       </MicroLabel>
       <h2 className="cs-intro-item" style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>
         {copy.headline.map((line, i) => (
-          <ScrambleText key={i} as="span" style={{ display: "block" }}>
+          <GradientRevealText key={i} as="span" tone="dark" style={{ display: "block" }}>
             {line}
-          </ScrambleText>
+          </GradientRevealText>
         ))}
       </h2>
       <p
