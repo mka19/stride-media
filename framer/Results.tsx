@@ -45,7 +45,11 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         background: color.black,
         color: color.textOnDark,
         fontFamily: typeScale.bodyLg.fontFamily,
-        paddingBlock: layout.section,
+        // The ticker is a full-bleed band that runs off both edges, so a
+        // full section token under it read as a gap rather than as rhythm.
+        // The next section brings its own top padding.
+        paddingTop: layout.section,
+        paddingBottom: `${space.h}px`,
         overflow: "hidden",
       }}
     >

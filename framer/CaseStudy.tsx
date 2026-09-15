@@ -25,7 +25,7 @@ import { useBreakpoint } from "./responsive";
  */
 export default function CaseStudy({
   gallery = [],
-  scrollLength = "560vh",
+  scrollLength = "760vh",
 }: {
   gallery?: string[];
   scrollLength?: string;
@@ -50,10 +50,45 @@ export default function CaseStudy({
     (root) => {
       const q = gsap.utils.selector(root);
 
+      // The gallery owns this slice of the scroll and nothing else overlaps
+      // it, so the plates are gone before the results chapter is readable.
+      const GALLERY_IN = 0.14;
+      const GALLERY_OUT = 0.62;
+
       gsap.set(q(".cs-intro-item"), { opacity: 0, y: 24, scale: 0.98 });
       gsap.set(q(".cs-warm"), { opacity: 0 });
       gsap.set(q(".cs-metrics"), { opacity: 0 });
-      gsap.set(q(".cs-metric"), { opacity: 0, y: 20 });
+      gsap.set(q(".cs-results-head"), { opacity: 0, y: 30 });
+      gsap.set(q(".cs-metric"), { opacity: 0, y: 64 });
+
+      // Each figure starts at zero and is counted up to its real value the
+      // first time the chapter is reached. Running it on the scrub instead
+      // would make the numbers walk backwards whenever the visitor scrolls
+      // up, which reads as a glitch rather than a tally.
+      const digits = q(".cs-num") as HTMLElement[];
+      digits.forEach((node) => {
+        node.textContent = (0).toFixed(Number(node.dataset.dec ?? 0));
+      });
+
+      let counted = false;
+      const countUp = () => {
+        if (counted) return;
+        counted = true;
+        digits.forEach((node, i) => {
+          const to = Number(node.dataset.to ?? 0);
+          const dec = Number(node.dataset.dec ?? 0);
+          const tally = { v: 0 };
+          gsap.to(tally, {
+            v: to,
+            duration: 1.5,
+            delay: i * 0.08,
+            ease: "power2.out",
+            onUpdate: () => {
+              node.textContent = tally.v.toFixed(dec);
+            },
+          });
+        });
+      };
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -62,7 +97,7 @@ export default function CaseStudy({
           end: "bottom bottom",
           scrub: 0.6,
           onUpdate: (self) =>
-            surface.current?.setTone(self.progress > 0.16 && self.progress < 0.68 ? "light" : "dark"),
+            surface.current?.setTone(self.progress > 0.16 && self.progress < 0.62 ? "light" : "dark"),
         },
       });
 
@@ -75,42 +110,70 @@ export default function CaseStudy({
 
       // Every plate crosses the frame bottom-right to upper-left, each at its
       // own rate, which is what makes them overlap on the way through.
+      //
+      // The crossing is confined to GALLERY_IN..GALLERY_OUT and lives on the
+      // same timeline as everything else, so the last plate has left the frame
+      // before the metrics chapter starts. It used to run the full scroll on a
+      // timeline of its own, which is why plates were still travelling across
+      // the headline and the numbers.
       q(".cs-plate").forEach((plate) => {
         const speed = Number((plate as HTMLElement).dataset.speed ?? 1);
 
         // Travel and fade are separate: tweening opacity across the whole
         // crossing left every plate at half strength in the middle of the
         // frame, so overlapping plates showed through each other and their
-        // captions read over whatever sat behind. The fade now happens in the
+        // captions read over whatever sat behind. The fade happens in the
         // first and last few percent; the plate is solid for the crossing.
-        gsap
-          .timeline({
-            scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.6 },
-          })
+        tl.fromTo(
+          plate,
+          { xPercent: 90 * speed, yPercent: 120 * speed },
+          {
+            xPercent: -110 * speed,
+            yPercent: -150 * speed,
+            ease: "none",
+            duration: GALLERY_OUT - GALLERY_IN,
+          },
+          GALLERY_IN,
+        )
           .fromTo(
             plate,
-            { xPercent: 90 * speed, yPercent: 120 * speed },
-            {
-              xPercent: -110 * speed,
-              yPercent: -150 * speed,
-              ease: "none",
-              duration: 1,
-            },
-            0,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.04, ease: "power1.out" },
+            GALLERY_IN,
           )
-          .fromTo(plate, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out" }, 0)
-          .to(plate, { opacity: 0, duration: 0.05, ease: "power1.in" }, 0.95);
+          .to(plate, { opacity: 0, duration: 0.04, ease: "power1.in" }, GALLERY_OUT - 0.04);
       });
 
-      // 3. the collage clears straight into the metrics chapter
-      tl.to(q(".cs-warm"), { opacity: 0, duration: 0.06 }, 0.68)
-        .to(q(".cs-metrics"), { opacity: 1, duration: 0.06 }, 0.7)
-        .to(q(".cs-metric"), { opacity: 1, y: 0, duration: 0.07, stagger: 0.03 }, 0.76);
+      // 3. the collage clears, and only then does the metrics chapter open
+      tl.to(q(".cs-warm"), { opacity: 0, duration: 0.06 }, GALLERY_OUT)
+        .to(q(".cs-metrics"), { opacity: 1, duration: 0.05 }, GALLERY_OUT + 0.02)
+
+        // 4. the headline lands in the centre of the empty frame
+        .to(
+          q(".cs-results-head"),
+          { opacity: 1, y: 0, duration: 0.06, stagger: 0.02, ease: "power2.out" },
+          0.68,
+        )
+
+        // 5. the numbers rise from below their rule, one after another
+        .to(
+          q(".cs-metric"),
+          { opacity: 1, y: 0, duration: 0.07, stagger: 0.035, ease: "power3.out" },
+          0.76,
+        )
+
+        // 6. and count up to their value once they are in place
+        .call(countUp, undefined, 0.78)
+
+        // A held tail so the finished chapter is readable before the section
+        // hands over, and so the positions above stay a fixed share of the
+        // scroll rather than drifting with the last tween.
+        .to({}, { duration: 0.02 }, 0.98);
     },
     [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".cs-intro-item, .cs-metric"), { opacity: 1, y: 0, scale: 1 });
+      gsap.set(q(".cs-intro-item, .cs-metric, .cs-results-head"), { opacity: 1, y: 0, scale: 1 });
       gsap.set(q(".cs-metrics, .cs-warm"), { opacity: 1 });
       gsap.set(q(".cs-plate"), { opacity: 1 });
     },
@@ -165,6 +228,7 @@ export default function CaseStudy({
         gap: layout.gutter,
         width: "100%",
         maxWidth: 1200,
+        margin: "0 auto",
       }}
     >
       {copy.metrics.map((m) => (
@@ -174,6 +238,8 @@ export default function CaseStudy({
           style={{
             display: "flex",
             flexDirection: "column",
+            alignItems: stacked ? "flex-start" : "center",
+            textAlign: stacked ? "left" : "center",
             gap: space.s,
             paddingTop: space.lg,
             borderTop: `1px solid ${color.hairlineOnDark}`,
@@ -185,9 +251,14 @@ export default function CaseStudy({
               fontSize: typeScale.h1.fontSize,
               color: color.accent,
               textShadow: `0 0 28px ${hexA(color.accent, 0.45)}`,
+              // The tally rewrites this node every frame; a tabular figure
+              // keeps the column from jittering as the digits change.
+              fontVariantNumeric: "tabular-nums",
             }}
           >
-            {m.value}
+            <span className="cs-num" data-to={m.value} data-dec={m.value.includes(".") ? 1 : 0}>
+              {m.value}
+            </span>
             {m.suffix}
           </div>
           <div style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{m.label}</div>
@@ -341,6 +412,8 @@ export default function CaseStudy({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
             gap: rhythm.headerToContent,
             padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
             background: color.ink,
@@ -348,11 +421,26 @@ export default function CaseStudy({
           }}
         >
           <Grain opacity={0.14} />
-          <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline }}>
-            <MicroLabel tone="accent">{copy.resultsLabel}</MicroLabel>
-            <h3 style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>{copy.resultsHeadline}</h3>
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: rhythm.eyebrowToHeadline,
+            }}
+          >
+            <MicroLabel tone="accent" className="cs-results-head">
+              {copy.resultsLabel}
+            </MicroLabel>
+            <h3
+              className="cs-results-head"
+              style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}
+            >
+              {copy.resultsHeadline}
+            </h3>
           </div>
-          <div style={{ position: "relative" }}>{metrics}</div>
+          <div style={{ position: "relative", width: "100%" }}>{metrics}</div>
         </div>
       </div>
     </section>

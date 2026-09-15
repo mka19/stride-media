@@ -48,7 +48,6 @@ export default function Problem({
       gsap.set(q(".pb-word"), { opacity: 0.12 });
       gsap.set(q(".pb-light"), { opacity: 0 });
       gsap.set(cards, { opacity: 0 });
-      gsap.set(cards[0], { opacity: 1 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -74,12 +73,28 @@ export default function Problem({
         0.02,
       )
 
-        // --- bridge: a straight crossfade between the two layers -----------
-        .to(q(".pb-dark"), { opacity: 0, duration: 0.06 }, 0.32)
-        .to(q(".pb-light"), { opacity: 1, duration: 0.06 }, 0.32);
+        // --- bridge -------------------------------------------------------
+        // Sequenced, not crossfaded. Fading both layers over the same beat
+        // left them each half-transparent in the middle, so the footage
+        // showed through the white and the bridge read as a grey wash. Now
+        // the statement leaves first, the opaque light layer rises over the
+        // footage, and only then does the dark layer drop out — there is no
+        // frame where two grounds are visible at once.
+        .to(q(".pb-statement"), { opacity: 0, y: -24, duration: 0.05, ease: "power2.in" }, 0.28)
+        .to(q(".pb-light"), { opacity: 1, duration: 0.08, ease: "power2.inOut" }, 0.33)
+        .set(q(".pb-dark"), { opacity: 0 }, 0.42)
+
+        // The first state rises into the empty slot rather than being there
+        // already, so arriving on the light ground is itself a transition.
+        .fromTo(
+          cards[0],
+          { opacity: 0, y: 28 },
+          { opacity: 1, y: 0, duration: 0.06, ease: "power3.out" },
+          0.42,
+        );
 
       // --- part 2: one slot, three states at even checkpoints -------------
-      const start = 0.44;
+      const start = 0.5;
       const span = (1 - start) / cards.length;
       cards.forEach((card, i) => {
         const at = start + i * span;
@@ -87,11 +102,11 @@ export default function Problem({
           // Everything swaps together: icon, label, headline, portrait and
           // number. Staggering the parts makes a state look like it is
           // assembling rather than like the slot changing its contents.
-          tl.to(cards[i - 1], { opacity: 0, duration: 0.04, ease: "power2.inOut" }, at).fromTo(
+          tl.to(cards[i - 1], { opacity: 0, y: -20, duration: 0.05, ease: "power2.in" }, at).fromTo(
             card,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.04, ease: "power2.out" },
-            at + 0.01,
+            { opacity: 0, y: 28 },
+            { opacity: 1, y: 0, duration: 0.06, ease: "power3.out" },
+            at + 0.03,
           );
         }
         tl.to(q(`.pb-tick-${i}`), { scaleX: 1, duration: span * 0.9, ease: "none" }, at);
@@ -232,8 +247,9 @@ export default function Problem({
           />
           <Grain opacity={0.18} />
 
-          {/* The statement: 720px, left-aligned, in the lower third. */}
+          {/* The statement, centred. It leaves before the ground changes. */}
           <div
+            className="pb-statement"
             style={{
               position: "absolute",
               inset: 0,
@@ -248,7 +264,10 @@ export default function Problem({
             }}
           >
             <MicroLabel tone="accent">{copy.label}</MicroLabel>
-            <p style={{ margin: 0, maxWidth: 720, ...typeScale.bodyLg }}>
+            {/* h3 rather than body: this is the section's statement, not a
+                supporting paragraph, and at body size it read as a caption
+                floating in the middle of an empty frame. */}
+            <p style={{ margin: 0, maxWidth: 720, ...typeScale.h3 }}>
               {words.map((w, i) => (
                 <span key={i} className="pb-word" style={{ display: "inline-block" }}>
                   {w}
@@ -276,7 +295,10 @@ export default function Problem({
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
+              // Only the nav needs clearing at the top; the section token on
+              // top of it pushed the slot into the lower half of the frame
+              // and left a dead band above every card.
+              padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xl}px`,
             }}
           >
             {/* The slot. Every state stacks here and swaps in place. */}
@@ -356,9 +378,13 @@ export default function Problem({
                     style={{
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "space-between",
+                      // Pinned to the column's full height, the number was
+                      // stranded in the top corner with its own description
+                      // half a frame below it. They belong together.
+                      justifyContent: "center",
                       alignItems: "flex-end",
                       textAlign: "right",
+                      gap: rhythm.headlineToBody,
                       height: "100%",
                     }}
                   >

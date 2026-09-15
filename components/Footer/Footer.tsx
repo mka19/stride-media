@@ -156,9 +156,16 @@ export default function Footer({
           </nav>
         </div>
 
-        {/* ---- the wordmark, dissolving under the cursor ---- */}
-        <div className="ft-word">
-          <Wordmark text={copy.wordmark} height={stacked ? 96 : 240} />
+        {/* ---- the wordmark, dissolving under the cursor ----
+             Pulled out of the column's side padding so the type runs the
+             full width of the page; the height is set from the viewport so
+             the word always reaches both edges rather than sitting as a
+             small mark in the middle of an empty band. */}
+        <div
+          className="ft-word"
+          style={{ marginInline: `calc(-1 * ${layout.pad})`, width: "auto" }}
+        >
+          <Wordmark text={copy.wordmark} height={stacked ? "30vw" : "24vw"} />
         </div>
 
         {/* ---- meta row ---- */}

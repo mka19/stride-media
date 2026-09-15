@@ -7,16 +7,29 @@ import { color } from "./theme";
  * reference's mark dissolves as you move across it.
  *
  * The clean type is rendered once to an offscreen canvas and blitted each
- * frame; only the blocks inside the pointer's radius are re-drawn with
+ * frame; only the blocks inside the pointer's reach are re-drawn with
  * jitter. Redrawing the whole wordmark per frame would cost a full text
  * raster on every pointer move, for an effect that is only ever local.
+ *
+ * Three things keep the effect smooth rather than mechanical:
+ *
+ *   · the erase is a radial gradient, not a clipped circle, so the dissolve
+ *     has no edge — the earlier version cut a hard disc out of the letters
+ *     and you could see the circle travelling across the word;
+ *   · the pointer is eased toward its target and the whole effect fades in
+ *     and out with an intensity value, so entering and leaving the mark is a
+ *     transition rather than a switch;
+ *   · each block's displacement comes from a hash of its own coordinates,
+ *     not from Math.random() per frame, so blocks drift steadily outward
+ *     instead of strobing in place.
  */
 export default function Wordmark({
   text,
   height = 220,
 }: {
   text: string;
-  height?: number;
+  /** Any CSS length. The type is sized to fill the width within it. */
+  height?: number | string;
 }) {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
@@ -33,29 +46,45 @@ export default function Wordmark({
     let off: HTMLCanvasElement | null = null;
     let raf = 0;
 
-    // Pointer position in canvas space; starts far away so nothing dissolves.
-    let px = -9999;
-    let py = -9999;
+    // Pointer target, the eased position that follows it, and how much of the
+    // effect is currently applied. Starting off-canvas means nothing dissolves
+    // until the cursor actually arrives.
+    let tx = -9999;
+    let ty = -9999;
+    let sx = -9999;
+    let sy = -9999;
+    let inside = false;
+    let intensity = 0;
+
+    const FONT = '700 100px "Familjen Grotesk", Helvetica, Arial, sans-serif';
 
     const render = () => {
       const octx = off?.getContext("2d");
       if (!off || !octx) return;
       octx.clearRect(0, 0, w, h);
-      // Fit the word to the canvas width, whatever the viewport does.
-      let size = h * 1.05;
+
+      // Size from the width first so the word reaches both edges, then clamp
+      // to what the box can show. Measuring once at 100px and scaling beats
+      // stepping the size down in a loop — it lands on the exact fit.
+      octx.font = FONT;
+      const unit = octx.measureText(text).width / 100 || 1;
+      const byWidth = (w * 0.99) / unit;
+      // Cap height is roughly 0.76 of the em for this face; keeping the caps
+      // inside the box is what stops the tops of the letters being clipped.
+      const byHeight = h / 0.76;
+      const size = Math.max(12, Math.min(byWidth, byHeight));
+
+      octx.font = `700 ${size}px "Familjen Grotesk", Helvetica, Arial, sans-serif`;
       octx.textBaseline = "middle";
       octx.textAlign = "center";
       octx.fillStyle = color.textOnDark;
-      for (; size > 12; size -= 2) {
-        octx.font = `700 ${size}px "Familjen Grotesk", Helvetica, Arial, sans-serif`;
-        if (octx.measureText(text).width <= w * 0.96) break;
-      }
       octx.fillText(text, w / 2, h / 2);
     };
 
     const resize = () => {
       w = canvas.clientWidth;
       h = canvas.clientHeight;
+      if (!w || !h) return;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -67,61 +96,91 @@ export default function Wordmark({
     };
 
     const BLOCK = 6;
-    const RADIUS = 150;
+    const RADIUS = 170;
+
+    // A stable pseudo-random value per block, so a block's scatter is a
+    // property of where it is rather than of which frame this is.
+    const hash = (x: number, y: number, salt: number) => {
+      let n = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(salt, 2246822519);
+      n = Math.imul(n ^ (n >>> 13), 1274126177);
+      return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
+    };
 
     const frame = () => {
       raf = requestAnimationFrame(frame);
-      if (!off) return;
+      if (!off || !w || !h) return;
+
+      // Ease the pointer and the strength of the effect. Both are what make
+      // hovering feel like the mark reacting rather than snapping.
+      if (sx < -1000 && inside) {
+        sx = tx;
+        sy = ty;
+      }
+      sx += (tx - sx) * 0.16;
+      sy += (ty - sy) * 0.16;
+      intensity += ((inside ? 1 : 0) - intensity) * 0.08;
 
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(off, 0, 0, w, h);
 
-      if (reduced || px < -1000) return;
+      if (reduced || intensity < 0.01) return;
 
-      // Clear the neighbourhood, then stamp its blocks back with scatter, so
-      // the letters break up rather than smear.
-      const x0 = Math.max(0, Math.floor((px - RADIUS) / BLOCK) * BLOCK);
-      const x1 = Math.min(w, Math.ceil((px + RADIUS) / BLOCK) * BLOCK);
-      const y0 = Math.max(0, Math.floor((py - RADIUS) / BLOCK) * BLOCK);
-      const y1 = Math.min(h, Math.ceil((py + RADIUS) / BLOCK) * BLOCK);
-
+      // 1. Thin the letters out under the cursor with a soft radial erase —
+      //    a gradient, so the dissolve has no boundary of its own.
+      const fade = ctx.createRadialGradient(sx, sy, 0, sx, sy, RADIUS);
+      fade.addColorStop(0, `rgba(0,0,0,${0.96 * intensity})`);
+      fade.addColorStop(0.45, `rgba(0,0,0,${0.72 * intensity})`);
+      fade.addColorStop(0.75, `rgba(0,0,0,${0.3 * intensity})`);
+      fade.addColorStop(1, "rgba(0,0,0,0)");
       ctx.save();
-      ctx.beginPath();
-      ctx.arc(px, py, RADIUS, 0, Math.PI * 2);
-      ctx.clip();
-      ctx.clearRect(x0, y0, x1 - x0, y1 - y0);
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = fade;
+      ctx.fillRect(sx - RADIUS, sy - RADIUS, RADIUS * 2, RADIUS * 2);
+      ctx.restore();
+
+      // 2. Stamp the erased blocks back, thrown outward and faded with
+      //    distance, which is what reads as the word coming apart.
+      const x0 = Math.max(0, Math.floor((sx - RADIUS) / BLOCK) * BLOCK);
+      const x1 = Math.min(w, Math.ceil((sx + RADIUS) / BLOCK) * BLOCK);
+      const y0 = Math.max(0, Math.floor((sy - RADIUS) / BLOCK) * BLOCK);
+      const y1 = Math.min(h, Math.ceil((sy + RADIUS) / BLOCK) * BLOCK);
 
       for (let y = y0; y < y1; y += BLOCK) {
         for (let x = x0; x < x1; x += BLOCK) {
-          const d = Math.hypot(x + BLOCK / 2 - px, y + BLOCK / 2 - py);
+          const d = Math.hypot(x + BLOCK / 2 - sx, y + BLOCK / 2 - sy);
           if (d > RADIUS) continue;
-          // Nearer the cursor: more likely to be thrown, more likely to go.
-          const t = 1 - d / RADIUS;
-          if (Math.random() < t * 0.55) continue;
-          const push = t * 26;
-          const dx = (Math.random() - 0.5) * push;
-          const dy = (Math.random() - 0.5) * push;
+
+          // Nearer the cursor: thrown further, more likely to be dropped.
+          const t = (1 - d / RADIUS) * intensity;
+          const keep = hash(x, y, 7);
+          if (keep < t * 0.5) continue;
+
+          const push = t * 30;
+          const dx = (hash(x, y, 1) - 0.5) * push;
+          const dy = (hash(x, y, 2) - 0.5) * push;
+          ctx.globalAlpha = Math.min(1, (1 - t * 0.55) * intensity + (1 - intensity));
           ctx.drawImage(off, x, y, BLOCK, BLOCK, x + dx, y + dy, BLOCK, BLOCK);
         }
       }
-      ctx.restore();
+      ctx.globalAlpha = 1;
     };
 
     const onPointer = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
-      px = e.clientX - r.left;
-      py = e.clientY - r.top;
-      // Off the wordmark by a margin: stop dissolving.
-      if (px < -RADIUS || px > r.width + RADIUS || py < -RADIUS || py > r.height + RADIUS) {
-        px = -9999;
-      }
+      tx = e.clientX - r.left;
+      ty = e.clientY - r.top;
+      // A margin either side, so the effect eases away as the cursor leaves
+      // rather than cutting out at the edge of the box.
+      inside =
+        tx > -RADIUS * 0.6 &&
+        tx < r.width + RADIUS * 0.6 &&
+        ty > -RADIUS * 0.6 &&
+        ty < r.height + RADIUS * 0.6;
     };
 
     // The webfont has to be in before the type is rastered, or the wordmark
     // bakes in the fallback face and never updates.
-    void document.fonts?.ready.then(() => {
-      resize();
-    });
+    void document.fonts?.ready.then(resize);
     resize();
     frame();
 
