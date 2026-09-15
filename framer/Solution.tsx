@@ -39,7 +39,13 @@ export default function Solution({
     (root) => {
       const q = gsap.utils.selector(root);
 
-      gsap.set(q(".sol-intro"), { opacity: 0, y: 28 });
+      // The entry pass and the pinned pass must not touch the same element.
+      // Both are scrubbed, so whichever ScrollTrigger updated last won: the
+      // entry timeline sat at progress 1 re-asserting opacity 1 and undoing
+      // the pin timeline's fade-out, which left the intro copy painted on top
+      // of the full-bleed video. The group animates on entry, the items
+      // inside it animate under the pin.
+      gsap.set(q(".sol-head"), { opacity: 0, y: 28 });
       gsap.set(q(".sol-stage"), { opacity: 0, scale: 0.94 });
       gsap.set(q(".sol-cue"), { opacity: 0, y: 10 });
       gsap.set(q(".sol-pillar"), { opacity: 0, y: 34 });
@@ -98,7 +104,7 @@ export default function Solution({
           },
         })
         .to(q(".sol-stage"), { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, 0)
-        .to(q(".sol-intro"), { opacity: 1, y: 0, duration: 0.4, stagger: 0.06 }, 0.3);
+        .to(q(".sol-head"), { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.3);
 
       // Everything from here happens while the frame is pinned.
       const tl = gsap.timeline({
@@ -113,7 +119,7 @@ export default function Solution({
 
       // 1. The frame grows to full bleed. Insets and radius animate together
       //    so the corners release exactly as the edges reach the viewport.
-      tl.to(q(".sol-intro"), { opacity: 0, y: -24, duration: 0.1 }, 0.06)
+      tl.to(q(".sol-intro"), { opacity: 0, y: -24, duration: 0.08, stagger: 0.02 }, 0.04)
         .to(
           frame,
           {
@@ -125,22 +131,24 @@ export default function Solution({
             duration: 0.3,
             ease: "power2.inOut",
           },
-          0.06,
+          0.04,
         )
 
-        // 2. Full screen: the cue to keep going.
-        .to(q(".sol-cue"), { opacity: 1, y: 0, duration: 0.08 }, 0.42)
+        // 2. Full screen: the cue to keep going. It used to arrive six
+        //    percent after the frame landed and then sit unchanged for a
+        //    fifth of the section — two screens where nothing moved at all.
+        .to(q(".sol-cue"), { opacity: 1, y: 0, duration: 0.07 }, 0.34)
 
         // 3. The pillars settle over the footage, which dims to carry them.
-        .to(q(".sol-cue"), { opacity: 0, duration: 0.06 }, 0.62)
-        .to(q(".sol-scrim"), { opacity: 1, duration: 0.1 }, 0.62)
-        .to(q(".sol-pillar"), { opacity: 1, y: 0, duration: 0.12, stagger: 0.05 }, 0.66);
+        .to(q(".sol-cue"), { opacity: 0, duration: 0.05 }, 0.5)
+        .to(q(".sol-scrim"), { opacity: 1, duration: 0.09 }, 0.5)
+        .to(q(".sol-pillar"), { opacity: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.55);
     },
     [],
     // Reduced motion: full-bleed video, header and pillars all simply present.
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".sol-intro, .sol-pillar"), { opacity: 1, y: 0 });
+      gsap.set(q(".sol-head, .sol-intro, .sol-pillar"), { opacity: 1, y: 0 });
       gsap.set(q(".sol-stage"), { opacity: 1, scale: 1 });
       gsap.set(q(".sol-scrim"), { opacity: 1 });
       gsap.set(q(".sol-frame"), { top: 0, left: 0, right: 0, bottom: 0, borderRadius: 0 });

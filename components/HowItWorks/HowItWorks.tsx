@@ -6,7 +6,7 @@ import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import FieldTexture from "./FieldTexture";
-import RevealText from "../shared/RevealText";
+import GradientRevealText from "../shared/GradientRevealText";
 
 /**
  * How It Works — anubischain.ai reference.
@@ -61,9 +61,21 @@ export default function HowItWorks({
         0,
       );
 
+      // The intro arrives on the way in, before the frame pins. Waiting for
+      // the pin meant the white ground filled the viewport with nothing on
+      // it for a whole screen of scroll as the section rose.
+      //
+      // It runs on its own trigger, and deliberately on a different element
+      // from the pin timeline's fade-out: two scrubbed timelines writing the
+      // same property fight, and whichever updated last wins.
+      gsap
+        .timeline({
+          scrollTrigger: { trigger: root, start: "top bottom", end: "top top", scrub: 0.7 },
+        })
+        .to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.4, stagger: 0.06 }, 0.45);
+
       // 1. intro clears
-      tl.to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.05, stagger: 0.02 }, 0.02)
-        .to(q(".hw-intro"), { opacity: 0, duration: 0.06 }, 0.18)
+      tl.to(q(".hw-intro"), { opacity: 0, duration: 0.06 }, 0.18)
         .to(q(".hw-steps"), { opacity: 1, duration: 0.05 }, 0.2);
 
       // 2. the steps fly toward the viewer and past
@@ -122,9 +134,14 @@ export default function HowItWorks({
       }}
     >
       <MicroLabel className="hw-intro-item">How it works</MicroLabel>
-      <RevealText as="h2" className="hw-intro-item" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>
+      <GradientRevealText
+        as="h2"
+        tone="light"
+        className="hw-intro-item"
+        style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}
+      >
         {copy.headline}
-      </RevealText>
+      </GradientRevealText>
       <p
         className="hw-intro-item"
         style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "52ch" }}

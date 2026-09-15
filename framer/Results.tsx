@@ -6,7 +6,7 @@ import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { ArrowIcon, MediaTile, MicroLabel } from "./primitives";
 import { useBreakpoint } from "./responsive";
 import { useInView } from "./useInView";
-import RevealText from "./RevealText";
+import GradientRevealText from "./GradientRevealText";
 
 /**
  * Results / Proof — clipcut.framer.ai reference.
@@ -66,9 +66,9 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         }}
       >
         <MicroLabel tone="accent">{copy.label}</MicroLabel>
-        <RevealText as="h2" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>
+        <GradientRevealText as="h2" tone="dark" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>
           {copy.headline}
-        </RevealText>
+        </GradientRevealText>
         <p
           style={{
             margin: 0,

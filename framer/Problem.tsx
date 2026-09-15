@@ -85,9 +85,9 @@ export default function Problem({
         // the statement leaves first, the opaque light layer rises over the
         // footage, and only then does the dark layer drop out — there is no
         // frame where two grounds are visible at once.
-        .to(q(".pb-statement"), { opacity: 0, y: -24, duration: 0.06, ease: "power2.in" }, 0.42)
-        .to(q(".pb-light"), { opacity: 1, duration: 0.09, ease: "power2.inOut" }, 0.46)
-        .set(q(".pb-dark"), { opacity: 0 }, 0.56);
+        .to(q(".pb-statement"), { opacity: 0, y: -24, duration: 0.06, ease: "power2.in" }, 0.4)
+        .to(q(".pb-light"), { opacity: 1, duration: 0.09, ease: "power2.inOut" }, 0.43)
+        .set(q(".pb-dark"), { opacity: 0 }, 0.54);
 
       // --- part 2: one slot, three states at even checkpoints -------------
       const start = 0.58;
@@ -99,11 +99,15 @@ export default function Problem({
           // The first state rises into the empty slot rather than being
           // there already, so arriving on the light ground is a transition
           // of its own rather than a cut.
+          // Overlapped with the ground change on purpose. Waiting for the
+          // light layer to finish left a stretch of empty white between the
+          // statement leaving and the first card arriving — a whole screen
+          // of nothing in the middle of the section.
           tl.fromTo(
             card,
             { opacity: 0, y: 28 },
-            { opacity: 1, y: 0, duration: 0.06, ease: "power3.out" },
-            at - 0.02,
+            { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
+            0.47,
           );
         } else {
           // Everything swaps together: icon, label, headline, portrait and

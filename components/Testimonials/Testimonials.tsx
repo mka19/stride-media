@@ -4,7 +4,7 @@ import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { testimonials as copy } from "../shared/copy";
 import { color, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { MicroLabel } from "../shared/primitives";
-import RevealText from "../shared/RevealText";
+import GradientRevealText from "../shared/GradientRevealText";
 import { useBreakpoint } from "../shared/responsive";
 
 /**
@@ -163,9 +163,9 @@ export default function Testimonials() {
       <div className="ts-frame" style={{ display: "flex", flexDirection: "column", gap: rhythm.headerToContent }}>
         <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 900 }}>
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <RevealText as="h2" style={{ ...typeScale.h1, maxWidth: "26ch", textWrap: "balance" }}>
+          <GradientRevealText as="h2" tone="light" style={{ ...typeScale.h1, maxWidth: "26ch", textWrap: "balance" }}>
             {copy.headline}
-          </RevealText>
+          </GradientRevealText>
         </div>
 
         {/* A grid rather than CSS columns: columns balance by height, which
