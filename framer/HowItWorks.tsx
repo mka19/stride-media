@@ -211,17 +211,17 @@ export default function HowItWorks({
         <MicroLabel number={step.n} tone={stacked ? "light" : "dark"}>
           {step.tag}
         </MicroLabel>
-        <h3
+        <GradientRevealText
+          as="h3"
+          tone={stacked ? "light" : "dark"}
           style={{
-            margin: 0,
             maxWidth: "24ch",
             textWrap: "balance",
             ...typeScale.h1,
-            color: stacked ? color.textOnLight : color.textOnDark,
           }}
         >
           {step.title}
-        </h3>
+        </GradientRevealText>
       </div>
       {/* The flight runs over dark footage; the stacked branch stands on the
           bone ground. The same muted-on-dark grey there was white on white. */}

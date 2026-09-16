@@ -6,6 +6,7 @@ import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 import HeroObject, { type HeroObjectHandle } from "../Hero/HeroObject";
+import GradientRevealText from "../shared/GradientRevealText";
 
 /**
  * Why Stride — trionn.com capabilities reference.
@@ -37,7 +38,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       gsap.set(q(".ws-word"), { yPercent: 108 });
       gsap.set(q(".ws-mask"), { overflow: "hidden" });
       gsap.set(q(".ws-dark"), { opacity: 0 });
-      gsap.set(q(".ws-object"), { opacity: 0, scale: 0.8 });
+      // It opens as the biggest thing on the screen and settles back, so the
+      // section starts on the mark rather than on a line of type.
+      gsap.set(q(".ws-object"), { opacity: 0, scale: 1.62 });
       gsap.set(q(".ws-card"), { opacity: 0 });
       // The object never dissolves here: it is the fixed centrepiece.
       objectRef.current?.setProgress(0);
@@ -48,25 +51,38 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           start: "top top",
           end: "bottom bottom",
           scrub: SCRUB,
-          onUpdate: (self) => surface.current?.setTone(self.progress < 0.17 ? "light" : "dark"),
+          onUpdate: (self) => surface.current?.setTone(self.progress < 0.2 ? "light" : "dark"),
         },
       });
 
-      // 1. the stacked headline
+      /*
+       * 1. The mark arrives, at full size.
+       *
+       * The section used to open on the headline and only produce the mark
+       * two thirds of the way through. It opens on the mark now: it comes up
+       * large and centred on the white ground, settles back to its resting
+       * size as the ground turns over, and only then does the type arrive on
+       * top of it. The order is the argument — the thing first, the words
+       * about it second.
+       */
+      tl.to(q(".ws-object"), { opacity: 1, duration: 0.06, ease: "power2.out" }, 0.02)
+
+        // 2. It settles back as the ground turns over: one move, not two.
+        .to(q(".ws-object"), { scale: 1, duration: 0.12, ease: "power2.inOut" }, 0.14)
+        .to(q(".ws-dark"), { opacity: 1, duration: 0.08 }, 0.16)
+        .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.08 }, 0.16);
+
+      // 3. And the words are uncovered over it, one after another.
       tl.to(
         q(".ws-word"),
-        { yPercent: 0, duration: 0.09, stagger: 0.03, ease: "power3.out" },
-        0.02,
+        { yPercent: 0, duration: 0.07, stagger: 0.025, ease: "power3.out" },
+        0.28,
       )
-        /* The window that uncovers the word would also clip it on the way
+        /* The window that uncovers each word would also clip it on the way
            out — the letters scatter well past the block they belong to. It
            is opened the moment the last word has landed and well before the
            scatter begins, and closes again on the way back up. */
-        .set(q(".ws-mask"), { overflow: "visible" }, 0.21)
-
-        // 2. ground and type invert together, one move
-        .to(q(".ws-dark"), { opacity: 1, duration: 0.05 }, 0.17)
-        .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.05 }, 0.17);
+        .set(q(".ws-mask"), { overflow: "visible" }, 0.44);
 
       // 3. The letters scatter — trionn.com's services reveal: they are
       //    thrown right out of the frame, turning as they go.
@@ -118,18 +134,17 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             opacity: 0,
             // Long and decelerating: the old move was a tenth of the section
             // on power2.in, which snapped them off the screen.
-            duration: 0.22,
+            duration: 0.14,
             ease: "power2.out",
           },
-          0.24 + (i % 4) * 0.012,
+          0.46 + (i % 4) * 0.012,
         );
       });
 
       // 4. the object arrives and stays
-      tl.to(q(".ws-object"), { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out" }, 0.44)
-        // The label has done its job by the time the object is there; leaving
-        // it sat on top of the mark.
-        .to(q(".ws-label"), { opacity: 0, duration: 0.04 }, 0.44);
+      // 4. The label has done its job by the time the type has gone; leaving
+      //    it sat on top of the mark.
+      tl.to(q(".ws-label"), { opacity: 0, duration: 0.04 }, 0.56);
 
       /*
        * 5. The services advance like a ticker.
@@ -146,46 +161,64 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * again on every refresh.
        */
       const cards = q(".ws-card") as HTMLElement[];
-      const first = 0.52;
+      const first = 0.62;
       // Each card spends one step arriving, one crossing, one leaving, and the
       // steps overlap by exactly one — so the whole run is n + 2 steps long
       // with a little tail.
       const STEP = (1 - first) / (cards.length + 1.45);
 
-      const stationR = () => {
+      /*
+       * One pitch, four positions.
+       *
+       * The distance between the two on-screen stations is the pitch, and the
+       * two off-screen positions are one pitch beyond each of them. That is
+       * the whole trick to cards that never touch: every step advances a card
+       * by exactly one pitch and every step has the same shape, so two cards
+       * are always exactly one pitch apart — at any point in the move, not
+       * just when they are standing still.
+       *
+       * The previous version had unequal gaps (a short hop in from the right,
+       * a long crossing, a short exit) and a different ease on each leg. The
+       * card leaving used a slow-in curve while the card crossing used an
+       * ease-in-out, so at the same moment the leaver was a fifth of the way
+       * out and the arriver four fifths of the way in — and they overlapped
+       * by a hundred and twenty pixels. Same distance, same curve, every leg.
+       */
+      const pitch = () => {
         const frame = (q(".ws-frame")[0] as HTMLElement | undefined) ?? root;
         const card = cards[0] as HTMLElement;
         const pad = card.offsetLeft;
-        return Math.max(0, frame.clientWidth - pad * 2 - card.offsetWidth);
+        return Math.max(1, frame.clientWidth - pad * 2 - card.offsetWidth);
       };
-      const offRight = () => stationR() + (cards[0] as HTMLElement).offsetWidth + 80;
-      const offLeft = () => -((cards[0] as HTMLElement).offsetWidth + 120);
 
       cards.forEach((card, i) => {
         const at = first + i * STEP;
-        gsap.set(card, { x: offRight, opacity: 0, force3D: true });
+        // The move takes most of the step and the rest is a rest: a card
+        // stands in its station long enough to be read before it is carried
+        // on. The hold is what makes it a ticker rather than a conveyor.
+        const MOVE = STEP * 0.66;
+        const leg = { duration: MOVE, ease: "power2.inOut", force3D: true } as const;
 
-        // In from off the right edge, into the right-hand station.
+        gsap.set(card, { x: () => pitch() * 2, opacity: 0, force3D: true });
+
+        // Off the right edge, into the right-hand station.
         tl.fromTo(
           card,
-          { x: offRight, opacity: 0 },
-          { x: stationR, opacity: 1, duration: STEP * 0.62, ease: "power2.out", force3D: true },
+          { x: () => pitch() * 2, opacity: 0 },
+          { x: () => pitch(), opacity: 1, ...leg },
           at,
         );
 
-        // Across to the left-hand station, as the card ahead leaves it.
-        tl.to(
-          card,
-          { x: 0, duration: STEP * 0.62, ease: "power2.inOut", force3D: true },
-          at + STEP,
-        );
+        // Across to the left-hand station, as the card ahead of it leaves.
+        tl.to(card, { x: 0, ...leg }, at + STEP);
 
-        // And out past the left edge.
-        tl.to(
-          card,
-          { x: offLeft, opacity: 0, duration: STEP * 0.62, ease: "power2.in", force3D: true },
-          at + STEP * 2,
-        );
+        // And out past the left edge, one pitch further on — except for the
+        // last one, which stands in the left-hand station to the end of the
+        // section. Letting it leave too emptied the frame for the last fifth
+        // of the scroll.
+        if (i < cards.length - 1) {
+          tl.to(card, { x: () => -pitch(), opacity: 0, ...leg }, at + STEP * 2);
+        }
       });
     },
     [stacked],
@@ -299,9 +332,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
           <h2 style={{ margin: 0, ...typeScale.displayLg }}>
             {copy.headline.map((w) => (
-              <span key={w} style={{ display: "block" }}>
+              <GradientRevealText key={w} as="span" style={{ display: "block" }}>
                 {w}
-              </span>
+              </GradientRevealText>
             ))}
           </h2>
           <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>

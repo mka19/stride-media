@@ -5,6 +5,7 @@ import { problem as copy } from "../shared/copy";
 import { color, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
+import GradientRevealText from "../shared/GradientRevealText";
 
 /**
  * Problem — sakazuki.io Philosophy reference.
@@ -247,9 +248,13 @@ export default function Problem({
               <CardIcon index={i} />
               <MicroLabel tone="light">Problem</MicroLabel>
               <div style={{ ...typeScale.h3 }}>{card.label}</div>
-              <h3 style={{ margin: 0, ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}>
+              <GradientRevealText
+                as="h3"
+                tone="light"
+                style={{ ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}
+              >
                 {card.headline}
-              </h3>
+              </GradientRevealText>
               <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
                 <MediaTile
                   src={cardMedia[i]}
@@ -364,13 +369,16 @@ export default function Problem({
                       display: "inline-block",
                       width: "1.06em",
                       height: "1.06em",
-                      // A tile is spaced exactly like a word: the run before
-                      // it is the previous word's own trailing space, and
-                      // this is the tile's. Giving it margin on both sides
-                      // made the gap before it the sum of two and the gap
-                      // after it one, so every tile sat off-centre in its
-                      // own gap.
-                      marginRight: "0.26em",
+                      /*
+                       * A tile needs more air than a word does. A word's
+                       * neighbours are letters with their own side bearings;
+                       * a tile is a solid block to its own edge, so the same
+                       * 0.26em that reads as a word space reads as the tile
+                       * touching the caps either side of it. The left margin
+                       * adds to the previous word's trailing space and the
+                       * right one stands alone, so both gaps come to 0.32em.
+                       */
+                      margin: "0 0.32em 0 0.06em",
                       borderRadius: "0.18em",
                       overflow: "hidden",
                       // Sat on the text's own baseline band, so it rides the
@@ -520,9 +528,10 @@ export default function Problem({
                     <CardIcon index={i} />
                     <MicroLabel tone="light">Problem</MicroLabel>
                     <div style={{ ...typeScale.h3 }}>{card.label}</div>
-                    <h3
+                    <GradientRevealText
+                      as="h3"
+                      tone="light"
                       style={{
-                        margin: 0,
                         ...typeScale.h1,
                         // Sized to its own column rather than to a character
                         // count: at the full h1 the line ran past the column
@@ -534,7 +543,7 @@ export default function Problem({
                       }}
                     >
                       {card.headline}
-                    </h3>
+                    </GradientRevealText>
                   </div>
 
                   {/* ---- centre: the portrait and its caption ---- */}

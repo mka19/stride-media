@@ -3,6 +3,7 @@ import { gsap, useGsapContext, SCRUB } from "../shared/gsap";
 import { faq as copy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { useStacked } from "../shared/responsive";
+import GradientRevealText from "../shared/GradientRevealText";
 
 /**
  * FAQ — sondaven.com reference.
@@ -177,7 +178,9 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
           padding: `${layout.section} ${layout.pad}`,
         }}
       >
-        <h2 style={{ margin: 0, ...typeScale.h1 }}>{copy.label}</h2>
+        <GradientRevealText as="h2" style={{ ...typeScale.h1 }}>
+          {copy.label}
+        </GradientRevealText>
         {list}
       </section>
     );

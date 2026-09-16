@@ -462,7 +462,9 @@ export default function CaseStudy({
           }}
         >
           <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
-          <h3 style={{ margin: 0, ...typeScale.h1 }}>{copy.resultsHeadline}</h3>
+          <GradientRevealText as="h3" tone="light" style={{ ...typeScale.h1 }}>
+            {copy.resultsHeadline}
+          </GradientRevealText>
           {metrics}
         </div>
       </section>
@@ -591,12 +593,14 @@ export default function CaseStudy({
             <MicroLabel tone="accent" className="cs-results-head">
               {copy.resultsLabel}
             </MicroLabel>
-            <h3
+            <GradientRevealText
+              as="h3"
+              tone="light"
               className="cs-results-head"
-              style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch", textWrap: "balance", color: color.textOnLight }}
+              style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}
             >
               {copy.resultsHeadline}
-            </h3>
+            </GradientRevealText>
           </div>
           <div style={{ position: "relative", width: "100%" }}>{metrics}</div>
 

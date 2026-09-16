@@ -6,6 +6,7 @@ import { useStacked } from "./responsive";
 import { solution as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { MediaTile, MicroLabel } from "./primitives";
+import GradientRevealText from "./GradientRevealText";
 
 /**
  * Solution / What We Do.
@@ -189,9 +190,9 @@ export default function Solution({
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
           <h2 style={{ margin: 0, ...typeScale.h1 }}>
             {copy.headline.map((line, i) => (
-              <span key={i} style={{ display: "block" }}>
+              <GradientRevealText key={i} as="span" style={{ display: "block" }}>
                 {line}
-              </span>
+              </GradientRevealText>
             ))}
           </h2>
           <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "52ch" }}>
@@ -368,9 +369,9 @@ export default function Solution({
               }}
             >
               {copy.headline.map((line, i) => (
-                <span key={i} style={{ display: "block" }}>
+                <GradientRevealText key={i} as="span" style={{ display: "block" }}>
                   {line}
-                </span>
+                </GradientRevealText>
               ))}
             </h2>
             <p

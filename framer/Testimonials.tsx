@@ -1,4 +1,4 @@
-import { gsap, useGsapContext, SCRUB } from "./gsap";
+import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "./gsap";
 import { useEffect, useRef } from "react";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { testimonials as copy } from "./copy";
@@ -39,90 +39,91 @@ export default function Testimonials() {
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
-      const cards = q(".ts-card");
-
-      // One scrubbed timeline for every card, so they share a single
-      // scroll-driven clock instead of drifting apart. Nothing here touches
-      // layout: only transform and opacity, which stay on the compositor.
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: root,
-          start: "top 75%",
-          end: "bottom bottom",
-          scrub: SCRUB,
-          // will-change is a hint, not a free win: held on every card for the
-          // life of the page it keeps six layers promoted for nothing, so it
-          // goes on while the section is live and comes off when it is not.
-          onToggle: ({ isActive }) =>
-            cards.forEach((card) => {
-              (card as HTMLElement).style.willChange = isActive ? "transform" : "auto";
-            }),
-        },
-      });
+      const cards = q(".ts-card") as HTMLElement[];
 
       /*
-       * The arrival is the one from vishakha-sharma21/animation-gsap: a card
-       * starts small and high, fanned out to the side it belongs to, and
-       * converges on its place as the scroll advances — scale and position
-       * resolving on a smoothstep rather than on a single tween, so the last
-       * part of the move is slower than the first without ever stopping.
+       * Driven the way vishakha-sharma21/animation-gsap drives it: one
+       * ScrollTrigger, and on every update each card's position is worked out
+       * from the section's progress by hand.
        *
-       * smoothstep is applied as the ease rather than by interpolating by
-       * hand on every update: same curve, but it stays on GSAP's own clock
-       * with the rest of the page.
+       * The tween version of this was not the same thing. Eight cards with
+       * three tweens each is twenty-four curves resolving against one another,
+       * every one of them lagging the scrub by its own amount — which is what
+       * made the arrival read as stepped. Here there is a single number, and
+       * every card is a pure function of it. Nothing can drift, because there
+       * is nothing to drift against.
+       *
+       * smoothStep is the reference's easing: 3t² − 2t³, flat at both ends,
+       * so a card leaves and reaches its place without a corner at either.
        */
-      const smoothStep = "power2.inOut";
+      const smoothStep = (p: number) => p * p * (3 - 2 * p);
+      const lerp = gsap.utils.interpolate;
+      const clamp = gsap.utils.clamp;
 
-      cards.forEach((card, i) => {
-        const col = i % 4;
-        // Outer columns come from further out and lean more, so the group
-        // opens from the middle rather than sliding in as a block.
-        const lean = [-1, -0.42, 0.42, 1][col];
-        const fromX = stacked ? 0 : lean * 132;
-        const fromY = stacked ? 40 : -96;
+      ScrollTrigger.create({
+        trigger: root,
+        start: "top 78%",
+        end: "bottom bottom",
+        scrub: SCRUB,
+        // will-change is a hint, not a free win: held on every card for the
+        // life of the page it keeps eight layers promoted for nothing, so it
+        // goes on while the section is live and comes off when it is not.
+        onToggle: ({ isActive }) =>
+          cards.forEach((card) => {
+            card.style.willChange = isActive ? "transform, opacity" : "auto";
+          }),
+        onUpdate: (self) => {
+          const progress = self.progress;
 
-        gsap.set(card, {
-          opacity: 0,
-          xPercent: 0,
-          x: fromX,
-          y: fromY,
-          rotation: stacked ? 0 : lean * 6,
-          scale: stacked ? 0.94 : 0.42,
-          transformOrigin: "50% 50%",
-          force3D: true,
-        });
+          cards.forEach((card, i) => {
+            const col = i % 4;
+            // The row is the delay and the column is the lean, so a row
+            // arrives together and opens from its middle.
+            const delay = Math.floor(i / 4) * 0.5 + col * 0.08;
+            const cardProgress = clamp(0, 1, (progress - delay * 0.1) / (0.9 - delay * 0.1));
 
-        const at = 0.04 + i * (0.52 / cards.length);
-        const span = 1.9 / cards.length;
+            // Up from below, overshooting its place and settling back into
+            // it — the two-stage move is what stops it arriving flat.
+            let y: string;
+            if (cardProgress < 0.4) {
+              y = lerp("14%", "-4%", smoothStep(cardProgress / 0.4));
+            } else if (cardProgress < 0.6) {
+              y = lerp("-4%", "0%", smoothStep((cardProgress - 0.4) / 0.2));
+            } else {
+              y = "0%";
+            }
 
-        // Opacity resolves in the first fifth of the card's own slice, so it
-        // is legible for most of the travel rather than arriving already
-        // there — the reference fades in over cardProgress < 0.2.
-        tl.to(card, { opacity: 1, duration: span * 0.2, ease: "none" }, at);
+            // Small, then most of the way, then the last of it.
+            let scale: number;
+            if (cardProgress < 0.4) {
+              scale = lerp(0.62, 0.92, smoothStep(cardProgress / 0.4));
+            } else if (cardProgress < 0.6) {
+              scale = lerp(0.92, 1, smoothStep((cardProgress - 0.4) / 0.2));
+            } else {
+              scale = 1;
+            }
 
-        // Most of the way in: up to three quarters of its size, still leaning.
-        tl.to(
-          card,
-          { scale: stacked ? 1 : 0.78, y: fromY * 0.18, duration: span * 0.55, ease: smoothStep },
-          at,
-        );
+            // Legible for most of the travel rather than arriving already
+            // there: presence resolves in the first fifth of the card's run.
+            const opacity = cardProgress < 0.2 ? smoothStep(cardProgress / 0.2) : 1;
 
-        // And the last of it: the lean, the offset and the last quarter of
-        // the scale all resolve together, which is what makes the card read
-        // as settling into a place rather than as stopping.
-        tl.to(
-          card,
-          {
-            x: 0,
-            y: 0,
-            rotation: 0,
-            scale: 1,
-            duration: span * 0.45,
-            ease: "power2.out",
-            force3D: true,
-          },
-          at + span * 0.55,
-        );
+            // Fanned out to the side the card belongs to, converging on its
+            // own column over the last two fifths.
+            const lean = [-1, -0.4, 0.4, 1][col];
+            let x: string;
+            let rotate: number;
+            if (cardProgress < 0.6) {
+              x = `${lean * 26}%`;
+              rotate = lean * 5;
+            } else {
+              const n = smoothStep((cardProgress - 0.6) / 0.4);
+              x = lerp(`${lean * 26}%`, "0%", n);
+              rotate = lerp(lean * 5, 0, n);
+            }
+
+            gsap.set(card, { x, y, rotate, scale, opacity, force3D: true });
+          });
+        },
       });
     },
     [stacked],
