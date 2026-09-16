@@ -1,3 +1,4 @@
+import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react";
 import { color, hexA, space, typeScale } from "./theme";
 
@@ -273,3 +274,14 @@ declare global {
     };
   }
 }
+
+/**
+ * @framerSupportedLayoutWidth any
+ * @framerSupportedLayoutHeight auto-height
+ */
+
+addPropertyControls(CalendlyEmbed, {
+  url: { type: ControlType.String, title: "Calendly link", defaultValue: "" },
+  minHeight: { type: ControlType.Number, title: "Height (desktop)", defaultValue: 760, min: 500, max: 1400 },
+  minHeightMobile: { type: ControlType.Number, title: "Height (mobile)", defaultValue: 1040, min: 600, max: 1600 },
+});

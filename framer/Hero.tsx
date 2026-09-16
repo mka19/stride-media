@@ -362,5 +362,11 @@ addPropertyControls(Hero, {
       },
     },
   },
+  clientFaces: {
+    type: ControlType.Array,
+    title: "Client faces",
+    control: { type: ControlType.File, allowedFileTypes: ["jpg", "jpeg", "png", "webp"] },
+    maxCount: 6,
+  },
   scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "320vh" },
 });

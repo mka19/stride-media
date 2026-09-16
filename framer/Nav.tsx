@@ -1,3 +1,4 @@
+import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useState } from "react";
 import { useBreakpoint, useNavRoom } from "./responsive";
 import { brand, nav as navCopy } from "./copy";
@@ -382,3 +383,16 @@ function Dot({ lit, ink }: { lit: boolean; ink: string }) {
     />
   );
 }
+
+/**
+ * @framerSupportedLayoutWidth any
+ * @framerSupportedLayoutHeight auto-height
+ */
+
+addPropertyControls(Nav, {
+  soundtrack: {
+    type: ControlType.File,
+    allowedFileTypes: ["mp3", "wav", "m4a"],
+    title: "Soundtrack",
+  },
+});

@@ -759,5 +759,11 @@ addPropertyControls(Problem, {
     control: { type: ControlType.File, allowedFileTypes: ["mp4", "webm", "jpg", "png"] },
     maxCount: 3,
   },
+  objectMedia: {
+    type: ControlType.Array,
+    title: "Sentence tiles",
+    control: { type: ControlType.File, allowedFileTypes: ["mp4", "webm", "jpg", "jpeg", "png", "webp"] },
+    maxCount: 4,
+  },
   scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "460vh" },
 });

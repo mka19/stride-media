@@ -626,8 +626,13 @@ addPropertyControls(CaseStudy, {
   gallery: {
     type: ControlType.Array,
     title: "Gallery",
-    control: { type: ControlType.File, allowedFileTypes: ["jpg", "png", "mp4"] },
-    maxCount: 8,
+    control: { type: ControlType.File, allowedFileTypes: ["jpg", "jpeg", "png", "webp", "mp4", "webm"] },
+    maxCount: 6,
   },
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "560vh" },
+  curtainImage: {
+    type: ControlType.File,
+    allowedFileTypes: ["jpg", "jpeg", "png", "webp"],
+    title: "Curtain still",
+  },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "760vh" },
 });

@@ -342,5 +342,6 @@ export default function HowItWorks({
  */
 
 addPropertyControls(HowItWorks, {
+  backgroundSrc: { type: ControlType.File, allowedFileTypes: ["mp4", "webm"], title: "Background" },
   scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "380vh" },
 });
