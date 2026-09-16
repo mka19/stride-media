@@ -16,7 +16,7 @@ import GradientRevealText from "../shared/GradientRevealText";
  * On phones the letters are simply a small static label: there is not enough
  * width for the spread to read, per the responsive prompt.
  */
-export default function FAQ({ scrollLength = "480vh" }: { scrollLength?: string }) {
+export default function FAQ({ scrollLength = "700vh" }: { scrollLength?: string }) {
   const [open, setOpen] = useState<number | null>(0);
   const stacked = useStacked();
 

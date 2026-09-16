@@ -24,7 +24,7 @@ import GradientRevealText from "./GradientRevealText";
 export default function HowItWorks({
   /** Footage behind the flight; falls back to a generated fill. */
   backgroundSrc,
-  scrollLength = "700vh",
+  scrollLength = "1000vh",
 }: {
   backgroundSrc?: string;
   scrollLength?: string;
@@ -343,5 +343,5 @@ export default function HowItWorks({
 
 addPropertyControls(HowItWorks, {
   backgroundSrc: { type: ControlType.File, allowedFileTypes: ["mp4", "webm"], title: "Background" },
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "700vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "1000vh" },
 });

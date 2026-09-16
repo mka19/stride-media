@@ -145,17 +145,45 @@ function chromeEnvironment(): THREE.Scene {
 
           // Floor: dark, but graded, so the downward faces carry a tone
           // instead of going dead black.
+          /*
+           * The floor is lifted, and neutral.
+           *
+           * At near-black it reflected into the middle of every domed arm
+           * as a dark band with hard edges, and a dark band across the waist
+           * of a shape does not read as a reflection — it reads as a crack,
+           * as though the piece were snapped in two. Real chrome standing on
+           * a real floor still picks up plenty of bounce from it.
+           *
+           * The blue is gone with it. A floor tinted toward blue put a navy
+           * cast in that band, which is the one colour that made the metal
+           * look dyed rather than lit.
+           */
+          /* Dark, but not a void. Near-black reflected as a crack across
+            the waist of every arm; 0.19 washed the contrast out until the
+            metal read as grey paint. This sits between the two: the lower
+            half of the mark is plainly in shadow and still has tone in it. */
           vec3 floorC = mix(
-            vec3(0.014, 0.014, 0.019),
-            vec3(0.062, 0.063, 0.074),
+            vec3(0.030, 0.030, 0.033),
+            vec3(0.105, 0.106, 0.110),
             smoothstep(-1.0, -0.04, y)
           );
 
           // Wall, rising into the cove.
+          /*
+           * The wall carries the widest range in the room now.
+           *
+           * With a soft horizon the dome spends most of its normals looking
+           * at the wall rather than crossing the line, so the wall is what
+           * the eye actually reads as shading. Held at a narrow mid-grey it
+           * returned a single flat tone over most of every face — the paint
+           * look, arriving by a different route than before. Stretching it
+           * from near-shadow to near-ceiling puts a real gradient across the
+           * face without reintroducing a hard edge anywhere.
+           */
           vec3 wallC = mix(
-            vec3(0.075, 0.078, 0.092),
-            vec3(0.265, 0.272, 0.300),
-            smoothstep(0.0, 0.62, y)
+            vec3(0.048, 0.049, 0.056),
+            vec3(0.430, 0.437, 0.465),
+            smoothstep(-0.05, 0.66, y)
           );
 
           // Ceiling: one broad soft box. 1.45 is chosen to sit just under
@@ -173,7 +201,18 @@ function chromeEnvironment(): THREE.Scene {
            * and as a step across a bevel. Slightly soft rather than a step
            * so it does not alias into a staircase.
            */
-          c = mix(floorC, c, smoothstep(-0.030, 0.030, y));
+          /*
+           * A soft horizon, not a step.
+           *
+           * A hard edge is right for a mirror-flat surface, where it draws
+           * one clean line. Across a dome it sweeps through the whole face
+           * in a couple of degrees of normal, so the light-to-dark
+           * transition lands as an abrupt seam and the arm looks broken
+           * rather than curved. Widening it more than threefold turns the
+           * same information into a gradient, which is what a curved surface
+           * is supposed to show.
+           */
+          c = mix(floorC, c, smoothstep(-0.105, 0.105, y));
 
           /*
            * Two standing softboxes, left and right.
@@ -190,15 +229,16 @@ function chromeEnvironment(): THREE.Scene {
           c += lights * smoothstep(-0.34, 0.66, y) * vec3(0.62, 0.63, 0.68);
 
           /*
-           * A cool cast above, a warm one below.
+           * No tint split any more.
            *
-           * Real polished metal is never one neutral grey: the sky end of
-           * it runs slightly blue and the bounce off the floor runs
-           * slightly warm, and that split is most of what the eye uses to
-           * tell chrome from silver paint. Far too small to read as colour.
+           * The theory was sound — real metal runs slightly cool at the sky
+           * end and slightly warm off the floor — but on a dome it stopped
+           * being subtle. The curvature stacks the whole vertical range of
+           * the room into a few millimetres of surface, so a gradient that
+           * is imperceptible on a flat panel becomes a visible coloured
+           * band, and the mark read as tinted rather than as reflective.
+           * Neutral is the more realistic answer here, not the safer one.
            */
-          c *= mix(vec3(1.020, 1.005, 0.980), vec3(0.980, 0.992, 1.030),
-                   smoothstep(-0.2, 0.6, y));
 
           gl_FragColor = vec4(c, 1.0);
         }
@@ -482,17 +522,33 @@ export default function HeroObject({
      * continuous sweep across one face. That sweep is what polished metal
      * looks like.
      */
-    /* 0.24. The dome compresses the whole room into each face, so past
-       about this the arms reflect the ceiling, both softboxes and the floor
-       inside a couple of centimetres of surface and the bands stack up too
-       tightly to read as anything. */
-    const DOME_H = 0.24;
+    /*
+     * The dome's height is a share of each shape's own width.
+     *
+     * A single figure cannot serve both, for the same reason the bevel
+     * could not: the arms are roughly four times wider than the centre
+     * star, so one lift is a strong curve on the star and a barely
+     * perceptible bow across an arm. That is exactly what the renders kept
+     * showing — a convincingly liquid middle inside four flat plates — and
+     * it was never the room's fault.
+     *
+     * Tying it to the narrow dimension domes them all to the same degree,
+     * so every face bends through a comparable slice of the room and comes
+     * back with a comparable sweep of light across it.
+     */
+    const DOME_RATIO_Z = 0.85;
+    /* Only x and y are scaled to world size later; z is left alone. So the
+       lift has to be converted here, from artboard units into the world
+       units it will be seen in. */
+    const perWorld = MARK_SIZE / svgSpan;
     const domeDisplace = (g: THREE.BufferGeometry) => {
       g.computeBoundingBox();
       const b = g.boundingBox!;
       const cx = (b.max.x + b.min.x) / 2;
       const cy = (b.max.y + b.min.y) / 2;
       const rad = Math.hypot(b.max.x - b.min.x, b.max.y - b.min.y) / 2 || 1;
+      const narrow = Math.min(b.max.x - b.min.x, b.max.y - b.min.y);
+      const DOME_H = Math.max(0.1, (narrow / 2) * DOME_RATIO_Z * perWorld);
       const pos = g.attributes.position as THREE.BufferAttribute;
       const nor = g.attributes.normal as THREE.BufferAttribute;
       for (let i = 0; i < pos.count; i++) {
@@ -555,7 +611,24 @@ export default function HeroObject({
        * the scatter. The plain one stays the source for the dissolve and the
        * rim; only the mesh the viewer sees as metal pays for the density.
        */
-      const dense = new TessellateModifier(svgSpan / 18, 4).modify(g.clone());
+      /*
+       * Fine enough to actually have an interior, and enough passes to get
+       * there.
+       *
+       * The first attempt asked for edges under a eighteenth of the artboard
+       * but allowed only four passes, and the modifier bisects the longest
+       * edge once per pass — so a big arm's face triangles ran out of passes
+       * long before they reached the target and kept their original size.
+       * There were still no interior vertices on the wide faces, so the
+       * displacement had nothing to lift and the arms stayed flat while the
+       * thin star domed correctly. That is what "only the middle looks like
+       * metal" was.
+       *
+       * The edge length is the real control — subdivision stops once a
+       * triangle is under it, so the count is bounded by this and not by the
+       * pass limit. Fourteen passes is simply enough headroom to arrive.
+       */
+      const dense = new TessellateModifier(svgSpan / 30, 14).modify(g.clone());
       const welded = mergeVertices(dense, 1e-4);
       dense.dispose();
       // Normals first, only to tell the flat faces from the chamfer; they
@@ -641,7 +714,7 @@ export default function HeroObject({
        * cannot be added by changing the room, only by letting the surface
        * blur what it reflects.
        */
-      roughness: 0.11,
+      roughness: 0.085,
       /*
        * 1.0, not 1.35.
        *
@@ -887,11 +960,22 @@ export default function HeroObject({
 
     // THREE.Clock is deprecated; elapsed time comes straight from the
     // animation frame instead.
-    // The angle the mark is parked at: turned enough to show the extrusion
-    // down one side and catch the horizon across the faces, tipped slightly
-    // so the top plane picks up the ceiling.
-    const POSE_Y = 0.34;
-    const POSE_X = -0.13;
+    /*
+     * The pose the mark returns to when the pointer is not on it.
+     *
+     * This used to be 0.34 — a third of a radian of permanent rightward
+     * turn — with the pointer allowed to swing only 0.26 either side of it.
+     * The sum never reached zero, so the mark was turned to the right at
+     * every cursor position on the screen and simply turned further right
+     * as the pointer crossed. It could not look left, which is exactly what
+     * "it only moves right" describes.
+     *
+     * Near enough to square-on now, so the pointer's swing is symmetrical
+     * about facing the viewer: cursor left and the mark turns left, cursor
+     * right and it turns right.
+     */
+    const POSE_Y = 0.06;
+    const POSE_X = -0.05;
 
     const t0 = performance.now();
     let raf = 0;
@@ -908,11 +992,20 @@ export default function HeroObject({
 
       // Damped toward the pointer so the mark follows the cursor without
       // snapping to it, and keeps drifting when the pointer is still.
-      // Halved. The pointer should tilt the mark, not swing the room
-      // through it — past about a quarter radian the reflections start to
-      // swim and it stops looking like a solid object.
-      swayX += (pointerX * 0.26 - swayX) * 0.035;
-      swayY += (pointerY * 0.15 - swayY) * 0.035;
+      /*
+       * Wide enough to be obviously following the cursor.
+       *
+       * 0.26 was tuned when the mark was already parked well off-axis, so
+       * the swing only ever deepened a turn that was there anyway. Centred,
+       * it can use the full range: 0.5 radians is about thirty degrees each
+       * way, enough that crossing the window visibly turns the mark through
+       * itself and drags a different part of the room across the metal.
+       *
+       * The damping stays slow. The response should read as something heavy
+       * being steered, not as an object stuck to the cursor.
+       */
+      swayX += (pointerX * 0.5 - swayX) * 0.035;
+      swayY += (pointerY * 0.26 - swayY) * 0.035;
 
       /*
        * A fixed pose, not a drift.
