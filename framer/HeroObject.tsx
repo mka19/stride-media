@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import {
+  mergeGeometries,
+  mergeVertices,
+} from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { color } from "./theme";
 import { detailFor, type Breakpoint } from "./responsive";
@@ -94,48 +97,109 @@ function chromeEnvironment(): THREE.Scene {
       side: THREE.BackSide,
       depthWrite: false,
       vertexShader: /* glsl */ `
-        varying float vH;
+        varying vec3 vDir;
         void main() {
-          vH = normalize(position).y;
+          vDir = normalize(position);
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
       fragmentShader: /* glsl */ `
-        varying float vH;
+        varying vec3 vDir;
         void main() {
           /*
-           * A studio ceiling, not a gradient.
+           * A studio, graded — not a barcode.
            *
-           * A smooth sky-to-floor ramp gives a mirror nothing to reflect but
-           * a smooth ramp, which is why the mark came out looking like light
-           * grey paint. What makes chrome look like chrome is structure —
-           * the hard edge between a lit strip and the dark between them,
-           * sliding across the surface as the object turns. These are the
-           * strips, over a bright ceiling, a hard horizon and a dark floor.
+           * The previous room was nineteen hard bright strips, and on a mark
+           * built from large flat faces that is the worst possible room: a
+           * flat face reflects one small patch of it, so each face came back
+           * either fully inside a strip or fully in the gap. Fully inside a
+           * strip meant 2.1 against an intensity of 1.35, which clips — and
+           * a clipped highlight is a flat white fill with no information in
+           * it. That is the white plastic in the screenshot. The strips also
+           * swept across the faces as the mark turned, which is the shimmer
+           * that had to go.
+           *
+           * What actually reads as chrome is the opposite: smooth, wide
+           * tonal range that never clips, and one hard line through it. A
+           * flat face under a perspective camera samples a spread of
+           * directions across its width, so a low-frequency gradient paints
+           * a gradient across the face — which is exactly the falloff a
+           * polished surface has and a painted one does not.
            */
-          vec3 ceiling = vec3(2.10, 2.14, 2.25);
-          vec3 gap     = vec3(0.10, 0.11, 0.15);
-          vec3 wall    = vec3(0.50, 0.52, 0.62);
-          vec3 floorC  = vec3(0.10, 0.10, 0.14);
+          /*
+           * Exposed for darks, not for brights.
+           *
+           * The instinct with metal is to make the room bright, and it is
+           * backwards: a room that is bright everywhere clips the surface
+           * to flat white, and flat white carries no information at all.
+           * Real polished chrome is mostly dark — look at any reference and
+           * the majority of the surface is deep grey, with the brightness
+           * concentrated into a few narrow streaks where a light source
+           * happens to land. That contrast is what reads as polish, so the
+           * ceiling here sits just above 1.0 and everything else well under
+           * it, leaving room for the softboxes to be the only bright things
+           * in the frame.
+           */
+          float y = vDir.y;
+
+          // Floor: dark, but graded, so the downward faces carry a tone
+          // instead of going dead black.
+          vec3 floorC = mix(
+            vec3(0.014, 0.014, 0.019),
+            vec3(0.062, 0.063, 0.074),
+            smoothstep(-1.0, -0.04, y)
+          );
+
+          // Wall, rising into the cove.
+          vec3 wallC = mix(
+            vec3(0.075, 0.078, 0.092),
+            vec3(0.265, 0.272, 0.300),
+            smoothstep(0.0, 0.62, y)
+          );
+
+          // Ceiling: one broad soft box. 1.45 is chosen to sit just under
+          // the point where envMapIntensity would push it past 1.0 on
+          // screen — the brightest face is nearly white and still has
+          // shading in it, which is what separates polished from blown out.
+          vec3 c = mix(wallC, vec3(1.02, 1.03, 1.08), smoothstep(0.46, 0.96, y));
 
           /*
-           * Many strips, not a few.
+           * The horizon.
            *
-           * The mark is made of large flat faces, and a flat face reflects
-           * one small patch of the room — so with four wide strips each face
-           * came back a single flat tone and the metal read as a colour fill.
-           * At this frequency even a slight turn sweeps several strips across
-           * one face, which is what puts the moving light and shade into the
-           * surface that says polished rather than painted.
+           * The single most important line in the room. Chrome looks like
+           * chrome because you can see where the world stops being bright
+           * and starts being dark, drawn as a hard edge on a curved surface
+           * and as a step across a bevel. Slightly soft rather than a step
+           * so it does not alias into a staircase.
            */
-          float strip = step(0.5, fract(vH * 19.0));
-          vec3 above = mix(gap, ceiling, strip);
+          c = mix(floorC, c, smoothstep(-0.030, 0.030, y));
 
-          // Wall between the strips and the horizon, then the floor below it.
-          float toWall = smoothstep(0.42, 0.14, vH);
-          vec3 upper = mix(above, wall, toWall);
-          float toFloor = smoothstep(0.04, -0.12, vH);
-          gl_FragColor = vec4(mix(upper, floorC, toFloor), 1.0);
+          /*
+           * Two standing softboxes, left and right.
+           *
+           * These are what run the long highlight down the side of a bevel.
+           * Gaussian rather than stepped: a hard-edged source on a nearly
+           * mirror surface reflects as a hard-edged white shape, which is
+           * the plastic look again. A falloff reflects as a falloff.
+           */
+          float az = atan(vDir.z, vDir.x);
+          float lights =
+              1.00 * exp(-pow((az - 2.30) / 0.34, 2.0))
+            + 0.55 * exp(-pow((az + 1.00) / 0.26, 2.0));
+          c += lights * smoothstep(-0.34, 0.66, y) * vec3(0.62, 0.63, 0.68);
+
+          /*
+           * A cool cast above, a warm one below.
+           *
+           * Real polished metal is never one neutral grey: the sky end of
+           * it runs slightly blue and the bounce off the floor runs
+           * slightly warm, and that split is most of what the eye uses to
+           * tell chrome from silver paint. Far too small to read as colour.
+           */
+          c *= mix(vec3(1.020, 1.005, 0.980), vec3(0.980, 0.992, 1.030),
+                   smoothstep(-0.2, 0.6, y));
+
+          gl_FragColor = vec4(c, 1.0);
         }
       `,
     }),
@@ -156,17 +220,20 @@ function chromeEnvironment(): THREE.Scene {
     env.add(m);
   };
 
-  panel(10, 3.2, 7.5, [0, 5.6, 0], [Math.PI / 2, 0, 0]);
-  panel(2.4, 9, 5.5, [-5.6, 0, 1], [0, Math.PI / 2, 0]);
-  panel(2.0, 9, 4.0, [5.6, 0, -1], [0, -Math.PI / 2, 0]);
+  // Intensities well under the old ones. These sit on top of a room that is
+  // already bright overhead, and at 7.5 the overhead key alone was enough to
+  // clip every upward-facing surface to flat white on its own.
+  panel(10, 3.2, 1.45, [0, 5.6, 0], [Math.PI / 2, 0, 0]);
+  panel(2.4, 9, 1.05, [-5.6, 0, 1], [0, Math.PI / 2, 0]);
+  panel(2.0, 9, 0.75, [5.6, 0, -1], [0, -Math.PI / 2, 0]);
   // The floor bounce and the back wall are what keep the faces turned away
   // from the key out of pure black, which is the difference between silver
   // and a dark mirror.
-  panel(9, 9, 1.1, [0, -5.6, 0], [-Math.PI / 2, 0, 0]);
-  panel(9, 9, 1.4, [0, 0, -5.6], [0, 0, 0]);
+  panel(9, 9, 0.30, [0, -5.6, 0], [-Math.PI / 2, 0, 0]);
+  panel(9, 9, 0.42, [0, 0, -5.6], [0, 0, 0]);
   // A broad soft source on the camera side: the faces pointing at the viewer
   // have to reflect something, and without this they reflect the back wall.
-  panel(7, 4.5, 0.7, [-1.6, 1.4, 5.8], [0, Math.PI, 0]);
+  panel(7, 4.5, 0.26, [-1.6, 1.4, 5.8], [0, Math.PI, 0]);
 
   return env;
 }
@@ -214,7 +281,18 @@ export default function HeroObject({
     renderer.setPixelRatio(1);
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    /*
+     * 0.85, down from 1.15.
+     *
+     * ACES lifts the midtones and rolls the highlights off, which is what
+     * makes it flattering for skin and scenery and unflattering for chrome:
+     * at 1.15 the whole surface floated up into a milky light grey with the
+     * brights clipped off the top, which is the matte look. Pulling the
+     * exposure down drops the mids back into shadow and leaves only the
+     * softboxes in the upper range — the surface becomes mostly dark with
+     * a few bright streaks, which is what polished metal actually is.
+     */
+    renderer.toneMappingExposure = 0.85;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.display = "block";
 
@@ -273,35 +351,157 @@ export default function HeroObject({
     // --- the mark, as a single solid ------------------------------------
     const detail = detailFor(breakpoint);
 
-    const extrude: THREE.ExtrudeGeometryOptions = {
-      depth: 0.42,
-      bevelEnabled: true,
-      /* A wider chamfer. Flat faces reflect one patch of the room and come
-         back uniform however good the environment is; the bevel is the only
-         curved metal on the mark, so it is where the light actually travels.
-         Widening it is what turns a flat panel into a machined edge. */
-      bevelThickness: 0.12,
-      bevelSize: 0.11,
-      bevelSegments: Math.max(2, Math.round(6 * detail)),
-      /*
-       * Halved from 24. The only curves in the mark are the star's four
-       * gentle beziers, and at 12 segments they are indistinguishable from 24
-       * — but this number sets the vertex count, and the vertex count is also
-       * the dissolve's particle count, so it is paid for twice on every
-       * frame. 10,692 vertices to 5,712, with the silhouette unchanged.
-       */
-      curveSegments: Math.max(6, Math.round(12 * detail)),
-    };
+    const shapes = logoShapes(LOGO_SVG);
 
     /*
-     * Every path in the SVG becomes its own extrusion and they are merged
-     * into one geometry, because everything downstream expects a single mesh:
-     * the rim shell reuses it, the dissolve samples it, and the pointer sway
-     * turns it as one object. Five separate meshes would need five of each.
+     * The bevel has to be measured in the SVG's units, not the world's.
+     *
+     * This was the bug behind every flat-looking version of the mark. The
+     * shapes arrive in the artboard's coordinates — an 80-unit viewBox —
+     * and are only scaled down to world size after they have been extruded.
+     * So a bevelSize of 0.11, written as though it meant world units, was
+     * 0.11 against a span of 80: a bevel about a thousandth of the mark's
+     * width, which rounds to nothing. Every face was flat, every flat face
+     * reflected one patch of the room at one brightness, and the mark came
+     * back as white panels with grey sides. Widening that number from 0.11
+     * to 0.15 changed nothing at all, because both are zero at this scale.
+     *
+     * Measuring the shapes first and dividing through by the same factor
+     * the geometry will later be scaled by means the bevel is specified in
+     * the units it is seen in.
      */
-    const parts = logoShapes(LOGO_SVG).map(
-      (shape) => new THREE.ExtrudeGeometry(shape, extrude),
-    );
+    const flat = new THREE.Box2();
+    for (const shape of shapes) {
+      for (const pt of shape.getPoints(8)) flat.expandByPoint(pt);
+      for (const hole of shape.holes) {
+        for (const pt of hole.getPoints(8)) flat.expandByPoint(pt);
+      }
+    }
+    const svgSpan = Math.max(flat.max.x - flat.min.x, flat.max.y - flat.min.y);
+    const MARK_SIZE = 2.7; // the diameter the old mark read at
+
+    /*
+     * A chamfer, sized per shape.
+     *
+     * This is the rim, not the curvature — Three's bevel only cuts the edge
+     * and leaves the top face flat and full-size whatever it is set to, so
+     * pushing it toward half the width produced a picture-frame lip around
+     * a still-flat middle rather than a dome. The curvature is done in the
+     * normals instead, below. What this is still worth doing is catching the
+     * hard highlight along the silhouette, and it is scaled to each shape so
+     * the thin star and the wide arms get the same rim rather than the same
+     * number of units.
+     */
+    const DOME_RATIO = 0.12;
+
+    /* Each shape's own narrow dimension, in the SVG units the bevel is
+       specified in. The outline alone: a hole makes a shape's bounding box
+       no narrower, and it is the solid material that is being domed. */
+    const domeOf = (shape: THREE.Shape) => {
+      const box = new THREE.Box2();
+      for (const pt of shape.getPoints(8)) box.expandByPoint(pt);
+      const narrow = Math.min(box.max.x - box.min.x, box.max.y - box.min.y);
+      return Math.max(0.002 * svgSpan, (narrow / 2) * DOME_RATIO);
+    };
+
+    const extrudeFor = (shape: THREE.Shape): THREE.ExtrudeGeometryOptions => ({
+      /*
+       * The bevels meet in the middle, so there is no flat face left.
+       *
+       * depth 0.34 with a 0.17 bevel on each side means the profile is a
+       * continuous curve from front silhouette to back — a dome, not a slab
+       * with its corners taken off. This is what makes it read as chrome: a
+       * flat mirror shows one patch of the room at one brightness, while a
+       * curved one compresses the whole room into itself, so a single face
+       * carries the ceiling, the horizon, the floor and both softboxes as
+       * one continuous sweep. That sweep is the liquid-metal look, and it
+       * comes from the geometry — no amount of lighting produces it on a
+       * flat face.
+       */
+      depth: 0.34,
+      bevelEnabled: true,
+      bevelThickness: 0.17,
+      bevelSize: domeOf(shape),
+      // Ten steps, because this is now the silhouette of a curve rather than
+      // a chamfer, and a dome drawn in three steps is a faceted dome.
+      bevelSegments: Math.max(5, Math.round(10 * detail)),
+      /*
+       * Halved from 24. The only curves in the mark are the star's four
+       * gentle beziers, and at 12 segments they are indistinguishable from
+       * 24 — but this number sets the vertex count, and the vertex count is
+       * also the dissolve's particle count, so it is paid for twice on every
+       * frame.
+       */
+      curveSegments: Math.max(6, Math.round(12 * detail)),
+    });
+
+    /*
+     * Curvature, applied to the normals rather than the vertices.
+     *
+     * The mark is an extruded outline, so its front and back are flat by
+     * construction and no bevel setting changes that. A flat mirror shows
+     * one patch of the room at one brightness, which is the whole reason
+     * the arms kept coming back as white panels however good the room got.
+     *
+     * A reflection is computed entirely from the surface normal, so bending
+     * the normals across a face makes it reflect exactly as a dome would:
+     * the middle looks straight out at the viewer and the edges lean away,
+     * so a single face sweeps through the ceiling, the horizon, the floor
+     * and both softboxes in one continuous gradient. That sweep is the
+     * liquid-chrome look.
+     *
+     * Doing it this way rather than actually displacing the geometry keeps
+     * the silhouette crisp — a real dome on a shape with concave corners
+     * folds through itself there — and costs nothing per frame, since it is
+     * baked into the buffer once at mount.
+     */
+    const BULGE = 2.4;
+    const domeNormals = (g: THREE.BufferGeometry) => {
+      g.computeBoundingBox();
+      const b = g.boundingBox!;
+      const cx = (b.max.x + b.min.x) / 2;
+      const cy = (b.max.y + b.min.y) / 2;
+      // Half the diagonal, so the lean reaches full strength at the corners
+      // rather than saturating partway across.
+      const rad =
+        Math.hypot(b.max.x - b.min.x, b.max.y - b.min.y) / 2 || 1;
+      const pos = g.attributes.position as THREE.BufferAttribute;
+      const nor = g.attributes.normal as THREE.BufferAttribute;
+      const v = new THREE.Vector3();
+      for (let i = 0; i < nor.count; i++) {
+        const nz = nor.getZ(i);
+        // Only the flat front and back. The chamfer already faces outward,
+        // and leaning it further would break the rim highlight.
+        if (Math.abs(nz) < 0.85) continue;
+        const dx = (pos.getX(i) - cx) / rad;
+        const dy = (pos.getY(i) - cy) / rad;
+        const d = Math.min(1, Math.hypot(dx, dy));
+        // Smoothstep rather than linear: a linear lean puts a visible cone
+        // point at the centre of every face.
+        const k = BULGE * d * d * (3 - 2 * d);
+        v.set(dx * k, dy * k, nz).normalize();
+        nor.setXYZ(i, v.x, v.y, v.z);
+      }
+      nor.needsUpdate = true;
+    };
+
+    const parts = shapes.map((shape) => {
+      const raw = new THREE.ExtrudeGeometry(shape, extrudeFor(shape));
+      /*
+       * Weld before shading. ExtrudeGeometry returns unindexed triangles,
+       * and normals computed on those are per-triangle — flat shading, which
+       * renders the chamfer's ten steps as ten distinct facets. Welding lets
+       * each normal average across the faces sharing it so the rim reads as
+       * one curve. The tolerance is small on purpose: any more generous and
+       * it welds the sharp silhouette corners too, rounding off the points
+       * that give the mark its shape.
+       */
+      const g = mergeVertices(raw, 1e-4);
+      raw.dispose();
+      g.computeVertexNormals();
+      domeNormals(g);
+      return g;
+    });
     const markGeo = mergeGeometries(parts, false)!;
 
     /*
@@ -320,14 +520,21 @@ export default function HeroObject({
     const span = new THREE.Box3().setFromBufferAttribute(
       markGeo.attributes.position as THREE.BufferAttribute,
     ).getSize(new THREE.Vector3());
-    const MARK_SIZE = 2.7; // the diameter the old mark read at
     markGeo.scale(
       MARK_SIZE / Math.max(span.x, span.y),
       MARK_SIZE / Math.max(span.x, span.y),
       1,
     );
 
-    markGeo.computeVertexNormals();
+    /*
+     * No computeVertexNormals here.
+     *
+     * The normals were welded, shaded and then bent into a dome per part,
+     * before the merge. Recomputing them at this point would flatten every
+     * face straight back out, which is the entire effect.
+     *
+     * The scale above is uniform in x and y, so it cannot skew them either.
+     */
 
     /*
      * Polished chrome.
@@ -343,10 +550,27 @@ export default function HeroObject({
      * rather than from the surface.
      */
     const solidMat = new THREE.MeshStandardMaterial({
-      color: 0xf2f3f5,
+      color: 0xf6f7fa,
       metalness: 1,
-      roughness: 0.015,
-      envMapIntensity: 1.35,
+      /*
+       * 0.05, not 0.015.
+       *
+       * A perfect mirror sounds like the most polished thing available and
+       * it is the opposite: at 0.015 every face returns one exact patch of
+       * the room with no falloff, so the surface has no gradient in it and
+       * reads as paint. Real polished chrome has a hair of scatter, which
+       * spreads each reflection into a soft-edged shape. That soft edge is
+       * the entire difference.
+       */
+      roughness: 0.07,
+      /*
+       * 1.0, not 1.35.
+       *
+       * The room is now built to sit just under clipping on its own. Any
+       * multiplier above 1 pushes the ceiling past white, and a clipped
+       * highlight throws away the shading that makes it read as metal.
+       */
+      envMapIntensity: 1.0,
       transparent: true,
       opacity: 1,
     });
@@ -366,13 +590,17 @@ export default function HeroObject({
      * what is behind and around the mark: the liquid field, the dust and the
      * page's own ground.
      */
-    const key = new THREE.DirectionalLight(0xffffff, 0.8);
+    const key = new THREE.DirectionalLight(0xffffff, 0.5);
     key.position.set(-3, 4, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xdfe6ff, 0.35);
+    // Neutral, not 0xdfe6ff. On a mirror a tinted light is a tinted mirror,
+    // and that blue was part of the cast in the reference shot.
+    const fill = new THREE.DirectionalLight(0xffffff, 0.3);
     fill.position.set(4, -2, 2);
     scene.add(fill);
-    const back = new THREE.PointLight(0xffffff, 5, 12);
+    // Dimmed hard. At intensity 5 this was washing the back of every bevel
+    // to white from the inside, which is what a lamp does and metal does not.
+    const back = new THREE.PointLight(0xffffff, 0.7, 12);
     back.position.set(0, 0, -3);
     scene.add(back);
 
@@ -580,6 +808,12 @@ export default function HeroObject({
 
     // THREE.Clock is deprecated; elapsed time comes straight from the
     // animation frame instead.
+    // The angle the mark is parked at: turned enough to show the extrusion
+    // down one side and catch the horizon across the faces, tipped slightly
+    // so the top plane picks up the ceiling.
+    const POSE_Y = 0.34;
+    const POSE_X = -0.13;
+
     const t0 = performance.now();
     let raf = 0;
     const tick = (now: number = performance.now()) => {
@@ -595,15 +829,29 @@ export default function HeroObject({
 
       // Damped toward the pointer so the mark follows the cursor without
       // snapping to it, and keeps drifting when the pointer is still.
-      swayX += (pointerX * 0.55 - swayX) * 0.045;
-      swayY += (pointerY * 0.3 - swayY) * 0.045;
+      // Halved. The pointer should tilt the mark, not swing the room
+      // through it — past about a quarter radian the reflections start to
+      // swim and it stops looking like a solid object.
+      swayX += (pointerX * 0.26 - swayX) * 0.035;
+      swayY += (pointerY * 0.15 - swayY) * 0.035;
 
-      // Sway, not spin. The ring is a flat circle, so an accumulating Y
-      // rotation eventually turns it edge-on and it stops reading as a ring;
-      // oscillating keeps the mark three-quarter-on the whole time.
-      solid.rotation.y = Math.sin(t * 0.2) * 0.3 + swayX;
-      solid.rotation.x = Math.sin(t * 0.15) * 0.1 + swayY;
-      solid.position.y = Math.sin(t * 0.5) * 0.06 + eased * 0.35;
+      /*
+       * A fixed pose, not a drift.
+       *
+       * The mark used to oscillate on two axes and bob on a third, none of
+       * it asked for by anyone. On a matte object that reads as a gentle
+       * float; on a mirror it drags the whole reflected room across every
+       * face continuously, so the surface is never still and the eye reads
+       * it as animated colour rather than as metal. It is parked at a fixed
+       * three-quarter angle instead, and only the pointer moves it.
+       *
+       * Nothing is lost in cost, either: the environment is baked once at
+       * mount, so with the pose still the reflection is genuinely static
+       * rather than merely slow.
+       */
+      solid.rotation.y = POSE_Y + swayX;
+      solid.rotation.x = POSE_X + swayY;
+      solid.position.y = eased * 0.35;
       // Shrinking as it goes hands the centre of the screen to the headline.
       const shrink = 1 - eased * 0.3;
       solid.scale.setScalar(shrink);
