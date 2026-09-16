@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap, useGsapContext } from "../shared/gsap";
+import { gsap, useGsapContext, SCRUB } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { caseStudy as copy } from "../shared/copy";
 import { color, ease, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
@@ -25,9 +25,16 @@ import { useStacked } from "../shared/responsive";
  */
 export default function CaseStudy({
   gallery = [],
+  curtainImage,
   scrollLength = "760vh",
 }: {
   gallery?: string[];
+  /**
+   * Optional still carried by the curtain at both ends of the section. With
+   * one, the slats are slices of the picture and it comes apart as they
+   * retract; without one they are a plain plate, as before.
+   */
+  curtainImage?: string;
   scrollLength?: string;
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
@@ -110,7 +117,7 @@ export default function CaseStudy({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.3,
+          scrub: SCRUB,
           onUpdate: (self) =>
             surface.current?.setTone(self.progress < 0.34 ? "light" : "dark"),
         },
@@ -476,7 +483,7 @@ export default function CaseStudy({
           className="cs-curtain"
           style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
         >
-          <SlatCurtain handleRef={slats} color={color.black} />
+          <SlatCurtain handleRef={slats} color={color.black} imageSrc={curtainImage} />
         </div>
 
         {/* ---- the metrics chapter ---- */}
@@ -525,7 +532,7 @@ export default function CaseStudy({
             className="cs-curtain-out"
             style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
           >
-            <SlatCurtain handleRef={slatsOut} color={color.black} />
+            <SlatCurtain handleRef={slatsOut} color={color.black} imageSrc={curtainImage} />
           </div>
         </div>
       </div>

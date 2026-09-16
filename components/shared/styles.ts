@@ -34,6 +34,23 @@ body {
 @media (min-width: 1440px) { :root { --stride-pad: 72px; --stride-section: 128px; } }
 @media (min-width: 1920px) { :root { --stride-pad: 96px; --stride-section: 160px; } }
 
+/*
+ * Optical spacing.
+ *
+ * Every gap in the spec is measured between what the eye sees — the cap of
+ * one line and the baseline of the next — but a text box also carries the
+ * half-leading above and below it. At 64/72 that is four extra pixels at each
+ * end, so a 24px gap under a headline read as 37. The text-box property trims
+ * half-leading out of the box, which makes the tokens land as drawn.
+ * Browsers without it simply keep the old, slightly looser spacing.
+ */
+@supports (text-box: trim-both cap alphabetic) {
+  h1, h2, h3, h4, h5, p, .stride-trim { text-box: trim-both cap alphabetic; }
+  /* Text filled with a clipped gradient only gets paint inside its box, so
+     these keep the descender edge or the sweep cuts the tails off. */
+  .stride-ink, .stride-ink * { text-box: trim-both cap text; }
+}
+
 @keyframes stride-drift {
   0%   { transform: scale(1.06) translate3d(0, 0, 0); }
   50%  { transform: scale(1.16) translate3d(-2.5%, -2%, 0); }

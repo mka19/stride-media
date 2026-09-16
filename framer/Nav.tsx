@@ -219,7 +219,7 @@ export default function Nav({
           <>
             {/* Sound sits beside the CTA, as a pair. It never starts on its
                 own — nothing plays until it is clicked. */}
-            <SoundButton src={soundtrack} />
+            <SoundButton src={soundtrack} style={{ marginRight: 8 }} />
             <GlowButton href="#contact">{navCopy.cta}</GlowButton>
             <Segment fill={0} active={false} hairline={hairline} />
           </>

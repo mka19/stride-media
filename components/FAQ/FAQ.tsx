@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { gsap, useGsapContext } from "../shared/gsap";
+import { gsap, useGsapContext, SCRUB } from "../shared/gsap";
 import { faq as copy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { useStacked } from "../shared/responsive";
@@ -25,7 +25,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
       gsap.set(q(".faq-item"), { opacity: 0, x: 40 });
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.7 },
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
       });
 
       // The letters shrink and travel while the list grows in: the two

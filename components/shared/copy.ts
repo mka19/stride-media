@@ -103,8 +103,9 @@ export const solution = {
   headline: ["We build your personal brand.", "Start to finish."],
   body: "Stride Media handles everything, so you never have to touch a camera, write a script, or guess what works.",
   videoCaption: "Watch how it comes together",
-  scrollHint: "Scroll for more",
-  watchFull: "Watch full video",
+  // One plain cue, no controls: the film keeps playing while it holds the
+  // screen, and the line simply says what the two options are.
+  scrollHint: "Keep watching to understand us better, or scroll for more",
   pillars: [
     {
       n: "01",

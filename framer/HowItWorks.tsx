@@ -1,5 +1,5 @@
 import { addPropertyControls, ControlType } from "framer"
-import { gsap, useGsapContext } from "./gsap";
+import { gsap, useGsapContext, SCRUB, reveal } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { useEffect, useRef } from "react";
 import { howItWorks as copy } from "./copy";
@@ -47,7 +47,7 @@ export default function HowItWorks({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: SCRUB,
           onUpdate: (self) => surface.current?.setTone(self.progress > 0.2 ? "dark" : "light"),
         },
       });
@@ -71,13 +71,21 @@ export default function HowItWorks({
       // same property fight, and whichever updated last wins.
       gsap
         .timeline({
-          scrollTrigger: { trigger: root, start: "top bottom", end: "top top", scrub: 0.7 },
+          scrollTrigger: { trigger: root, start: "top bottom", end: "top top", scrub: SCRUB },
         })
-        .to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.4, stagger: 0.06 }, 0.45);
+        .to(q(".hw-intro-item"), { opacity: 1, y: 0, duration: 0.4, stagger: 0.06, ease: reveal.ease }, 0.45);
 
-      // 1. intro clears
-      tl.to(q(".hw-intro"), { opacity: 0, duration: 0.06 }, 0.18)
-        .to(q(".hw-steps"), { opacity: 1, duration: 0.05 }, 0.2);
+      // 1. The intro leaves the way it came: the same drift, the same
+      //    stagger, the same curve, simply run the other way. It used to
+      //    blink out over six percent of the pin with no movement at all,
+      //    which read as a cut rather than as the panel retiring. The steps
+      //    are already fading up underneath before it has finished, so the
+      //    screen is never empty between the two.
+      tl.to(
+        q(".hw-intro-item"),
+        { opacity: 0, y: -reveal.y, duration: 0.14, stagger: 0.04, ease: reveal.easeIn },
+        0.12,
+      ).to(q(".hw-steps"), { opacity: 1, duration: 0.12, ease: reveal.ease }, 0.18);
 
       // 2. the steps fly toward the viewer and past
       const steps = q(".hw-step");

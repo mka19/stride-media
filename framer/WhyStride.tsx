@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react";
-import { gsap, useGsapContext } from "./gsap";
+import { gsap, useGsapContext, SCRUB } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { whyStride as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
@@ -46,7 +46,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: SCRUB,
           onUpdate: (self) => surface.current?.setTone(self.progress < 0.17 ? "light" : "dark"),
         },
       });

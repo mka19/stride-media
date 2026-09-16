@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef } from "react";
-import { gsap, useGsapContext } from "./gsap";
+import { gsap, useGsapContext, SCRUB } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { problem as copy } from "./copy";
 import { color, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
@@ -67,7 +67,7 @@ export default function Problem({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: SCRUB,
           invalidateOnRefresh: true,
           // Hand the nav its tone at the crossfade's midpoint, so the bar
           // turns with the ground rather than before or after it.

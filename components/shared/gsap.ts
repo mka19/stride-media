@@ -23,6 +23,31 @@ if (typeof window !== "undefined" && !registered) {
 export { gsap, ScrollTrigger };
 
 /**
+ * One scrub value for the whole site.
+ *
+ * Scrub is how long a scrubbed timeline takes to catch up with the scroll
+ * position, and it is the single biggest contributor to how the page feels
+ * under a wheel. Sections used to pick their own between 0.6 and 1.3, so the
+ * weight of the scroll changed every time one ended — the page felt tight in
+ * one and loose in the next. One value everywhere means the whole document
+ * carries the same inertia.
+ */
+export const SCRUB = 1;
+
+/**
+ * The shared reveal vocabulary. Everything that arrives does so the same
+ * way, and everything that leaves is the exact inverse of arriving, so a
+ * section read backwards looks like the section read forwards in reverse
+ * rather than like a different animation.
+ */
+export const reveal = {
+  y: 24,
+  ease: "power2.out",
+  easeIn: "power2.in",
+  easeBoth: "power2.inOut",
+} as const;
+
+/**
  * An explicit override for the reduced-motion preference, read once from
  * `?motion=on` / `?motion=off` and then remembered for the tab.
  *

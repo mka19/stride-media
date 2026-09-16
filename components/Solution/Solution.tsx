@@ -1,4 +1,5 @@
-import { gsap, useGsapContext } from "../shared/gsap";
+import { useState } from "react";
+import { gsap, useGsapContext, SCRUB } from "../shared/gsap";
 import { useInView } from "../shared/useInView";
 import { useStacked } from "../shared/responsive";
 import { solution as copy } from "../shared/copy";
@@ -32,6 +33,10 @@ export default function Solution({
   // A scroll-driven expand to full screen is excessive on a phone: the reel
   // is simply a fixed plate that plays when it comes into view.
   const stacked = useStacked();
+  // The reel keeps playing for as long as it holds the screen. Once the
+  // scroll carries past it and the pillars take over it stops — and it picks
+  // straight back up if the visitor scrolls back into it.
+  const [pastReel, setPastReel] = useState(false);
 
   const rootRef = useGsapContext(
     (root) => {
@@ -96,7 +101,7 @@ export default function Solution({
             trigger: root,
             start: "top bottom",
             end: "top top",
-            scrub: 0.7,
+            scrub: SCRUB,
             invalidateOnRefresh: true,
             onRefresh: placeFrame,
           },
@@ -110,8 +115,11 @@ export default function Solution({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.7,
+          scrub: SCRUB,
           invalidateOnRefresh: true,
+          // The reel stops exactly where the pillars begin to settle over it.
+          onUpdate: (self) => setPastReel(self.progress > 0.5),
+          onLeaveBack: () => setPastReel(false),
         },
       });
 
@@ -195,39 +203,18 @@ export default function Solution({
         <div
           style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: space.s }}
         >
-          {/* Two ways on: take the film in full, or keep going. */}
-          <div style={{ display: "flex", alignItems: "center", gap: space.s, pointerEvents: "auto" }}>
-            <button
-              type="button"
-              onClick={() => {
-                const v = stageRef.current?.querySelector("video");
-                if (v?.requestFullscreen) void v.requestFullscreen();
-                else v?.play();
-              }}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: space.sm,
-                height: 40,
-                padding: `0 ${space.md}px`,
-                borderRadius: 8,
-                cursor: "pointer",
-                border: "none",
-                background: color.boneSoft,
-                color: color.textOnLight,
-                ...typeScale.eyebrow,
-                fontWeight: 500,
-              }}
-            >
-              <svg width="11" height="12" viewBox="0 0 11 12" aria-hidden="true">
-                <path d="M0 0l11 6-11 6V0z" fill="currentColor" />
-              </svg>
-              {copy.watchFull}
-            </button>
-            <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
-              {copy.scrollHint}
-            </MicroLabel>
-          </div>
+          {/* One plain line, no controls. The film is already playing; this
+              only says what the two ways on are. */}
+          <span
+            style={{
+              ...typeScale.eyebrow,
+              color: color.textOnDark,
+              opacity: 0.74,
+              textAlign: "center",
+            }}
+          >
+            {copy.scrollHint}
+          </span>
           <svg className="stride-pulse" width="18" height="11" viewBox="0 0 18 11" fill="none" aria-hidden="true">
             <path d="M1 1L9 9L17 1" stroke={color.accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -291,7 +278,7 @@ export default function Solution({
               src={videoSrc}
               poster={poster}
               seed={4}
-              play={inView}
+              play={inView && !pastReel}
               style={{ position: "absolute", inset: 0 }}
             />
             {/* Dims only once the pillars need to sit on top. */}
@@ -424,39 +411,18 @@ export default function Solution({
             pointerEvents: "none",
           }}
         >
-          {/* Two ways on: take the film in full, or keep going. */}
-          <div style={{ display: "flex", alignItems: "center", gap: space.s, pointerEvents: "auto" }}>
-            <button
-              type="button"
-              onClick={() => {
-                const v = stageRef.current?.querySelector("video");
-                if (v?.requestFullscreen) void v.requestFullscreen();
-                else v?.play();
-              }}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: space.sm,
-                height: 40,
-                padding: `0 ${space.md}px`,
-                borderRadius: 8,
-                cursor: "pointer",
-                border: "none",
-                background: color.boneSoft,
-                color: color.textOnLight,
-                ...typeScale.eyebrow,
-                fontWeight: 500,
-              }}
-            >
-              <svg width="11" height="12" viewBox="0 0 11 12" aria-hidden="true">
-                <path d="M0 0l11 6-11 6V0z" fill="currentColor" />
-              </svg>
-              {copy.watchFull}
-            </button>
-            <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
-              {copy.scrollHint}
-            </MicroLabel>
-          </div>
+          {/* One plain line, no controls. The film is already playing; this
+              only says what the two ways on are. */}
+          <span
+            style={{
+              ...typeScale.eyebrow,
+              color: color.textOnDark,
+              opacity: 0.74,
+              textAlign: "center",
+            }}
+          >
+            {copy.scrollHint}
+          </span>
           <svg
             className="stride-pulse"
             width="18"

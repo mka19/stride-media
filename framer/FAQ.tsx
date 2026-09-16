@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useState } from "react";
-import { gsap, useGsapContext } from "./gsap";
+import { gsap, useGsapContext, SCRUB } from "./gsap";
 import { faq as copy } from "./copy";
 import { color, ease, hexA, layout, space, typeScale } from "./theme";
 import { useStacked } from "./responsive";
@@ -26,7 +26,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
       gsap.set(q(".faq-item"), { opacity: 0, x: 40 });
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: 0.7 },
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
       });
 
       // The letters shrink and travel while the list grows in: the two

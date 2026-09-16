@@ -1,4 +1,4 @@
-import { gsap, useGsapContext } from "./gsap";
+import { gsap, useGsapContext, SCRUB } from "./gsap";
 import { useEffect, useRef } from "react";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { testimonials as copy } from "./copy";
@@ -49,7 +49,7 @@ export default function Testimonials() {
           trigger: root,
           start: "top 75%",
           end: "bottom bottom",
-          scrub: 0.7,
+          scrub: SCRUB,
           // will-change is a hint, not a free win: held on every card for the
           // life of the page it keeps six layers promoted for nothing, so it
           // goes on while the section is live and comes off when it is not.

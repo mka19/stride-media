@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useRef, useState } from "react";
-import { gsap, ScrollTrigger, useGsapContext } from "./gsap";
+import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "./gsap";
 import { hero as heroCopy } from "./copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { GlowButton, Grain, MicroLabel } from "./primitives";
@@ -59,7 +59,7 @@ export default function Hero({
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: SCRUB,
           onUpdate: (self) => {
             // Feed the dissolve. 0 -> 1 across the first 55% of the scroll.
             objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.55));
@@ -87,7 +87,7 @@ export default function Hero({
       gsap.to(q(".hero-mosaic"), {
         yPercent: -6,
         ease: "none",
-        scrollTrigger: { trigger: root, start: "bottom bottom", end: "bottom top", scrub: true },
+        scrollTrigger: { trigger: root, start: "bottom bottom", end: "bottom top", scrub: SCRUB },
       });
 
       return () => ScrollTrigger.refresh();
