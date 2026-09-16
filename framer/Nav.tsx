@@ -30,8 +30,12 @@ import { subscribeSurface, toneAt, type Tone } from "./surface";
 export default function Nav({
   /** Height of the bar; the underline segments sit on its bottom edge. */
   height = layout.navHeight,
-  /** A track for the sound button. Without one the button toggles silently. */
-  soundtrack,
+  /**
+   * A track for the sound button. Without one the button toggles silently.
+   * It is never played until the button is pressed — nothing on this site
+   * makes noise at a visitor who has not asked for it.
+   */
+  soundtrack = "/audio/stride-theme.mp3",
 }: {
   height?: number;
   soundtrack?: string;

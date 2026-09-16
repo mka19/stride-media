@@ -1,6 +1,6 @@
 import { createElement, useRef } from "react";
 import type { CSSProperties, ElementType } from "react";
-import { gsap, useGsapContext } from "./gsap";
+import { gsap, ScrollTrigger, useGsapContext } from "./gsap";
 import { color, hexA } from "./theme";
 
 /**
@@ -58,16 +58,55 @@ export default function GradientRevealText({
       // pass on entry reads as light moving over the type and leaves it in
       // its finished state whatever the visitor does next.
       const sweep = { p: -18 };
-      gsap.to(sweep, {
-        p: 118,
-        duration: 1.5,
-        ease: "power1.inOut",
-        onUpdate: () => write(sweep.p),
-        onComplete: () => {
-          root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} 100%)`;
+      const run = () => {
+        gsap.to(sweep, {
+          p: 118,
+          duration: 1.5,
+          ease: "power1.inOut",
+          onUpdate: () => write(sweep.p),
+          onComplete: () => {
+            root.style.backgroundImage = `linear-gradient(95deg, ${final} 0%, ${final} 100%)`;
+          },
+        });
+      };
+
+      /*
+       * Crossing into the viewport is not the same as being visible.
+       *
+       * Half the headlines on this site live inside a pinned frame and are
+       * uncovered by that section's own timeline well after the frame itself
+       * has come into view. Firing on the frame's position spent the sweep on
+       * a line that was still at zero opacity, and by the time anyone saw the
+       * words the light had already passed over them. So the trigger only
+       * starts the watch, and the watch waits for the line to actually be
+       * painted before spending the one pass it gets.
+       */
+      let watching = 0;
+      let fired = false;
+      const watch = () => {
+        if (fired) return;
+        const visible = Number(getComputedStyle(root).opacity) > 0.5;
+        const box = root.getBoundingClientRect();
+        const onScreen = box.bottom > 0 && box.top < window.innerHeight;
+        if (visible && onScreen) {
+          fired = true;
+          run();
+          return;
+        }
+        watching = requestAnimationFrame(watch);
+      };
+
+      ScrollTrigger.create({
+        trigger: root,
+        start,
+        once: true,
+        onEnter: () => {
+          cancelAnimationFrame(watching);
+          watch();
         },
-        scrollTrigger: { trigger: root, start, once: true },
       });
+
+      return () => cancelAnimationFrame(watching);
     },
     [children, tone, start],
     (root) => {

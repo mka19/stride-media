@@ -176,42 +176,56 @@ export default function CaseStudy({
         // rather than sitting just inside the edge.
         gsap.set(plate, { xPercent: -50, yPercent: -50, force3D: true });
 
+        /*
+         * The travel owns x and y, and nothing else.
+         *
+         * It used to carry opacity and scale as well, at the values they hold
+         * at the ends — and the two tweens below write the same properties
+         * over the top of it. Scrubbing forwards the overlap resolved in the
+         * order that happened to look right; scrubbing back it resolved the
+         * other way, the travel's zero won, and every card stayed invisible.
+         * One property, one owner.
+         *
+         * The diagonal reaches a full viewport in each direction, so a card a
+         * quarter of the way along has its centre on the frame's edge: half of
+         * it showing, and its inner edge clear of the card in the middle
+         * rather than lying across it.
+         */
         tl.fromTo(
           plate,
-          { x: "78vw", y: "72vh", scale: 0.74, opacity: 0 },
-          {
-            x: "-78vw",
-            y: "-72vh",
-            scale: 0.74,
-            opacity: 0,
-            duration: TRAVEL,
-            ease: "none",
-            force3D: true,
-          },
+          { x: "100vw", y: "100vh" },
+          { x: "-100vw", y: "-100vh", duration: TRAVEL, ease: "none", force3D: true },
           at,
         );
+
+        gsap.set(plate, { opacity: 0, scale: 0.74 });
 
         // Size and presence peak in the middle of that travel and fall away
         // again, so the subject is the biggest and the brightest thing in
         // the frame and the two corners are plainly on their way somewhere.
-        // Linear on purpose. On an eased rise the card in the bottom-right
-        // corner was already at nine tenths of full presence by the time it
-        // was a quarter of the way in, so two cards read as the subject at
-        // once. Straight lines put it at exactly half — half the presence,
-        // half out of the frame — which is what the corner is for.
-        tl.to(plate, { scale: 1, opacity: 1, duration: TRAVEL * 0.5, ease: "none" }, at)
-          .to(
-            plate,
-            { scale: 0.74, opacity: 0, duration: TRAVEL * 0.5, ease: "none" },
-            at + TRAVEL * 0.5,
-          );
+        // Linear on purpose: on an eased rise the card in the bottom-right
+        // corner was at nine tenths of full presence a quarter of the way in,
+        // and two cards read as the subject at once.
+        tl.fromTo(
+          plate,
+          { scale: 0.74, opacity: 0 },
+          { scale: 1, opacity: 1, duration: TRAVEL * 0.5, ease: "none" },
+          at,
+        ).to(
+          plate,
+          { scale: 0.74, opacity: 0, duration: TRAVEL * 0.5, ease: "none" },
+          at + TRAVEL * 0.5,
+        );
       });
 
       // 3. the collage clears, and only then does the metrics chapter open —
       //    behind the same curtain the section opened with, so the two ends
       //    of it are the same device rather than two different transitions.
       const curtainOut = { p: 0 };
-      tl.set(q(".cs-metrics"), { opacity: 1 }, GALLERY_OUT).to(
+      /* Pointer-events with it, not just opacity: an invisible metrics layer
+         lying over the whole frame still swallowed every hover, which is why
+         the cards' "view case study" badge never appeared. */
+      tl.set(q(".cs-metrics"), { opacity: 1, pointerEvents: "auto" }, GALLERY_OUT).to(
         curtainOut,
         {
           p: 1,
@@ -525,6 +539,10 @@ export default function CaseStudy({
             placeItems: "center",
             padding: `0 ${layout.pad}`,
             color: color.textOnLight,
+            // A headline with nothing to click on. Left hit-testable it lay
+            // over the whole frame for the rest of the section and swallowed
+            // every hover meant for a card.
+            pointerEvents: "none",
           }}
         >
           <div style={{ position: "relative" }}>{headline}</div>
@@ -544,8 +562,10 @@ export default function CaseStudy({
           style={{
             position: "absolute",
             inset: 0,
-            // A full-frame chapter: it must not cover the gallery at rest.
+            // A full-frame chapter: it must not cover the gallery at rest —
+            // and "cover" includes hit-testing, not just paint.
             opacity: 0,
+            pointerEvents: "none",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
