@@ -180,7 +180,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B92";
+export const BUILD = "B93";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

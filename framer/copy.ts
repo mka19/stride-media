@@ -322,12 +322,21 @@ export const footer = {
     { n: "03", label: "Work", href: "#results" },
     { n: "04", label: "Contact", href: "#contact" },
   ],
-  /** Right-hand column. */
+  /**
+   * Right-hand column.
+   *
+   * An empty href is the real state: these accounts have no URLs yet. They
+   * used to be href="#", which is worse than nothing — it looks like a link,
+   * takes the click, and jumps the page to the top. Until a real URL is put
+   * in, the footer renders these as plain text instead of as links.
+   *
+   * ── PASTE THE PROFILE URLS HERE ──────────────────────────────────────────
+   */
   socials: [
-    { label: "Instagram", href: "#" }, // PLACEHOLDER
-    { label: "YouTube", href: "#" }, // PLACEHOLDER
-    { label: "TikTok", href: "#" }, // PLACEHOLDER
-    { label: "LinkedIn", href: "#" }, // PLACEHOLDER
+    { label: "Instagram", href: "" },
+    { label: "YouTube", href: "" },
+    { label: "TikTok", href: "" },
+    { label: "LinkedIn", href: "" },
   ],
   rights: "all rights reserved",
   basedLabel: "Based in",

@@ -152,17 +152,27 @@ export default function Footer({
               textAlign: stacked ? "left" : "right",
             }}
           >
-            {copy.socials.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                style={linkStyle}
-                onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
-                onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
-              >
-                {item.label}
-              </a>
-            ))}
+            {/* A name with no URL behind it is rendered as a name. Anything
+                that looks like a link has to go somewhere. */}
+            {copy.socials.map((item) =>
+              item.href ? (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  style={linkStyle}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <span key={item.label} style={linkStyle}>
+                  {item.label}
+                </span>
+              ),
+            )}
           </nav>
         </div>
 

@@ -282,7 +282,6 @@ export default function Problem({
 
   return (
     <section
-      id="problem"
       ref={rootRef}
       style={{
         position: "relative",
@@ -291,6 +290,32 @@ export default function Problem({
         fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
+      {/*
+        Two chapters share one scroll container, and the nav lists them as two
+        entries — so they need two anchors, spanning the stretch of scroll each
+        one actually occupies.
+
+        The nav's ABOUT link used to point at an id nothing had: the whole
+        section was `id="problem"`, so clicking ABOUT did nothing at all and
+        the ABOUT entry never lit up as you passed it. These are zero-visual
+        markers, but they have real height, because the nav reads their
+        bounding boxes to work out where you are and how far through.
+
+        0.52 is where the card chain starts on the timeline; the same number
+        splits the anchors, so the nav changes over exactly when the chapter
+        does rather than at a guessed point.
+      */}
+      <span
+        id="about"
+        aria-hidden="true"
+        style={{ position: "absolute", top: 0, height: "52%", left: 0, right: 0, pointerEvents: "none" }}
+      />
+      <span
+        id="problem"
+        aria-hidden="true"
+        style={{ position: "absolute", top: "52%", bottom: 0, left: 0, right: 0, pointerEvents: "none" }}
+      />
+
       <div
         className="pb-frame"
         style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}

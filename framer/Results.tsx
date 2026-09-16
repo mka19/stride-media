@@ -16,6 +16,15 @@ import GradientRevealText from "./GradientRevealText";
  * ongoing interaction is the row's own horizontal scroll with snap. Each
  * card's reel plays only while that card is on screen.
  */
+/**
+ * How far a centre card grows past the row it sits in.
+ *
+ * The carousel scales the middle of the strip up, so the tallest projected
+ * card runs about 58px beyond the flat ones at each end. This is that, with
+ * room to spare.
+ */
+const CLIP_HEADROOM = 70;
+
 export default function Results({ clips = [] }: { clips?: string[] }) {
   const bp = useBreakpoint();
   const cardWidth = bp === "mobile" ? "85vw" : bp === "tablet" ? 240 : 280;
@@ -214,11 +223,36 @@ function Ticker({ children }: { children: ReactNode }) {
     <div
       ref={viewport}
       style={{
+        /*
+         * The strip has to be clipped horizontally — that is what makes the
+         * cards run off the sides — but the clip applies to both axes, and the
+         * cards in the middle are scaled up by the perspective, which makes
+         * them taller than the row they sit in. A 397px viewport was cutting
+         * the bottom off a 513px card: the sector, the sentence and the handle
+         * under the figure were all sliced through mid-word.
+         *
+         * The padding is the headroom the scaled cards need. It is symmetric
+         * because they grow about their own centre.
+         */
         overflow: "hidden",
         cursor: "grab",
         touchAction: "pan-y",
         perspective: 1500,
-        paddingBottom: space.lg,
+        /*
+         * The padding here is headroom for the clip, not spacing, and the
+         * matching negative margin is what keeps it from becoming spacing.
+         *
+         * Padding alone moves the clip edge and the content together, so the
+         * card met the boundary in exactly the same place. Putting the
+         * negative margin on the track instead shrank the content box by as
+         * much as the padding added, which came to the same thing. It has to
+         * be on this element: the padding grows the clip box, the margin pulls
+         * this whole box back out of the flow by the same amount, and the
+         * section around it never moves.
+         */
+        paddingBlock: CLIP_HEADROOM,
+        paddingBottom: CLIP_HEADROOM + space.lg,
+        marginBlock: -CLIP_HEADROOM,
       }}
     >
       <div
