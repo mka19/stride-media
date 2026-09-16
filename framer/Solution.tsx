@@ -327,6 +327,10 @@ export default function Solution({
               flexDirection: "column",
               gap: rhythm.headlineToBody,
               maxWidth: "min(840px, 56vw)",
+              // Held down in the lower part of the frame, so the plate has
+              // the middle of the screen to grow into rather than sharing it
+              // with the header.
+              marginTop: "auto",
             }}
           >
             <MicroLabel tone="accent" className="sol-intro">

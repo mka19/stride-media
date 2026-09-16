@@ -103,10 +103,15 @@ export default function Footer({
           // the last screen and slid the link rows up under the fixed nav.
           // The rhythm around it is tightened so the whole footer lands
           // inside one viewport with the nav cleared.
-          gap: `${space.h}px`,
-          padding: `${space.hh}px ${layout.pad} ${space.xl}px`,
-          minHeight: stacked ? undefined : "70vh",
-          justifyContent: "space-between",
+          // Tighter than a section token either side of the mark: it is the
+          // largest thing on the page and does not need to be held off the
+          // rule beneath it as well.
+          gap: `${space.md}px`,
+          padding: `${space.hh}px ${layout.pad} ${space.lg}px`,
+          // Not space-between with a min-height: that distributes the spare
+          // height into the gaps, so tightening the gap around the mark did
+          // nothing — the column simply gave the space back.
+          justifyContent: "flex-start",
         }}
       >
         {/* ---- links: numbered left, social right ---- */}
@@ -166,11 +171,8 @@ export default function Footer({
              full width of the page; the height is set from the viewport so
              the word always reaches both edges rather than sitting as a
              small mark in the middle of an empty band. */}
-        <div
-          className="ft-word"
-          style={{ marginInline: `calc(-1 * ${layout.pad})`, width: "auto" }}
-        >
-          <Wordmark text={copy.wordmark} height={stacked ? "30vw" : "min(24vw, 44vh)"} />
+        <div className="ft-word">
+          <Wordmark text={copy.wordmark} height={stacked ? "21vw" : "min(12.6vw, 26vh)"} />
         </div>
 
         {/* ---- meta row ---- */}

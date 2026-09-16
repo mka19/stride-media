@@ -64,19 +64,13 @@ export const problem = {
    * words and objects in the order they are read.
    */
   introSequence: [
-    "STRIDE", "MEDIA", "EXISTS", 0, "because", "talented", "entrepreneurs",
-    "keep", "losing", "to", "louder,", 1, "less", "capable", "competitors.",
-    "Not", "on", "skill.", "On", "visibility.",
-    "We", "build", "the", "video", "presence", 2, "that", "makes",
-    "recognition", "inevitable", "\u2014", "using", "AI", "to", "move",
-    "faster", "than", "any", "traditional", "agency,", 3, "without",
-    "cutting", "corners", "on", "quality.",
-    "One", "strategy.", "One", "voice.", 4, "Shipped", "every", "month,",
-    "on", "time,", "without", "exception.",
+    "STRIDE", "MEDIA", "EXISTS", 0, "BECAUSE", "TALENTED", "ENTREPRENEURS",
+    "KEEP", "LOSING", "TO", "LOUDER,", 1, "LESS", "CAPABLE", "COMPETITORS.",
+    "NOT", "ON", "SKILL.", 2, "ON", "VISIBILITY.",
   ] as (string | number)[],
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   /** The two blocks under the rule, left and right. */
-  aboutCaps: ["WE BUILD FOR RECOGNITION", "STRATEGY FIRST, CRAFT ALWAYS,", "SHIPPED EVERY MONTH."],
+  aboutCaps: ["WE BUILD FOR RECOGNITION.", "STRATEGY FIRST, SHIPPED MONTHLY."],
   aboutMission:
     "Our mission is to make expertise impossible to ignore, with video that earns attention instead of buying it.",
   cards: [

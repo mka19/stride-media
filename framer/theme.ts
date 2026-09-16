@@ -63,9 +63,9 @@ export const typeScale = {
    *   number 115/117    display 96/100    h1 64/72
    *   h3      26/30     body     18/22    eyebrow 12/15
    *
-   * Tracking is −1px everywhere except the small labels: at 12px and under,
-   * negative tracking closes an uppercase word up until it cannot be read,
-   * so those sit at 0.
+   * Tracking is −1px on the headline sizes. At 18px and under it is 0 —
+   * negative tracking closes small type up until it is harder to read, and
+   * an uppercase label at 12px suffers most.
    *
    * Weights: medium (500) for statements, regular (400) for everything else.
    */
@@ -108,7 +108,8 @@ export const typeScale = {
     fontSize: fluid(15, 18),
     fontWeight: 400,
     lineHeight: fluid(18, 22),
-    letterSpacing: "-1px",
+    // Nothing at 18px or under takes tracking.
+    letterSpacing: "0",
   },
   /** Every small label: eyebrows, nav, captions, meta. */
   eyebrow: {
@@ -141,8 +142,8 @@ export const space = {
 
 /** The recurring relationships from the spec, so sections don't re-decide. */
 export const rhythm = {
-  eyebrowToHeadline: space.md, // 16
-  headlineToBody: 36,
+  eyebrowToHeadline: 12,
+  headlineToBody: 24,
   bodyToCta: space.xl, // 32
   betweenCards: space.lg, // 24
   headerToContent: space.h, // 64
@@ -173,7 +174,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B76";
+export const BUILD = "B82";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

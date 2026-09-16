@@ -62,7 +62,14 @@ export default function Wordmark({
     // explosion and the return are one continuous move rather than a swap
     // between two states.
     let pressed = false;
-    let blast = 0;
+    // Two channels, not one. `spread` is how far the blocks are from home;
+    // `veil` is how much of the clean mark underneath is erased. On the way
+    // out they move together. On the way back the veil is held up until the
+    // blocks are nearly home — with one value the erase lifted as the blocks
+    // were still travelling, so the word reassembled underneath its own
+    // debris and the particles arrived late, which is backwards.
+    let spread = 0;
+    let veil = 0;
     let last = performance.now();
 
     const FONT = '500 100px "Familjen Grotesk", Helvetica, Arial, sans-serif';
@@ -77,7 +84,7 @@ export default function Wordmark({
       // stepping the size down in a loop — it lands on the exact fit.
       octx.font = FONT;
       const unit = octx.measureText(text).width / 100 || 1;
-      const byWidth = (w * 0.99) / unit;
+      const byWidth = (w * 0.995) / unit;
       // Cap height is roughly 0.76 of the em for this face; keeping the caps
       // inside the box is what stops the tops of the letters being clipped.
       const byHeight = h / 0.76;
@@ -90,10 +97,34 @@ export default function Wordmark({
       octx.fillText(text, w / 2, h / 2);
     };
 
+    let fitting = false;
+
     const resize = () => {
       w = canvas.clientWidth;
       h = canvas.clientHeight;
       if (!w || !h) return;
+
+      // Shrink the box to the type. The word is sized from the width, so
+      // whatever height it is given above that is dead space inside the
+      // canvas — and dead space inside a canvas reads as a gap under the
+      // mark that no amount of tightening the layout around it can remove.
+      if (!fitting) {
+        const probe = document.createElement("canvas").getContext("2d");
+        if (probe) {
+          probe.font = FONT;
+          const unit = probe.measureText(text).width / 100 || 1;
+          const byWidth = (w * 0.995) / unit;
+          const capPx = Math.round(byWidth * 0.76);
+          if (capPx > 24 && Math.abs(capPx - h) > 2 && capPx < h) {
+            fitting = true;
+            canvas.style.height = `${capPx}px`;
+            requestAnimationFrame(() => {
+              fitting = false;
+            });
+            h = capPx;
+          }
+        }
+      }
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -140,26 +171,32 @@ export default function Wordmark({
       intensity += ((inside ? 1 : 0) - intensity) * approach(0.13);
       // Out fast, back slower: a mark that reassembles at the speed it came
       // apart reads as a rewind rather than as settling.
-      blast += ((pressed ? 1 : 0) - blast) * approach(pressed ? 0.09 : 0.2);
+      spread += ((pressed ? 1 : 0) - spread) * approach(pressed ? 0.09 : 0.26);
+      // Held at full while the blocks are still out, then released as they
+      // land: the mark is only uncovered once there is something home to
+      // uncover.
+      const veilTarget = pressed ? 1 : Math.min(1, spread * 3.2);
+      veil += (veilTarget - veil) * approach(pressed ? 0.09 : 0.1);
 
       // Both channels snap at the tail. An exponential never reaches zero,
       // and while either has anything left the loop keeps stamping blocks a
       // fraction of a pixel out of place — a permanently ragged mark.
       if (!inside && intensity < 0.02) intensity = 0;
-      if (!pressed && blast < 0.012) blast = 0;
+      if (!pressed && spread < 0.01) spread = 0;
+      if (!pressed && spread === 0 && veil < 0.012) veil = 0;
 
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(off, 0, 0, w, h);
 
-      if (reduced || (intensity === 0 && blast === 0)) return;
+      if (reduced || (intensity === 0 && spread === 0 && veil === 0)) return;
 
       // 1. Thin the letters out under the cursor with a soft radial erase —
       //    a gradient, so the dissolve has no boundary of its own. Under a
       //    press the erase covers the whole mark instead.
       ctx.save();
       ctx.globalCompositeOperation = "destination-out";
-      if (blast > 0) {
-        ctx.fillStyle = `rgba(0,0,0,${blast})`;
+      if (veil > 0) {
+        ctx.fillStyle = `rgba(0,0,0,${veil})`;
         ctx.fillRect(0, 0, w, h);
       }
       if (intensity > 0) {
@@ -177,7 +214,7 @@ export default function Wordmark({
       //    distance, which is what reads as the word coming apart.
       // Under a press every block is in play; otherwise only the ones the
       // cursor is over.
-      const full = blast > 0;
+      const full = spread > 0 || veil > 0;
       const x0 = full ? 0 : Math.max(0, Math.floor((sx - RADIUS) / BLOCK) * BLOCK);
       const x1 = full ? w : Math.min(w, Math.ceil((sx + RADIUS) / BLOCK) * BLOCK);
       const y0 = full ? 0 : Math.max(0, Math.floor((sy - RADIUS) / BLOCK) * BLOCK);
@@ -198,20 +235,20 @@ export default function Wordmark({
           const ox = x + BLOCK / 2 - cx;
           const oy = y + BLOCK / 2 - cy;
           const len = Math.hypot(ox, oy) || 1;
-          const spread = blast * (90 + hash(x, y, 4) * 260);
-          const bx = (ox / len) * spread;
-          const by = (oy / len) * spread * 0.55;
+          const throwDist = spread * (90 + hash(x, y, 4) * 260);
+          const bx = (ox / len) * throwDist;
+          const by = (oy / len) * throwDist * 0.55;
 
           const keep = hash(x, y, 7);
           if (keep < t * 0.5) continue;
-          if (blast > 0.02 && keep < blast * 0.22) continue;
+          if (spread > 0.02 && keep < spread * 0.22) continue;
 
           const push = t * 30;
           const dx = (hash(x, y, 1) - 0.5) * push + bx;
           const dy = (hash(x, y, 2) - 0.5) * push + by;
 
           const localAlpha = Math.min(1, (1 - t * 0.55) * intensity + (1 - intensity));
-          ctx.globalAlpha = Math.max(0, localAlpha * (1 - blast * 0.25));
+          ctx.globalAlpha = Math.max(0, localAlpha * (1 - spread * 0.25));
           ctx.drawImage(off, x, y, BLOCK, BLOCK, x + dx, y + dy, BLOCK, BLOCK);
         }
       }

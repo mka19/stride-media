@@ -118,80 +118,48 @@ export default function Problem({
         .to(q(".pb-light"), { opacity: 1, duration: 0.09, ease: "power2.inOut" }, 0.43)
         .set(q(".pb-dark"), { opacity: 0 }, 0.54);
 
-      // --- part 2: one slot, three states at even checkpoints -------------
-      const start = 0.58;
+      // --- part 2: the footage never leaves the screen --------------------
+      //
+      // Each state's plate arrives already covering the frame, shrinks into
+      // its slot while the card's text fades in around it, holds, then grows
+      // back out to cover — and the next plate fades up underneath it at the
+      // same size, so the handover happens between two full-bleed frames and
+      // there is never a moment without footage on screen. The last state
+      // expands too: the section leaves through the footage the same way
+      // every state inside it did.
+      const start = 0.52;
       const span = (1 - start) / cards.length;
+
       cards.forEach((card, i) => {
         const at = start + i * span;
+        const media = card.querySelector(".pb-media") as HTMLElement | null;
+        const text = card.querySelectorAll(".pb-text");
 
-        if (i === 0) {
-          // The first state rises into the empty slot rather than being
-          // there already, so arriving on the light ground is a transition
-          // of its own rather than a cut.
-          // Overlapped with the ground change on purpose. Waiting for the
-          // light layer to finish left a stretch of empty white between the
-          // statement leaving and the first card arriving — a whole screen
-          // of nothing in the middle of the section.
-          tl.fromTo(
-            card,
-            { opacity: 0, y: 34 },
-            { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
-            0.47,
-          );
-        } else {
-          // Everything swaps together: icon, label, headline, portrait and
-          // number. Staggering the parts makes a state look like it is
-          // assembling rather than like the slot changing its contents.
-          // Only the plate expands. The card's text leaves on its own and
-          // the portrait grows out of its frame until it covers the screen,
-          // so the state hands over through the footage rather than by the
-          // whole composition scaling — type included — toward the viewer.
-          const leaving = cards[i - 1];
-          const leavingMedia = leaving.querySelector(".pb-media") as HTMLElement | null;
+        gsap.set(card, { opacity: 0 });
+        if (media) gsap.set(media, { scale: coverScale, transformOrigin: "50% 50%" });
 
-          tl.to(leaving.querySelectorAll(".pb-text"), { opacity: 0, duration: 0.035 }, at);
+        // 1. take over the screen from the plate before it, at the same size
+        tl.to(card, { opacity: 1, duration: 0.02 }, at);
+        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.02 }, at + 0.02);
 
-          if (leavingMedia) {
-            tl.to(
-              leavingMedia,
-              {
-                // Computed from the plate's own layout rule rather than from
-                // a live measurement: a function value read the rect while
-                // the push-in tween still had the plate part-scaled, so it
-                // divided the cover factor by a scale that was about to be
-                // undone and the plate barely grew.
-                scale: coverScale,
-                duration: 0.09,
-                ease: "power2.inOut",
-              },
-              at,
-            ).to(leavingMedia, { opacity: 0, duration: 0.03 }, at + 0.07);
-          }
-
-          tl.to(leaving, { opacity: 0, duration: 0.01 }, at + 0.1).fromTo(
-            card,
-            { opacity: 0, y: 34 },
-            { opacity: 1, y: 0, duration: 0.07, ease: "power3.out" },
-            at + 0.11,
-          );
-        }
-
-        // A card holds for most of its checkpoint, so without this the slot
-        // is motionless for hundreds of pixels at a time and the section
-        // reads as static. The portrait settles out of a slight push-in and
-        // the number drifts against it for the whole hold, which keeps the
-        // state alive while it is the one on screen.
-        const media = card.querySelector(".pb-media");
-        const number = card.querySelector(".pb-number");
+        // 2. settle into the slot, and let the card build around it
         if (media) {
-          tl.fromTo(media, { scale: 1.08 }, { scale: 1, duration: span, ease: "none" }, at);
+          tl.to(media, { scale: 1, duration: span * 0.3, ease: "power2.inOut" }, at + 0.02);
         }
-        if (number) {
-          tl.fromTo(
-            number,
-            { yPercent: 14 },
-            { yPercent: -14, duration: span, ease: "none" },
-            at,
+        tl.fromTo(
+          text,
+          { opacity: 0, y: 26 },
+          { opacity: 1, y: 0, duration: span * 0.22, ease: "power3.out" },
+          at + span * 0.18,
+        );
+
+        // 3. the text goes, and the plate grows back out to cover
+        tl.to(text, { opacity: 0, y: -22, duration: span * 0.16, ease: "power2.in" }, at + span * 0.66);
+        if (media) {
+          tl.to(
+            media,
+            { scale: coverScale, duration: span * 0.32, ease: "power2.inOut" },
+            at + span * 0.68,
           );
         }
 
@@ -374,6 +342,8 @@ export default function Problem({
               style={{
                 margin: 0,
                 ...typeScale.h3,
+                fontSize: fluid(26, 48),
+                lineHeight: fluid(29, 52),
                 // A block, not a flex row: flex sizes each row to its tallest
                 // item and ignores line-height, so the object tiles set the
                 // row height and the leading went wherever they put it.
@@ -381,7 +351,7 @@ export default function Problem({
                 textAlign: "center",
                 textTransform: "uppercase",
                 fontWeight: 500,
-                maxWidth: "min(1000px, 86vw)",
+                maxWidth: "min(1240px, 88vw)",
               }}
             >
               {copy.introSequence.map((token, i) =>

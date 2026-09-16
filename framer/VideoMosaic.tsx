@@ -31,7 +31,7 @@ export default function VideoMosaic({
   active = true,
   interactive = true,
   opacity = 1,
-  gap = 8,
+  gap = 10,
   columns = 5,
   rows = 3,
 }: {
@@ -50,9 +50,12 @@ export default function VideoMosaic({
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
   const cells = Array.from({ length: columns * rows }, (_, i) => tiles[i] ?? {});
-  /* Spring, not a plain ease: the tracks overshoot their target slightly and
-     settle, which is what keeps the rebalance from reading as a snap. */
-  const transition = `flex-grow 700ms ${ease.spring}`;
+  /* Not a spring. Animating flex-grow re-runs layout for every cell on every
+     frame, and a curve that overshoots and comes back doubles the number of
+     frames where the whole grid is being re-measured — which is where the
+     jerk came from. A long, flat deceleration does the same job for one
+     pass instead of two. */
+  const transition = `flex-grow 900ms ${ease.out}`;
 
   return (
     <div
