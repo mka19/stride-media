@@ -312,18 +312,28 @@ export default function Solution({
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            padding: `calc(${layout.navHeight}px + ${layout.section}) ${layout.pad} ${layout.section}`,
+            // Symmetric, so "centred" means centred on the screen. The extra
+            // nav's height on the top edge alone put the block 27px high.
+            padding: `${layout.section} ${layout.pad}`,
             pointerEvents: "none",
           }}
         >
           <div
             className="sol-head"
             style={{
-              // Centred on the frame, and held down in its lower part so the
-              // plate has the middle of the screen to grow into rather than
-              // sharing it with the header.
-              maxWidth: "min(840px, 56vw)",
-              margin: "auto auto 0",
+              /*
+               * Centred on the screen, not on what is left of the column.
+               * As a flex item its position depended on the pillars sharing
+               * the same space-between parent, which is how it kept landing
+               * short of the middle. Taken out of the flow it is simply in
+               * the centre. The timeline animates .sol-intro-group inside
+               * it, so this transform is not fighting anything.
+               */
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "min(840px, 56vw)",
             }}
           >
             {/* The entry pass animates .sol-head and the pinned pass animates
