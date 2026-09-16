@@ -4,7 +4,6 @@ import {
   mergeGeometries,
   mergeVertices,
 } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { TessellateModifier } from "three/examples/jsm/modifiers/TessellateModifier.js";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { color } from "./theme";
 import { detailFor, type Breakpoint } from "./responsive";
@@ -163,8 +162,8 @@ function chromeEnvironment(): THREE.Scene {
             metal read as grey paint. This sits between the two: the lower
             half of the mark is plainly in shadow and still has tone in it. */
           vec3 floorC = mix(
-            vec3(0.030, 0.030, 0.033),
-            vec3(0.105, 0.106, 0.110),
+            vec3(0.022, 0.022, 0.025),
+            vec3(0.088, 0.089, 0.093),
             smoothstep(-1.0, -0.04, y)
           );
 
@@ -190,7 +189,7 @@ function chromeEnvironment(): THREE.Scene {
           // the point where envMapIntensity would push it past 1.0 on
           // screen — the brightest face is nearly white and still has
           // shading in it, which is what separates polished from blown out.
-          vec3 c = mix(wallC, vec3(1.02, 1.03, 1.08), smoothstep(0.46, 0.96, y));
+          vec3 c = mix(wallC, vec3(1.28, 1.29, 1.34), smoothstep(0.40, 0.95, y));
 
           /*
            * The horizon.
@@ -497,151 +496,45 @@ export default function HeroObject({
      * baked into the buffer once at mount.
      */
     /*
-     * A real dome, cut into the geometry.
+     * No dome, in the end.
      *
-     * Two earlier attempts failed here and both failures were informative.
-     * Widening the bevel did nothing, because Three's bevel only chamfers
-     * the rim and leaves the top face flat at full size whatever it is set
-     * to. Bending the normals did almost nothing to the wide arms, because
-     * an extrusion's flat front is the outline polygon triangulated — every
-     * vertex sits on the perimeter, none in the middle — so leaning normals
-     * that all live on the edge and interpolating between them cancels out
-     * across the span and the centre comes back flat.
+     * Three versions of curvature were tried on this mark and every one of
+     * them cost more than it bought. Widening the bevel did nothing, since
+     * Three's bevel only chamfers the rim. Bending the normals did nothing
+     * to the wide arms, since an extrusion's flat face has all its vertices
+     * on the perimeter and the leans cancel across the span. Subdividing and
+     * physically displacing the faces did finally curve them — and inflated
+     * the four arms into pillows that no longer read as the logo at all.
      *
-     * So the vertices move. Subdividing first puts points in the interior,
-     * and each one is pushed out along z by how far it is from the outline:
-     * full height at the centre, nothing at the edge. Normals are then
-     * computed from the result rather than invented, which is why this looks
-     * right where bent normals looked speckled — the shading follows a
-     * surface that genuinely curves instead of being told to pretend.
+     * That last one is the answer, not a setback. The reference this was
+     * being pushed toward is a smooth organic star with tapered points: a
+     * modelled object. This mark is an extrusion of a flat logo, and the
+     * silhouette is the brand. Deforming it into something rounder does not
+     * make it that reference, it just makes it a worse version of itself.
      *
-     * The silhouette is untouched, because the displacement is zero at the
-     * perimeter. The reason to care is the reflection: a flat mirror shows
-     * one patch of the room at one brightness, and a curved one compresses
-     * the ceiling, the horizon, the floor and both softboxes into a single
-     * continuous sweep across one face. That sweep is what polished metal
-     * looks like.
+     * So the geometry stays true to the artboard and the metal comes from
+     * the things that do not distort it — a clean chamfer catching a hard
+     * highlight along every edge, a studio with a real horizon in it, and a
+     * material that is actually metal. Polished machined aluminium rather
+     * than liquid mercury, which is a a thing a logo can honestly be.
      */
-    /*
-     * The dome's height is a share of each shape's own width.
-     *
-     * A single figure cannot serve both, for the same reason the bevel
-     * could not: the arms are roughly four times wider than the centre
-     * star, so one lift is a strong curve on the star and a barely
-     * perceptible bow across an arm. That is exactly what the renders kept
-     * showing — a convincingly liquid middle inside four flat plates — and
-     * it was never the room's fault.
-     *
-     * Tying it to the narrow dimension domes them all to the same degree,
-     * so every face bends through a comparable slice of the room and comes
-     * back with a comparable sweep of light across it.
-     */
-    const DOME_RATIO_Z = 0.85;
-    /* Only x and y are scaled to world size later; z is left alone. So the
-       lift has to be converted here, from artboard units into the world
-       units it will be seen in. */
-    const perWorld = MARK_SIZE / svgSpan;
-    const domeDisplace = (g: THREE.BufferGeometry) => {
-      g.computeBoundingBox();
-      const b = g.boundingBox!;
-      const cx = (b.max.x + b.min.x) / 2;
-      const cy = (b.max.y + b.min.y) / 2;
-      const rad = Math.hypot(b.max.x - b.min.x, b.max.y - b.min.y) / 2 || 1;
-      const narrow = Math.min(b.max.x - b.min.x, b.max.y - b.min.y);
-      const DOME_H = Math.max(0.1, (narrow / 2) * DOME_RATIO_Z * perWorld);
-      const pos = g.attributes.position as THREE.BufferAttribute;
-      const nor = g.attributes.normal as THREE.BufferAttribute;
-      for (let i = 0; i < pos.count; i++) {
-        const nz = nor.getZ(i);
-        // The flat front and back only. The chamfer is already the curve
-        // that meets them, and moving it would open a seam along the rim.
-        if (Math.abs(nz) < 0.85) continue;
-        const dx = (pos.getX(i) - cx) / rad;
-        const dy = (pos.getY(i) - cy) / rad;
-        const d = Math.min(1, Math.hypot(dx, dy));
-        // A spherical cap rather than a linear ramp: a cone has a crease
-        // down the middle and catches the light as a line, not a sweep.
-        const lift = DOME_H * Math.sqrt(Math.max(0, 1 - d * d));
-        pos.setZ(i, pos.getZ(i) + (nz > 0 ? lift : -lift));
-      }
-      pos.needsUpdate = true;
-    };
-
-    /*
-     * The faces have to be subdivided before the dome can exist on them.
-     *
-     * Bending the normals was right and still did almost nothing to the four
-     * arms, for a reason that only shows up when you look at what
-     * ExtrudeGeometry actually builds: the flat front of an extrusion is the
-     * outline polygon triangulated, so every one of its vertices sits on the
-     * perimeter and there are none at all in the middle. Bending normals
-     * that all live on the edge and letting the rasteriser interpolate
-     * between them cannot produce a dome — across a wide face the outward
-     * leans from opposite sides cancel, and the middle comes back flat. The
-     * thin centre star looked like chrome because it is narrow enough to be
-     * almost all perimeter; the wide arms stayed white panels.
-     *
-     * Tessellating splits those long triangles until there are vertices in
-     * the interior to carry the curve. The edge length is tied to the
-     * artboard's own span so it subdivides the same amount whatever units
-     * the SVG was drawn in.
-     */
-    const solidParts: THREE.BufferGeometry[] = [];
     const parts = shapes.map((shape) => {
       const raw = new THREE.ExtrudeGeometry(shape, extrudeFor(shape));
       /*
        * Weld before shading. ExtrudeGeometry returns unindexed triangles,
        * and normals computed on those are per-triangle — flat shading, which
-       * renders the chamfer's ten steps as ten distinct facets. Welding lets
-       * each normal average across the faces sharing it so the rim reads as
-       * one curve. The tolerance is small on purpose: any more generous and
-       * it welds the sharp silhouette corners too, rounding off the points
-       * that give the mark its shape.
+       * renders the chamfer's steps as that many distinct facets. Welding
+       * lets each normal average across the faces sharing it so the rim
+       * reads as one curve. The tolerance is small on purpose: any more
+       * generous and it welds the sharp silhouette corners too, rounding off
+       * the points that give the mark its shape.
        */
       const g = mergeVertices(raw, 1e-4);
       raw.dispose();
       g.computeVertexNormals();
-
-      /*
-       * A second, denser copy for the solid only.
-       *
-       * The dissolve clones the mark's geometry and uses one particle per
-       * vertex, so subdividing the shared geometry would multiply the
-       * particle count by the same factor and cost that on every frame of
-       * the scatter. The plain one stays the source for the dissolve and the
-       * rim; only the mesh the viewer sees as metal pays for the density.
-       */
-      /*
-       * Fine enough to actually have an interior, and enough passes to get
-       * there.
-       *
-       * The first attempt asked for edges under a eighteenth of the artboard
-       * but allowed only four passes, and the modifier bisects the longest
-       * edge once per pass — so a big arm's face triangles ran out of passes
-       * long before they reached the target and kept their original size.
-       * There were still no interior vertices on the wide faces, so the
-       * displacement had nothing to lift and the arms stayed flat while the
-       * thin star domed correctly. That is what "only the middle looks like
-       * metal" was.
-       *
-       * The edge length is the real control — subdivision stops once a
-       * triangle is under it, so the count is bounded by this and not by the
-       * pass limit. Fourteen passes is simply enough headroom to arrive.
-       */
-      const dense = new TessellateModifier(svgSpan / 30, 14).modify(g.clone());
-      const welded = mergeVertices(dense, 1e-4);
-      dense.dispose();
-      // Normals first, only to tell the flat faces from the chamfer; they
-      // are recomputed from the displaced surface immediately after.
-      welded.computeVertexNormals();
-      domeDisplace(welded);
-      welded.computeVertexNormals();
-      solidParts.push(welded);
-
       return g;
     });
     const markGeo = mergeGeometries(parts, false)!;
-    const solidGeo = mergeGeometries(solidParts, false)!;
 
     /*
      * SVG's y axis points down and Three's points up, so the mark arrives
@@ -655,17 +548,12 @@ export default function HeroObject({
      */
     markGeo.scale(1, -1, 1);
     markGeo.center();
-    // The solid carries the same transforms, so the two stay registered:
-    // the dissolve's particles have to start exactly where the metal was.
-    solidGeo.scale(1, -1, 1);
-    solidGeo.center();
 
     const span = new THREE.Box3().setFromBufferAttribute(
       markGeo.attributes.position as THREE.BufferAttribute,
     ).getSize(new THREE.Vector3());
     const fit = MARK_SIZE / Math.max(span.x, span.y);
     markGeo.scale(fit, fit, 1);
-    solidGeo.scale(fit, fit, 1);
 
     /*
      * No computeVertexNormals here.
@@ -714,7 +602,20 @@ export default function HeroObject({
        * cannot be added by changing the room, only by letting the surface
        * blur what it reflects.
        */
-      roughness: 0.085,
+      /*
+       * 0.045, and it is the geometry being flat that makes this the right
+       * number rather than the wrong one.
+       *
+       * With the dome gone the only thing varying across a face is the view
+       * direction — under a perspective camera the reflection vector still
+       * sweeps from one edge of a large flat panel to the other, so a face
+       * does pick up a gradient, just a gentler one than a curve gives. That
+       * gradient only survives if the surface returns the room sharply. At
+       * 0.085 it was blurred away and every face came back one mid grey,
+       * which is the matte look; sharpening it lets the room's range show
+       * through the only variation the shape has left.
+       */
+      roughness: 0.045,
       /*
        * 1.0, not 1.35.
        *
@@ -726,7 +627,7 @@ export default function HeroObject({
       transparent: true,
       opacity: 1,
     });
-    const solid = new THREE.Mesh(solidGeo, solidMat);
+    const solid = new THREE.Mesh(markGeo, solidMat);
     scene.add(solid);
 
     // Lighting: a cool key from the upper left, accent fill from the right, so
@@ -1053,7 +954,7 @@ export default function HeroObject({
       window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
       handleRef.current = null;
-      [...parts, ...solidParts, markGeo, solidGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
+      [...parts, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
         g.dispose(),
       );
       [solidMat, rim.material, cloud.material, dust.material, halo.material].forEach((m) =>
