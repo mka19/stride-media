@@ -85,7 +85,16 @@ export default function Preloader({
       window.removeEventListener("load", finish);
       document.body.style.overflow = prevOverflow;
     };
-  }, [onDone]);
+    /*
+     * Deliberately empty, not [onDone].
+     *
+     * onDone arrives as an inline arrow, so its identity changes on every
+     * render of the parent — and with it in the dependency list, a single
+     * re-render anywhere above would tear the whole hold down and start the
+     * five seconds again. The callback is only ever read at the end.
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (gone) return null;
 
@@ -110,9 +119,14 @@ export default function Preloader({
       }}
     >
       <div className={still ? undefined : "stride-cam"} style={camera}>
-        {/* The lens. The turning ring is the aperture, the dark centre is the
-            glass, and the highlight is a single sweep across it. */}
-        <span className={still ? undefined : "stride-cam-lens"} style={lens} />
+        {/* The barrel stands still and the glass turns inside it, which is
+            what a lens actually does. */}
+        <span style={lens}>
+          <span className={still ? undefined : "stride-cam-lens"} style={glass} />
+          {/* The highlight belongs to the room, not to the glass, so it does
+              not rotate with it. */}
+          <span style={glint} />
+        </span>
         {/* Record light: the one thing on the body that is not grey. */}
         <span className={still ? undefined : "stride-cam-rec"} style={rec} />
       </div>
@@ -158,26 +172,41 @@ export default function Preloader({
  */
 const camera: React.CSSProperties = {
   position: "relative",
-  width: 168,
-  height: 116,
-  borderRadius: 14,
+  width: 188,
+  height: 126,
+  borderRadius: 16,
   backgroundColor: "#17171A",
   backgroundRepeat: "no-repeat",
   backgroundImage: [
-    // hot shoe
-    "linear-gradient(#2E2E33, #2E2E33)",
-    // mode dial
-    "radial-gradient(circle at center, #34343A 42%, #202024 43%)",
-    // grip ridges, left
-    "repeating-linear-gradient(90deg, #232327 0 2px, #1B1B1F 2px 5px)",
-    // the seam under the top plate
-    "linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.10))",
-    // the top plate itself, a shade lighter than the shell
-    "linear-gradient(#202024, #1A1A1E)",
+    // A hot shoe with a lit top edge rather than a flat grey block.
+    "linear-gradient(#3A3A41 0 60%, #232328 60%)",
+    // The mode dial: a knurled disc, lit from the upper left.
+    "repeating-conic-gradient(from 0deg, #45454F 0deg 9deg, #3A3A44 9deg 18deg)",
+    "radial-gradient(circle at 38% 34%, #4A4A54 0%, #30303A 48%, #1C1C22 52%, #262630 100%)",
+    // Grip: ridges with a highlight down the left of each, which is what
+    // makes moulded rubber read as moulded rather than as stripes.
+    "repeating-linear-gradient(90deg, #2C2C32 0 1px, #232329 1px 3px, #191920 3px 5px)",
+    // The seam under the top plate, and a thin lit edge above it.
+    "linear-gradient(rgba(255,255,255,0.16), rgba(255,255,255,0.16))",
+    "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55))",
+    // The top plate, lighter than the shell and falling off toward the seam.
+    "linear-gradient(#3A3A45 0%, #2A2A34 70%, #232330 100%)",
+    // The shell: light from above, darker at the base, with a soft sheen
+    // sweeping across the middle.
+    "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.05) 46%, transparent 58%)",
+    "linear-gradient(#2E2E38 0%, #202029 55%, #17171E 100%)",
   ].join(","),
-  backgroundPosition: "62px -9px, 118px 4px, 14px 62px, 0 26px, 0 0",
-  backgroundSize: "34px 12px, 26px 26px, 26px 30px, 100% 1px, 100% 26px",
-  boxShadow: `0 26px 70px ${hexA("#000000", 0.6)}, inset 0 1px 0 rgba(255,255,255,0.06)`,
+  backgroundPosition:
+    "68px -10px, 132px 6px, 132px 6px, 16px 70px, 0 28px, 0 29px, 0 0, 0 0, 0 0",
+  backgroundSize:
+    "36px 13px, 24px 24px, 24px 24px, 28px 34px, 100% 1px, 100% 1px, 100% 28px, 100% 100%, 100% 100%",
+  boxShadow: [
+    // Grounded: a contact shadow close in, and a soft one spread wide.
+    `0 2px 0 ${hexA("#FFFFFF", 0.05)} inset`,
+    `0 -14px 24px ${hexA("#000000", 0.45)} inset`,
+    `0 18px 30px ${hexA("#000000", 0.55)}`,
+    `0 40px 90px ${hexA("#000000", 0.6)}`,
+  ].join(","),
   transformOrigin: "50% 120%",
 };
 
@@ -185,38 +214,55 @@ const lens: React.CSSProperties = {
   position: "absolute",
   left: 0,
   right: 0,
-  bottom: 14,
+  bottom: 15,
   margin: "auto",
-  width: 72,
-  height: 72,
+  width: 78,
+  height: 78,
   borderRadius: "50%",
   boxSizing: "border-box",
-  border: "7px solid #232327",
-  backgroundColor: "#0C0C0F",
-  backgroundRepeat: "no-repeat",
-  backgroundImage: [
-    // the aperture blades
-    `conic-gradient(${hexA("#FFFFFF", 0.1)} 0deg 18deg, transparent 18deg 60deg, ${hexA(
-      "#FFFFFF",
-      0.1,
-    )} 60deg 78deg, transparent 78deg 120deg, ${hexA("#FFFFFF", 0.1)} 120deg 138deg, transparent 138deg 180deg, ${hexA(
-      "#FFFFFF",
-      0.1,
-    )} 180deg 198deg, transparent 198deg 240deg, ${hexA("#FFFFFF", 0.1)} 240deg 258deg, transparent 258deg 300deg, ${hexA(
-      "#FFFFFF",
-      0.1,
-    )} 300deg 318deg, transparent 318deg 360deg)`,
-    // the glass: the accent only ever shows up as a coating on it
-    `radial-gradient(circle at 34% 30%, ${hexA(color.accentBright, 0.55)} 0%, ${hexA(
-      color.accent,
-      0.3,
-    )} 34%, #0A0A0C 72%)`,
+  overflow: "hidden",
+  // The barrel: a machined ring, lit from the upper left and falling away to
+  // the lower right, the way a turned metal collar catches a single source.
+  backgroundImage:
+    "conic-gradient(from 210deg, #6B6B7A 0deg, #3A3A46 80deg, #22222C 175deg, #55555F 285deg, #6B6B7A 360deg)",
+  boxShadow: [
+    `0 0 0 1px ${hexA("#FFFFFF", 0.12)}`,
+    `0 0 22px ${hexA(color.accent, 0.3)}`,
   ].join(","),
-  backgroundSize: "100% 100%, 100% 100%",
-  boxShadow: `0 0 0 3px #121215 inset, 0 0 0 1px ${hexA("#FFFFFF", 0.08)}, 0 0 26px ${hexA(
-    color.accent,
-    0.3,
-  )}`,
+};
+
+/*
+ * The glass, as its own round element.
+ *
+ * These layers were background images on the barrel, sized to 56% — and a
+ * background layer paints its box, not a circle, so the aperture and the
+ * coating rendered as a square that visibly rotated inside a round lens. A
+ * child with its own border-radius is round by construction.
+ */
+const glass: React.CSSProperties = {
+  position: "absolute",
+  inset: 9,
+  borderRadius: "50%",
+  backgroundColor: "#08080A",
+  backgroundImage: [
+    // The aperture blades, only just visible through the coating.
+    `conic-gradient(${hexA("#FFFFFF", 0.07)} 0deg 16deg, transparent 16deg 60deg, ${hexA("#FFFFFF", 0.07)} 60deg 76deg, transparent 76deg 120deg, ${hexA("#FFFFFF", 0.07)} 120deg 136deg, transparent 136deg 180deg, ${hexA("#FFFFFF", 0.07)} 180deg 196deg, transparent 196deg 240deg, ${hexA("#FFFFFF", 0.07)} 240deg 256deg, transparent 256deg 300deg, ${hexA("#FFFFFF", 0.07)} 300deg 316deg, transparent 316deg 360deg)`,
+    // The coating: the colour a multi-coated element throws back.
+    `radial-gradient(circle at 36% 30%, ${hexA(color.accentBright, 0.5)} 0%, ${hexA(color.accent, 0.32)} 26%, #0B0B12 62%, #060608 100%)`,
+  ].join(","),
+  boxShadow: `0 0 12px 5px ${hexA("#000000", 0.75)} inset`,
+};
+
+/** The room, reflected: a hot spot and the crescent above it. */
+const glint: React.CSSProperties = {
+  position: "absolute",
+  inset: 9,
+  borderRadius: "50%",
+  pointerEvents: "none",
+  backgroundImage: [
+    "radial-gradient(circle at 33% 25%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.2) 8%, transparent 18%)",
+    "radial-gradient(ellipse 58% 20% at 50% 16%, rgba(255,255,255,0.16) 0%, transparent 72%)",
+  ].join(","),
 };
 
 const rec: React.CSSProperties = {

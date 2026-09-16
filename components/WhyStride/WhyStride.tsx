@@ -56,33 +56,28 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       });
 
       /*
-       * 1. The mark arrives, at full size.
+       * 1. The words, first.
        *
-       * The section used to open on the headline and only produce the mark
-       * two thirds of the way through. It opens on the mark now: it comes up
-       * large and centred on the white ground, settles back to its resting
-       * size as the ground turns over, and only then does the type arrive on
-       * top of it. The order is the argument — the thing first, the words
-       * about it second.
+       * The section states the four things it does, throws them off the
+       * screen, and the mark is what is left standing behind them. The mark
+       * arriving first was tried and it inverts the argument: the object is
+       * the answer to the words, so it cannot precede them.
        */
-      tl.to(q(".ws-object"), { opacity: 1, duration: 0.06, ease: "power2.out" }, 0.02)
-
-        // 2. It settles back as the ground turns over: one move, not two.
-        .to(q(".ws-object"), { scale: 1, duration: 0.12, ease: "power2.inOut" }, 0.14)
-        .to(q(".ws-dark"), { opacity: 1, duration: 0.08 }, 0.16)
-        .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.08 }, 0.16);
-
-      // 3. And the words are uncovered over it, one after another.
       tl.to(
         q(".ws-word"),
-        { yPercent: 0, duration: 0.07, stagger: 0.025, ease: "power3.out" },
-        0.28,
+        { yPercent: 0, duration: 0.07, stagger: 0.03, ease: "power3.out" },
+        0.03,
       )
+
+        // 2. The ground turns over under them, and the type inverts with it.
+        .to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.22)
+        .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.07 }, 0.22)
+
         /* The window that uncovers each word would also clip it on the way
-           out — the letters scatter well past the block they belong to. It
-           is opened the moment the last word has landed and well before the
-           scatter begins, and closes again on the way back up. */
-        .set(q(".ws-mask"), { overflow: "visible" }, 0.44);
+           out — the letters travel well past the block they belong to. It is
+           opened once the last word has landed and before the scatter begins,
+           and closes again on the way back up. */
+        .set(q(".ws-mask"), { overflow: "visible" }, 0.30);
 
       // 3. The letters scatter — trionn.com's services reveal: they are
       //    thrown right out of the frame, turning as they go.
@@ -109,8 +104,21 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       const cy = field.top + field.height / 2;
       // Far enough that the letters clear the frame rather than
       // gathering in a loose cloud around the middle of it.
-      const reach = window.innerWidth * 0.82;
-      const lift = window.innerHeight * 0.78;
+      /*
+       * Past the frame, not to its edge.
+       *
+       * At 0.82 of the width a letter starting near the middle ended up just
+       * inside the frame and then faded where it stood, which reads as the
+       * type dissolving rather than being thrown. One and a half viewports
+       * puts every letter, including the ones that start closest to the
+       * centre, outside the frame before it is allowed to disappear.
+       */
+      const reach = window.innerWidth * 1.5;
+      const lift = window.innerHeight * 1.35;
+
+      // The scatter starts once the ground has turned and the words have
+      // been readable on it for a beat.
+      const at = 0.34;
 
       letters.forEach((letter, i) => {
         const box = letter.getBoundingClientRect();
@@ -131,19 +139,47 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             // some fall away, as in the reference. A single scale read as one
             // flat sheet of type pulling apart.
             scale: [2.1, 0.7, 1.5, 0.9, 2.6, 1.1, 0.6, 1.8][i % 8],
-            opacity: 0,
             // Long and decelerating: the old move was a tenth of the section
             // on power2.in, which snapped them off the screen.
-            duration: 0.14,
+            duration: 0.18,
             ease: "power2.out",
           },
-          0.46 + (i % 4) * 0.012,
+          at + (i % 4) * 0.012,
+        );
+
+        /*
+         * Opacity is its own tween, and a late one.
+         *
+         * Carrying it in the move above faded each letter out over the whole
+         * travel, so by the time it was halfway across it was already gone —
+         * which is why the type looked like it dissolved on the spot instead
+         * of leaving. It now holds full strength for most of the throw and
+         * goes out over the last third, by which point it is off the frame
+         * anyway.
+         */
+        tl.to(
+          letter,
+          { opacity: 0, duration: 0.06, ease: "power1.in" },
+          at + 0.12 + (i % 4) * 0.012,
         );
       });
 
-      // 4. the object arrives and stays
-      // 4. The label has done its job by the time the type has gone; leaving
-      //    it sat on top of the mark.
+      /*
+       * 4. And the mark is what the type was hiding.
+       *
+       * It comes up large as the last letters clear the frame, then settles
+       * back to its resting size — so it reads as having been behind them all
+       * along rather than as a fifth thing arriving.
+       */
+      tl.fromTo(
+        q(".ws-object"),
+        { opacity: 0, scale: 1.62 },
+        { opacity: 1, duration: 0.07, ease: "power2.out" },
+        0.48,
+      ).to(q(".ws-object"), { scale: 1, duration: 0.1, ease: "power2.inOut" }, 0.54);
+
+      // The label has done its job by the time the type has gone; leaving it
+      // sat on top of the mark.
       tl.to(q(".ws-label"), { opacity: 0, duration: 0.04 }, 0.56);
 
       /*

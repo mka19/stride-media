@@ -35,7 +35,16 @@ export default function Nav({
    * It is never played until the button is pressed — nothing on this site
    * makes noise at a visitor who has not asked for it.
    */
-  soundtrack = "/audio/stride-theme.mp3",
+  /*
+   * Relative, not rooted.
+   *
+   * "/audio/…" resolves against the origin, which is right for a site served
+   * from its own domain and wrong everywhere else — in the published artifact
+   * it pointed at claude.ai/audio and returned a 404, so the button toggled
+   * and nothing played. Relative to the page, it finds the file wherever the
+   * page happens to be.
+   */
+  soundtrack = "audio/stride-theme.mp3",
 }: {
   height?: number;
   soundtrack?: string;
