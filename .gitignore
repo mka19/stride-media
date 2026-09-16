@@ -6,3 +6,4 @@ dist
 
 # Agent skills installed via `npx skills add` — vendored tooling, not source.
 .agents
+dist-preview

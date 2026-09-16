@@ -584,6 +584,14 @@ export default function Problem({
                        plate sits on the centre line of the screen rather than
                        wherever a 40/30/30 split happened to leave it. */
                     gridTemplateColumns: bp === "tablet" ? "1fr 1fr" : "1fr auto 1fr",
+                    /* Tablet is two rows: the copy side by side across the
+                       top, and the plate spanning underneath. The plate has
+                       to be the full width of the card, because it scales up
+                       to cover the frame on the handover between states and
+                       a scale is applied about the element's own centre —
+                       sat in a half-width side cell it grew off the left
+                       edge of the screen instead of covering anything. */
+                    gridTemplateRows: bp === "tablet" ? "auto 1fr" : undefined,
                     gap: layout.gutter,
                     alignItems: "center",
                     // Shorter, because the plate is landscape now: at the old height a
@@ -600,7 +608,8 @@ export default function Problem({
                       flexDirection: "column",
                       justifyContent: "center",
                       gap: rhythm.eyebrowToHeadline,
-                      gridColumn: bp === "tablet" ? "1 / -1" : undefined,
+                      gridColumn: bp === "tablet" ? "1" : undefined,
+                      gridRow: bp === "tablet" ? "1" : undefined,
                       height: "100%",
                       minWidth: 0,
                     }}
@@ -629,12 +638,15 @@ export default function Problem({
                   {/* ---- centre: the portrait and its caption ---- */}
                   <div
                     style={{
+                      gridColumn: bp === "tablet" ? "1 / -1" : undefined,
+                      gridRow: bp === "tablet" ? "2" : undefined,
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
                       gap: space.md,
                       height: "100%",
+                      minHeight: 0,
                       // No stretching: the column is as wide as the plate, and
                       // the plate is as wide as its own aspect ratio allows.
                       minWidth: 0,
@@ -667,6 +679,11 @@ export default function Problem({
                   <div
                     className="pb-text"
                     style={{
+                      // Beside the copy on tablet, not under the plate: the
+                      // two text blocks share the header row and the plate
+                      // gets the whole width below them.
+                      gridColumn: bp === "tablet" ? "2" : undefined,
+                      gridRow: bp === "tablet" ? "1" : undefined,
                       display: "flex",
                       flexDirection: "column",
                       // Pinned to the column's full height, the number was
