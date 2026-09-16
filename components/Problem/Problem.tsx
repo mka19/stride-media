@@ -346,31 +346,44 @@ export default function Problem({
               display: "flex",
               flexDirection: "column",
               /*
-               * The label belongs to the statement, so it travels with it.
+               * The rule and the two blocks under it stay on the floor of the
+               * frame; the label and the statement are centred in what is
+               * left above them.
                *
-               * It used to be pinned to the top of the frame by
-               * space-between, a third of a screen above the words it labels
-               * — which reads as two unrelated things rather than as a
-               * heading and its eyebrow. The pair sits together in the middle
-               * now and the two small blocks stay on the floor.
+               * The label used to be pinned to the top by space-between, a
+               * third of a screen above the words it labels, which read as
+               * two unrelated things. Centring the whole column fixed that
+               * but brought the rule up with it. So the column ends at the
+               * floor and the pair centres itself in the space above, with
+               * the auto margins on the group below doing the work.
                */
-              justifyContent: "center",
+              justifyContent: "flex-end",
               alignItems: "center",
               textAlign: "center",
-              gap: rhythm.eyebrowToHeadline,
               padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.hh}px`,
               color: color.textOnDark,
             }}
           >
-            <MicroLabel tone="accent">{copy.label}</MicroLabel>
-
             <div
               style={{
+                // Centred in the space the floor group leaves. Sixteen between
+                // the label and the words it labels.
+                margin: "auto 0",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                gap: 16,
               }}
             >
+              <MicroLabel tone="accent">{copy.label}</MicroLabel>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
             <p
               style={{
                 margin: 0,
@@ -435,7 +448,8 @@ export default function Problem({
                   </span>
                 ),
               )}
-            </p>
+              </p>
+              </div>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: space.xl, width: "100%" }}>
