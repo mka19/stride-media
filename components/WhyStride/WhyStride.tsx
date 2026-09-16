@@ -35,6 +35,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
 
       // Parked a full line below its window, not nudged and faded.
       gsap.set(q(".ws-word"), { yPercent: 108 });
+      gsap.set(q(".ws-mask"), { overflow: "hidden" });
       gsap.set(q(".ws-dark"), { opacity: 0 });
       gsap.set(q(".ws-object"), { opacity: 0, scale: 0.8 });
       gsap.set(q(".ws-card"), { opacity: 0 });
@@ -54,9 +55,14 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       // 1. the stacked headline
       tl.to(
         q(".ws-word"),
-        { yPercent: 0, duration: 0.11, stagger: 0.045, ease: "power3.out" },
+        { yPercent: 0, duration: 0.09, stagger: 0.03, ease: "power3.out" },
         0.02,
       )
+        /* The window that uncovers the word would also clip it on the way
+           out — the letters scatter well past the block they belong to. It
+           is opened the moment the last word has landed and well before the
+           scatter begins, and closes again on the way back up. */
+        .set(q(".ws-mask"), { overflow: "visible" }, 0.21)
 
         // 2. ground and type invert together, one move
         .to(q(".ws-dark"), { opacity: 1, duration: 0.05 }, 0.17)
@@ -161,6 +167,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     (root) => {
       const q = gsap.utils.selector(root);
       gsap.set(q(".ws-word, .ws-letter"), { opacity: 1, x: 0, y: 0, yPercent: 0, rotation: 0, scale: 1 });
+      gsap.set(q(".ws-mask"), { overflow: "visible" });
       gsap.set(q(".ws-dark, .ws-object"), { opacity: 1, scale: 1 });
       gsap.set(q(".ws-card"), { opacity: 1, x: 0, y: 0 });
     },
@@ -348,7 +355,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             /* Each word rides in a window of its own height. The word starts
                below its window and slides up into it, so it is uncovered
                rather than faded on — a pull-up, not an appearance. */
-            <div key={word} style={{ overflow: "hidden" }}>
+            <div key={word} className="ws-mask" style={{ overflow: "hidden" }}>
             <div className="ws-word" style={{ ...typeScale.displayLg }}>
               {/* Each letter stays its own span because the scatter needs
                   them individually. The letters themselves simply arrive —
