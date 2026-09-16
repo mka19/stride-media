@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { color } from "../shared/theme";
 import { detailFor, type Breakpoint } from "../shared/responsive";
 
@@ -20,29 +21,137 @@ import { detailFor, type Breakpoint } from "../shared/responsive";
  */
 export type HeroObjectHandle = { setProgress: (p: number) => void };
 
-/** The mark's chevron, drawn as a closed 2D path ready to extrude. */
-function chevronShape() {
-  const s = new THREE.Shape();
-  const outer = 0.34; // stroke width
-  s.moveTo(-1.0, -0.62);
-  s.lineTo(-1.0 + outer * 1.25, -0.62);
-  s.lineTo(0, 0.72 - outer * 1.5);
-  s.lineTo(1.0 - outer * 1.25, -0.62);
-  s.lineTo(1.0, -0.62);
-  s.lineTo(0, 0.96);
-  s.closePath();
-  return s;
+/**
+ * The logo, as SVG.
+ *
+ * ── THIS IS THE ONE THING TO EDIT TO CHANGE THE MARK ──────────────────────
+ *
+ * Paste a new SVG between the backticks and the 3D object becomes that shape.
+ * Nothing else in this file needs to change: the geometry, the bevel, the
+ * chrome, the pointer sway, the dissolve and the scroll handle all work from
+ * whatever is here.
+ *
+ * What the SVG has to be:
+ *   - filled closed paths only (`<path d="…">` with a fill). Strokes are not
+ *     geometry — a stroked outline has no area to extrude, so it comes out
+ *     empty. Outline any strokes before exporting.
+ *   - no gradients, masks, clip-paths or text. Gradients are a paint, and
+ *     this surface is chrome; text has to be converted to outlines.
+ *   - holes are fine. A path wound against its parent becomes a real hole in
+ *     the extrusion rather than filling solid.
+ *
+ * It is inlined as a string rather than fetched, which is what keeps this
+ * component a single file with no asset to host when it moves into Framer.
+ */
+const LOGO_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="19 12.25 80 80">
+  <g fill="#000000">
+    <path d="M 28 44 L 28 32 L 36 24 L 49 24 L 41 32 L 38 32 L 35.5 34.5 L 35.5 37 Z"/>
+    <path d="M 90 44 L 90 32 L 82 24 L 69 24 L 77 32 L 80 32 L 82.5 34.5 L 82.5 37 Z"/>
+    <path d="M 28 60.5 L 28 72.5 L 36 80.5 L 49 80.5 L 41 72.5 L 38 72.5 L 35.5 70 L 35.5 67.5 Z"/>
+    <path d="M 90 60.5 L 90 72.5 L 82 80.5 L 69 80.5 L 77 72.5 L 80 72.5 L 82.5 70 L 82.5 67.5 Z"/>
+    <path d="M 59 37.25 C 59 48.5 62.75 52.25 74 52.25 C 62.75 52.25 59 56 59 67.25 C 59 56 55.25 52.25 44 52.25 C 55.25 52.25 59 48.5 59 37.25 Z"/>
+  </g>
+</svg>`;
+
+/**
+ * Turn that SVG into shapes Three can extrude.
+ *
+ * Two things have to be corrected on the way in. SVG's y axis points down and
+ * Three's points up, so every shape is mirrored vertically — miss this and
+ * the mark comes out upside down. And SVG coordinates are in whatever units
+ * the artboard used, which here is an 80-unit viewBox: the result is
+ * normalised so the mark's longest side is a fixed size in world units, which
+ * is what lets a different SVG drop in without everything around it moving.
+ */
+/**
+ * The room the chrome reflects.
+ *
+ * RoomEnvironment — Three's own studio box — was the obvious choice and it
+ * was wrong for this: it is lit fairly evenly, and a mirror reflecting an
+ * evenly lit room has no contrast in it, so the mark came out looking like
+ * grey paint rather than metal. What reads as polished is the *banding* —
+ * hard bright strips against near-black, the light fittings of a studio
+ * reflected in the surface. That is what this builds: a dark enclosure with
+ * a few bright panels in it, which is about twenty lines and no asset file.
+ */
+function chromeEnvironment(): THREE.Scene {
+  const env = new THREE.Scene();
+
+  /*
+   * The enclosure, and the single most important thing in it: a horizon.
+   *
+   * A uniform grey box gives the metal a body tone but every flat face then
+   * reflects the same grey, which is why the large faces came out as flat
+   * paint. Real chrome outdoors or in a studio always shows a division —
+   * bright above, dark below — and the line between them sliding across the
+   * surface as the object turns is most of what reads as "polished". So the
+   * shell is a vertical gradient rather than a colour.
+   */
+  const shell = new THREE.Mesh(
+    new THREE.SphereGeometry(9, 32, 24),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      vertexShader: /* glsl */ `
+        varying float vH;
+        void main() {
+          vH = normalize(position).y;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        varying float vH;
+        void main() {
+          // Sky, a soft band at the horizon, then floor.
+          vec3 sky   = vec3(0.86, 0.88, 0.95);
+          vec3 band  = vec3(0.30, 0.31, 0.37);
+          vec3 floorC = vec3(0.07, 0.07, 0.10);
+          float t = smoothstep(-0.10, 0.22, vH);
+          vec3 c = mix(mix(floorC, band, smoothstep(-0.55, -0.05, vH)), sky, t);
+          gl_FragColor = vec4(c, 1.0);
+        }
+      `,
+    }),
+  );
+  env.add(shell);
+
+  // The fittings: a wide key overhead, two verticals for the long highlights
+  // down the sides of a bevel, and a dim bounce underneath so the lower faces
+  // are not pure black.
+  const panel = (w: number, h: number, intensity: number, pos: [number, number, number], rot: [number, number, number]) => {
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({ color: 0xffffff }),
+    );
+    m.material.color.multiplyScalar(intensity);
+    m.position.set(...pos);
+    m.rotation.set(...rot);
+    env.add(m);
+  };
+
+  panel(10, 3.2, 7.5, [0, 5.6, 0], [Math.PI / 2, 0, 0]);
+  panel(2.4, 9, 5.5, [-5.6, 0, 1], [0, Math.PI / 2, 0]);
+  panel(2.0, 9, 4.0, [5.6, 0, -1], [0, -Math.PI / 2, 0]);
+  // The floor bounce and the back wall are what keep the faces turned away
+  // from the key out of pure black, which is the difference between silver
+  // and a dark mirror.
+  panel(9, 9, 1.1, [0, -5.6, 0], [-Math.PI / 2, 0, 0]);
+  panel(9, 9, 1.4, [0, 0, -5.6], [0, 0, 0]);
+  // A broad soft source on the camera side: the faces pointing at the viewer
+  // have to reflect something, and without this they reflect the back wall.
+  panel(7, 4.5, 0.7, [-1.6, 1.4, 5.8], [0, Math.PI, 0]);
+
+  return env;
 }
 
-/** The bar beneath the chevron. */
-function barShape() {
-  const s = new THREE.Shape();
-  s.moveTo(-0.62, -1.02);
-  s.lineTo(0.62, -1.02);
-  s.lineTo(0.62, -0.82);
-  s.lineTo(-0.62, -0.82);
-  s.closePath();
-  return s;
+function logoShapes(svg: string): THREE.Shape[] {
+  const paths = new SVGLoader().parse(svg).paths;
+  const shapes: THREE.Shape[] = [];
+  for (const path of paths) {
+    for (const shape of SVGLoader.createShapes(path)) shapes.push(shape);
+  }
+  return shapes;
 }
 
 export default function HeroObject({
@@ -86,6 +195,30 @@ export default function HeroObject({
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, mount.clientWidth / mount.clientHeight, 0.1, 100);
 
+    /*
+     * Something for the chrome to reflect.
+     *
+     * A metal surface has almost no diffuse response — what you see in it is
+     * the room around it. At metalness 1 with no environment the mark renders
+     * very nearly black, however many lights are pointed at it, because there
+     * is nothing in the scene for those lights to be a reflection of.
+     *
+     * The studio is built in code rather than loaded as an HDR, which is the
+     * reason this stays a single component that can be pasted into Framer
+     * with nothing to host. It is run through PMREM once at mount and the
+     * render target is released with everything else on teardown.
+     */
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envScene = chromeEnvironment();
+    const envRT = pmrem.fromScene(envScene, 0.02);
+    scene.environment = envRT.texture;
+    pmrem.dispose();
+    envScene.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      if (m.material) (m.material as THREE.Material).dispose();
+    });
+
     /**
      * How many pixels tall the mark should read as.
      *
@@ -106,8 +239,10 @@ export default function HeroObject({
 
     camera.position.set(0, 0, 6.4 * zScale());
 
+    // The accent survives only in the rim, the fill light and the dust; the
+    // mark itself is neutral metal now, so the deep purple it used to be
+    // coloured with is gone.
     const accent = new THREE.Color(color.accentBright);
-    const deep = new THREE.Color(color.accentDeep);
 
     // --- the mark, as a single solid ------------------------------------
     const detail = detailFor(breakpoint);
@@ -118,40 +253,70 @@ export default function HeroObject({
       bevelThickness: 0.07,
       bevelSize: 0.06,
       bevelSegments: Math.max(2, Math.round(6 * detail)),
-      curveSegments: Math.max(8, Math.round(24 * detail)),
+      /*
+       * Halved from 24. The only curves in the mark are the star's four
+       * gentle beziers, and at 12 segments they are indistinguishable from 24
+       * — but this number sets the vertex count, and the vertex count is also
+       * the dissolve's particle count, so it is paid for twice on every
+       * frame. 10,692 vertices to 5,712, with the silhouette unchanged.
+       */
+      curveSegments: Math.max(6, Math.round(12 * detail)),
     };
 
-    const chevron = new THREE.ExtrudeGeometry(chevronShape(), extrude);
-    const bar = new THREE.ExtrudeGeometry(barShape(), extrude);
-    // The chevron and bar are pulled well inside the ring. They are extruded
-    // and the ring is flat, so at any angle the extrusion's front corners
-    // project further out than their flat footprint: sized to just fit, they
-    // break through the ring as the object turns.
-    const core = mergeGeometries([chevron, bar], false)!;
-    core.scale(0.74, 0.74, 0.74);
+    /*
+     * Every path in the SVG becomes its own extrusion and they are merged
+     * into one geometry, because everything downstream expects a single mesh:
+     * the rim shell reuses it, the dissolve samples it, and the pointer sway
+     * turns it as one object. Five separate meshes would need five of each.
+     */
+    const parts = logoShapes(LOGO_SVG).map(
+      (shape) => new THREE.ExtrudeGeometry(shape, extrude),
+    );
+    const markGeo = mergeGeometries(parts, false)!;
 
-    // A ring around the mark, matching the aperture in the nav logo.
-    // ExtrudeGeometry is non-indexed and TorusGeometry is indexed; merging
-    // needs them to agree, so the ring is flattened before it joins.
-    // Segment counts kept close to the chevron's vertex count: the dissolve
-    // samples this geometry, and a denser ring makes the cloud nearly all ring.
-    const ring = new THREE.TorusGeometry(
-      1.34,
-      0.046,
-      Math.max(6, Math.round(12 * detail)),
-      Math.max(36, Math.round(96 * detail)),
-    ).toNonIndexed();
-    ring.translate(0, 0, 0.155);
-
-    const markGeo = mergeGeometries([core, ring], false)!;
+    /*
+     * SVG's y axis points down and Three's points up, so the mark arrives
+     * mirrored; flipping y here rather than rotating the mesh means the
+     * geometry itself is the right way up and every effect built on it —
+     * the outward dissolve vectors especially — points where it should.
+     *
+     * Then it is centred and normalised: whatever units the artboard used,
+     * the mark ends up a fixed size in world units, so a different SVG can be
+     * dropped in without the camera, the dust or the dissolve moving.
+     */
+    markGeo.scale(1, -1, 1);
     markGeo.center();
+
+    const span = new THREE.Box3().setFromBufferAttribute(
+      markGeo.attributes.position as THREE.BufferAttribute,
+    ).getSize(new THREE.Vector3());
+    const MARK_SIZE = 2.7; // the diameter the old mark read at
+    markGeo.scale(
+      MARK_SIZE / Math.max(span.x, span.y),
+      MARK_SIZE / Math.max(span.x, span.y),
+      1,
+    );
+
     markGeo.computeVertexNormals();
 
+    /*
+     * Polished chrome.
+     *
+     * Three numbers carry the whole look. metalness 1 because it is metal and
+     * anything less mixes in a plastic diffuse term that reads as painted.
+     * roughness 0.06 because polished means the reflection stays sharp — at
+     * 0.3 the same material is brushed steel. envMapIntensity above 1 because
+     * RoomEnvironment is a modest studio and the mark wants to look lit.
+     *
+     * No emissive. A metal that glows from inside stops reading as metal, and
+     * the glow on this mark now comes from the rim and the dust around it
+     * rather than from the surface.
+     */
     const solidMat = new THREE.MeshStandardMaterial({
-      color: deep.clone().multiplyScalar(1.5),
-      emissive: accent.clone().multiplyScalar(0.22),
-      metalness: 0.35,
-      roughness: 0.34,
+      color: 0xf2f3f5,
+      metalness: 1,
+      roughness: 0.08,
+      envMapIntensity: 1.0,
       transparent: true,
       opacity: 1,
     });
@@ -160,14 +325,24 @@ export default function HeroObject({
 
     // Lighting: a cool key from the upper left, accent fill from the right, so
     // the extrusion reads as a soft gradient rather than a flat silhouette.
-    scene.add(new THREE.AmbientLight(accent, 0.35));
-    const key = new THREE.DirectionalLight(0xfff0f2, 2.6);
+    /*
+     * The environment does the lighting now; these are for the highlights it
+     * cannot give on its own — the hard specular streak that says polished.
+     *
+     * All three are neutral. The mark is silver, and a coloured light on a
+     * mirror is a coloured mirror — a purple fill put a lilac cast down one
+     * side of every bevel, which is the difference between polished metal and
+     * metal-coloured plastic. The purple on this section now comes only from
+     * what is behind and around the mark: the liquid field, the dust and the
+     * page's own ground.
+     */
+    const key = new THREE.DirectionalLight(0xffffff, 1.5);
     key.position.set(-3, 4, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(accent, 3.2);
+    const fill = new THREE.DirectionalLight(0xdfe6ff, 0.7);
     fill.position.set(4, -2, 2);
     scene.add(fill);
-    const back = new THREE.PointLight(accent, 18, 12);
+    const back = new THREE.PointLight(0xffffff, 5, 12);
     back.position.set(0, 0, -3);
     scene.add(back);
 
@@ -177,9 +352,17 @@ export default function HeroObject({
       uAccent: { value: accent },
     };
 
-    // --- neon rim ---------------------------------------------------------
-    // A slightly inflated back-face shell; only its silhouette survives, which
-    // gives the neon edge without washing out the sculpted faces.
+    /*
+     * --- edge shell -------------------------------------------------------
+     *
+     * A slightly inflated back-face shell whose silhouette is all that
+     * survives. It existed to put a neon edge on a matte purple solid. Chrome
+     * does not need it — the environment already puts a hard highlight on
+     * every bevel, which is where an edge on metal comes from — and it costs
+     * a second full draw of the mark's geometry on every frame. It is kept
+     * for the dissolve, where the fading silhouette still reads well, and
+     * switched off for the rest.
+     */
     const rim = new THREE.Mesh(
       markGeo,
       new THREE.ShaderMaterial({
@@ -199,18 +382,22 @@ export default function HeroObject({
           }
         `,
         fragmentShader: /* glsl */ `
-          uniform vec3 uAccent;
           uniform float uProgress;
           varying vec3 vNormalW;
           varying vec3 vViewDir;
           void main() {
-            float fres = pow(1.0 - abs(dot(normalize(vNormalW), normalize(vViewDir))), 2.2);
-            gl_FragColor = vec4(uAccent, fres * 0.8 * (1.0 - smoothstep(0.0, 0.45, uProgress)));
+            // A white edge, not a neon one: on polished metal the silhouette
+            // catches the light rather than emitting a colour.
+            float fres = pow(1.0 - abs(dot(normalize(vNormalW), normalize(vViewDir))), 2.6);
+            gl_FragColor = vec4(1.0, 1.0, 1.0, fres * 0.22 * (1.0 - smoothstep(0.0, 0.45, uProgress)));
           }
         `,
       }),
     );
     scene.add(rim);
+    // Only while the mark is coming apart. At rest the chrome carries its own
+    // edges and this is one draw call of ~5,700 vertices for nothing.
+    rim.visible = false;
 
     // --- dissolve cloud ---------------------------------------------------
     const cloudGeo = markGeo.clone();
@@ -390,6 +577,7 @@ export default function HeroObject({
       // Shrinking as it goes hands the centre of the screen to the headline.
       const shrink = 1 - eased * 0.3;
       solid.scale.setScalar(shrink);
+      rim.visible = eased > 0.01 && eased < 0.98;
       rim.rotation.copy(solid.rotation);
       rim.position.copy(solid.position);
       rim.scale.copy(solid.scale);
@@ -415,12 +603,14 @@ export default function HeroObject({
       window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
       handleRef.current = null;
-      [chevron, bar, core, ring, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
+      [...parts, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
         g.dispose(),
       );
       [solidMat, rim.material, cloud.material, dust.material, halo.material].forEach((m) =>
         (m as THREE.Material).dispose(),
       );
+      envRT.texture.dispose();
+      envRT.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
     };
