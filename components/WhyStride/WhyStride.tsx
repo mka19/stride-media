@@ -131,36 +131,61 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         // it sat on top of the mark.
         .to(q(".ws-label"), { opacity: 0, duration: 0.04 }, 0.44);
 
-      // 5. The services arrive in pairs, one card either side of the object.
-      //    Each pair slides in from its own edge, holds while it is read,
-      //    then carries on inward and goes behind the object — the layer
-      //    they sit on is under it, so the card is occluded rather than
-      //    fading over the top of it. The last pair holds to the end of the
-      //    section, so nothing is mid-move when the next one starts.
+      /*
+       * 5. The services advance like a ticker.
+       *
+       * Two stations are on screen, one either side of the mark. A card comes
+       * in from off the right edge into the right-hand station; when it moves
+       * across to the left-hand one, the card that was there leaves past the
+       * left edge and the next card enters the right — all three at once, on
+       * the same scroll. Nothing crossfades in place: a card is always either
+       * standing in a station or travelling between two of them.
+       *
+       * The stations are measured rather than assumed, so the right-hand one
+       * is wherever the frame's right edge actually is, and they are measured
+       * again on every refresh.
+       */
       const cards = q(".ws-card") as HTMLElement[];
-      const pairs = Math.max(1, ...cards.map((c) => Number(c.dataset.pair ?? 0) + 1));
       const first = 0.52;
-      const each = (1 - first) / pairs;
+      // Each card spends one step arriving, one crossing, one leaving, and the
+      // steps overlap by exactly one — so the whole run is n + 2 steps long
+      // with a little tail.
+      const STEP = (1 - first) / (cards.length + 1.45);
 
-      cards.forEach((card) => {
-        const pair = Number(card.dataset.pair ?? 0);
-        const fromLeft = card.dataset.side === "left";
-        const at = first + pair * each;
-        const away = fromLeft ? 1 : -1;
+      const stationR = () => {
+        const frame = (q(".ws-frame")[0] as HTMLElement | undefined) ?? root;
+        const card = cards[0] as HTMLElement;
+        const pad = card.offsetLeft;
+        return Math.max(0, frame.clientWidth - pad * 2 - card.offsetWidth);
+      };
+      const offRight = () => stationR() + (cards[0] as HTMLElement).offsetWidth + 80;
+      const offLeft = () => -((cards[0] as HTMLElement).offsetWidth + 120);
 
+      cards.forEach((card, i) => {
+        const at = first + i * STEP;
+        gsap.set(card, { x: offRight, opacity: 0, force3D: true });
+
+        // In from off the right edge, into the right-hand station.
         tl.fromTo(
           card,
-          { opacity: 0, x: -away * 90, y: 18 },
-          { opacity: 1, x: 0, y: 0, duration: each * 0.34, ease: "power3.out" },
+          { x: offRight, opacity: 0 },
+          { x: stationR, opacity: 1, duration: STEP * 0.62, ease: "power2.out", force3D: true },
           at,
         );
-        if (pair < pairs - 1) {
-          tl.to(
-            card,
-            { opacity: 0, x: away * 190, duration: each * 0.3, ease: "power2.in" },
-            at + each * 0.66,
-          );
-        }
+
+        // Across to the left-hand station, as the card ahead leaves it.
+        tl.to(
+          card,
+          { x: 0, duration: STEP * 0.62, ease: "power2.inOut", force3D: true },
+          at + STEP,
+        );
+
+        // And out past the left edge.
+        tl.to(
+          card,
+          { x: offLeft, opacity: 0, duration: STEP * 0.62, ease: "power2.in", force3D: true },
+          at + STEP * 2,
+        );
       });
     },
     [stacked],
@@ -378,37 +403,32 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             position: "absolute",
             inset: 0,
             zIndex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: `0 ${layout.pad}`,
             pointerEvents: "none",
           }}
         >
-          {(["left", "right"] as const).map((side) => (
+          {/* One queue, not two columns.
+              Every card is laid out in the left-hand station and the timeline
+              moves it: in from off the right edge, across to the left-hand
+              station as the one ahead of it leaves, and out past the left
+              edge. Two stations are on screen at a time, either side of the
+              mark, and a card advances a station as the card ahead advances
+              one — which is the whole read. */}
+          {copy.capabilities.map((cap, i) => (
             <div
-              key={side}
-              style={{ position: "relative", width: "min(420px, 27vw)", minHeight: 290 }}
+              key={cap.n}
+              className="ws-card"
+              data-index={i}
+              style={{
+                position: "absolute",
+                left: layout.pad,
+                top: "50%",
+                width: "min(420px, 27vw)",
+                minHeight: 290,
+                marginTop: -145,
+                opacity: 0,
+              }}
             >
-              {copy.capabilities
-                .filter((_, i) => (side === "left" ? i % 2 === 0 : i % 2 === 1))
-                .map((cap, pair) => (
-                  <div
-                    key={cap.n}
-                    className="ws-card"
-                    data-side={side}
-                    data-pair={pair}
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      // Only the first pair rests visible, for a render with
-                      // no timeline behind it.
-                      opacity: pair === 0 ? 1 : 0,
-                    }}
-                  >
-                    {capability(cap, pair, "")}
-                  </div>
-                ))}
+              {capability(cap, i, "")}
             </div>
           ))}
         </div>
