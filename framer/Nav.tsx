@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useBreakpoint } from "./responsive";
+import { useBreakpoint, useNavRoom } from "./responsive";
 import { brand, nav as navCopy } from "./copy";
 import { color, ease, hexA, layout, space, typeScale } from "./theme";
 import { GlowButton, StrideMark } from "./primitives";
@@ -44,6 +44,10 @@ export default function Nav({
   const [menuOpen, setMenuOpen] = useState(false);
   const bp = useBreakpoint();
   const isMobile = bp === "mobile";
+  // The rail shows only where eight labels actually fit; below that the menu
+  // carries them, and a tablet keeps the sound toggle and the CTA in the bar.
+  const navRoom = useNavRoom();
+  const railVisible = !isMobile && navRoom;
 
   useEffect(() => {
     let frame = 0;
@@ -145,7 +149,7 @@ export default function Nav({
         className="stride-nav-links"
         aria-label="Sections"
         style={{
-          display: isMobile ? "none" : "flex",
+          display: railVisible ? "flex" : "none",
           alignItems: "stretch",
           flex: 1,
           minWidth: 0,
@@ -194,9 +198,10 @@ export default function Nav({
           paddingLeft: space.xl,
         }}
       >
-        {isMobile ? (
+        {!railVisible && (
           <button
             type="button"
+            className="stride-press"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
@@ -215,11 +220,12 @@ export default function Nav({
             <span style={{ height: 1.5, background: ink, transition: `background 600ms ${ease.out}` }} />
             <span style={{ height: 1.5, background: ink, transition: `background 600ms ${ease.out}` }} />
           </button>
-        ) : (
+        )}
+        {!isMobile && (
           <>
             {/* Sound sits beside the CTA, as a pair. It never starts on its
                 own — nothing plays until it is clicked. */}
-            <SoundButton src={soundtrack} style={{ marginRight: 8 }} />
+            <SoundButton src={soundtrack} style={{ marginRight: 8, marginLeft: railVisible ? 0 : 8 }} />
             <GlowButton href="#contact">{navCopy.cta}</GlowButton>
             <Segment fill={0} active={false} hairline={hairline} />
           </>
@@ -228,7 +234,7 @@ export default function Nav({
 
       {/* Collapsed nav: the whole page's progress, since the per-section
           underlines are not on screen to read. */}
-      {isMobile && (
+      {!railVisible && (
         <span
           aria-hidden="true"
           style={{

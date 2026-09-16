@@ -306,21 +306,37 @@ export default function CaseStudy({
             minHeight: 300,
             padding: `${space.lg}px`,
             borderRadius: 12,
-            background: hexA(color.textOnLight, 0.035),
-            border: `1px solid ${hexA(color.textOnLight, 0.08)}`,
+            background: hexA(color.textOnLight, 0.04),
             textAlign: "left",
-            transition: `background 480ms ${ease.out}, border-color 480ms ${ease.out}`,
+            transition: `background ${ease.hoverMs}ms ${ease.hover}`,
           }}
+          /* One colour rising from the floor of the card, at an alpha you
+             notice only next to a card that does not have it. The old hover
+             was a lavender wash across the whole plate with a second stop
+             fading out of it, which read as a gradient applied to a card
+             rather than as the card responding. */
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = `linear-gradient(160deg, ${hexA(color.accent, 0.14)} 0%, ${hexA(color.accentBright, 0.05)} 55%, transparent 100%)`;
-            e.currentTarget.style.borderColor = hexA(color.accent, 0.35);
+            e.currentTarget.style.background = `linear-gradient(0deg, ${hexA(color.accent, 0.1)} 0%, ${hexA(color.textOnLight, 0.04)} 62%)`;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = hexA(color.textOnLight, 0.035);
-            e.currentTarget.style.borderColor = hexA(color.textOnLight, 0.08);
+            e.currentTarget.style.background = hexA(color.textOnLight, 0.04);
           }}
         >
-          <div style={{ ...typeScale.h3, color: color.textOnLight, maxWidth: "14ch" }}>{m.label}</div>
+          {/* Two lines, and the room for two whether or not the words need
+              it, so the figures under them all start at the same height. */}
+          <div
+            style={{
+              ...typeScale.h3,
+              color: color.textOnLight,
+              maxWidth: "12ch",
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              overflow: "hidden",
+            }}
+          >
+            {m.label}
+          </div>
 
           <div
             style={{
@@ -335,7 +351,18 @@ export default function CaseStudy({
             {m.suffix}
           </div>
 
-          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "26ch" }}>
+          <p
+            style={{
+              margin: 0,
+              ...typeScale.bodyLg,
+              color: color.textOnLightMuted,
+              maxWidth: "26ch",
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              overflow: "hidden",
+            }}
+          >
             {copy.metricNotes?.[i] ?? ""}
           </p>
         </div>

@@ -17,13 +17,23 @@ import { color, ease, hexA } from "./theme";
 export type MosaicTile = { src?: string; caption?: string };
 
 
-/** Weights: hovered track expands, its immediate neighbours take the hit. */
-function weight(index: number, hovered: number | null) {
-  if (hovered === null) return 1;
-  const d = Math.abs(index - hovered);
-  if (d === 0) return 2.05;
-  if (d === 1) return 0.72;
-  return 0.86;
+/**
+ * How much a tile swells or gives way, as a scale factor.
+ *
+ * This used to be a flex-grow weight, and animating flex-grow is what made
+ * the hero stutter: every frame of the transition re-ran layout for all
+ * forty-eight cells, and layout is the one thing that cannot be handed to the
+ * GPU. The grid is fixed now and the push is a transform, so the same read —
+ * one tile coming forward, its neighbours easing back — costs a composite
+ * instead of a full layout pass.
+ */
+function swell(dCol: number, dRow: number, hovered: boolean) {
+  if (!hovered) return 1;
+  const d = Math.max(dCol, dRow);
+  if (d === 0) return 1.22;
+  if (d === 1) return 0.94;
+  if (d === 2) return 0.98;
+  return 1;
 }
 
 export default function VideoMosaic({
@@ -50,12 +60,15 @@ export default function VideoMosaic({
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
   const cells = Array.from({ length: columns * rows }, (_, i) => tiles[i] ?? {});
-  /* Not a spring. Animating flex-grow re-runs layout for every cell on every
-     frame, and a curve that overshoots and comes back doubles the number of
-     frames where the whole grid is being re-measured — which is where the
-     jerk came from. A long, flat deceleration does the same job for one
-     pass instead of two. */
-  const transition = `flex-grow 900ms ${ease.out}`;
+  // Touch fires a hover on tap and then leaves it stuck on the tile the
+  // finger last touched, so the push is for real pointers only.
+  const pointer =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
+  /* Transform and opacity only, and a single flat deceleration: a curve that
+     overshoots and comes back doubles the number of composited frames for the
+     same read. */
+  const transition = `transform 620ms ${ease.out}`;
 
   return (
     <div
@@ -78,10 +91,9 @@ export default function VideoMosaic({
           style={{
             display: "flex",
             gap,
-            flexGrow: weight(row, hover?.row ?? null),
+            flexGrow: 1,
             flexBasis: 0,
             minHeight: 0,
-            transition,
           }}
         >
           {Array.from({ length: columns }, (_, col) => {
@@ -90,12 +102,18 @@ export default function VideoMosaic({
             return (
               <div
                 key={col}
-                onMouseEnter={() => interactive && setHover({ col, row })}
+                onMouseEnter={() => interactive && pointer && setHover({ col, row })}
                 style={{
                   position: "relative",
-                  flexGrow: weight(col, hover?.col ?? null),
+                  flexGrow: 1,
                   flexBasis: 0,
                   minWidth: 0,
+                  zIndex: isHovered ? 2 : 1,
+                  transform: `scale(${swell(
+                    hover ? Math.abs(col - hover.col) : 99,
+                    hover ? Math.abs(row - hover.row) : 99,
+                    hover !== null,
+                  )})`,
                   transition,
                 }}
               >

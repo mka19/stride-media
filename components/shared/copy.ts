@@ -63,11 +63,20 @@ export const problem = {
    * slot; everything else is a word. Kept as one list so the reveal can walk
    * words and objects in the order they are read.
    */
+  /*
+   * Four tiles, at irregular intervals rather than one per line — a tile
+   * landing in the same place in every line reads as a layout, not as
+   * something caught in the sentence. The tail is long enough that the last
+   * line is a line of copy and not two words trailing off the end.
+   */
   introSequence: [
-    "STRIDE", "MEDIA", "EXISTS", 0, "BECAUSE", "TALENTED", "ENTREPRENEURS",
-    "KEEP", "LOSING", "TO", "LOUDER,", 1, "LESS", "CAPABLE", "COMPETITORS.",
-    "NOT", "ON", "SKILL.", 2, "ON", "VISIBILITY.",
-  ] as (string | number)[],
+    "STRIDE", "MEDIA", "EXISTS", "BECAUSE", "ENTREPRENEURS", 0,
+    "KEEP", "LOSING", "TO", "LOUDER,", "LESS", 1,
+    "CAPABLE", "COMPETITORS.", "NOT", "ON", "SKILL,", 2,
+    "ON", "VISIBILITY.", "WE", "MAKE", "IT", 3,
+    "IMPOSSIBLE", "TO", "IGNORE.",
+  ] as (string | number)[]
+,
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",
   /** The two blocks under the rule, left and right. */
   aboutCaps: ["WE BUILD FOR RECOGNITION.", "STRATEGY FIRST, SHIPPED MONTHLY."],
@@ -175,11 +184,13 @@ export const caseStudy = {
   resultsLabel: "Ninety days later",
   resultsHeadline: "The number that mattered moved.",
   /** The sentence on the floor of each metric card. */
+  /* Two lines each, at the card's measure — the cards sit in a row and an
+     odd one running to three broke the line they share. */
   metricNotes: [
-    "Reach from month one to month three, on the same posting cadence.",
+    "Reach from month one to month three, same cadence.",
     "Views across the quarter, from a standing start.",
-    "Inbound conversations that began with a piece of content.",
-    "Listings sourced from the feed, with no cold outreach.",
+    "Inbound conversations that began with content.",
+    "Listings sourced from the feed, no cold outreach.",
   ],
   metrics: [
     { value: "41", suffix: "×", label: "Reach in ninety days" },

@@ -79,14 +79,23 @@ export default function GradientRevealText({
     as,
     {
       ref: rootRef,
-      className,
+      className: className ? `stride-ink ${className}` : "stride-ink",
       style: {
         ...style,
-        margin: 0,
-        // The fill is clipped to the glyphs and painted only inside the
-        // element's box. At a line-height under 1 the descenders hang outside
-        // that box, get no paint, and read as cropped — the tail of a g
-        // simply missing. The padding gives the box room for them.
+        /*
+         * A clipped gradient is painted only inside the element's box, so at
+         * these line-heights the descenders hang outside it and read as
+         * cropped — the tail of a g simply missing. The padding gives them
+         * room.
+         *
+         * As a heading in its own right that is all it needs: the stylesheet
+         * trims the half-leading off the box, and the padding replaces it
+         * with exactly the descender room, which is how the 24px under a
+         * headline stays 24. Used as one of several lines inside a heading
+         * the padding would instead show up as extra leading between those
+         * lines, so there it is taken straight back out again.
+         */
+        margin: as === "span" ? "0 0 -0.14em" : 0,
         paddingBottom: "0.14em",
         backgroundImage: `linear-gradient(95deg, ${final} 0%, ${final} 100%)`,
         WebkitBackgroundClip: "text",

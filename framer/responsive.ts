@@ -119,6 +119,29 @@ function readReduce(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+/**
+ * True when the bar is wide enough for the full section rail.
+ *
+ * The breakpoints are about layout structure; this is about one row of eight
+ * links fitting. Between 861 and 1439 the old rule said "not mobile, show
+ * them", and each link is nowrap with flex: 1 — so they ran into each other
+ * rather than shrinking. Eight labels plus the mark plus the CTA need about
+ * 1200px before they stop colliding.
+ */
+export function useNavRoom(): boolean {
+  const [room, setRoom] = useState(true);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1200px)");
+    const onChange = () => setRoom(mq.matches);
+    mq.addEventListener("change", onChange);
+    onChange();
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  return room;
+}
+
 /** Phones get a fraction of the particle and vertex counts. */
 export function detailFor(bp: Breakpoint): number {
   if (bp === "mobile") return 0.35;

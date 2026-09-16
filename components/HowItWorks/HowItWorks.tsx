@@ -93,27 +93,29 @@ export default function HowItWorks({
       steps.forEach((step, i) => {
         const at = first + i * span;
 
+        // Smoothness here is mostly a question of how much of its slice a
+        // step spends moving. It used to cross from 0.45 to 1 in four tenths
+        // of its slice and then sit still for the rest, which on a scrub
+        // reads as a snap followed by a pause. It now starts much closer to
+        // its final size and takes two thirds of the slice to get there, on
+        // a gentler curve — the same travel, spread over enough scroll that
+        // no single wheel notch carries a visible jump.
         tl.fromTo(
           step,
-          { opacity: 0, scale: 0.45 },
-          { opacity: 1, scale: 1, duration: span * 0.4, ease: "power2.out" },
+          { opacity: 0, scale: 0.72 },
+          { opacity: 1, scale: 1, duration: span * 0.66, ease: "power1.out" },
           at,
         );
 
         // Past the viewer: it keeps growing as it fades, so it reads as the
-        // camera going through it rather than the text simply leaving.
-        //
-        // The exit finishes at 0.96 of the step's own slice, and the next
-        // step does not start until 1.0 — they used to run together, with
-        // one step still expanding across the screen while the next was
-        // already legible on top of it. It also goes much further now:
-        // stopping at 1.9 read as a zoom, where carrying on past the frame
-        // reads as passing through the words.
+        // camera going through it rather than the text simply leaving. The
+        // fade starts before the next step does, and the two overlap by a
+        // tenth of a slice, so there is never a frame with nothing arriving.
         if (i < steps.length - 1) {
           tl.to(
             step,
-            { opacity: 0, scale: 3.4, duration: span * 0.41, ease: "power2.in" },
-            at + span * 0.55,
+            { opacity: 0, scale: 2.6, duration: span * 0.42, ease: "power1.in" },
+            at + span * 0.68,
           );
         }
       });

@@ -126,7 +126,16 @@ export default function Solution({
 
       // 1. The frame grows to full bleed. Insets and radius animate together
       //    so the corners release exactly as the edges reach the viewport.
-      tl.to(q(".sol-intro"), { opacity: 0, y: -24, duration: 0.08, stagger: 0.02 }, 0.04)
+      // The header does not leave, it recedes. It shrinks away over exactly
+      // the stretch the plate uses to grow — one movement read two ways,
+      // rather than copy blinking out and a plate expanding after it. Scaled
+      // from the group so the three lines stay set to each other.
+      gsap.set(q(".sol-intro-group"), { transformOrigin: "50% 50%" });
+      tl.to(
+        q(".sol-intro-group"),
+        { scale: 0.62, opacity: 0, duration: 0.3, ease: "power2.inOut" },
+        0.04,
+      )
         .to(
           frame,
           {
@@ -310,16 +319,27 @@ export default function Solution({
           <div
             className="sol-head"
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: rhythm.headlineToBody,
+              // Centred on the frame, and held down in its lower part so the
+              // plate has the middle of the screen to grow into rather than
+              // sharing it with the header.
               maxWidth: "min(840px, 56vw)",
-              // Held down in the lower part of the frame, so the plate has
-              // the middle of the screen to grow into rather than sharing it
-              // with the header.
-              marginTop: "auto",
+              margin: "auto auto 0",
             }}
           >
+            {/* The entry pass animates .sol-head and the pinned pass animates
+                this group. Two scrubbed timelines writing the same property
+                on the same element fight, and whichever updated last wins —
+                which is how the intro copy ended up painted over the video. */}
+            <div
+              className="sol-intro-group"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                gap: rhythm.headlineToBody,
+              }}
+            >
             <MicroLabel tone="accent" className="sol-intro">
               {copy.label}
             </MicroLabel>
@@ -349,7 +369,8 @@ export default function Solution({
               }}
             >
               {copy.body}
-            </p>
+              </p>
+            </div>
           </div>
 
           {/* ---- the three pillars, over the full-bleed footage ---- */}
@@ -402,9 +423,13 @@ export default function Solution({
           className="sol-cue"
           style={{
             position: "absolute",
-            left: "50%",
+            // Spanned and centred by the flex, not by translateX(-50%): the
+            // timeline animates this element's y, and GSAP writes the whole
+            // transform — so the -50% that was centring it was overwritten
+            // the moment the cue moved.
+            left: 0,
+            right: 0,
             bottom: space.xxl,
-            transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

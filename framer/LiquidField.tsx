@@ -139,8 +139,11 @@ export default function LiquidField({
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     const resize = () => {
-      const w = Math.max(1, Math.round(canvas.clientWidth * 0.6));
-      const h = Math.max(1, Math.round(canvas.clientHeight * 0.6));
+      /* The field is a slow, heavily blurred wash — nothing in it survives
+         being resolved. Rendering it at 45% of the canvas costs about half
+         the fragment work of 60% and is indistinguishable at any size. */
+      const w = Math.max(1, Math.round(canvas.clientWidth * 0.45));
+      const h = Math.max(1, Math.round(canvas.clientHeight * 0.45));
       if (canvas.width === w && canvas.height === h) return;
       canvas.width = w;
       canvas.height = h;

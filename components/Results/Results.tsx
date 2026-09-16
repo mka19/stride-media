@@ -279,7 +279,6 @@ function ResultCard({
             display: "grid",
             placeItems: "center",
             background: hexA(color.black, 0.55),
-            border: `1px solid ${hexA("#FFFFFF", 0.3)}`,
             ...typeScale.eyebrow,
             fontWeight: 500,
             color: color.textOnDark,

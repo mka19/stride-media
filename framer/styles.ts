@@ -74,11 +74,20 @@ body {
  * half-leading out of the box, which makes the tokens land as drawn.
  * Browsers without it simply keep the old, slightly looser spacing.
  */
+/*
+ * A clipped gradient fill is painted only inside its element's box, and at a
+ * line-height under 1 the descenders hang outside it — the tail of a g simply
+ * missing. Padding gives them room; where text-box is supported the trimmed
+ * box does the same without also showing up as a gap under the line.
+ */
+
+
 @supports (text-box: trim-both cap alphabetic) {
   h1, h2, h3, h4, h5, p, .stride-trim { text-box: trim-both cap alphabetic; }
-  /* Text filled with a clipped gradient only gets paint inside its box, so
-     these keep the descender edge or the sweep cuts the tails off. */
-  .stride-ink, .stride-ink * { text-box: trim-both cap text; }
+  /* Explicitly not trimmed. A trimmed box here is cap-to-descender, which
+     pulls two stacked lines closer than the leading says; the negative margin
+     above already keeps the descender padding out of the layout. */
+  .stride-ink, .stride-ink * { text-box: normal; }
 }
 
 @keyframes stride-drift {

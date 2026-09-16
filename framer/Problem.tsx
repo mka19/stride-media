@@ -351,7 +351,7 @@ export default function Problem({
                 textAlign: "center",
                 textTransform: "uppercase",
                 fontWeight: 500,
-                maxWidth: "min(1240px, 88vw)",
+                maxWidth: "min(1680px, 94vw)",
               }}
             >
               {copy.introSequence.map((token, i) =>
@@ -363,15 +363,21 @@ export default function Problem({
                     style={{
                       position: "relative",
                       display: "inline-block",
-                      width: "0.92em",
-                      height: "0.92em",
-                      margin: "0 0.16em",
-                      borderRadius: "0.2em",
+                      width: "1.06em",
+                      height: "1.06em",
+                      // A tile is spaced exactly like a word: the run before
+                      // it is the previous word's own trailing space, and
+                      // this is the tile's. Giving it margin on both sides
+                      // made the gap before it the sum of two and the gap
+                      // after it one, so every tile sat off-centre in its
+                      // own gap.
+                      marginRight: "0.26em",
+                      borderRadius: "0.18em",
                       overflow: "hidden",
                       // Sat on the text's own baseline band, so it rides the
                       // line rather than pushing the row taller than the
                       // leading allows for.
-                      verticalAlign: "-0.12em",
+                      verticalAlign: "-0.18em",
                       boxShadow: `0 0 0 1px ${hexA("#FFFFFF", 0.14)}`,
                       willChange: "transform, filter",
                     }}

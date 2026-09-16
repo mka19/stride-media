@@ -33,7 +33,8 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     (root) => {
       const q = gsap.utils.selector(root);
 
-      gsap.set(q(".ws-word"), { opacity: 0, y: 30 });
+      // Parked a full line below its window, not nudged and faded.
+      gsap.set(q(".ws-word"), { yPercent: 108 });
       gsap.set(q(".ws-dark"), { opacity: 0 });
       gsap.set(q(".ws-object"), { opacity: 0, scale: 0.8 });
       gsap.set(q(".ws-card"), { opacity: 0 });
@@ -51,7 +52,11 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       });
 
       // 1. the stacked headline
-      tl.to(q(".ws-word"), { opacity: 1, y: 0, duration: 0.05, stagger: 0.02 }, 0.02)
+      tl.to(
+        q(".ws-word"),
+        { yPercent: 0, duration: 0.11, stagger: 0.045, ease: "power3.out" },
+        0.02,
+      )
 
         // 2. ground and type invert together, one move
         .to(q(".ws-dark"), { opacity: 1, duration: 0.05 }, 0.17)
@@ -155,7 +160,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".ws-word, .ws-letter"), { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1 });
+      gsap.set(q(".ws-word, .ws-letter"), { opacity: 1, x: 0, y: 0, yPercent: 0, rotation: 0, scale: 1 });
       gsap.set(q(".ws-dark, .ws-object"), { opacity: 1, scale: 1 });
       gsap.set(q(".ws-card"), { opacity: 1, x: 0, y: 0 });
     },
@@ -226,8 +231,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         gap: space.h,
         minHeight: 290,
         padding: `${space.xl}px`,
-        background: hexA("#FFFFFF", 0.035),
-        border: `1px solid ${hexA("#FFFFFF", 0.1)}`,
+        // A plate, not a framed box: the fill is what separates the card
+        // from the ground, and an outline on top of it only draws a rectangle.
+        background: hexA("#FFFFFF", 0.05),
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
       }}
@@ -339,7 +345,11 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             {copy.label}
           </MicroLabel>
           {copy.headline.map((word) => (
-            <div key={word} className="ws-word" style={{ ...typeScale.displayLg }}>
+            /* Each word rides in a window of its own height. The word starts
+               below its window and slides up into it, so it is uncovered
+               rather than faded on — a pull-up, not an appearance. */
+            <div key={word} style={{ overflow: "hidden" }}>
+            <div className="ws-word" style={{ ...typeScale.displayLg }}>
               {/* Each letter stays its own span because the scatter needs
                   them individually. The letters themselves simply arrive —
                   a decode on top of the scatter was two effects on one word. */}
@@ -348,6 +358,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
                   {ch}
                 </span>
               ))}
+            </div>
             </div>
           ))}
         </div>

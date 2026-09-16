@@ -90,8 +90,8 @@ export function MicroLabel({
             display: "inline-flex",
             alignItems: "center",
             padding: `${space.xs}px ${space.sm}px`,
-            color: color.accent,
-            border: `1px solid ${hexA(color.accent, 0.5)}`,
+            color: color.accentOnDark,
+            background: hexA(color.accent, 0.16),
           }}
         >
           {number}
