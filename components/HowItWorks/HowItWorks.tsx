@@ -205,12 +205,32 @@ export default function HowItWorks({
           gap: rhythm.eyebrowToHeadline,
         }}
       >
-        <MicroLabel number={step.n}>{step.tag}</MicroLabel>
-        <h3 style={{ margin: 0, maxWidth: "24ch", textWrap: "balance", ...typeScale.h1 }}>
+        <MicroLabel number={step.n} tone={stacked ? "light" : "dark"}>
+          {step.tag}
+        </MicroLabel>
+        <h3
+          style={{
+            margin: 0,
+            maxWidth: "24ch",
+            textWrap: "balance",
+            ...typeScale.h1,
+            color: stacked ? color.textOnLight : color.textOnDark,
+          }}
+        >
           {step.title}
         </h3>
       </div>
-      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{step.body}</p>
+      {/* The flight runs over dark footage; the stacked branch stands on the
+          bone ground. The same muted-on-dark grey there was white on white. */}
+      <p
+        style={{
+          margin: 0,
+          ...typeScale.bodyLg,
+          color: stacked ? color.textOnLightMuted : color.textOnDarkMuted,
+        }}
+      >
+        {step.body}
+      </p>
     </div>
   ));
 

@@ -61,6 +61,7 @@ export default function SoundButton({
     <>
       <button
         type="button"
+        className="stride-press"
         aria-pressed={on}
         aria-label={on ? "Mute" : "Play sound"}
         onClick={() => setOn((v) => !v)}
@@ -76,7 +77,7 @@ export default function SoundButton({
           border: `1px solid ${hexA("#FFFFFF", on ? 0.3 : 0.14)}`,
           background: on ? hexA(color.accent, 0.18) : hexA("#FFFFFF", 0.04),
           color: on ? color.accentBright : hexA("#FFFFFF", 0.65),
-          transition: `background 380ms ${ease.out}, color 380ms ${ease.out}, border-color 380ms ${ease.out}`,
+          transition: `background ${ease.hoverMs}ms ${ease.hover}, color ${ease.hoverMs}ms ${ease.hover}, border-color ${ease.hoverMs}ms ${ease.hover}, transform ${ease.pressMs}ms ${ease.out}`,
           ...style,
         }}
       >

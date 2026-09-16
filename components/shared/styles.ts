@@ -35,6 +35,36 @@ body {
 @media (min-width: 1920px) { :root { --stride-pad: 96px; --stride-section: 160px; } }
 
 /*
+ * Keyboard focus.
+ *
+ * There was no focus style anywhere on this site — every control fell back to
+ * whatever the browser draws, which on a dark ground is close to nothing.
+ * :focus-visible only fires for keyboard and assistive navigation, so a mouse
+ * click never leaves a ring behind on a button.
+ */
+:focus-visible {
+  outline: 2px solid #8B5CF6;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/*
+ * Press feedback.
+ *
+ * A control that does nothing between the press and the result reads as not
+ * having heard the press at all. This is deliberately small — the press is
+ * confirmation, not an animation — and short enough to land inside the same
+ * moment as the click.
+ */
+.stride-press { transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1); }
+.stride-press:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: reduce) {
+  /* The feedback stays; only the movement goes. */
+  .stride-press:active { transform: none; opacity: 0.82; }
+}
+
+/*
  * Optical spacing.
  *
  * Every gap in the spec is measured between what the eye sees — the cap of

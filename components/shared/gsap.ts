@@ -76,22 +76,24 @@ function motionOverride(): boolean | null {
 /**
  * True when the scroll choreography should be skipped.
  *
- * This deliberately does NOT follow the OS setting on its own. Windows ships
- * with "Animation effects" off on a lot of machines and Edge reports that as
- * `prefers-reduced-motion: reduce`, so following it silently meant a large
- * share of visitors — the owner of this site included — got a page where the
- * Problem's dark statement chapter never rendered at all and every pinned
- * section painted all of its states on top of each other. That is not a calm
- * version of the design; it is a broken one.
+ * The OS setting is honoured again. It was ignored for a while because
+ * following it silently produced a broken page rather than a calm one: the
+ * Problem's dark statement chapter never rendered, and every pinned section
+ * painted all of its chapters on top of each other. The cause was the
+ * fallback, not the preference — a pinned layout with its timeline removed
+ * has nothing left to separate its chapters.
  *
- * Motion is on unless it is turned off explicitly, with `?motion=off`, which
- * is remembered for the tab. Honouring the OS preference again is a matter of
- * making each static fallback lay its section out correctly first — until
- * then, the fallback is worse than the animation it replaces.
+ * That is fixed at the layout level now: `useStacked()` is true under reduced
+ * motion, so these sections render the flow layout they already have for
+ * phones — same chapters, same copy, in order, as ordinary blocks. Nothing is
+ * hidden and nothing overlaps, which is what the preference actually asks
+ * for. `?motion=on` still forces the full choreography for a demo.
  */
 export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return true;
-  return motionOverride() === false;
+  const override = motionOverride();
+  if (override !== null) return !override;
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 }
 
 /**
@@ -123,6 +125,9 @@ export function useGsapContext(
     const refresh = () => ScrollTrigger.refresh();
     const t = window.setTimeout(refresh, 250);
     window.addEventListener("load", refresh);
+    // Web fonts can settle after `load`, and a headline reflowing by a line
+    // moves every trigger below it.
+    void document.fonts?.ready.then(refresh);
 
     return () => {
       window.clearTimeout(t);

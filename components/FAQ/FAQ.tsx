@@ -57,6 +57,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
             style={{ borderTop: `1px solid ${color.hairlineOnDark}` }}
           >
             <button
+              className="stride-press"
               type="button"
               id={`faq-q-${i}`}
               aria-expanded={isOpen}
@@ -83,7 +84,7 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
               <span
                 style={{
                   ...typeScale.eyebrow,
-                  color: color.accent,
+                  color: color.accentOnDark,
                   minWidth: 64,
                 }}
               >

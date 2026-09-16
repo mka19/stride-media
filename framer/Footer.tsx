@@ -136,7 +136,7 @@ export default function Footer({
                 onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
                 onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
               >
-                <span style={{ ...typeScale.eyebrow, color: color.accent }}>{item.n}</span>
+                <span style={{ ...typeScale.eyebrow, color: color.accentOnDark }}>{item.n}</span>
                 {item.label}
               </a>
             ))}
@@ -191,7 +191,7 @@ export default function Footer({
         >
           <span>
             @{brand.url.replace(/\..*$/, "")} — {copy.rights}{" "}
-            <span style={{ color: color.accent }}>{BUILD}</span>
+            <span style={{ color: color.accentOnDark }}>{BUILD}</span>
           </span>
           <span>
             {copy.basedLabel} {copy.basedIn}

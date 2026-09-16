@@ -344,9 +344,13 @@ export default function CaseStudy({
 
   if (stacked) {
     return (
+      /* The ground is light here, as it is in the scrolled version: every
+         block in this branch — the headline, the results label, the metric
+         cards — is drawn in dark ink. On the black ground it used to carry,
+         the headline was very nearly invisible. */
       <section
         id="case-study"
-        style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.bodyLg.fontFamily }}
+        style={{ background: color.bone, color: color.textOnLight, fontFamily: typeScale.bodyLg.fontFamily }}
       >
         <div style={{ position: "relative", padding: `${layout.section} ${layout.pad}` }}>
           <Grain opacity={0.18} />

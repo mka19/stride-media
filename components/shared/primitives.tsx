@@ -174,7 +174,7 @@ export function GlowButton({
     fontWeight: 500,
     background: solid ? color.boneSoft : "transparent",
     color: solid ? color.textOnLight : color.textOnDark,
-    transition: `background 420ms ${ease.out}, color 420ms ${ease.out}, border-color 420ms ${ease.out}`,
+    transition: `background ${ease.hoverMs}ms ${ease.hover}, color ${ease.hoverMs}ms ${ease.hover}, border-color ${ease.hoverMs}ms ${ease.hover}, transform ${ease.pressMs}ms ${ease.out}`,
     ...style,
   };
 
@@ -208,11 +208,11 @@ export function GlowButton({
   );
 
   return href ? (
-    <a href={href} style={base} {...handlers}>
+    <a href={href} className="stride-press" style={base} {...handlers}>
       {inner}
     </a>
   ) : (
-    <button type="button" onClick={onClick} style={base} {...handlers}>
+    <button type="button" className="stride-press" onClick={onClick} style={base} {...handlers}>
       {inner}
     </button>
   );

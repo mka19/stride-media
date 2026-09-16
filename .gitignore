@@ -3,3 +3,6 @@ dist
 *.local
 .DS_Store
 .vite
+
+# Agent skills installed via `npx skills add` — vendored tooling, not source.
+.agents

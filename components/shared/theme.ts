@@ -16,6 +16,12 @@ export const color = {
   /* Purple accent */
   accent: "#7C3AED",
   accentBright: "#A78BFA",
+  /*
+   * #7C3AED is 3.5:1 on the near-black ground — fine for a 26px number, under
+   * the 4.5:1 floor for 12px label text. Small accent type on dark uses this
+   * instead; it is the same hue, lifted until it clears.
+   */
+  accentOnDark: "#A78BFA",
   accentDeep: "#4C1D95",
   textOnDark: "#FFFFFF",
   textOnDarkMuted: "rgba(255, 255, 255, 0.58)",
@@ -174,7 +180,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B83";
+export const BUILD = "B84";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;
@@ -195,11 +201,20 @@ export const layout = {
 } as const;
 
 export const ease = {
-  /* Elegant, never snappy. Used for every reveal and the bento push. */
-  out: "cubic-bezier(0.22, 1, 0.36, 1)",
+  /* The strong ease-out. Hand-rolled curves that "look about right" are how
+     a page ends up with five easings that almost match; this is the canonical
+     one and every transition on the site uses it. */
+  out: "cubic-bezier(0.23, 1, 0.32, 1)",
   /* Overshoots and settles — the bento rebalance and other spring moments. */
   spring: "cubic-bezier(0.34, 1.42, 0.64, 1)",
-  inOut: "cubic-bezier(0.65, 0, 0.35, 1)",
+  inOut: "cubic-bezier(0.77, 0, 0.175, 1)",
+  /* Hover and colour changes are not entrances — they get the plain curve,
+     and they stay inside the 300ms ceiling that keeps a control feeling
+     answerable rather than syrupy. */
+  hover: "ease",
+  hoverMs: 200,
+  /* Press feedback: fast enough to read as the button taking the press. */
+  pressMs: 150,
   gsapOut: "power3.out",
   gsapInOut: "power2.inOut",
 } as const;

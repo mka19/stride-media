@@ -358,7 +358,7 @@ function Dot({ lit, ink }: { lit: boolean; ink: string }) {
         border: `1px solid ${lit ? color.accent : hexA(ink, 0.4)}`,
         background: lit ? color.accent : "transparent",
         boxShadow: lit ? `0 0 8px ${hexA(color.accent, 0.8)}` : "none",
-        transition: `all 400ms ${ease.out}`,
+        transition: `border-color 400ms ${ease.out}, background 400ms ${ease.out}, box-shadow 400ms ${ease.out}`,
       }}
     />
   );

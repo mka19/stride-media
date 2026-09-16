@@ -70,7 +70,53 @@ export function useCanHover(): boolean {
 export function useStacked(): boolean {
   const bp = useBreakpoint();
   const canHover = useCanHover();
-  return bp === "mobile" && !canHover;
+  // Called before the test, never inside it: `||` short-circuits, and a hook
+  // that runs on some renders and not others corrupts the hook order.
+  const reduce = useReducedMotion();
+  // Reduced motion takes the same road. Every one of these sections already
+  // has a flow layout for phones — the same chapters, in order, as ordinary
+  // blocks — and that is exactly what "present the final readable state"
+  // asks for. Trying instead to leave the pinned layout standing and simply
+  // not animate it is what broke before: a pinned frame with no timeline
+  // paints all of its chapters on top of each other.
+  return (bp === "mobile" && !canHover) || reduce;
+}
+
+/**
+ * The visitor's motion preference, live.
+ *
+ * `prefersReducedMotion()` in shared/gsap.ts is the same decision read once
+ * for an imperative timeline; this is the version a component can render
+ * from, and it re-renders if the preference changes under it.
+ */
+export function useReducedMotion(): boolean {
+  const [reduce, setReduce] = useState(() => readReduce());
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReduce(readReduce());
+    mq.addEventListener("change", onChange);
+    onChange();
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  return reduce;
+}
+
+function readReduce(): boolean {
+  if (typeof window === "undefined" || !window.matchMedia) return false;
+  // `?motion=on` / `?motion=off` still wins, so the build can be shown on a
+  // machine with the OS setting on without touching that machine's settings.
+  try {
+    const param = new URLSearchParams(window.location.search).get("motion");
+    const saved = window.sessionStorage.getItem("stride-motion");
+    const choice = param === "on" || param === "off" ? param : saved;
+    if (choice === "on") return false;
+    if (choice === "off") return true;
+  } catch {
+    // Storage blocked: fall through to the OS preference.
+  }
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 /** Phones get a fraction of the particle and vertex counts. */
