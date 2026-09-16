@@ -160,7 +160,28 @@ for (const file of files) {
   // Framer's code files are flat: every local import becomes a sibling.
   code = code.replace(/from "\.\.?\/(?:[\w-]+\/)*([\w-]+)"/g, 'from "./$1"');
 
-  const controls = CONTROLS[name];
+  let controls = CONTROLS[name];
+  /*
+   * The scroll-length control's default is read from the component, not
+   * written here.
+   *
+   * Two copies of a number drift, and these had: Problem's control said
+   * 460vh against a real default of 620vh. That is worse than a stale
+   * comment, because a Framer control always passes its default down — so
+   * dropping the component on a canvas silently overrode the tuned value
+   * with the stale one, and the section ran its whole sequence in three
+   * quarters of the scroll it was choreographed for. Parsing it means the
+   * panel always opens on whatever the component actually does.
+   */
+  if (controls) {
+    const tuned = code.match(/scrollLength = "(\d+vh)"/)?.[1];
+    if (tuned) {
+      controls = controls.replace(
+        /(scrollLength:[^}]*defaultValue: ")\d+vh(")/,
+        `$1${tuned}$2`,
+      );
+    }
+  }
   if (controls) {
     code =
       `import { addPropertyControls, ControlType } from "framer"\n` +

@@ -17,7 +17,7 @@ import GradientRevealText from "./GradientRevealText";
  * On phones the letters are simply a small static label: there is not enough
  * width for the spread to read, per the responsive prompt.
  */
-export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string }) {
+export default function FAQ({ scrollLength = "340vh" }: { scrollLength?: string }) {
   const [open, setOpen] = useState<number | null>(0);
   const stacked = useStacked();
 
@@ -292,5 +292,5 @@ function AmbientShapes() {
  */
 
 addPropertyControls(FAQ, {
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "300vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "340vh" },
 });

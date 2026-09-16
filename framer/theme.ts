@@ -211,20 +211,56 @@ export const layout = {
 export const ease = {
   /* The strong ease-out. Hand-rolled curves that "look about right" are how
      a page ends up with five easings that almost match; this is the canonical
-     one and every transition on the site uses it. */
-  out: "cubic-bezier(0.23, 1, 0.32, 1)",
-  /* Overshoots and settles — the bento rebalance and other spring moments. */
+     one and every transition on the site uses it.
+
+     cubic-bezier(0.16, 1, 0.3, 1): nearly all of the distance is covered at
+     once and the last stretch takes the rest of the time. That long tail is
+     what makes a movement read as having mass and coming to rest, rather
+     than as stopping because its duration ran out. */
+  out: "cubic-bezier(0.16, 1, 0.3, 1)",
+  /* Overshoots and settles. Used sparingly and never on an entrance: an
+     entrance that overshoots reads as bouncy, which is the opposite of the
+     weight this page is after. */
   spring: "cubic-bezier(0.34, 1.42, 0.64, 1)",
-  inOut: "cubic-bezier(0.77, 0, 0.175, 1)",
+  inOut: "cubic-bezier(0.65, 0, 0.35, 1)",
   /* Hover and colour changes are not entrances — they get the plain curve,
-     and they stay inside the 300ms ceiling that keeps a control feeling
+     and they stay inside the 400ms ceiling that keeps a control feeling
      answerable rather than syrupy. */
-  hover: "ease",
-  hoverMs: 200,
-  /* Press feedback: fast enough to read as the button taking the press. */
+  hover: "cubic-bezier(0.16, 1, 0.3, 1)",
+  hoverMs: 280,
+  /* Press feedback stays fast. A press is the one place where immediacy
+     beats weight: any slower and the control feels like it missed the
+     click. */
   pressMs: 150,
-  gsapOut: "power3.out",
-  gsapInOut: "power2.inOut",
+  gsapOut: "expo.out",
+  gsapInOut: "power3.inOut",
+} as const;
+
+/**
+ * The motion hierarchy, as four tiers.
+ *
+ * The rule this encodes is that duration carries rank. When a heading, an
+ * image and a card all move for the same length of time, the eye is given
+ * no way to tell which of them is the point, and the result reads as
+ * busyness however restrained each individual movement is. A section should
+ * have one primary movement that visibly dominates, supporting movement
+ * that is felt rather than watched, and micro interactions that answer the
+ * pointer and nothing more.
+ *
+ * Seconds, because everything timed against these is a GSAP tween; the
+ * CSS-transition figures live in `ease` above in milliseconds.
+ */
+export const motion = {
+  /** One major movement per section: the transition, the camera, the cards. */
+  primary: 1.1,
+  /** Typography and content arriving under it. */
+  content: 0.7,
+  /** A card or image answering a hover or a scroll threshold. */
+  element: 0.55,
+  /** Pointer feedback only. */
+  micro: 0.28,
+  /** Between meaningful elements in one group. Never long chains. */
+  stagger: 0.1,
 } as const;
 
 /** #RRGGBB + alpha -> rgba() string. */

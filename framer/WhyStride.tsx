@@ -24,7 +24,7 @@ import GradientRevealText from "./GradientRevealText";
  * On phones the scatter is replaced by a plain crossfade and the labels
  * become a stacked list, per the responsive prompt.
  */
-export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: string }) {
+export default function WhyStride({ scrollLength = "650vh" }: { scrollLength?: string }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const bp = useBreakpoint();
@@ -553,5 +553,5 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
  */
 
 addPropertyControls(WhyStride, {
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "560vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "650vh" },
 });

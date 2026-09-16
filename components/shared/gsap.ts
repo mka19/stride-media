@@ -32,13 +32,23 @@ export { gsap, ScrollTrigger };
  * one and loose in the next. One value everywhere means the whole document
  * carries the same inertia.
  *
- * Raised from 1. A scrubbed timeline reaches its target this many seconds
- * after the scroll does, and that lag is the whole feel of the page: at 1 the
- * sections tracked the wheel closely enough to read as sharp, almost brittle.
- * Half a second more of catch-up is the difference between the page answering
- * the scroll and the page being dragged by it.
+ * A scrubbed timeline reaches its target this many seconds after the scroll
+ * does, and that lag is the main lever against the page reading as too
+ * reactive. At 1 the sections tracked the wheel almost exactly, so a small
+ * wheel movement produced an immediate, equally small jump in every
+ * animation at once — which is what "everything fires the moment I touch the
+ * wheel" actually is.
+ *
+ * 1.9 puts nearly two seconds of damping between the input and the motion.
+ * Every scroll is still answered — nothing is ignored or thresholded away —
+ * but it arrives on a curve instead of a step, which is the difference
+ * between the user dragging the page and the page gliding.
+ *
+ * Deliberately not higher. Past roughly 2.5 the lag stops reading as weight
+ * and starts reading as the page not listening: smooth and weighted, never
+ * floaty.
  */
-export const SCRUB = 1.5;
+export const SCRUB = 1.9;
 
 /**
  * The shared reveal vocabulary. Everything that arrives does so the same
@@ -47,10 +57,34 @@ export const SCRUB = 1.5;
  * rather than like a different animation.
  */
 export const reveal = {
-  y: 24,
-  ease: "power2.out",
-  easeIn: "power2.in",
-  easeBoth: "power2.inOut",
+  /*
+   * 16px, down from 24.
+   *
+   * Editorial typography settles; it does not fly in. At 24 the movement
+   * announced itself — you watched the text travel. At 16 it registers as
+   * the text arriving without the eye tracking the journey, which is the
+   * whole intent.
+   */
+  y: 16,
+  /*
+   * expo.out, not power2.out.
+   *
+   * This is GSAP's match for cubic-bezier(0.16, 1, 0.3, 1): almost all of
+   * the distance is covered immediately and the last few pixels take the
+   * rest of the time. That long tail is what makes movement feel like it
+   * has mass and is coming to rest, rather than simply stopping when its
+   * duration runs out. power2 decelerates far too evenly to read as weight.
+   */
+  ease: "expo.out",
+  easeIn: "expo.in",
+  easeBoth: "power3.inOut",
+  /*
+   * The stagger between meaningful elements in one group.
+   *
+   * Enough to establish an order, short enough that the group still reads
+   * as one event rather than as a queue of separate arrivals.
+   */
+  stagger: 0.1,
 } as const;
 
 /**

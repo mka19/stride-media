@@ -24,7 +24,7 @@ export default function Solution({
   /** Landscape client reel. Falls back to a generated cinematic fill. */
   videoSrc,
   poster,
-  scrollLength = "420vh",
+  scrollLength = "490vh",
 }: {
   videoSrc?: string;
   poster?: string;
@@ -495,5 +495,5 @@ export default function Solution({
 addPropertyControls(Solution, {
   videoSrc: { type: ControlType.File, allowedFileTypes: ["mp4", "webm"], title: "Reel" },
   poster: { type: ControlType.File, allowedFileTypes: ["jpg", "png"], title: "Poster" },
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "420vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "490vh" },
 });

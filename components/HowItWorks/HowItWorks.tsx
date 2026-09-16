@@ -23,7 +23,7 @@ import GradientRevealText from "../shared/GradientRevealText";
 export default function HowItWorks({
   /** Footage behind the flight; falls back to a generated fill. */
   backgroundSrc,
-  scrollLength = "380vh",
+  scrollLength = "440vh",
 }: {
   backgroundSrc?: string;
   scrollLength?: string;

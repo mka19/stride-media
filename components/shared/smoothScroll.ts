@@ -34,14 +34,33 @@ export function initSmoothScroll(): () => void {
     // timelines, and how heavy the whole document feels is set here more
     // than anywhere else: a short duration lands the scroll before the
     // timelines have caught up, which is what read as snapping.
-    duration: 1.6,
+    /*
+     * 1.9s. How long a wheel gesture keeps gliding after the fingers stop.
+     *
+     * This and SCRUB are the two numbers behind "the page moves too quickly
+     * through the content". They do different jobs and both are needed: this
+     * one damps the scroll position itself, SCRUB damps how the timelines
+     * follow it. Raising only one of them produces either a page that glides
+     * while its contents snap, or contents that drift over a scroll position
+     * that jumps.
+     */
+    duration: 1.9,
     // Heavy at the start, long settle — the weightless feel comes from the
     // tail of this curve, not from the duration.
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
     // A notch of the wheel moves slightly less than the browser default, so
     // a single flick never jumps past a whole beat of a pinned section.
-    wheelMultiplier: 0.82,
+    /*
+     * 0.72. A notch of the wheel covers about three quarters of what the
+     * browser would move, so a single flick advances one beat of a pinned
+     * section rather than overshooting through two or three of them — which
+     * is most of why sections felt abrupt and hard to navigate.
+     *
+     * Lower than this and the page starts to feel like it is resisting the
+     * user, which costs more than it buys.
+     */
+    wheelMultiplier: 0.72,
     // Touch devices already have their own momentum; adding ours fights it.
     syncTouch: false,
   });

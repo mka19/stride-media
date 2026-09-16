@@ -28,7 +28,7 @@ export default function Problem({
   cardMedia = [],
   /** Footage for the objects that sit inline in the About statement. */
   objectMedia = [],
-  scrollLength = "620vh",
+  scrollLength = "720vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
