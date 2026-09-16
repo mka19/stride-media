@@ -65,7 +65,11 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
               onClick={() => setOpen(isOpen ? null : i)}
               style={{
                 width: "100%",
-                display: "flex",
+                // A grid, so the answer below can be placed in the same
+                // column as the question rather than guessing at a padding
+                // that has to match a min-width plus a flex gap.
+                display: "grid",
+                gridTemplateColumns: `64px 1fr 16px`,
                 alignItems: "center",
                 gap: space.lg,
                 padding: `${space.md}px 0`,
@@ -131,12 +135,19 @@ export default function FAQ({ scrollLength = "300vh" }: { scrollLength?: string 
                 transition: `grid-template-rows 300ms ${ease.out}`,
               }}
             >
-              <div style={{ overflow: "hidden" }}>
+              <div
+                style={{
+                  overflow: "hidden",
+                  display: "grid",
+                  gridTemplateColumns: `64px 1fr 16px`,
+                  gap: space.lg,
+                }}
+              >
+                <span />
                 <p
                   style={{
                     margin: 0,
                     paddingBottom: space.md,
-                    paddingLeft: 64,
                     maxWidth: "62ch",
                     ...typeScale.bodyLg,
                     color: color.textOnDarkMuted,

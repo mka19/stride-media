@@ -56,6 +56,14 @@ export default function Wordmark({
     let sy = -9999;
     let inside = false;
     let intensity = 0;
+    // A separate channel from the pointer's local dissolve: pressing blows
+    // the whole mark apart, wherever the cursor happens to be, and releasing
+    // draws it back. It eases in and out on the same frame loop, so the
+    // explosion and the return are one continuous move rather than a swap
+    // between two states.
+    let pressed = false;
+    let blast = 0;
+    let last = performance.now();
 
     const FONT = '500 100px "Familjen Grotesk", Helvetica, Arial, sans-serif';
 
@@ -111,55 +119,99 @@ export default function Wordmark({
       raf = requestAnimationFrame(frame);
       if (!off || !w || !h) return;
 
-      // Ease the pointer and the strength of the effect. Both are what make
-      // hovering feel like the mark reacting rather than snapping.
+      // Ease the pointer and the strength of the effect against the clock,
+      // not against the frame. A per-frame factor makes every one of these
+      // settle at whatever rate the page happens to be running at, and this
+      // page carries a 3D scene and a shader: at fifteen frames a second the
+      // mark was still in pieces seconds after the press ended.
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const approach = (tau: number) => 1 - Math.exp(-dt / tau);
+
       if (sx < -1000 && inside) {
         sx = tx;
         sy = ty;
       }
-      sx += (tx - sx) * 0.16;
-      sy += (ty - sy) * 0.16;
-      intensity += ((inside ? 1 : 0) - intensity) * 0.08;
+      const follow = approach(0.09);
+      sx += (tx - sx) * follow;
+      sy += (ty - sy) * follow;
+
+      intensity += ((inside ? 1 : 0) - intensity) * approach(0.13);
+      // Out fast, back slower: a mark that reassembles at the speed it came
+      // apart reads as a rewind rather than as settling.
+      blast += ((pressed ? 1 : 0) - blast) * approach(pressed ? 0.09 : 0.2);
+
+      // Both channels snap at the tail. An exponential never reaches zero,
+      // and while either has anything left the loop keeps stamping blocks a
+      // fraction of a pixel out of place — a permanently ragged mark.
+      if (!inside && intensity < 0.02) intensity = 0;
+      if (!pressed && blast < 0.012) blast = 0;
 
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(off, 0, 0, w, h);
 
-      if (reduced || intensity < 0.01) return;
+      if (reduced || (intensity === 0 && blast === 0)) return;
 
       // 1. Thin the letters out under the cursor with a soft radial erase —
-      //    a gradient, so the dissolve has no boundary of its own.
-      const fade = ctx.createRadialGradient(sx, sy, 0, sx, sy, RADIUS);
-      fade.addColorStop(0, `rgba(0,0,0,${0.96 * intensity})`);
-      fade.addColorStop(0.45, `rgba(0,0,0,${0.72 * intensity})`);
-      fade.addColorStop(0.75, `rgba(0,0,0,${0.3 * intensity})`);
-      fade.addColorStop(1, "rgba(0,0,0,0)");
+      //    a gradient, so the dissolve has no boundary of its own. Under a
+      //    press the erase covers the whole mark instead.
       ctx.save();
       ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = fade;
-      ctx.fillRect(sx - RADIUS, sy - RADIUS, RADIUS * 2, RADIUS * 2);
+      if (blast > 0) {
+        ctx.fillStyle = `rgba(0,0,0,${blast})`;
+        ctx.fillRect(0, 0, w, h);
+      }
+      if (intensity > 0) {
+        const fade = ctx.createRadialGradient(sx, sy, 0, sx, sy, RADIUS);
+        fade.addColorStop(0, `rgba(0,0,0,${0.96 * intensity})`);
+        fade.addColorStop(0.45, `rgba(0,0,0,${0.72 * intensity})`);
+        fade.addColorStop(0.75, `rgba(0,0,0,${0.3 * intensity})`);
+        fade.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = fade;
+        ctx.fillRect(sx - RADIUS, sy - RADIUS, RADIUS * 2, RADIUS * 2);
+      }
       ctx.restore();
 
       // 2. Stamp the erased blocks back, thrown outward and faded with
       //    distance, which is what reads as the word coming apart.
-      const x0 = Math.max(0, Math.floor((sx - RADIUS) / BLOCK) * BLOCK);
-      const x1 = Math.min(w, Math.ceil((sx + RADIUS) / BLOCK) * BLOCK);
-      const y0 = Math.max(0, Math.floor((sy - RADIUS) / BLOCK) * BLOCK);
-      const y1 = Math.min(h, Math.ceil((sy + RADIUS) / BLOCK) * BLOCK);
+      // Under a press every block is in play; otherwise only the ones the
+      // cursor is over.
+      const full = blast > 0;
+      const x0 = full ? 0 : Math.max(0, Math.floor((sx - RADIUS) / BLOCK) * BLOCK);
+      const x1 = full ? w : Math.min(w, Math.ceil((sx + RADIUS) / BLOCK) * BLOCK);
+      const y0 = full ? 0 : Math.max(0, Math.floor((sy - RADIUS) / BLOCK) * BLOCK);
+      const y1 = full ? h : Math.min(h, Math.ceil((sy + RADIUS) / BLOCK) * BLOCK);
+
+      const cx = w / 2;
+      const cy = h / 2;
 
       for (let y = y0; y < y1; y += BLOCK) {
         for (let x = x0; x < x1; x += BLOCK) {
           const d = Math.hypot(x + BLOCK / 2 - sx, y + BLOCK / 2 - sy);
-          if (d > RADIUS) continue;
 
-          // Nearer the cursor: thrown further, more likely to be dropped.
-          const t = (1 - d / RADIUS) * intensity;
+          // Local dissolve under the cursor.
+          const t = d > RADIUS ? 0 : (1 - d / RADIUS) * intensity;
+
+          // The press throws every block outward from the middle of the mark,
+          // so the word opens rather than scattering into noise.
+          const ox = x + BLOCK / 2 - cx;
+          const oy = y + BLOCK / 2 - cy;
+          const len = Math.hypot(ox, oy) || 1;
+          const spread = blast * (90 + hash(x, y, 4) * 260);
+          const bx = (ox / len) * spread;
+          const by = (oy / len) * spread * 0.55;
+
           const keep = hash(x, y, 7);
           if (keep < t * 0.5) continue;
+          if (blast > 0.02 && keep < blast * 0.22) continue;
 
           const push = t * 30;
-          const dx = (hash(x, y, 1) - 0.5) * push;
-          const dy = (hash(x, y, 2) - 0.5) * push;
-          ctx.globalAlpha = Math.min(1, (1 - t * 0.55) * intensity + (1 - intensity));
+          const dx = (hash(x, y, 1) - 0.5) * push + bx;
+          const dy = (hash(x, y, 2) - 0.5) * push + by;
+
+          const localAlpha = Math.min(1, (1 - t * 0.55) * intensity + (1 - intensity));
+          ctx.globalAlpha = Math.max(0, localAlpha * (1 - blast * 0.25));
           ctx.drawImage(off, x, y, BLOCK, BLOCK, x + dx, y + dy, BLOCK, BLOCK);
         }
       }
@@ -179,6 +231,25 @@ export default function Wordmark({
         ty < r.height + RADIUS * 0.6;
     };
 
+    // The loop runs continuously here, so these only set the flag.
+    const onDown = () => {
+      pressed = true;
+    };
+    const onUp = () => {
+      pressed = false;
+    };
+
+    canvas.addEventListener("pointerdown", onDown);
+    // Released on anything that can end a press, not just the one event: a
+    // press that is never cleared leaves the mark permanently in pieces, and
+    // that is a worse failure than releasing one frame early.
+    canvas.addEventListener("pointerup", onUp);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    window.addEventListener("blur", onUp);
+    canvas.addEventListener("pointerleave", onUp);
+
     // The webfont has to be in before the type is rastered, or the wordmark
     // bakes in the fallback face and never updates.
     void document.fonts?.ready.then(resize);
@@ -193,6 +264,13 @@ export default function Wordmark({
       cancelAnimationFrame(raf);
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
+      canvas.removeEventListener("pointerdown", onDown);
+      canvas.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      window.removeEventListener("blur", onUp);
+      canvas.removeEventListener("pointerleave", onUp);
     };
   }, [text]);
 
