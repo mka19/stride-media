@@ -18,9 +18,14 @@ export const brand = {
   phoneLabel: "Call us 24/7",
   email: "hello@stridemedia.co", // PLACEHOLDER
   url: "stridemedia.co",
-  calendly: "https://calendly.com/stride-media/strategy-call", // PLACEHOLDER
-  /** Flip to true once the Calendly link above is the real one. */
-  calendlyReady: false,
+  /*
+   * The scheduling link does not live here.
+   *
+   * It is CALENDLY_URL in shared/CalendlyEmbed.tsx, next to the code that
+   * uses it, so there is exactly one place to paste it. Keeping a second copy
+   * in the copy file is how a site ends up with the booking button and the
+   * booking widget pointing at different events.
+   */
 } as const;
 
 export const nav = {

@@ -1,0 +1,213 @@
+import { useEffect, useRef, useState } from "react";
+import { color, hexA, space, typeScale } from "./theme";
+
+/**
+ * Calendly, inline.
+ *
+ * The whole booking flow happens on this page: pick a date, pick a time, fill
+ * in name and email, confirm. Nobody is redirected and nothing opens in a new
+ * tab. Calendly owns the hard parts — real availability, timezones, the
+ * confirmation email, rescheduling and cancellation links — through its own
+ * official inline widget, which is the only supported way to do this without
+ * a backend.
+ *
+ * ┌─────────────────────────────────────────────────────────────────────────┐
+ * │  PASTE YOUR CALENDLY LINK ON THE NEXT LINE. IT IS THE ONLY EDIT.        │
+ * └─────────────────────────────────────────────────────────────────────────┘
+ */
+export const CALENDLY_URL = "YOUR_CALENDLY_URL_HERE";
+
+/**
+ * Until that constant is a real link, the component renders a panel saying so
+ * rather than trying to load it.
+ *
+ * This is checked rather than left to a second "ready" flag to remember to
+ * flip, because a placeholder handed to Calendly does not fail quietly — it
+ * loads their 404 inside the card, which looks exactly like a broken embed.
+ */
+function isPlaceholder(url: string) {
+  return !url || !/^https?:\/\/(calendly\.com|.*\.calendly\.com)\//i.test(url.trim());
+}
+
+const WIDGET_SRC = "https://assets.calendly.com/assets/external/widget.js";
+
+/**
+ * One load of Calendly's script per page, however many embeds are on it.
+ *
+ * The promise is held at module scope rather than in a ref: two components
+ * mounting in the same tick would each see an empty ref, each append a script
+ * tag, and Calendly would initialise twice over the same element. Everything
+ * after the first mount waits on the same promise.
+ */
+let widgetPromise: Promise<void> | null = null;
+
+function loadWidget(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (window.Calendly) return Promise.resolve();
+  if (widgetPromise) return widgetPromise;
+
+  widgetPromise = new Promise<void>((resolve, reject) => {
+    // A script tag may already be on the page — pasted into Framer's site
+    // settings, say — in which case listen to that one instead of adding a
+    // second.
+    const existing = document.querySelector<HTMLScriptElement>(
+      `script[src="${WIDGET_SRC}"]`,
+    );
+    const script = existing ?? document.createElement("script");
+    const done = () => resolve();
+    script.addEventListener("load", done, { once: true });
+    script.addEventListener(
+      "error",
+      () => {
+        // Let a later mount try again rather than caching the failure.
+        widgetPromise = null;
+        reject(new Error("Calendly widget script failed to load"));
+      },
+      { once: true },
+    );
+    if (!existing) {
+      script.src = WIDGET_SRC;
+      script.async = true;
+      document.head.appendChild(script);
+    } else if (window.Calendly) {
+      done();
+    }
+  });
+
+  return widgetPromise;
+}
+
+export default function CalendlyEmbed({
+  /** Overridable so the same component can serve more than one event type. */
+  url = CALENDLY_URL,
+  /**
+   * How tall the widget stands. Calendly's own flow needs real room — the
+   * month grid, the times column and then the name/email form all live inside
+   * this one box, and anything under about 700px puts its own scrollbar
+   * inside the page, which is the worst of both.
+   */
+  minHeight = 760,
+  minHeightMobile = 1040,
+  /** Matches the widget to the page instead of its default blue. */
+  background = color.black,
+  text = color.textOnDark,
+  primary = color.accent,
+  style,
+}: {
+  url?: string;
+  minHeight?: number;
+  minHeightMobile?: number;
+  background?: string;
+  text?: string;
+  primary?: string;
+  style?: React.CSSProperties;
+}) {
+  const host = useRef<HTMLDivElement | null>(null);
+  const [failed, setFailed] = useState(false);
+  const placeholder = isPlaceholder(url);
+
+  // Calendly wants the colours as bare hex, no leading hash.
+  const strip = (c: string) => c.replace("#", "").slice(0, 6);
+  const themed =
+    `${url}?hide_gdpr_banner=1` +
+    `&background_color=${strip(background)}` +
+    `&text_color=${strip(text)}` +
+    `&primary_color=${strip(primary)}`;
+
+  useEffect(() => {
+    if (placeholder) return;
+    const el = host.current;
+    if (!el) return;
+
+    let cancelled = false;
+    loadWidget()
+      .then(() => {
+        if (cancelled || !host.current) return;
+        // initInlineWidget appends an iframe. On a re-run — a hot reload, or
+        // the url prop changing — the old one has to go first or they stack.
+        host.current.innerHTML = "";
+        window.Calendly?.initInlineWidget({
+          url: themed,
+          parentElement: host.current,
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+
+    return () => {
+      cancelled = true;
+      if (el) el.innerHTML = "";
+    };
+  }, [themed, placeholder]);
+
+  const frame: React.CSSProperties = {
+    width: "100%",
+    // Never wider than its column, whatever the widget does inside it: this
+    // is what keeps a phone from getting a sideways scrollbar.
+    maxWidth: "100%",
+    overflow: "hidden",
+    borderRadius: 4,
+    background: hexA(color.black, 0.4),
+    ...style,
+  };
+
+  if (placeholder || failed) {
+    return (
+      <div
+        style={{
+          ...frame,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: space.md,
+          textAlign: "center",
+          padding: space.xl,
+          minHeight: 420,
+          border: `1px dashed ${color.hairlineOnDark}`,
+        }}
+      >
+        <span style={{ ...typeScale.h3, color: color.textOnDark }}>
+          {failed ? "Booking is offline" : "Booking opens here"}
+        </span>
+        <span style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "34ch" }}>
+          {failed
+            ? "The scheduler could not be reached. Email us and we will send times."
+            : "Paste the Calendly link into CALENDLY_URL in CalendlyEmbed.tsx and the booking flow appears here."}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Calendly sizes its own iframe to 100% of this element, so the height
+          has to come from here. The media query cannot be an inline style. */}
+      <style>{`
+        .stride-calendly { min-height: ${minHeightMobile}px; }
+        @media (min-width: 769px) { .stride-calendly { min-height: ${minHeight}px; } }
+      `}</style>
+      <div
+        ref={host}
+        className="stride-calendly calendly-inline-widget"
+        data-auto-load="false"
+        aria-label="Booking calendar"
+        style={frame}
+      />
+    </>
+  );
+}
+
+declare global {
+  interface Window {
+    Calendly?: {
+      initInlineWidget: (opts: {
+        url: string;
+        parentElement: HTMLElement;
+        prefill?: Record<string, unknown>;
+        utm?: Record<string, unknown>;
+      }) => void;
+    };
+  }
+}

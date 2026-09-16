@@ -4,6 +4,7 @@ import { brand, finalCta as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
 import { GlowButton, Grain, MicroLabel } from "./primitives";
 import GradientRevealText from "./GradientRevealText";
+import CalendlyEmbed from "./CalendlyEmbed";
 import { useBreakpoint, useStacked } from "./responsive";
 
 /**
@@ -18,14 +19,13 @@ import { useBreakpoint, useStacked } from "./responsive";
  * enter and nothing scroll-driven. Its job is the booking, not spectacle.
  */
 export default function FinalCTA({
-  /** Calendly scheduling link. The embed inherits the site's colours. */
-  calendly = brand.calendly,
-  /** Until the link is real, the card shows a placeholder panel: a dead
-   *  scheduling URL renders as a broken grey frame, which looks like a bug. */
-  ready = brand.calendlyReady,
+  /**
+   * Scheduling link. Left undefined it uses CALENDLY_URL from the embed,
+   * which is the single place the link is written down.
+   */
+  calendly,
 }: {
   calendly?: string;
-  ready?: boolean;
 }) {
   const bp = useBreakpoint();
   const stacked = useStacked() || bp === "tablet";
@@ -46,10 +46,6 @@ export default function FinalCTA({
     [],
     (root) => gsap.set(gsap.utils.selector(root)(".cta-item"), { opacity: 1, y: 0 }),
   );
-
-  // Calendly reads these from the query string; they keep the widget on
-  // palette instead of its default blue.
-  const embedUrl = `${calendly}?hide_event_type_details=0&hide_gdpr_banner=1&background_color=120D0C&text_color=F6F1EC&primary_color=E01535`;
 
   return (
     <section
@@ -168,45 +164,11 @@ export default function FinalCTA({
           }}
         >
           <MicroLabel tone="accent">{copy.calendlyHeader}</MicroLabel>
-          {ready ? (
-            <iframe
-              title={copy.calendlyHeader}
-              src={embedUrl}
-              style={{
-                width: "100%",
-                minHeight: stacked ? 620 : 680,
-                border: "none",
-                borderRadius: 4,
-                background: color.ink,
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: space.md,
-                textAlign: "center",
-                width: "100%",
-                minHeight: stacked ? 620 : 680,
-                borderRadius: 4,
-                border: `1px dashed ${color.hairlineOnDark}`,
-                background: hexA(color.black, 0.4),
-                padding: space.xl,
-              }}
-            >
-              <span style={{ ...typeScale.h3, color: color.textOnDark }}>
-                Calendly booking widget
-              </span>
-              <span style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "36ch" }}>
-                Add the real scheduling link and set calendlyReady in copy.ts. The embed is
-                pre-themed to the site: purple primary, black ground.
-              </span>
-              <GlowButton href={calendly}>{copy.calendlyHeader}</GlowButton>
-            </div>
-          )}
+          <CalendlyEmbed
+            url={calendly}
+            minHeight={stacked ? 820 : 760}
+            minHeightMobile={1040}
+          />
         </div>
       </div>
     </section>
