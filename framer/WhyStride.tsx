@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react";
-import { gsap, useGsapContext, SCRUB } from "./gsap";
+import { gsap, useGsapContext, SCRUB, approach } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { whyStride as copy } from "./copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "./theme";
@@ -34,6 +34,10 @@ export default function WhyStride({ scrollLength = "650vh" }: { scrollLength?: s
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+
+      // The overlap with the section before this one. Runs on the frame,
+      // which this section's own timelines only ever measure, never animate.
+      approach(root, ".ws-frame");
 
       // Parked a full line below its window, not nudged and faded.
       gsap.set(q(".ws-word"), { yPercent: 108 });

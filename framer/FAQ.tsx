@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useState } from "react";
-import { gsap, useGsapContext, SCRUB } from "./gsap";
+import { gsap, useGsapContext, SCRUB, approach } from "./gsap";
 import { faq as copy } from "./copy";
 import { color, ease, hexA, layout, space, typeScale } from "./theme";
 import { useStacked } from "./responsive";
@@ -24,6 +24,10 @@ export default function FAQ({ scrollLength = "340vh" }: { scrollLength?: string 
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+
+      // The overlap with the section before this one. Runs on the frame,
+      // which this section's own timelines only ever measure, never animate.
+      approach(root, ".faq-frame");
       gsap.set(q(".faq-item"), { opacity: 0, x: 40 });
 
       const tl = gsap.timeline({
@@ -198,7 +202,7 @@ export default function FAQ({ scrollLength = "340vh" }: { scrollLength?: string 
         fontFamily: typeScale.bodyLg.fontFamily,
       }}
     >
-      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+      <div className="faq-frame" style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
         <AmbientShapes />
 
         {/* The letters: spread, then shrunk into the corner. */}

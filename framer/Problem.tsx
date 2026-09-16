@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef } from "react";
-import { gsap, useGsapContext, SCRUB, reveal } from "./gsap";
+import { gsap, useGsapContext, SCRUB, reveal, approach } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { problem as copy } from "./copy";
 import { color, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
@@ -46,6 +46,10 @@ export default function Problem({
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+
+      // The overlap with the section before this one. Runs on the frame,
+      // which this section's own timelines only ever measure, never animate.
+      approach(root, ".pb-frame");
       const cards = q(".pb-card");
 
       // The plate is 16:9 at min(430px, 48vh) tall, so what it takes to

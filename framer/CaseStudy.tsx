@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef } from "react";
-import { gsap, useGsapContext, SCRUB } from "./gsap";
+import { gsap, useGsapContext, SCRUB, approach } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { caseStudy as copy } from "./copy";
 import { color, ease, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
@@ -72,6 +72,10 @@ export default function CaseStudy({
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+
+      // The overlap with the section before this one. Runs on the frame,
+      // which this section's own timelines only ever measure, never animate.
+      approach(root, ".cs-frame");
 
       // The gallery owns this slice of the scroll and nothing else overlaps
       // it, so the plates are gone before the results chapter is readable.

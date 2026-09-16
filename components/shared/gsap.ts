@@ -179,3 +179,67 @@ export function useGsapContext(
 
   return ref;
 }
+
+/**
+ * The overlap between one section leaving and the next arriving.
+ *
+ * Without this a pinned section's first trigger is `top top`, which means it
+ * sits completely inert until the instant its top edge reaches the top of the
+ * window — and then its whole sequence begins at once. The previous section
+ * has finished and left by then, so nothing is ever on screen mid-movement
+ * and the page reads as slides changing rather than as a camera moving
+ * through it. Solution and HowItWorks already had an approach of their own;
+ * Problem, CaseStudy, WhyStride and FAQ began cold.
+ *
+ * The window is the viewport-height of scroll before the section pins, which
+ * is exactly the stretch where both sections are on screen together: the
+ * outgoing one is still leaving while this one resolves underneath it.
+ *
+ * Deliberately one property.
+ *
+ * Not a translate — these frames are `position: sticky` inside
+ * `overflow: hidden`, so moving one vertically opens a gap at the edge it
+ * moves away from. And not a scale, which on a full-bleed frame reads as the
+ * page zooming rather than as the section arriving. A fade covers it, costs a
+ * composite rather than a layout, and cannot possibly disagree with the
+ * layout underneath.
+ *
+ * From 0.55 rather than from 0. This is supporting movement: it should be
+ * felt as the section resolving into place, not watched as a black rectangle
+ * filling in.
+ *
+ * The target must be an element the section's own pinned timeline never
+ * touches. Two scrubbed timelines writing the same property fight, and
+ * whichever updated last wins — which shows up as flicker at the boundary
+ * rather than as an error.
+ */
+export function approach(root: HTMLElement, selector: string) {
+  const el = root.querySelector<HTMLElement>(selector);
+  if (!el) return;
+  gsap.set(el, { opacity: 0.55 });
+  gsap.to(el, {
+    opacity: 1,
+    ease: "none",
+    scrollTrigger: {
+      trigger: root,
+      start: "top bottom",
+      /*
+       * Finished a quarter of a viewport before the section pins, not at it.
+       *
+       * Ending on "top top" looks right and measures wrong. A scrubbed tween
+       * reaches its target SCRUB seconds after the scroll does, so a fade
+       * that is only told to finish at the pin is still catching up for
+       * nearly two seconds afterwards — the section takes the screen and
+       * spends its whole first beat visibly dim. Probing it found frames
+       * sitting at 0.79 while pinned.
+       *
+       * Ending early gives the scrub the last stretch of approach to settle
+       * in, so the section is already at full strength by the time it owns
+       * the screen.
+       */
+      end: "top 25%",
+      scrub: SCRUB,
+      invalidateOnRefresh: true,
+    },
+  });
+}
