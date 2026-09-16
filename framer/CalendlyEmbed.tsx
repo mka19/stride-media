@@ -15,7 +15,7 @@ import { color, hexA, space, typeScale } from "./theme";
  * │  PASTE YOUR CALENDLY LINK ON THE NEXT LINE. IT IS THE ONLY EDIT.        │
  * └─────────────────────────────────────────────────────────────────────────┘
  */
-export const CALENDLY_URL = "YOUR_CALENDLY_URL_HERE";
+export const CALENDLY_URL = "https://calendly.com/ayubvideos/30min";
 
 /**
  * Until that constant is a real link, the component renders a panel saying so
@@ -27,6 +27,46 @@ export const CALENDLY_URL = "YOUR_CALENDLY_URL_HERE";
  */
 function isPlaceholder(url: string) {
   return !url || !/^https?:\/\/(calendly\.com|.*\.calendly\.com)\//i.test(url.trim());
+}
+
+/**
+ * Query parameters that come along for the ride and should not.
+ *
+ * The link people actually copy is rarely the bare event URL — it is whatever
+ * was in the Instagram bio, which arrives carrying campaign tags, a Facebook
+ * click id and often `month`, which pins the widget to whatever month the
+ * link was generated in. A visitor would open the booking calendar already
+ * scrolled to a month a year out.
+ */
+const NOISE = /^(utm_|fbclid$|gclid$|msclkid$|mc_cid$|mc_eid$|_gl$|month$|date$|utm_id$)/i;
+
+/**
+ * Build the URL the widget is actually given.
+ *
+ * Doing this with URL and URLSearchParams rather than string concatenation is
+ * not fussiness: the previous version appended "?hide_gdpr_banner=1", which
+ * produces a second question mark — and a broken link — the moment anyone
+ * pastes a URL that already has a query on it. Which is exactly what the real
+ * link turned out to be.
+ */
+function buildEmbedUrl(
+  raw: string,
+  colors: { background: string; text: string; primary: string },
+) {
+  const hex = (c: string) => c.replace("#", "").slice(0, 6);
+  try {
+    const u = new URL(raw.trim());
+    for (const key of [...u.searchParams.keys()]) {
+      if (NOISE.test(key)) u.searchParams.delete(key);
+    }
+    u.searchParams.set("hide_gdpr_banner", "1");
+    u.searchParams.set("background_color", hex(colors.background));
+    u.searchParams.set("text_color", hex(colors.text));
+    u.searchParams.set("primary_color", hex(colors.primary));
+    return u.toString();
+  } catch {
+    return raw;
+  }
 }
 
 const WIDGET_SRC = "https://assets.calendly.com/assets/external/widget.js";
@@ -106,13 +146,7 @@ export default function CalendlyEmbed({
   const [failed, setFailed] = useState(false);
   const placeholder = isPlaceholder(url);
 
-  // Calendly wants the colours as bare hex, no leading hash.
-  const strip = (c: string) => c.replace("#", "").slice(0, 6);
-  const themed =
-    `${url}?hide_gdpr_banner=1` +
-    `&background_color=${strip(background)}` +
-    `&text_color=${strip(text)}` +
-    `&primary_color=${strip(primary)}`;
+  const themed = buildEmbedUrl(url, { background, text, primary });
 
   useEffect(() => {
     if (placeholder) return;
