@@ -27,7 +27,7 @@ import { useStacked } from "./responsive";
 export default function CaseStudy({
   gallery = [],
   curtainImage,
-  scrollLength = "880vh",
+  scrollLength = "1400vh",
 }: {
   gallery?: string[];
   /**
@@ -638,5 +638,5 @@ addPropertyControls(CaseStudy, {
     allowedFileTypes: ["jpg", "jpeg", "png", "webp"],
     title: "Curtain still",
   },
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "880vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "1400vh" },
 });

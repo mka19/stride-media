@@ -52,7 +52,7 @@ export function initSmoothScroll(): () => void {
     // A notch of the wheel moves slightly less than the browser default, so
     // a single flick never jumps past a whole beat of a pinned section.
     /*
-     * 0.72. A notch of the wheel covers about three quarters of what the
+     * 0.58. A notch of the wheel covers a little over half of what the
      * browser would move, so a single flick advances one beat of a pinned
      * section rather than overshooting through two or three of them — which
      * is most of why sections felt abrupt and hard to navigate.
@@ -60,7 +60,7 @@ export function initSmoothScroll(): () => void {
      * Lower than this and the page starts to feel like it is resisting the
      * user, which costs more than it buys.
      */
-    wheelMultiplier: 0.72,
+    wheelMultiplier: 0.58,
     // Touch devices already have their own momentum; adding ours fights it.
     syncTouch: false,
   });

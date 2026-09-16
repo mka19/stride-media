@@ -29,7 +29,7 @@ export default function Hero({
   tiles = [],
   /** Client photographs for the proof row. Gaps render as tinted discs. */
   clientFaces = [],
-  scrollLength = "370vh",
+  scrollLength = "520vh",
 }: {
   tiles?: MosaicTile[];
   clientFaces?: string[];
@@ -368,5 +368,5 @@ addPropertyControls(Hero, {
     control: { type: ControlType.File, allowedFileTypes: ["jpg", "jpeg", "png", "webp"] },
     maxCount: 6,
   },
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "370vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "520vh" },
 });

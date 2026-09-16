@@ -26,7 +26,7 @@ import { useStacked } from "../shared/responsive";
 export default function CaseStudy({
   gallery = [],
   curtainImage,
-  scrollLength = "880vh",
+  scrollLength = "1400vh",
 }: {
   gallery?: string[];
   /**

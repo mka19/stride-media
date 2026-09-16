@@ -29,7 +29,7 @@ export default function Problem({
   cardMedia = [],
   /** Footage for the objects that sit inline in the About statement. */
   objectMedia = [],
-  scrollLength = "720vh",
+  scrollLength = "1150vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
@@ -818,5 +818,5 @@ addPropertyControls(Problem, {
     control: { type: ControlType.File, allowedFileTypes: ["mp4", "webm", "jpg", "jpeg", "png", "webp"] },
     maxCount: 4,
   },
-  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "720vh" },
+  scrollLength: { type: ControlType.String, title: "Scroll length", defaultValue: "1150vh" },
 });

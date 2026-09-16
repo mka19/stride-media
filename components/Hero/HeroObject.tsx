@@ -4,6 +4,7 @@ import {
   mergeGeometries,
   mergeVertices,
 } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { TessellateModifier } from "three/examples/jsm/modifiers/TessellateModifier.js";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { color } from "../shared/theme";
 import { detailFor, type Breakpoint } from "../shared/responsive";
@@ -455,36 +456,81 @@ export default function HeroObject({
      * folds through itself there — and costs nothing per frame, since it is
      * baked into the buffer once at mount.
      */
-    const BULGE = 2.4;
-    const domeNormals = (g: THREE.BufferGeometry) => {
+    /*
+     * A real dome, cut into the geometry.
+     *
+     * Two earlier attempts failed here and both failures were informative.
+     * Widening the bevel did nothing, because Three's bevel only chamfers
+     * the rim and leaves the top face flat at full size whatever it is set
+     * to. Bending the normals did almost nothing to the wide arms, because
+     * an extrusion's flat front is the outline polygon triangulated — every
+     * vertex sits on the perimeter, none in the middle — so leaning normals
+     * that all live on the edge and interpolating between them cancels out
+     * across the span and the centre comes back flat.
+     *
+     * So the vertices move. Subdividing first puts points in the interior,
+     * and each one is pushed out along z by how far it is from the outline:
+     * full height at the centre, nothing at the edge. Normals are then
+     * computed from the result rather than invented, which is why this looks
+     * right where bent normals looked speckled — the shading follows a
+     * surface that genuinely curves instead of being told to pretend.
+     *
+     * The silhouette is untouched, because the displacement is zero at the
+     * perimeter. The reason to care is the reflection: a flat mirror shows
+     * one patch of the room at one brightness, and a curved one compresses
+     * the ceiling, the horizon, the floor and both softboxes into a single
+     * continuous sweep across one face. That sweep is what polished metal
+     * looks like.
+     */
+    /* 0.24. The dome compresses the whole room into each face, so past
+       about this the arms reflect the ceiling, both softboxes and the floor
+       inside a couple of centimetres of surface and the bands stack up too
+       tightly to read as anything. */
+    const DOME_H = 0.24;
+    const domeDisplace = (g: THREE.BufferGeometry) => {
       g.computeBoundingBox();
       const b = g.boundingBox!;
       const cx = (b.max.x + b.min.x) / 2;
       const cy = (b.max.y + b.min.y) / 2;
-      // Half the diagonal, so the lean reaches full strength at the corners
-      // rather than saturating partway across.
-      const rad =
-        Math.hypot(b.max.x - b.min.x, b.max.y - b.min.y) / 2 || 1;
+      const rad = Math.hypot(b.max.x - b.min.x, b.max.y - b.min.y) / 2 || 1;
       const pos = g.attributes.position as THREE.BufferAttribute;
       const nor = g.attributes.normal as THREE.BufferAttribute;
-      const v = new THREE.Vector3();
-      for (let i = 0; i < nor.count; i++) {
+      for (let i = 0; i < pos.count; i++) {
         const nz = nor.getZ(i);
-        // Only the flat front and back. The chamfer already faces outward,
-        // and leaning it further would break the rim highlight.
+        // The flat front and back only. The chamfer is already the curve
+        // that meets them, and moving it would open a seam along the rim.
         if (Math.abs(nz) < 0.85) continue;
         const dx = (pos.getX(i) - cx) / rad;
         const dy = (pos.getY(i) - cy) / rad;
         const d = Math.min(1, Math.hypot(dx, dy));
-        // Smoothstep rather than linear: a linear lean puts a visible cone
-        // point at the centre of every face.
-        const k = BULGE * d * d * (3 - 2 * d);
-        v.set(dx * k, dy * k, nz).normalize();
-        nor.setXYZ(i, v.x, v.y, v.z);
+        // A spherical cap rather than a linear ramp: a cone has a crease
+        // down the middle and catches the light as a line, not a sweep.
+        const lift = DOME_H * Math.sqrt(Math.max(0, 1 - d * d));
+        pos.setZ(i, pos.getZ(i) + (nz > 0 ? lift : -lift));
       }
-      nor.needsUpdate = true;
+      pos.needsUpdate = true;
     };
 
+    /*
+     * The faces have to be subdivided before the dome can exist on them.
+     *
+     * Bending the normals was right and still did almost nothing to the four
+     * arms, for a reason that only shows up when you look at what
+     * ExtrudeGeometry actually builds: the flat front of an extrusion is the
+     * outline polygon triangulated, so every one of its vertices sits on the
+     * perimeter and there are none at all in the middle. Bending normals
+     * that all live on the edge and letting the rasteriser interpolate
+     * between them cannot produce a dome — across a wide face the outward
+     * leans from opposite sides cancel, and the middle comes back flat. The
+     * thin centre star looked like chrome because it is narrow enough to be
+     * almost all perimeter; the wide arms stayed white panels.
+     *
+     * Tessellating splits those long triangles until there are vertices in
+     * the interior to carry the curve. The edge length is tied to the
+     * artboard's own span so it subdivides the same amount whatever units
+     * the SVG was drawn in.
+     */
+    const solidParts: THREE.BufferGeometry[] = [];
     const parts = shapes.map((shape) => {
       const raw = new THREE.ExtrudeGeometry(shape, extrudeFor(shape));
       /*
@@ -499,10 +545,30 @@ export default function HeroObject({
       const g = mergeVertices(raw, 1e-4);
       raw.dispose();
       g.computeVertexNormals();
-      domeNormals(g);
+
+      /*
+       * A second, denser copy for the solid only.
+       *
+       * The dissolve clones the mark's geometry and uses one particle per
+       * vertex, so subdividing the shared geometry would multiply the
+       * particle count by the same factor and cost that on every frame of
+       * the scatter. The plain one stays the source for the dissolve and the
+       * rim; only the mesh the viewer sees as metal pays for the density.
+       */
+      const dense = new TessellateModifier(svgSpan / 18, 4).modify(g.clone());
+      const welded = mergeVertices(dense, 1e-4);
+      dense.dispose();
+      // Normals first, only to tell the flat faces from the chamfer; they
+      // are recomputed from the displaced surface immediately after.
+      welded.computeVertexNormals();
+      domeDisplace(welded);
+      welded.computeVertexNormals();
+      solidParts.push(welded);
+
       return g;
     });
     const markGeo = mergeGeometries(parts, false)!;
+    const solidGeo = mergeGeometries(solidParts, false)!;
 
     /*
      * SVG's y axis points down and Three's points up, so the mark arrives
@@ -516,15 +582,17 @@ export default function HeroObject({
      */
     markGeo.scale(1, -1, 1);
     markGeo.center();
+    // The solid carries the same transforms, so the two stay registered:
+    // the dissolve's particles have to start exactly where the metal was.
+    solidGeo.scale(1, -1, 1);
+    solidGeo.center();
 
     const span = new THREE.Box3().setFromBufferAttribute(
       markGeo.attributes.position as THREE.BufferAttribute,
     ).getSize(new THREE.Vector3());
-    markGeo.scale(
-      MARK_SIZE / Math.max(span.x, span.y),
-      MARK_SIZE / Math.max(span.x, span.y),
-      1,
-    );
+    const fit = MARK_SIZE / Math.max(span.x, span.y);
+    markGeo.scale(fit, fit, 1);
+    solidGeo.scale(fit, fit, 1);
 
     /*
      * No computeVertexNormals here.
@@ -562,7 +630,18 @@ export default function HeroObject({
        * spreads each reflection into a soft-edged shape. That soft edge is
        * the entire difference.
        */
-      roughness: 0.07,
+      /*
+       * 0.11. Raised once the surface actually curved.
+       *
+       * At 0.07 a domed face returns the room almost exactly, and because
+       * the room is a bright ceiling over a dark floor with two softboxes in
+       * it, the face came back as hard-edged stripes. Real polished metal
+       * has enough scatter to spread each source into a soft-edged band —
+       * that softness is what separates chrome from a striped decal, and it
+       * cannot be added by changing the room, only by letting the surface
+       * blur what it reflects.
+       */
+      roughness: 0.11,
       /*
        * 1.0, not 1.35.
        *
@@ -574,7 +653,7 @@ export default function HeroObject({
       transparent: true,
       opacity: 1,
     });
-    const solid = new THREE.Mesh(markGeo, solidMat);
+    const solid = new THREE.Mesh(solidGeo, solidMat);
     scene.add(solid);
 
     // Lighting: a cool key from the upper left, accent fill from the right, so
@@ -881,7 +960,7 @@ export default function HeroObject({
       window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
       handleRef.current = null;
-      [...parts, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
+      [...parts, ...solidParts, markGeo, solidGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
         g.dispose(),
       );
       [solidMat, rim.material, cloud.material, dust.material, halo.material].forEach((m) =>
