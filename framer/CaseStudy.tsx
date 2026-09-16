@@ -52,7 +52,9 @@ export default function CaseStudy({
   // sheet, so what is laid out clear stays clear for the whole crossing.
   // Widths are a share of the frame and the rows are far enough apart that
   // even a 21:9 viewport, where a plate is at its tallest, leaves a gap.
-  const plates = copy.gallery.map((item, i) => ({
+  // Six: the conveyor shows three at a time, so six is two full turns of
+  // it — enough to read as a body of work without becoming a slideshow.
+  const plates = copy.gallery.slice(0, 6).map((item, i) => ({
     ...item,
     src: gallery[i],
     // Two to a row, four rows deep. The field is taller than the frame on
@@ -146,45 +148,64 @@ export default function CaseStudy({
         // last bar is gone before the white starts going anywhere.
         .to(q(".cs-white"), { opacity: 0, duration: 0.08, ease: "power2.inOut" }, 0.3);
 
-      // Every plate crosses the frame bottom-right to upper-left, each at its
-      // own rate, which is what makes them overlap on the way through.
-      //
-      // The crossing is confined to GALLERY_IN..GALLERY_OUT and lives on the
-      // same timeline as everything else, so the last plate has left the frame
-      // before the metrics chapter starts. It used to run the full scroll on a
-      // timeline of its own, which is why plates were still travelling across
-      // the headline and the numbers.
-      // One plate at a time, each arriving diagonally across from the one
-      // going. The sheet used to carry all eight past the frame together,
-      // which meant four or five were on screen at once and none of them
-      // was the subject.
-      const sheet = q(".cs-sheet");
-      const span = GALLERY_OUT - GALLERY_IN;
-      const each = span / plateEls.length;
-
-      tl.set(sheet, { opacity: 1 }, GALLERY_IN).fromTo(
-        sheet,
-        { xPercent: 4, yPercent: 6 },
-        { xPercent: -4, yPercent: -6, ease: "none", duration: span },
-        GALLERY_IN,
-      );
+      /*
+       * The conveyor.
+       *
+       * One card is the subject at any moment. It arrives from the bottom
+       * right, crosses to the centre, and carries on out of the top left.
+       * The next one starts its own crossing exactly when the one ahead
+       * reaches the middle, so the frame reads: half a card arriving in the
+       * bottom-right corner, the subject in the centre, half a card leaving
+       * through the top-left corner. Never two subjects at once.
+       *
+       * Each card gets one tween across the whole diagonal rather than an
+       * entrance and an exit stitched together, because a scrub shows the
+       * seam between two tweens as a hesitation in the middle of the travel
+       * — which is exactly where the eye is.
+       */
+      const TRAVEL = (GALLERY_OUT - GALLERY_IN) / (plateEls.length * 0.25 + 0.75);
+      // A quarter of its own travel between one card and the next: at that
+      // spacing the card behind is a quarter in (half out of frame at the
+      // bottom right) when the one ahead is at the centre.
+      const STEP = TRAVEL * 0.25;
 
       plateEls.forEach((plate, i) => {
-        const at = GALLERY_IN + i * each;
-        // Transform and opacity only, and no scale: a scale on a scrubbed
-        // timeline re-lays out nothing but does re-rasterise the plate at a
-        // new size on every frame of the wheel, which is what made the run
-        // feel stepped rather than continuous.
+        const at = GALLERY_IN + i * STEP;
+
+        // Far enough that the ends of the diagonal are off the frame
+        // entirely, so half of the travel is spent half-visible in a corner
+        // rather than sitting just inside the edge.
+        gsap.set(plate, { xPercent: -50, yPercent: -50, force3D: true });
+
         tl.fromTo(
           plate,
-          { opacity: 0, y: 70, force3D: true },
-          { opacity: 1, y: 0, duration: each * 0.55, ease: "power2.out", force3D: true },
+          { x: "78vw", y: "72vh", scale: 0.74, opacity: 0 },
+          {
+            x: "-78vw",
+            y: "-72vh",
+            scale: 0.74,
+            opacity: 0,
+            duration: TRAVEL,
+            ease: "none",
+            force3D: true,
+          },
           at,
-        ).to(
-          plate,
-          { opacity: 0, y: -60, duration: each * 0.5, ease: "power2.in", force3D: true },
-          at + each * 0.66,
         );
+
+        // Size and presence peak in the middle of that travel and fall away
+        // again, so the subject is the biggest and the brightest thing in
+        // the frame and the two corners are plainly on their way somewhere.
+        // Linear on purpose. On an eased rise the card in the bottom-right
+        // corner was already at nine tenths of full presence by the time it
+        // was a quarter of the way in, so two cards read as the subject at
+        // once. Straight lines put it at exactly half — half the presence,
+        // half out of the frame — which is what the corner is for.
+        tl.to(plate, { scale: 1, opacity: 1, duration: TRAVEL * 0.5, ease: "none" }, at)
+          .to(
+            plate,
+            { scale: 0.74, opacity: 0, duration: TRAVEL * 0.5, ease: "none" },
+            at + TRAVEL * 0.5,
+          );
       });
 
       // 3. the collage clears, and only then does the metrics chapter open —
@@ -234,8 +255,7 @@ export default function CaseStudy({
       gsap.set(q(".cs-white"), { opacity: 0 });
       slats.current?.setProgress(1);
       slatsOut.current?.setProgress(1);
-      gsap.set(q(".cs-sheet"), { opacity: 1 });
-      gsap.set(q(".cs-plate"), { opacity: 1, scale: 1, y: 0 });
+      gsap.set(q(".cs-plate"), { opacity: 1, scale: 1, x: 0, y: 0 });
     },
   );
 
@@ -454,27 +474,29 @@ export default function CaseStudy({
           style={{ position: "absolute", inset: 0, background: color.bone }}
         />
 
-        {/* ---- the collage, travelling bottom-right to upper-left ---- */}
+        {/* ---- the conveyor: bottom right, through the centre, out top left ---- */}
         <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-          {/* One sheet, moved as a single element. Translating each plate by
-              its own percentage moved them different distances, because a
-              percentage translate is a share of the element's own width and
-              the plates are different sizes — which is what put them back on
-              top of each other however carefully they were laid out. */}
-          <div className="cs-sheet" style={{ position: "absolute", inset: 0, opacity: 0 }}>
-            {plates.map((plate) => (
+          {/* Every card is laid out in the same place — the middle of the
+              frame — and the timeline is the only thing that says where it
+              is on its way through. Laying them out at different points and
+              then translating them is what used to put two of them on top of
+              each other: a percentage translate is a share of the element's
+              own width, so equal percentages moved unequal distances. */}
+          {plates.map((plate) => (
             <figure
               key={plate.caption}
               className="cs-plate"
               style={{
                 position: "absolute",
-                left: `${plate.x}%`,
-                top: `${plate.y}%`,
-                width: `${plate.w}%`,
+                top: "50%",
+                left: "50%",
+                width: "min(760px, 46vw)",
                 margin: 0,
+                transform: "translate(-50%, -50%)",
+                opacity: 0,
               }}
             >
-              <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
+              <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
                 <MediaTile src={plate.src} seed={plate.w} style={{ position: "absolute", inset: 0 }} />
                 <figcaption
                   style={{
@@ -490,9 +512,8 @@ export default function CaseStudy({
                 </figcaption>
                 <HoverBadge top={copy.hoverTop}>{copy.hoverMain}</HoverBadge>
               </div>
-              </figure>
-            ))}
-          </div>
+            </figure>
+          ))}
         </div>
 
         {/* ---- the line, uncovered by the slats ---- */}

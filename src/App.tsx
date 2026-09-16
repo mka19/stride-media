@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { initSmoothScroll } from "../components/shared/smoothScroll";
+import { ScrollTrigger } from "../components/shared/gsap";
 import Marquee from "../components/shared/Marquee";
+import Preloader from "../components/shared/Preloader";
 import { marquee } from "../components/shared/copy";
 import Nav from "../components/Nav/Nav";
 import Hero from "../components/Hero/Hero";
@@ -28,6 +30,9 @@ export default function App() {
 
   return (
     <>
+      {/* Holds the page still while it finishes measuring itself, then
+          refreshes every trigger against the settled layout. */}
+      <Preloader onDone={() => ScrollTrigger.refresh()} />
       <Nav />
       <Hero />
       <Problem />

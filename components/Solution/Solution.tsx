@@ -310,7 +310,12 @@ export default function Solution({
             height: "100%",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
+            // The header is out of the flow, centred on the screen, so the
+            // pillars are the only thing left in this column — and
+            // space-between with one child puts it at the top, which is how
+            // they ended up under the nav instead of on the floor of the
+            // frame where they belong.
+            justifyContent: "flex-end",
             // Symmetric, so "centred" means centred on the screen. The extra
             // nav's height on the top edge alone put the block 27px high.
             padding: `${layout.section} ${layout.pad}`,

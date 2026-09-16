@@ -104,6 +104,35 @@ body {
 }
 .stride-pulse { animation: stride-pulse 2.2s ease-in-out infinite; }
 
+/*
+ * The preloader's camera. Same shape as the Uiverse washing machine it is
+ * built from: the body rocks a fraction of a degree and the round thing
+ * inside it turns, fast then slow then fast, the way a lens racks focus
+ * rather than the way a motor runs.
+ */
+@keyframes stride-cam-spin {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(360deg); }
+  75%  { transform: rotate(750deg); }
+  100% { transform: rotate(1800deg); }
+}
+.stride-cam-lens { animation: stride-cam-spin 5s ease-in-out infinite; }
+
+@keyframes stride-cam-shake {
+  0%, 50%, 100%       { transform: rotate(0deg); }
+  65%, 80%, 88%, 96%  { transform: rotate(0.5deg); }
+  50.1%, 75%, 84%, 92%{ transform: rotate(-0.5deg); }
+}
+.stride-cam { animation: stride-cam-shake 5s ease-in-out infinite; }
+
+/* The record light breathes rather than blinks: a hard blink at this size
+   reads as a fault indicator. */
+@keyframes stride-cam-rec {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+.stride-cam-rec { animation: stride-cam-rec 1.6s ease-in-out infinite; }
+
 /* Continuous rotations stay linear so they never visibly speed up or slow. */
 @keyframes stride-spin { to { transform: rotate(360deg); } }
 .stride-spin { animation: stride-spin 20s linear infinite; }
