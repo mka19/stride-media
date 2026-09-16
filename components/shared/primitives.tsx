@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useId, useRef } from "react";
 import { color, ease, hexA, space, typeScale } from "./theme";
 import { injectStrideStyles } from "./styles";
 import SmearLabel from "./SmearLabel";
@@ -24,37 +24,74 @@ import SmearLabel from "./SmearLabel";
  * It is filled, not stroked: `tint` is the fill. The old mark was a stroked
  * circle and chevron, which is why the prop used to be called `stroke`.
  */
+/**
+ * The mark, flat.
+ *
+ * The same five paths the hero extrudes into 3D — four corner forms around a
+ * concave four-point star — so the logo in the bar and the object on the
+ * screen are one drawing rather than two that resemble each other. The
+ * viewBox is the artboard's own, untouched, because the shape is the client's
+ * and nothing here should be redrawing it.
+ *
+ * `metal` is the default and gives it the same polished silver the hero
+ * object has: a gradient running from a lit top-left to a dark lower right,
+ * a bright edge along the top, and a shadow under it. At 26px there is no
+ * room for real shading, and none is needed — a metal surface reads as metal
+ * from the direction of its falloff more than from any detail in it.
+ *
+ * `tint` paints it flat in one colour instead, for anywhere the gradient
+ * would be wrong.
+ */
 export function StrideMark({
   size = 40,
-  tint = color.accent,
+  tint,
   glowing = false,
   style,
 }: {
   size?: number;
+  /** A flat colour. Left unset, the mark is silver. */
   tint?: string;
   glowing?: boolean;
   style?: CSSProperties;
 }) {
+  const id = useId().replace(/:/g, "");
+  const fill = tint ?? `url(#${id}-metal)`;
+
   return (
     <svg
       width={size}
       height={size}
       viewBox="19 12.25 80 80"
-      fill={tint}
       aria-hidden="true"
       style={{
         display: "block",
+        overflow: "visible",
         filter: glowing
-          ? `drop-shadow(0 0 10px ${hexA(tint, 0.6)}) drop-shadow(0 0 28px ${hexA(tint, 0.35)})`
+          ? tint
+            ? `drop-shadow(0 0 10px ${hexA(tint, 0.6)})`
+            : // Silver does not glow; it catches light and casts a shadow.
+              `drop-shadow(0 1px 1px ${hexA("#000000", 0.55)}) drop-shadow(0 0 14px ${hexA(color.accent, 0.3)})`
           : undefined,
         ...style,
       }}
     >
-      <path d="M 28 44 L 28 32 L 36 24 L 49 24 L 41 32 L 38 32 L 35.5 34.5 L 35.5 37 Z" />
-      <path d="M 90 44 L 90 32 L 82 24 L 69 24 L 77 32 L 80 32 L 82.5 34.5 L 82.5 37 Z" />
-      <path d="M 28 60.5 L 28 72.5 L 36 80.5 L 49 80.5 L 41 72.5 L 38 72.5 L 35.5 70 L 35.5 67.5 Z" />
-      <path d="M 90 60.5 L 90 72.5 L 82 80.5 L 69 80.5 L 77 72.5 L 80 72.5 L 82.5 70 L 82.5 67.5 Z" />
-      <path d="M 59 37.25 C 59 48.5 62.75 52.25 74 52.25 C 62.75 52.25 59 56 59 67.25 C 59 56 55.25 52.25 44 52.25 C 55.25 52.25 59 48.5 59 37.25 Z" />
+      <defs>
+        <linearGradient id={`${id}-metal`} x1="0" y1="0" x2="0.65" y2="1">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="34%" stopColor="#E4E6EC" />
+          <stop offset="56%" stopColor="#9AA0AE" />
+          <stop offset="78%" stopColor="#C9CDD8" />
+          <stop offset="100%" stopColor="#6E7482" />
+        </linearGradient>
+      </defs>
+
+      <g fill={fill}>
+        <path d="M 28 44 L 28 32 L 36 24 L 49 24 L 41 32 L 38 32 L 35.5 34.5 L 35.5 37 Z" />
+        <path d="M 90 44 L 90 32 L 82 24 L 69 24 L 77 32 L 80 32 L 82.5 34.5 L 82.5 37 Z" />
+        <path d="M 28 60.5 L 28 72.5 L 36 80.5 L 49 80.5 L 41 72.5 L 38 72.5 L 35.5 70 L 35.5 67.5 Z" />
+        <path d="M 90 60.5 L 90 72.5 L 82 80.5 L 69 80.5 L 77 72.5 L 80 72.5 L 82.5 70 L 82.5 67.5 Z" />
+        <path d="M 59 37.25 C 59 48.5 62.75 52.25 74 52.25 C 62.75 52.25 59 56 59 67.25 C 59 56 55.25 52.25 44 52.25 C 55.25 52.25 59 48.5 59 37.25 Z" />
+      </g>
     </svg>
   );
 }

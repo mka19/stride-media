@@ -104,10 +104,18 @@ export default function Wordmark({
       h = canvas.clientHeight;
       if (!w || !h) return;
 
-      // Shrink the box to the type. The word is sized from the width, so
-      // whatever height it is given above that is dead space inside the
-      // canvas — and dead space inside a canvas reads as a gap under the
-      // mark that no amount of tightening the layout around it can remove.
+      /*
+       * Fit the box to the type, in both directions.
+       *
+       * The word is sized from the width, so any height above that is dead
+       * space inside the canvas — and dead space in a canvas reads as a gap
+       * under the mark that no tightening of the layout around it can remove.
+       *
+       * It has to be able to grow as well as shrink. It only shrank before,
+       * so when the box came in shorter than the width demanded the type was
+       * sized down to fit the height and sat centred with a gap at each end,
+       * which is the opposite of a wordmark that spans the page.
+       */
       if (!fitting) {
         const probe = document.createElement("canvas").getContext("2d");
         if (probe) {
@@ -115,7 +123,7 @@ export default function Wordmark({
           const unit = probe.measureText(text).width / 100 || 1;
           const byWidth = (w * 0.995) / unit;
           const capPx = Math.round(byWidth * 0.76);
-          if (capPx > 24 && Math.abs(capPx - h) > 2 && capPx < h) {
+          if (capPx > 24 && Math.abs(capPx - h) > 2) {
             fitting = true;
             canvas.style.height = `${capPx}px`;
             requestAnimationFrame(() => {

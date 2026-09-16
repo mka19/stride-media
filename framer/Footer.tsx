@@ -182,7 +182,12 @@ export default function Footer({
              the word always reaches both edges rather than sitting as a
              small mark in the middle of an empty band. */}
         <div className="ft-word">
-          <Wordmark text={copy.wordmark} height={stacked ? "21vw" : "min(12.6vw, 26vh)"} />
+          /* Width only. The height used to be capped at 26vh as well, and on a
+              short window that cap won — the type was sized down to fit the
+              height and sat centred with a gap at each end instead of
+              spanning the grid. The canvas takes whatever height the width
+              demands. */
+          <Wordmark text={copy.wordmark} height={stacked ? "21vw" : "12.6vw"} />
         </div>
 
         {/* ---- meta row ---- */}

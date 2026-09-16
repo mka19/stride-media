@@ -260,7 +260,8 @@ export default function Hero({
             count={heroCopy.proofCount}
             label={heroCopy.proofLabel}
             faces={clientFaces}
-            style={{ marginBottom: rhythm.headlineToBody }}
+            /* It labels the headline, so it takes the eyebrow gap. */
+            style={{ marginBottom: rhythm.eyebrowToHeadline }}
           />
           <h1
             style={{

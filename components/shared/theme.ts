@@ -79,9 +79,17 @@ export const typeScale = {
   /** Hero headline, Why Stride's stacked words, the marquee. */
   displayLg: {
     fontFamily: SANS,
-    fontSize: fluid(40, 96),
+    /*
+     * The floor is 30, not 40.
+     *
+     * The hero's second line is THAT GETS RECOGNIZED — twenty characters,
+     * which at 40px needs more width than a 390px phone has once the page
+     * padding is taken out, so it broke to a third line. At 30 it fits, and
+     * the same ratio between size and leading is kept.
+     */
+    fontSize: fluid(22, 96),
     fontWeight: 500,
-    lineHeight: fluid(42, 100),
+    lineHeight: fluid(24, 100),
     letterSpacing: "-1px",
   },
   /** Every section and sub-section headline, and the About statement. */
@@ -148,7 +156,7 @@ export const space = {
 
 /** The recurring relationships from the spec, so sections don't re-decide. */
 export const rhythm = {
-  eyebrowToHeadline: 12,
+  eyebrowToHeadline: 15,
   headlineToBody: 24,
   bodyToCta: space.xl, // 32
   betweenCards: space.lg, // 24
@@ -180,7 +188,7 @@ export const numberGradient = {
  * cached copy can be identified from the page itself rather than argued
  * about — a single HTML file served from one URL caches hard.
  */
-export const BUILD = "B97";
+export const BUILD = "B98";
 
 /** Micro-label above section headlines — the eyebrow token, nothing else. */
 export const microLabel = typeScale.eyebrow;

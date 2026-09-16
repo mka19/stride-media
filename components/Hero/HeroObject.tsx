@@ -103,13 +103,30 @@ function chromeEnvironment(): THREE.Scene {
       fragmentShader: /* glsl */ `
         varying float vH;
         void main() {
-          // Sky, a soft band at the horizon, then floor.
-          vec3 sky   = vec3(0.86, 0.88, 0.95);
-          vec3 band  = vec3(0.30, 0.31, 0.37);
-          vec3 floorC = vec3(0.07, 0.07, 0.10);
-          float t = smoothstep(-0.10, 0.22, vH);
-          vec3 c = mix(mix(floorC, band, smoothstep(-0.55, -0.05, vH)), sky, t);
-          gl_FragColor = vec4(c, 1.0);
+          /*
+           * A studio ceiling, not a gradient.
+           *
+           * A smooth sky-to-floor ramp gives a mirror nothing to reflect but
+           * a smooth ramp, which is why the mark came out looking like light
+           * grey paint. What makes chrome look like chrome is structure —
+           * the hard edge between a lit strip and the dark between them,
+           * sliding across the surface as the object turns. These are the
+           * strips, over a bright ceiling, a hard horizon and a dark floor.
+           */
+          vec3 ceiling = vec3(1.35, 1.38, 1.46);
+          vec3 gap     = vec3(0.24, 0.25, 0.32);
+          vec3 wall    = vec3(0.60, 0.62, 0.70);
+          vec3 floorC  = vec3(0.10, 0.10, 0.14);
+
+          // Four strips across the upper hemisphere, hard-edged.
+          float strip = step(0.55, fract(vH * 7.0));
+          vec3 above = mix(gap, ceiling, strip);
+
+          // Wall between the strips and the horizon, then the floor below it.
+          float toWall = smoothstep(0.42, 0.14, vH);
+          vec3 upper = mix(above, wall, toWall);
+          float toFloor = smoothstep(0.04, -0.12, vH);
+          gl_FragColor = vec4(mix(upper, floorC, toFloor), 1.0);
         }
       `,
     }),
@@ -210,7 +227,7 @@ export default function HeroObject({
      */
     const pmrem = new THREE.PMREMGenerator(renderer);
     const envScene = chromeEnvironment();
-    const envRT = pmrem.fromScene(envScene, 0.02);
+    const envRT = pmrem.fromScene(envScene, 0);
     scene.environment = envRT.texture;
     pmrem.dispose();
     envScene.traverse((o) => {
@@ -315,8 +332,8 @@ export default function HeroObject({
     const solidMat = new THREE.MeshStandardMaterial({
       color: 0xf2f3f5,
       metalness: 1,
-      roughness: 0.08,
-      envMapIntensity: 1.0,
+      roughness: 0.025,
+      envMapIntensity: 1.35,
       transparent: true,
       opacity: 1,
     });
@@ -336,10 +353,10 @@ export default function HeroObject({
      * what is behind and around the mark: the liquid field, the dust and the
      * page's own ground.
      */
-    const key = new THREE.DirectionalLight(0xffffff, 1.5);
+    const key = new THREE.DirectionalLight(0xffffff, 0.8);
     key.position.set(-3, 4, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xdfe6ff, 0.7);
+    const fill = new THREE.DirectionalLight(0xdfe6ff, 0.35);
     fill.position.set(4, -2, 2);
     scene.add(fill);
     const back = new THREE.PointLight(0xffffff, 5, 12);

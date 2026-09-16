@@ -346,14 +346,19 @@ export default function Problem({
               inset: 0,
               display: "flex",
               flexDirection: "column",
-              // Label at the top, statement in the middle of what is left,
-              // the two small blocks on the floor of the frame — rather than
-              // the three of them stacked together in the centre with the
-              // rest of the screen empty under them.
-              justifyContent: "space-between",
+              /*
+               * The label belongs to the statement, so it travels with it.
+               *
+               * It used to be pinned to the top of the frame by
+               * space-between, a third of a screen above the words it labels
+               * — which reads as two unrelated things rather than as a
+               * heading and its eyebrow. The pair sits together in the middle
+               * now and the two small blocks stay on the floor.
+               */
+              justifyContent: "center",
               alignItems: "center",
               textAlign: "center",
-              gap: space.xl,
+              gap: rhythm.eyebrowToHeadline,
               padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.hh}px`,
               color: color.textOnDark,
             }}
@@ -362,7 +367,6 @@ export default function Problem({
 
             <div
               style={{
-                flex: "1 1 auto",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
