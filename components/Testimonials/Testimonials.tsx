@@ -60,45 +60,74 @@ export default function Testimonials() {
         },
       });
 
+      /*
+       * The arrival is the one from vishakha-sharma21/animation-gsap: a card
+       * starts small and high, fanned out to the side it belongs to, and
+       * converges on its place as the scroll advances — scale and position
+       * resolving on a smoothstep rather than on a single tween, so the last
+       * part of the move is slower than the first without ever stopping.
+       *
+       * smoothstep is applied as the ease rather than by interpolating by
+       * hand on every update: same curve, but it stays on GSAP's own clock
+       * with the rest of the page.
+       */
+      const smoothStep = "power2.inOut";
+
       cards.forEach((card, i) => {
-        // On a phone the cards simply rise into place: a scatter from off
-        // screen reads as drift when the viewport is one column wide.
-        // Straight up, from a little below, at a depth that varies by column.
-        // Coming in from the sides meant eight cards crossing each other's
-        // columns on the way to their own.
-        const fromX = 0;
-        const fromY = stacked ? 40 : 70 + (i % 4) * 22;
+        const col = i % 4;
+        // Outer columns come from further out and lean more, so the group
+        // opens from the middle rather than sliding in as a block.
+        const lean = [-1, -0.42, 0.42, 1][col];
+        const fromX = stacked ? 0 : lean * 132;
+        const fromY = stacked ? 40 : -96;
+
         gsap.set(card, {
           opacity: 0,
+          xPercent: 0,
           x: fromX,
           y: fromY,
-          rotation: 0,
+          rotation: stacked ? 0 : lean * 6,
+          scale: stacked ? 0.94 : 0.42,
+          transformOrigin: "50% 50%",
           force3D: true,
         });
 
-        const at = 0.05 + i * (0.62 / cards.length);
+        const at = 0.04 + i * (0.52 / cards.length);
+        const span = 1.9 / cards.length;
+
+        // Opacity resolves in the first fifth of the card's own slice, so it
+        // is legible for most of the travel rather than arriving already
+        // there — the reference fades in over cardProgress < 0.2.
+        tl.to(card, { opacity: 1, duration: span * 0.2, ease: "none" }, at);
+
+        // Most of the way in: up to three quarters of its size, still leaning.
+        tl.to(
+          card,
+          { scale: stacked ? 1 : 0.78, y: fromY * 0.18, duration: span * 0.55, ease: smoothStep },
+          at,
+        );
+
+        // And the last of it: the lean, the offset and the last quarter of
+        // the scale all resolve together, which is what makes the card read
+        // as settling into a place rather than as stopping.
         tl.to(
           card,
           {
-            opacity: 1,
-            x: Number((card as HTMLElement).dataset.x ?? 0),
-            y: Number((card as HTMLElement).dataset.y ?? 0),
-            rotation: Number((card as HTMLElement).dataset.r ?? 0),
-            duration: 2.2 / cards.length,
-            // Not elastic. On a scrubbed timeline an overshoot oscillation
-            // is driven by the wheel rather than by a clock, so every notch
-            // of scroll re-enters the wobble and the whole grid reads as
-            // jerky. A flat deceleration is what stays smooth on a scrub.
-            ease: "power3.out",
+            x: 0,
+            y: 0,
+            rotation: 0,
+            scale: 1,
+            duration: span * 0.45,
+            ease: "power2.out",
             force3D: true,
           },
-          at,
+          at + span * 0.55,
         );
       });
     },
     [stacked],
     (root) =>
-      gsap.set(gsap.utils.selector(root)(".ts-card"), { opacity: 1, x: 0, y: 0, rotation: 0 }),
+      gsap.set(gsap.utils.selector(root)(".ts-card"), { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1 }),
   );
 
   useEffect(() => {
@@ -132,10 +161,29 @@ export default function Testimonials() {
         </span>
         <span style={{ ...typeScale.eyebrow, fontWeight: 500 }}>{t.name}</span>
       </div>
-      <p style={{ margin: 0, ...typeScale.bodyLg }}>“{t.quote}”</p>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space.s }}>
+      {/* Four lines of room whether the quote needs them or not, so every
+          card in the row puts its figure on the same line. */}
+      <p
+        style={{
+          margin: 0,
+          ...typeScale.bodyLg,
+          flex: "1 1 auto",
+          display: "-webkit-box",
+          WebkitBoxOrient: "vertical",
+          WebkitLineClamp: 4,
+          overflow: "hidden",
+        }}
+      >
+        “{t.quote}”
+      </p>
+      {/* The figure gets its own line rather than sharing one with the
+          sector: side by side, a long figure wrapped to three lines and the
+          card turned into a stack of purple. */}
+      <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
         <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
-        <span style={{ ...typeScale.h3, fontWeight: 500, ...numberGradient }}>{t.stat}</span>
+        <span style={{ ...typeScale.h3, fontWeight: 500, whiteSpace: "nowrap", ...numberGradient }}>
+          {t.stat}
+        </span>
       </div>
     </>
   );
@@ -146,10 +194,9 @@ export default function Testimonials() {
     gap: space.md,
     padding: space.lg,
     background: color.bone,
-    border: `1px solid ${color.hairlineOnLight}`,
     borderRadius: 4,
     boxShadow: `0 24px 60px ${hexA("#0A0A0A", 0.14)}`,
-    transition: `box-shadow 420ms ${ease.out}, border-color 420ms ${ease.out}`,
+    transition: `box-shadow ${ease.hoverMs}ms ${ease.hover}`,
   };
 
   return (
@@ -184,6 +231,10 @@ export default function Testimonials() {
             // hole in it. Rows stretch, so every card in a row is the same
             // height and the type sits on one baseline.
             gridTemplateColumns: stacked ? "1fr" : "repeat(4, 1fr)",
+            // Every row the same height, not just every card within a row:
+            // stretch alone gave the two rows 240 and 214, which read as two
+            // different card sizes rather than as one set.
+            gridAutoRows: stacked ? "auto" : "1fr",
             gap: layout.gutter,
             alignItems: "stretch",
           }}
@@ -200,11 +251,9 @@ export default function Testimonials() {
                 style={{ ...cardStyle, height: "100%" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
-                  e.currentTarget.style.borderColor = hexA(color.accent, 0.4);
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = cardStyle.boxShadow;
-                  e.currentTarget.style.borderColor = color.hairlineOnLight;
                 }}
               >
                 {card(t)}

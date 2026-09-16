@@ -18,22 +18,21 @@ export type MosaicTile = { src?: string; caption?: string };
 
 
 /**
- * How much a tile swells or gives way, as a scale factor.
+ * Weights: the hovered track takes the space and its neighbours give it up.
  *
- * This used to be a flex-grow weight, and animating flex-grow is what made
- * the hero stutter: every frame of the transition re-ran layout for all
- * forty-eight cells, and layout is the one thing that cannot be handed to the
- * GPU. The grid is fixed now and the push is a transform, so the same read —
- * one tile coming forward, its neighbours easing back — costs a composite
- * instead of a full layout pass.
+ * This is a real push — the tile grows and the ones beside it compress — so
+ * it has to be flex-grow rather than a transform: a scaled tile overlaps its
+ * neighbours instead of displacing them, which is a different effect. The
+ * cost is that every frame of the transition re-runs layout for all
+ * forty-eight cells, so the transition is kept short and each cell is a
+ * containment boundary, which keeps that layout work inside the tile.
  */
-function swell(dCol: number, dRow: number, hovered: boolean) {
-  if (!hovered) return 1;
-  const d = Math.max(dCol, dRow);
-  if (d === 0) return 1.22;
-  if (d === 1) return 0.94;
-  if (d === 2) return 0.98;
-  return 1;
+function weight(index: number, hovered: number | null) {
+  if (hovered === null) return 1;
+  const d = Math.abs(index - hovered);
+  if (d === 0) return 2.05;
+  if (d === 1) return 0.72;
+  return 0.86;
 }
 
 export default function VideoMosaic({
@@ -65,10 +64,10 @@ export default function VideoMosaic({
   const pointer =
     typeof window !== "undefined" &&
     window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
-  /* Transform and opacity only, and a single flat deceleration: a curve that
-     overshoots and comes back doubles the number of composited frames for the
-     same read. */
-  const transition = `transform 620ms ${ease.out}`;
+  /* One flat deceleration, and shorter than it was: a curve that overshoots
+     and comes back doubles the number of frames the grid spends being
+     re-measured, and so does a long one. */
+  const transition = `flex-grow 420ms ${ease.out}`;
 
   return (
     <div
@@ -91,9 +90,10 @@ export default function VideoMosaic({
           style={{
             display: "flex",
             gap,
-            flexGrow: 1,
+            flexGrow: weight(row, hover?.row ?? null),
             flexBasis: 0,
             minHeight: 0,
+            transition,
           }}
         >
           {Array.from({ length: columns }, (_, col) => {
@@ -105,15 +105,13 @@ export default function VideoMosaic({
                 onMouseEnter={() => interactive && pointer && setHover({ col, row })}
                 style={{
                   position: "relative",
-                  flexGrow: 1,
+                  flexGrow: weight(col, hover?.col ?? null),
                   flexBasis: 0,
                   minWidth: 0,
-                  zIndex: isHovered ? 2 : 1,
-                  transform: `scale(${swell(
-                    hover ? Math.abs(col - hover.col) : 99,
-                    hover ? Math.abs(row - hover.row) : 99,
-                    hover !== null,
-                  )})`,
+                  // A containment boundary per cell: the tile's own layout
+                  // and paint cannot escape it, so growing one does not
+                  // invalidate the inside of the other forty-seven.
+                  contain: "layout paint",
                   transition,
                 }}
               >

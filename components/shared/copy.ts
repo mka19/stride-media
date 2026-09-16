@@ -258,13 +258,13 @@ export const testimonials = {
   headline: "What entrepreneurs say after working with Stride",
   cards: [
     { quote: "Before Stride, we were posting randomly with no real strategy. Now every video has a purpose, and it shows in the results.", name: "[Client Name]", handle: "Real estate", stat: "2.3× engagement", initials: "01" },
-    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "[Client Name]", handle: "Real estate", stat: "41× reach in 90 days", initials: "02" },
-    { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "[Client Name]", handle: "Coaching", stat: "11 weeks, zero missed", initials: "03" },
-    { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "[Client Name]", handle: "Consulting", stat: "Calendar booked out", initials: "04" },
-    { quote: "The scripts are the thing. They write like they want it watched.", name: "[Client Name]", handle: "Founder", stat: "18K saves, one video", initials: "05" },
-    { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "[Client Name]", handle: "Real estate", stat: "9 listings sourced", initials: "06" },
-    { quote: "We stopped guessing what to post. There is a plan, and the plan is working.", name: "[Client Name]", handle: "Fitness", stat: "4× saves per post", initials: "07" },
-    { quote: "The first batch landed in five days. Two of them are still my best performing videos.", name: "[Client Name]", handle: "Property", stat: "5 days to first batch", initials: "08" },
+    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "[Client Name]", handle: "Real estate", stat: "41× reach", initials: "02" },
+    { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "[Client Name]", handle: "Coaching", stat: "11 weeks straight", initials: "03" },
+    { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "[Client Name]", handle: "Consulting", stat: "Calendar full", initials: "04" },
+    { quote: "The scripts are the thing. They write like they want it watched.", name: "[Client Name]", handle: "Founder", stat: "18K saves", initials: "05" },
+    { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "[Client Name]", handle: "Real estate", stat: "9 listings", initials: "06" },
+    { quote: "We stopped guessing what to post. There is a plan, and the plan is working.", name: "[Client Name]", handle: "Fitness", stat: "4× saves", initials: "07" },
+    { quote: "The first batch landed in five days. Two of them are still my best performing videos.", name: "[Client Name]", handle: "Property", stat: "5-day first batch", initials: "08" },
   ],
 } as const;
 

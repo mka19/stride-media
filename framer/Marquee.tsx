@@ -51,14 +51,24 @@ export default function Marquee({
       const span = el.scrollWidth / 2 || 1;
 
       if (!dragging) {
-        offset += speed * dt - throwV * direction * dt;
+        offset += (speed * dt - throwV * dt) * direction;
         throwV *= 0.94;
         if (Math.abs(throwV) < 1) throwV = 0;
       }
       // Wrap in both directions: a drag can push the offset negative, and a
       // bare modulo leaves that as a negative translate and a visible gap.
       offset = ((offset % span) + span) % span;
-      el.style.transform = `translate3d(${direction * offset}px, 0, 0)`;
+      /*
+       * Always translated backwards, whichever way the strip travels.
+       *
+       * The direction used to be applied to the transform, so a
+       * right-travelling strip was pushed from 0 to +span — and with only two
+       * copies laid out there is nothing to the left of the first one, so the
+       * band emptied from the left as the offset grew. Direction belongs on
+       * which way the offset advances; the transform stays in [-span, 0],
+       * where the second copy always covers what the first one leaves.
+       */
+      el.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
     raf = requestAnimationFrame(frame);
 
@@ -73,11 +83,11 @@ export default function Marquee({
       if (!dragging) return;
       const dx = e.clientX - lastX;
       lastX = e.clientX;
-      offset -= dx * direction;
-      throwV = dx * 12;
+      offset -= dx;
+      throwV = dx * 12 * direction;
       const span = el.scrollWidth / 2 || 1;
       offset = ((offset % span) + span) % span;
-      el.style.transform = `translate3d(${direction * offset}px, 0, 0)`;
+      el.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
     const onUp = (e: PointerEvent) => {
       dragging = false;
