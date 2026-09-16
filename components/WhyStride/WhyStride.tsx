@@ -125,15 +125,31 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         const dx = box.left + box.width / 2 - cx;
         const dy = box.top + box.height / 2 - cy;
         const len = Math.hypot(dx, dy) || 1;
-        // A floor on the radius so a letter sitting near the centre still
-        // gets thrown somewhere rather than barely moving.
-        const push = 0.72 + 0.4 * Math.min(1, len / (field.width * 0.34));
+        /*
+         * Direction: where the letter sits, blended with a fan.
+         *
+         * Position alone was not enough. The words are stacked and narrow, so
+         * nearly every letter's vector from the block's centre pointed up or
+         * down — which is why the field filled a column and left the sides of
+         * the screen empty instead of exploding into it. Mixing in the golden
+         * angle, stepped once per letter, guarantees the twenty-five of them
+         * are spread right round the circle while the positional half keeps
+         * the whole thing still reading as opening out from the middle.
+         */
+        const fan = i * 2.399963;
+        const bx = (dx / len) * 0.5 + Math.cos(fan) * 0.5;
+        const by = (dy / len) * 0.5 + Math.sin(fan) * 0.5;
+        const blen = Math.hypot(bx, by) || 1;
+
+        // Every letter clears the frame: the floor is what stops the ones
+        // that start near the middle from stalling just outside the block.
+        const push = 0.95 + 0.35 * Math.min(1, len / (field.width * 0.34));
 
         tl.to(
           letter,
           {
-            x: (dx / len) * reach * push,
-            y: (dy / len) * lift * push,
+            x: (bx / blen) * reach * push,
+            y: (by / blen) * lift * push,
             rotation: (dx < 0 ? -1 : 1) * (55 + (i % 7) * 34),
             // Varied, so the field has depth: some letters come at you and
             // some fall away, as in the reference. A single scale read as one
@@ -232,8 +248,17 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         // The move takes most of the step and the rest is a rest: a card
         // stands in its station long enough to be read before it is carried
         // on. The hold is what makes it a ticker rather than a conveyor.
-        const MOVE = STEP * 0.66;
-        const leg = { duration: MOVE, ease: "power2.inOut", force3D: true } as const;
+        /*
+         * Most of the step is travel.
+         *
+         * At two thirds the cards spent a third of every step standing dead
+         * still, and on a scrub that reads as stop-start rather than as a
+         * ticker — the pause is long enough to register as the animation
+         * having jammed. A longer move on a gentler curve keeps them going
+         * almost continuously while still easing into each station.
+         */
+        const MOVE = STEP * 0.88;
+        const leg = { duration: MOVE, ease: "power1.inOut", force3D: true } as const;
 
         gsap.set(card, { x: () => pitch() * 2, opacity: 0, force3D: true });
 

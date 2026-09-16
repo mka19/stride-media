@@ -12,7 +12,8 @@
 
 export const brand = {
   name: "Stride Media",
-  mark: "STRIDE",
+  /* The bar carries the full name, not a shortening of it. */
+  mark: "STRIDE MEDIA",
   tagline: "AI Creators. Real Recognition.",
   phone: "+1 (000) 000-0000", // PLACEHOLDER
   phoneLabel: "Call us 24/7",

@@ -12,14 +12,26 @@ import SmearLabel from "./SmearLabel";
  * Works transition flash, the Case Study logo card and the footer anchor.
  * Pure SVG so it can glow, rotate and scale without a raster asset.
  */
+/**
+ * The mark, flat.
+ *
+ * The same five paths the hero extrudes into 3D — four corner forms around a
+ * concave four-point star — so the logo in the bar and the object on the
+ * screen are one drawing rather than two that resemble each other. The
+ * viewBox is the artboard's own, untouched, because the shape is the client's
+ * and nothing here should be redrawing it.
+ *
+ * It is filled, not stroked: `tint` is the fill. The old mark was a stroked
+ * circle and chevron, which is why the prop used to be called `stroke`.
+ */
 export function StrideMark({
   size = 40,
-  stroke = color.accent,
+  tint = color.accent,
   glowing = false,
   style,
 }: {
   size?: number;
-  stroke?: string;
+  tint?: string;
   glowing?: boolean;
   style?: CSSProperties;
 }) {
@@ -27,26 +39,22 @@ export function StrideMark({
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
-      fill="none"
+      viewBox="19 12.25 80 80"
+      fill={tint}
       aria-hidden="true"
       style={{
+        display: "block",
         filter: glowing
-          ? `drop-shadow(0 0 12px ${hexA(stroke, 0.7)}) drop-shadow(0 0 40px ${hexA(stroke, 0.4)})`
+          ? `drop-shadow(0 0 10px ${hexA(tint, 0.6)}) drop-shadow(0 0 28px ${hexA(tint, 0.35)})`
           : undefined,
         ...style,
       }}
     >
-      <circle cx="50" cy="50" r="46" stroke={stroke} strokeWidth="1.5" opacity="0.5" />
-      <path d="M50 4 L50 96" stroke={stroke} strokeWidth="1" opacity="0.25" />
-      <path
-        d="M26 68 L50 18 L74 68"
-        stroke={stroke}
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M34 82 L66 82" stroke={stroke} strokeWidth="3" strokeLinecap="round" />
+      <path d="M 28 44 L 28 32 L 36 24 L 49 24 L 41 32 L 38 32 L 35.5 34.5 L 35.5 37 Z" />
+      <path d="M 90 44 L 90 32 L 82 24 L 69 24 L 77 32 L 80 32 L 82.5 34.5 L 82.5 37 Z" />
+      <path d="M 28 60.5 L 28 72.5 L 36 80.5 L 49 80.5 L 41 72.5 L 38 72.5 L 35.5 70 L 35.5 67.5 Z" />
+      <path d="M 90 60.5 L 90 72.5 L 82 80.5 L 69 80.5 L 77 72.5 L 80 72.5 L 82.5 70 L 82.5 67.5 Z" />
+      <path d="M 59 37.25 C 59 48.5 62.75 52.25 74 52.25 C 62.75 52.25 59 56 59 67.25 C 59 56 55.25 52.25 44 52.25 C 55.25 52.25 59 48.5 59 37.25 Z" />
     </svg>
   );
 }

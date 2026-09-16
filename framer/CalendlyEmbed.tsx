@@ -186,7 +186,38 @@ export default function CalendlyEmbed({
     ...style,
   };
 
-  if (placeholder || failed) {
+  /*
+   * If the script could not load, fall back to the frame it would have made.
+   *
+   * Calendly's widget.js does one thing: it puts an iframe pointing at the
+   * scheduling URL inside the element you give it. So where a page forbids
+   * third-party scripts — a sandboxed preview, a strict content policy — the
+   * booking flow is still perfectly reachable by making that iframe directly.
+   * The visitor gets the same calendar, the same times and the same form; the
+   * only thing lost is the widget's event callbacks, which nothing here uses.
+   *
+   * This matters more than being purist about the official embed: the panel
+   * that used to appear instead said "booking is offline", which is a dead
+   * end on the one section of the site whose entire job is to take a booking.
+   */
+  if (failed && !placeholder) {
+    return (
+      <>
+        <style>{`
+          .stride-calendly { min-height: ${minHeightMobile}px; }
+          @media (min-width: 769px) { .stride-calendly { min-height: ${minHeight}px; } }
+        `}</style>
+        <iframe
+          className="stride-calendly"
+          title="Booking calendar"
+          src={themed}
+          style={{ ...frame, border: "none", display: "block" }}
+        />
+      </>
+    );
+  }
+
+  if (placeholder) {
     return (
       <div
         style={{
@@ -202,13 +233,10 @@ export default function CalendlyEmbed({
           border: `1px dashed ${color.hairlineOnDark}`,
         }}
       >
-        <span style={{ ...typeScale.h3, color: color.textOnDark }}>
-          {failed ? "Booking is offline" : "Booking opens here"}
-        </span>
+        <span style={{ ...typeScale.h3, color: color.textOnDark }}>Booking opens here</span>
         <span style={{ ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "34ch" }}>
-          {failed
-            ? "The scheduler could not be reached. Email us and we will send times."
-            : "Paste the Calendly link into CALENDLY_URL in CalendlyEmbed.tsx and the booking flow appears here."}
+          Paste the Calendly link into CALENDLY_URL in CalendlyEmbed.tsx and the booking flow
+          appears here.
         </span>
       </div>
     );

@@ -152,7 +152,7 @@ export default function Nav({
           color: "inherit",
         }}
       >
-        <StrideMark size={24} glowing />
+        <StrideMark size={26} glowing />
         <span style={{ ...typeScale.eyebrow, fontWeight: 500 }}>
           {brand.mark}
         </span>
