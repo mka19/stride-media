@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useState } from "react";
-import { gsap, useGsapContext, SCRUB } from "./gsap";
+import { gsap, useGsapContext, SCRUB, reveal } from "./gsap";
 import { useInView } from "./useInView";
 import { useStacked } from "./responsive";
 import { solution as copy } from "./copy";
@@ -108,8 +108,11 @@ export default function Solution({
             onRefresh: placeFrame,
           },
         })
-        .to(q(".sol-stage"), { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, 0)
-        .to(q(".sol-head"), { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.3);
+        // The plate is the primary movement and the heading follows it, so
+        // the plate gets both the longer duration and the head start. Same
+        // curve on both: one vocabulary, different rank.
+        .to(q(".sol-stage"), { opacity: 1, scale: 1, duration: 0.7, ease: reveal.ease }, 0)
+        .to(q(".sol-head"), { opacity: 1, y: 0, duration: 0.4, ease: reveal.ease }, 0.3);
 
       // Everything from here happens while the frame is pinned.
       const tl = gsap.timeline({
@@ -134,7 +137,12 @@ export default function Solution({
       gsap.set(q(".sol-intro-group"), { transformOrigin: "50% 50%" });
       tl.to(
         q(".sol-intro-group"),
-        { scale: 0.62, opacity: 0, duration: 0.3, ease: "power2.inOut" },
+        /* 0.84, not 0.62. The recede has to be legible as the plate taking
+           over from the copy, and at 0.62 you watched the words shrink —
+           the movement announced itself instead of being felt. Nothing is
+           lost in the read, because the opacity is doing most of the work
+           and the plate growing behind it does the rest. */
+        { scale: 0.84, opacity: 0, duration: 0.3, ease: reveal.easeBoth },
         0.04,
       )
         .to(

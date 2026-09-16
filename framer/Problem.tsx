@@ -1,6 +1,6 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef } from "react";
-import { gsap, useGsapContext, SCRUB } from "./gsap";
+import { gsap, useGsapContext, SCRUB, reveal } from "./gsap";
 import { registerSurface, type SurfaceHandle } from "./surface";
 import { problem as copy } from "./copy";
 import { color, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "./theme";
@@ -61,7 +61,21 @@ export default function Problem({
       // this is the type's own colour, which is what the reference does.
       gsap.set(q(".pb-light"), { opacity: 0 });
       gsap.set(q(".pb-word"), { opacity: 0.16 });
-      gsap.set(q(".pb-tile"), { opacity: 0.16, scale: 0.72, filter: "blur(7px)" });
+      /*
+       * No blur, and a much smaller scale.
+       *
+       * Three properties were animating on every tile at once — opacity,
+       * scale and a 7px blur — and the blur was the worst of them twice
+       * over. It forces a full repaint of the tile on every scrubbed frame
+       * rather than riding the compositor like transform and opacity do, and
+       * a scroll-driven blur is the single most distracting effect on a
+       * page: the eye cannot help tracking something coming into focus.
+       *
+       * 0.94 rather than 0.72 for the same reason the reveal travel came
+       * down: at 0.72 you watch the tile grow, at 0.94 you register that it
+       * arrived. The movement should be felt, not announced.
+       */
+      gsap.set(q(".pb-tile"), { opacity: 0.16, scale: 0.94 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -84,6 +98,21 @@ export default function Problem({
       //
       // Words and objects resolve in the order they are read, spread over the
       // whole dark chapter so the pace is the reader's.
+/*
+       * The words lead; the objects follow them.
+       *
+       * These used to start a hundredth apart and run over the same 0.3
+       * slice, so the whole chapter was two staggered groups resolving
+       * simultaneously — the reader's eye had a sentence assembling on one
+       * side and six tiles assembling on the other, with nothing to say
+       * which was the point. Reading is the primary act here, so the
+       * sentence gets the chapter's opening to itself and the objects
+       * settle in underneath it once it is most of the way there.
+       *
+       * The tiles' own stagger is shortened too. They are supporting
+       * movement: they should register as having appeared, not perform an
+       * entrance of their own alongside the one already running.
+       */
       tl.to(
         q(".pb-word"),
         { opacity: 1, duration: 0.06, ease: "none", stagger: { amount: 0.3 } },
@@ -93,12 +122,11 @@ export default function Problem({
         {
           opacity: 1,
           scale: 1,
-          filter: "blur(0px)",
-          duration: 0.04,
-          ease: "power2.out",
-          stagger: { amount: 0.3 },
+          duration: 0.05,
+          ease: reveal.ease,
+          stagger: { amount: 0.18 },
         },
-        0.03,
+        0.2,
       );
 
       tl
@@ -115,7 +143,7 @@ export default function Problem({
         // the statement leaves first, the opaque light layer rises over the
         // footage, and only then does the dark layer drop out — there is no
         // frame where two grounds are visible at once.
-        .to(q(".pb-statement"), { opacity: 0, y: -24, duration: 0.06, ease: "power2.in" }, 0.4)
+        .to(q(".pb-statement"), { opacity: 0, y: -16, duration: 0.06, ease: reveal.easeIn }, 0.4)
         .to(q(".pb-light"), { opacity: 1, duration: 0.09, ease: "power2.inOut" }, 0.43)
         .set(q(".pb-dark"), { opacity: 0 }, 0.54);
 
@@ -149,13 +177,17 @@ export default function Problem({
         }
         tl.fromTo(
           text,
-          { opacity: 0, y: 26 },
-          { opacity: 1, y: 0, duration: span * 0.22, ease: "power3.out" },
+          // 16px, matching the shared reveal travel. This was 26 — the one
+          // place on the page where body copy travelled further than the
+          // headings did.
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: span * 0.22, ease: reveal.ease },
           at + span * 0.18,
         );
 
         // 3. the text goes, and the plate grows back out to cover
-        tl.to(text, { opacity: 0, y: -22, duration: span * 0.16, ease: "power2.in" }, at + span * 0.66);
+        // Leaving is the exact inverse of arriving, at the same distance.
+        tl.to(text, { opacity: 0, y: -16, duration: span * 0.16, ease: reveal.easeIn }, at + span * 0.66);
         if (media) {
           tl.to(
             media,
@@ -173,7 +205,7 @@ export default function Problem({
     (root) => {
       const q = gsap.utils.selector(root);
       gsap.set(q(".pb-word"), { opacity: 1 });
-      gsap.set(q(".pb-tile"), { opacity: 1, scale: 1, filter: "none" });
+      gsap.set(q(".pb-tile"), { opacity: 1, scale: 1 });
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
       gsap.set(q(".pb-card"), { opacity: 0 });

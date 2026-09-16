@@ -20,7 +20,7 @@ export default function SmearLabel({
   children,
   reach = 58,
   pull = 0.42,
-  blur = 2.6,
+  blur = 1.6,
   style,
 }: {
   children: string;
@@ -28,7 +28,9 @@ export default function SmearLabel({
   reach?: number;
   /** How far a letter travels toward the cursor, as a share of the distance. */
   pull?: number;
-  /** Peak blur on the letter directly under the cursor. */
+  /** Peak blur on the letter directly under the cursor. Down from 2.6:
+      blurred type is the one effect the eye cannot stop tracking, and on a
+      label it only has to suggest the drag, not perform it. */
   blur?: number;
   style?: CSSProperties;
 }) {
@@ -46,15 +48,38 @@ export default function SmearLabel({
     let raf = 0;
     const state = chars.map(() => ({ x: 0, b: 0 }));
 
+    /*
+     * The letters' resting positions, measured once rather than every frame.
+     *
+     * This loop used to call getBoundingClientRect on every character on
+     * every animation frame. That is a forced synchronous layout per letter
+     * per frame — on a nav bar composited over a scrolling page, the most
+     * expensive possible way to ask a question whose answer does not change.
+     *
+     * It was also wrong. getBoundingClientRect reports the rect *after* the
+     * transform, so each letter's measured centre included the smear already
+     * applied to it, and that fed back into the distance driving the smear.
+     * A letter pulled toward the cursor measured as closer to the cursor,
+     * so it pulled harder — the falloff was never the clean squared curve
+     * the code below describes.
+     *
+     * offsetLeft is the untransformed position, which is the one actually
+     * wanted, and it only changes when the layout does.
+     */
+    let centres: number[] = [];
+    const measure = () => {
+      centres = chars.map((ch) => ch.offsetLeft + ch.offsetWidth / 2);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(root);
+
     const frame = () => {
       raf = requestAnimationFrame(frame);
-      const box = root.getBoundingClientRect();
       let moved = false;
 
       chars.forEach((ch, i) => {
-        const r = ch.getBoundingClientRect();
-        const centre = r.left + r.width / 2 - box.left;
-        const d = px - centre;
+        const d = px - centres[i];
         const near = px < -1000 ? 0 : Math.max(0, 1 - Math.abs(d) / reach);
         // Squared falloff: the letter under the cursor takes nearly all of
         // the movement and its neighbours only lean, which is what makes it
@@ -98,6 +123,7 @@ export default function SmearLabel({
 
     return () => {
       cancelAnimationFrame(raf);
+      ro.disconnect();
       host.removeEventListener("pointermove", onMove);
       host.removeEventListener("pointerleave", onLeave);
     };
