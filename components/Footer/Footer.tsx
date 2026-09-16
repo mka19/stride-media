@@ -181,11 +181,11 @@ export default function Footer({
              the word always reaches both edges rather than sitting as a
              small mark in the middle of an empty band. */}
         <div className="ft-word">
-          /* Width only. The height used to be capped at 26vh as well, and on a
-              short window that cap won — the type was sized down to fit the
+          {/* Width only. The height used to be capped at 26vh as well, and on
+              a short window that cap won — the type was sized down to fit the
               height and sat centred with a gap at each end instead of
               spanning the grid. The canvas takes whatever height the width
-              demands. */
+              demands. */}
           <Wordmark text={copy.wordmark} height={stacked ? "21vw" : "12.6vw"} />
         </div>
 
@@ -203,9 +203,13 @@ export default function Footer({
             color: color.textOnDarkMuted,
           }}
         >
-          <span>
-            @{brand.url.replace(/\..*$/, "")} — {copy.rights}{" "}
-            <span style={{ color: color.accentOnDark }}>{BUILD}</span>
+          {/* The build tag is carried as an attribute rather than as text.
+              It exists so a stale cached copy can be identified from the page
+              itself, which is worth keeping — but a visitor reading "B99"
+              next to the copyright line has no idea what it is, and it is not
+              theirs to read. Inspect the footer, or run scripts/audit.mjs. */}
+          <span data-build={BUILD}>
+            @{brand.url.replace(/\..*$/, "")} — {copy.rights}
           </span>
           <span>
             {copy.basedLabel} {copy.basedIn}

@@ -156,7 +156,7 @@ export default function Solution({
         .to(q(".sol-cue"), { opacity: 1, y: 0, duration: 0.07 }, 0.34)
 
         // 3. The pillars settle over the footage, which dims to carry them.
-        .to(q(".sol-cue"), { opacity: 0, duration: 0.05 }, 0.5)
+        .to(q(".sol-cue"), { opacity: 0, duration: 0.09 }, 0.48)
         .to(q(".sol-scrim"), { opacity: 1, duration: 0.09 }, 0.5)
         .to(q(".sol-pillar"), { opacity: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.55);
     },

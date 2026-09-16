@@ -302,6 +302,19 @@ export function Grain({ opacity = 0.16, blend = "overlay" as const }) {
  * derived from `seed`, so every tile in a mosaic looks different but the set
  * still reads as one palette. Swap `src` in and nothing else changes.
  */
+/**
+ * Which element a source wants.
+ *
+ * Every slot on this site was a video, so a still handed to one rendered an
+ * empty <video> — a black rectangle with no error. Judging it by extension is
+ * crude but it is the only thing available without a network request, and it
+ * covers what anyone actually drops in. A source with no extension, or a
+ * query string on the end, falls through to video, which is the common case.
+ */
+function isImage(src: string) {
+  return /\.(jpe?g|png|webp|avif|gif|svg)(\?|#|$)/i.test(src);
+}
+
 export function MediaTile({
   src,
   poster,
@@ -361,7 +374,15 @@ export function MediaTile({
         ...style,
       }}
     >
-      {src ? (
+      {src && isImage(src) ? (
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+      ) : src ? (
         <video
           ref={videoRef}
           src={src}

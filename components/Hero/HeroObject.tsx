@@ -113,13 +113,22 @@ function chromeEnvironment(): THREE.Scene {
            * sliding across the surface as the object turns. These are the
            * strips, over a bright ceiling, a hard horizon and a dark floor.
            */
-          vec3 ceiling = vec3(1.35, 1.38, 1.46);
-          vec3 gap     = vec3(0.24, 0.25, 0.32);
-          vec3 wall    = vec3(0.60, 0.62, 0.70);
+          vec3 ceiling = vec3(2.10, 2.14, 2.25);
+          vec3 gap     = vec3(0.10, 0.11, 0.15);
+          vec3 wall    = vec3(0.50, 0.52, 0.62);
           vec3 floorC  = vec3(0.10, 0.10, 0.14);
 
-          // Four strips across the upper hemisphere, hard-edged.
-          float strip = step(0.55, fract(vH * 7.0));
+          /*
+           * Many strips, not a few.
+           *
+           * The mark is made of large flat faces, and a flat face reflects
+           * one small patch of the room — so with four wide strips each face
+           * came back a single flat tone and the metal read as a colour fill.
+           * At this frequency even a slight turn sweeps several strips across
+           * one face, which is what puts the moving light and shade into the
+           * surface that says polished rather than painted.
+           */
+          float strip = step(0.5, fract(vH * 19.0));
           vec3 above = mix(gap, ceiling, strip);
 
           // Wall between the strips and the horizon, then the floor below it.
@@ -267,8 +276,12 @@ export default function HeroObject({
     const extrude: THREE.ExtrudeGeometryOptions = {
       depth: 0.42,
       bevelEnabled: true,
-      bevelThickness: 0.07,
-      bevelSize: 0.06,
+      /* A wider chamfer. Flat faces reflect one patch of the room and come
+         back uniform however good the environment is; the bevel is the only
+         curved metal on the mark, so it is where the light actually travels.
+         Widening it is what turns a flat panel into a machined edge. */
+      bevelThickness: 0.12,
+      bevelSize: 0.11,
       bevelSegments: Math.max(2, Math.round(6 * detail)),
       /*
        * Halved from 24. The only curves in the mark are the star's four
@@ -332,7 +345,7 @@ export default function HeroObject({
     const solidMat = new THREE.MeshStandardMaterial({
       color: 0xf2f3f5,
       metalness: 1,
-      roughness: 0.025,
+      roughness: 0.015,
       envMapIntensity: 1.35,
       transparent: true,
       opacity: 1,

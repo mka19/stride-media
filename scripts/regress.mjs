@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 import { createServer } from 'http';
 import { readFileSync, existsSync } from 'fs';
-const root = new URL('../stride-media/dist', import.meta.url).pathname;
+const root = new URL('../dist', import.meta.url).pathname;
 const srv=createServer((q,r)=>{let p=root+(q.url.split('?')[0]);if(!existsSync(p)||p.endsWith('/'))p=root+'/index.html';const e=p.split('.').pop();
  r.setHeader('content-type', e==='mp3'?'audio/mpeg':e==='js'?'text/javascript':e==='css'?'text/css':'text/html'); r.end(readFileSync(p));}).listen(4550);
 const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});

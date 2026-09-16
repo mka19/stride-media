@@ -197,7 +197,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
 
       // The label has done its job by the time the type has gone; leaving it
       // sat on top of the mark.
-      tl.to(q(".ws-label"), { opacity: 0, duration: 0.04 }, 0.56);
+      tl.to(q(".ws-label"), { opacity: 0, duration: 0.08 }, 0.56);
 
       /*
        * 5. The services advance like a ticker.

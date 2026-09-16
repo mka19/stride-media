@@ -31,8 +31,14 @@ export { gsap, ScrollTrigger };
  * weight of the scroll changed every time one ended — the page felt tight in
  * one and loose in the next. One value everywhere means the whole document
  * carries the same inertia.
+ *
+ * Raised from 1. A scrubbed timeline reaches its target this many seconds
+ * after the scroll does, and that lag is the whole feel of the page: at 1 the
+ * sections tracked the wheel closely enough to read as sharp, almost brittle.
+ * Half a second more of catch-up is the difference between the page answering
+ * the scroll and the page being dragged by it.
  */
-export const SCRUB = 1;
+export const SCRUB = 1.5;
 
 /**
  * The shared reveal vocabulary. Everything that arrives does so the same

@@ -86,7 +86,7 @@ export default function Problem({
       // whole dark chapter so the pace is the reader's.
       tl.to(
         q(".pb-word"),
-        { opacity: 1, duration: 0.02, ease: "none", stagger: { amount: 0.3 } },
+        { opacity: 1, duration: 0.06, ease: "none", stagger: { amount: 0.3 } },
         0.02,
       ).to(
         q(".pb-tile"),
@@ -140,8 +140,8 @@ export default function Problem({
         if (media) gsap.set(media, { scale: coverScale, transformOrigin: "50% 50%" });
 
         // 1. take over the screen from the plate before it, at the same size
-        tl.to(card, { opacity: 1, duration: 0.02 }, at);
-        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.02 }, at + 0.02);
+        tl.to(card, { opacity: 1, duration: 0.05 }, at);
+        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.05 }, at + 0.03);
 
         // 2. settle into the slot, and let the card build around it
         if (media) {

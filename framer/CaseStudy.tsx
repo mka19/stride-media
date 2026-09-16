@@ -259,7 +259,7 @@ export default function CaseStudy({
         // A held tail so the finished chapter is readable before the section
         // hands over, and so the positions above stay a fixed share of the
         // scroll rather than drifting with the last tween.
-        .to({}, { duration: 0.02 }, 0.98);
+        .to({}, { duration: 0.05 }, 0.95);
     },
     [stacked],
     (root) => {

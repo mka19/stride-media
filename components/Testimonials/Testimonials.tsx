@@ -77,9 +77,17 @@ export default function Testimonials() {
 
           cards.forEach((card, i) => {
             const col = i % 4;
-            // The row is the delay and the column is the lean, so a row
-            // arrives together and opens from its middle.
-            const delay = Math.floor(i / 4) * 0.5 + col * 0.08;
+            /*
+             * One card at a time, in reading order.
+             *
+             * The delay used to be the row plus a fraction of the column, and
+             * the formula below multiplies it by 0.1 — so the eight of them
+             * were spread across eight hundredths of the section and arrived
+             * as one block, every card mid-lean at the same moment. Stepping
+             * a full unit per card spreads them over about six tenths of the
+             * run, which is what makes them land one after another.
+             */
+            const delay = i * 0.8;
             const cardProgress = clamp(0, 1, (progress - delay * 0.1) / (0.9 - delay * 0.1));
 
             // Up from below, overshooting its place and settling back into

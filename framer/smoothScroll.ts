@@ -34,14 +34,14 @@ export function initSmoothScroll(): () => void {
     // timelines, and how heavy the whole document feels is set here more
     // than anywhere else: a short duration lands the scroll before the
     // timelines have caught up, which is what read as snapping.
-    duration: 1.35,
+    duration: 1.6,
     // Heavy at the start, long settle — the weightless feel comes from the
     // tail of this curve, not from the duration.
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
     // A notch of the wheel moves slightly less than the browser default, so
     // a single flick never jumps past a whole beat of a pinned section.
-    wheelMultiplier: 0.9,
+    wheelMultiplier: 0.82,
     // Touch devices already have their own momentum; adding ours fights it.
     syncTouch: false,
   });
