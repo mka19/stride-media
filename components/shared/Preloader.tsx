@@ -24,7 +24,7 @@ import { prefersReducedMotion } from "./gsap";
  * after the curtain has left.
  */
 
-const HOLD_MS = 1100;
+const HOLD_MS = 2300;
 
 export default function Preloader({
   /** Runs once the curtain is gone and the page has been re-measured. */
@@ -63,7 +63,7 @@ export default function Preloader({
       window.setTimeout(() => {
         setGone(true);
         onDone?.();
-      }, 350);
+      }, 480);
     };
 
     const hold = window.setTimeout(finish, HOLD_MS);
@@ -103,14 +103,18 @@ export default function Preloader({
         background: color.black,
         opacity: leaving ? 0 : 1,
         pointerEvents: leaving ? "none" : "auto",
-        transition: `opacity 350ms ${ease.out}`,
+        transition: `opacity 480ms ${ease.out}`,
       }}
     >
       <div className={still ? undefined : "stride-cam"} style={camera}>
         {/* The barrel stands still and the glass turns inside it, which is
             what a lens actually does. */}
         <span style={lens}>
-          <span className={still ? undefined : "stride-cam-lens"} style={glass} />
+          <span style={focusRing} />
+          <span style={glass}>
+            <span className={still ? undefined : "stride-cam-lens"} style={aperture} />
+            <span style={innerGlass} />
+          </span>
           {/* The highlight belongs to the room, not to the glass, so it does
               not rotate with it. */}
           <span style={glint} />
@@ -213,8 +217,17 @@ const lens: React.CSSProperties = {
     "conic-gradient(from 210deg, #6B6B7A 0deg, #3A3A46 80deg, #22222C 175deg, #55555F 285deg, #6B6B7A 360deg)",
   boxShadow: [
     `0 0 0 1px ${hexA("#FFFFFF", 0.12)}`,
+    `0 0 0 3px ${hexA("#050507", 0.9)} inset`,
     `0 0 22px ${hexA(color.accent, 0.3)}`,
   ].join(","),
+};
+
+const focusRing: React.CSSProperties = {
+  position: "absolute",
+  inset: 3,
+  borderRadius: "50%",
+  background: "repeating-conic-gradient(from 4deg, rgba(255,255,255,.18) 0deg 1deg, rgba(5,5,8,.2) 1deg 7deg)",
+  boxShadow: "0 0 0 1px rgba(255,255,255,.08) inset, 0 0 0 3px rgba(0,0,0,.48) inset",
 };
 
 /*
@@ -229,14 +242,28 @@ const glass: React.CSSProperties = {
   position: "absolute",
   inset: 9,
   borderRadius: "50%",
-  backgroundColor: "#08080A",
-  backgroundImage: [
-    // The aperture blades, only just visible through the coating.
-    `conic-gradient(${hexA("#FFFFFF", 0.07)} 0deg 16deg, transparent 16deg 60deg, ${hexA("#FFFFFF", 0.07)} 60deg 76deg, transparent 76deg 120deg, ${hexA("#FFFFFF", 0.07)} 120deg 136deg, transparent 136deg 180deg, ${hexA("#FFFFFF", 0.07)} 180deg 196deg, transparent 196deg 240deg, ${hexA("#FFFFFF", 0.07)} 240deg 256deg, transparent 256deg 300deg, ${hexA("#FFFFFF", 0.07)} 300deg 316deg, transparent 316deg 360deg)`,
-    // The coating: the colour a multi-coated element throws back.
-    `radial-gradient(circle at 36% 30%, ${hexA(color.accentBright, 0.5)} 0%, ${hexA(color.accent, 0.32)} 26%, #0B0B12 62%, #060608 100%)`,
+  overflow: "hidden",
+  background: "radial-gradient(circle at 48% 52%, #060608 0 36%, #11111a 55%, #050507 100%)",
+  boxShadow: `0 0 12px 5px ${hexA("#000000", 0.75)} inset, 0 0 0 1px rgba(255,255,255,.1)`,
+};
+
+const aperture: React.CSSProperties = {
+  position: "absolute",
+  inset: 5,
+  borderRadius: "50%",
+  background: [
+    "radial-gradient(circle, transparent 0 22%, rgba(0,0,0,.25) 23% 34%, transparent 35%)",
+    "conic-gradient(from 8deg, #34343d 0deg 38deg, #17171d 38deg 51deg, #3d3d47 51deg 89deg, #18181e 89deg 102deg, #35353f 102deg 140deg, #15151b 140deg 153deg, #3c3c46 153deg 191deg, #17171d 191deg 204deg, #34343e 204deg 242deg, #14141a 242deg 255deg, #3d3d47 255deg 293deg, #17171d 293deg 306deg, #35353f 306deg 344deg, #15151b 344deg 360deg)"
   ].join(","),
-  boxShadow: `0 0 12px 5px ${hexA("#000000", 0.75)} inset`,
+  boxShadow: "0 0 0 1px rgba(255,255,255,.08), 0 0 18px rgba(0,0,0,.9) inset",
+};
+
+const innerGlass: React.CSSProperties = {
+  position: "absolute",
+  inset: 16,
+  borderRadius: "50%",
+  background: `radial-gradient(circle at 36% 28%, rgba(255,255,255,.88) 0 3%, ${hexA(color.accentBright, 0.46)} 9%, ${hexA(color.accent, 0.32)} 24%, #090911 58%, #020204 100%)`,
+  boxShadow: "0 0 16px rgba(124,58,237,.34), 0 0 8px rgba(0,0,0,.9) inset",
 };
 
 /** The room, reflected: a hot spot and the crescent above it. */

@@ -122,7 +122,8 @@ export default function Hero({
         style={{
           position: "sticky",
           top: 0,
-          height: "100vh",
+          height: "calc(100vh + 2px)",
+          marginBottom: -2,
           overflow: "hidden",
           isolation: "isolate",
         }}
