@@ -468,8 +468,8 @@ export default function HeroObject({
      */
     const markPx = () => {
       const vmin = Math.min(window.innerWidth, window.innerHeight);
-      if (breakpoint === "mobile") return vmin * 0.37;
-      if (breakpoint === "tablet") return vmin * 0.52;
+      if (breakpoint === "mobile") return vmin * 0.54;
+      if (breakpoint === "tablet") return vmin * 0.58;
       return Math.min(540, window.innerWidth * 0.6);
     };
     const zScale = () => Math.max(1, mount.clientHeight / Math.max(1, markPx()));
@@ -713,8 +713,8 @@ export default function HeroObject({
     microTexture.needsUpdate = true;
 
     const solidMat = new THREE.MeshPhysicalMaterial({
-      color: 0xe7e9ee,
-      metalness: 0.96,
+      color: 0xc9cdd4,
+      metalness: 1,
       /*
        * 0.05, not 0.015.
        *
@@ -749,7 +749,7 @@ export default function HeroObject({
        * which is the matte look; sharpening it lets the room's range show
        * through the only variation the shape has left.
        */
-      roughness: 0.075,
+      roughness: 0.13,
       /*
        * 1.0, not 1.35.
        *
@@ -757,10 +757,10 @@ export default function HeroObject({
        * multiplier above 1 pushes the ceiling past white, and a clipped
        * highlight throws away the shading that makes it read as metal.
        */
-      envMapIntensity: 1.12,
-      clearcoat: 0.18,
-      clearcoatRoughness: 0.1,
-      anisotropy: 0.14,
+      envMapIntensity: 1.24,
+      clearcoat: 0.08,
+      clearcoatRoughness: 0.16,
+      anisotropy: 0.1,
       anisotropyRotation: Math.PI / 2,
       bumpMap: microTexture,
       bumpScale: 0.003,
@@ -831,7 +831,10 @@ export default function HeroObject({
     const rim = new THREE.Mesh(
       markGeo,
       new THREE.ShaderMaterial({
-        uniforms,
+        uniforms: {
+          ...uniforms,
+          uDensity: { value: breakpoint === "mobile" ? 0.38 : 0.58 },
+        },
         transparent: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -881,6 +884,7 @@ export default function HeroObject({
         vertexShader: /* glsl */ `
           uniform float uTime;
           uniform float uProgress;
+          uniform float uDensity;
           attribute vec3 aSeed;
           varying float vFade;
 
@@ -889,7 +893,7 @@ export default function HeroObject({
             // mark comes apart in waves instead of all at once.
             float stagger = 0.35 * (aSeed.x * 0.5 + 0.5);
             float t = clamp((uProgress - stagger) / (1.0 - stagger), 0.0, 1.0);
-            float travel = t * t * 4.5;
+            float travel = t * t * 3.6;
 
             vec3 dir = normalize(normal + aSeed * 0.7);
             vec3 p = position + dir * travel;
@@ -898,9 +902,10 @@ export default function HeroObject({
 
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             gl_Position = projectionMatrix * mv;
-            gl_PointSize = (7.0 + aSeed.z * 3.0) * (1.0 / -mv.z) * 3.0;
+            float keep = step(aSeed.x * 0.5 + 0.5, uDensity);
+            gl_PointSize = keep * (5.2 + aSeed.z * 2.0) * (1.0 / -mv.z) * 3.0;
 
-            vFade = smoothstep(0.0, 0.2, uProgress) * (1.0 - smoothstep(0.55, 1.0, uProgress));
+            vFade = keep * smoothstep(0.02, 0.16, uProgress) * (1.0 - smoothstep(0.38, 0.76, uProgress));
           }
         `,
         fragmentShader: /* glsl */ `
@@ -910,7 +915,8 @@ export default function HeroObject({
             vec2 c = gl_PointCoord - 0.5;
             float d = length(c);
             if (d > 0.5) discard;
-            gl_FragColor = vec4(uAccent, (1.0 - smoothstep(0.1, 0.5, d)) * vFade * 0.85);
+            vec3 silver = mix(vec3(0.62, 0.56, 0.82), vec3(0.9), gl_PointCoord.y);
+            gl_FragColor = vec4(silver, (1.0 - smoothstep(0.08, 0.5, d)) * vFade * 0.56);
           }
         `,
       }),

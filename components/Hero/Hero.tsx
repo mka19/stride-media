@@ -48,7 +48,7 @@ export default function Hero({
 
       // The headline emerges from where the object was rather than sliding
       // in: it scales up from slightly smaller as the object fades away.
-      gsap.set(lines, { scale: 0.88, opacity: 0, transformOrigin: "50% 50%" });
+      gsap.set(lines, { scale: 0.94, opacity: 0, transformOrigin: "50% 50%" });
       gsap.set(q(".hero-mosaic"), { opacity: 0, scale: 1.14 });
       gsap.set(q(".hero-tail"), { opacity: 0, y: 24 });
 
@@ -68,15 +68,15 @@ export default function Hero({
         },
       });
 
-      tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 0.14)
-        .to(q(".hero-veil"), { opacity: 0.55, duration: 0.46 }, 0.17)
+      tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.46, ease: "power2.out" }, 0.12)
+        .to(q(".hero-veil"), { opacity: 0.68, duration: 0.38 }, 0.14)
         .to(
           lines,
-          { scale: 1, opacity: 1, duration: 0.42, stagger: 0.07, ease: "power3.out" },
-          0.24,
+          { scale: 1, opacity: 1, duration: 0.28, stagger: 0.055, ease: "power3.out" },
+          0.18,
         )
-        .to(q(".hero-glow"), { opacity: 1, duration: 0.4 }, 0.28)
-        .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 }, 0.46)
+        .to(q(".hero-glow"), { opacity: 1, duration: 0.34 }, 0.22)
+        .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.26, stagger: 0.04 }, 0.37)
         .to(q(".hero-intro"), { opacity: 0, y: -20, duration: 0.25 }, 0.05)
         .to(q(".hero-hint"), { opacity: 0, duration: 0.2 }, 0.05);
 
@@ -263,6 +263,7 @@ export default function Hero({
               marginBottom: rhythm.headlineToBody,
               maxWidth: "26ch",
               ...typeScale.displayLg,
+              ...(bp === "mobile" ? { fontSize: "clamp(29px, 8vw, 34px)", lineHeight: "clamp(33px, 9vw, 38px)" } : {}),
               textWrap: "balance",
             }}
           >

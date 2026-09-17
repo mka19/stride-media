@@ -63,6 +63,13 @@ body {
 @keyframes stride-spin { to { transform: rotate(360deg); } }
 .stride-spin { animation: stride-spin 20s linear infinite; }
 
+@keyframes stride-loader-mark {
+  0% { opacity: 0; transform: perspective(700px) rotateX(12deg) rotateY(-18deg) scale(.82); }
+  55% { opacity: 1; transform: perspective(700px) rotateX(-3deg) rotateY(5deg) scale(1); }
+  100% { opacity: 1; transform: perspective(700px) rotateX(0deg) rotateY(0deg) scale(1); }
+}
+.stride-loader-mark { animation: stride-loader-mark 900ms cubic-bezier(.16,1,.3,1) both; transform-origin: 50% 50%; }
+
 /* Ambient dots: a slow float that never resets abruptly. */
 @keyframes stride-float {
   0%, 100% { transform: translate3d(0, 0, 0); }
