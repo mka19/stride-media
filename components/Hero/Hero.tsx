@@ -48,7 +48,7 @@ export default function Hero({
 
       // The headline emerges from where the object was rather than sliding
       // in: it scales up from slightly smaller as the object fades away.
-      gsap.set(lines, { yPercent: 112, scale: 0.985, opacity: 0, transformOrigin: "50% 50%" });
+      gsap.set(lines, { y: 28, scale: 0.985, opacity: 0, transformOrigin: "50% 50%" });
       gsap.set(q(".hero-mosaic"), { opacity: 0, scale: 1.14 });
       gsap.set(q(".hero-tail"), { opacity: 0, y: 24 });
 
@@ -72,7 +72,7 @@ export default function Hero({
         .to(q(".hero-veil"), { opacity: 0.68, duration: 0.38 }, 0.14)
         .to(
           lines,
-          { yPercent: 0, scale: 1, opacity: 1, duration: 0.3, stagger: 0.055, ease: "power3.out" },
+          { y: 0, scale: 1, opacity: 1, duration: 0.3, stagger: 0.055, ease: "power3.out" },
           0.18,
         )
         .to(q(".hero-glow"), { opacity: 1, duration: 0.34 }, 0.22)
@@ -95,7 +95,7 @@ export default function Hero({
     // Reduced motion: land on the phase-3 composition immediately, no scrub.
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".hero-line-inner"), { yPercent: 0, scale: 1, opacity: 1 });
+      gsap.set(q(".hero-line-inner"), { y: 0, scale: 1, opacity: 1 });
       gsap.set(q(".hero-mosaic"), { opacity: 1, scale: 1 });
       gsap.set(q(".hero-veil"), { opacity: 0.55 });
       gsap.set(q(".hero-tail, .hero-glow"), { opacity: 1, y: 0 });
@@ -268,7 +268,7 @@ export default function Hero({
             }}
           >
             {heroCopy.headline.map((line, i) => (
-              <span key={i} style={{ display: "block", overflow: "hidden" }}>
+              <span key={i} style={{ display: "block" }}>
                 <GradientRevealText
                   as="span"
                   tone="dark"

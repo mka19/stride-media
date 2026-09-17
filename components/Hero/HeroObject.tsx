@@ -356,7 +356,7 @@ export default function HeroObject({
     // A modest supersample keeps the polished silhouette crisp without the
     // four-times fragment cost of blindly using a 2x phone/retina DPR.
     renderer.setPixelRatio(
-      Math.min(window.devicePixelRatio || 1, breakpoint === "mobile" ? 1.25 : 1.4),
+      Math.min(window.devicePixelRatio || 1, 1),
     );
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -371,7 +371,7 @@ export default function HeroObject({
      * softboxes in the upper range — the surface becomes mostly dark with
      * a few bright streaks, which is what polished metal actually is.
      */
-    renderer.toneMappingExposure = 0.92;
+    renderer.toneMappingExposure = 0.84;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.display = "block";
 
@@ -713,7 +713,7 @@ export default function HeroObject({
     microTexture.needsUpdate = true;
 
     const solidMat = new THREE.MeshPhysicalMaterial({
-      color: 0xc9cdd4,
+      color: 0xa4a9b2,
       metalness: 1,
       /*
        * 0.05, not 0.015.
@@ -749,7 +749,7 @@ export default function HeroObject({
        * which is the matte look; sharpening it lets the room's range show
        * through the only variation the shape has left.
        */
-      roughness: 0.13,
+      roughness: 0.11,
       /*
        * 1.0, not 1.35.
        *
@@ -757,7 +757,7 @@ export default function HeroObject({
        * multiplier above 1 pushes the ceiling past white, and a clipped
        * highlight throws away the shading that makes it read as metal.
        */
-      envMapIntensity: 1.24,
+      envMapIntensity: 1.42,
       clearcoat: 0.08,
       clearcoatRoughness: 0.16,
       anisotropy: 0.1,
@@ -797,17 +797,17 @@ export default function HeroObject({
      * what is behind and around the mark: the liquid field, the dust and the
      * page's own ground.
      */
-    const key = new THREE.DirectionalLight(0xffffff, 0.5);
+    const key = new THREE.DirectionalLight(0xffffff, 0.28);
     key.position.set(-3, 4, 5);
     scene.add(key);
     // Neutral, not 0xdfe6ff. On a mirror a tinted light is a tinted mirror,
     // and that blue was part of the cast in the reference shot.
-    const fill = new THREE.DirectionalLight(0xffffff, 0.3);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.16);
     fill.position.set(4, -2, 2);
     scene.add(fill);
     // Dimmed hard. At intensity 5 this was washing the back of every bevel
     // to white from the inside, which is what a lamp does and metal does not.
-    const back = new THREE.PointLight(0xffffff, 0.7, 12);
+    const back = new THREE.PointLight(0xffffff, 0.42, 12);
     back.position.set(0, 0, -3);
     scene.add(back);
 
@@ -831,10 +831,7 @@ export default function HeroObject({
     const rim = new THREE.Mesh(
       markGeo,
       new THREE.ShaderMaterial({
-        uniforms: {
-          ...uniforms,
-          uDensity: { value: breakpoint === "mobile" ? 0.56 : 0.76 },
-        },
+        uniforms,
         transparent: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -868,8 +865,25 @@ export default function HeroObject({
     rim.visible = false;
 
     // --- dissolve cloud ---------------------------------------------------
-    const cloudGeo = markGeo.clone();
-    const count = cloudGeo.attributes.position.count;
+    const sourcePosition = markGeo.attributes.position as THREE.BufferAttribute;
+    const sourceNormal = markGeo.attributes.normal as THREE.BufferAttribute;
+    const sampleStep = breakpoint === "mobile" ? 3 : 2;
+    const count = Math.ceil(sourcePosition.count / sampleStep);
+    const sampledPosition = new Float32Array(count * 3);
+    const sampledNormal = new Float32Array(count * 3);
+    let sample = 0;
+    for (let i = 0; i < sourcePosition.count; i += sampleStep) {
+      sampledPosition[sample * 3] = sourcePosition.getX(i);
+      sampledPosition[sample * 3 + 1] = sourcePosition.getY(i);
+      sampledPosition[sample * 3 + 2] = sourcePosition.getZ(i);
+      sampledNormal[sample * 3] = sourceNormal.getX(i);
+      sampledNormal[sample * 3 + 1] = sourceNormal.getY(i);
+      sampledNormal[sample * 3 + 2] = sourceNormal.getZ(i);
+      sample += 1;
+    }
+    const cloudGeo = new THREE.BufferGeometry();
+    cloudGeo.setAttribute("position", new THREE.BufferAttribute(sampledPosition, 3));
+    cloudGeo.setAttribute("normal", new THREE.BufferAttribute(sampledNormal, 3));
     const seeds = new Float32Array(count * 3);
     for (let i = 0; i < seeds.length; i++) seeds[i] = Math.random() * 2 - 1;
     cloudGeo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 3));
@@ -877,7 +891,10 @@ export default function HeroObject({
     const cloud = new THREE.Points(
       cloudGeo,
       new THREE.ShaderMaterial({
-        uniforms,
+        uniforms: {
+          ...uniforms,
+          uDensity: { value: 1 },
+        },
         transparent: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -903,9 +920,9 @@ export default function HeroObject({
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             gl_Position = projectionMatrix * mv;
             float keep = step(aSeed.x * 0.5 + 0.5, uDensity);
-            gl_PointSize = keep * (5.8 + aSeed.z * 2.3) * (1.0 / -mv.z) * 3.0;
+            gl_PointSize = keep * (7.2 + aSeed.z * 2.8) * (1.0 / -mv.z) * 3.0;
 
-            vFade = keep * smoothstep(0.02, 0.16, uProgress) * (1.0 - smoothstep(0.38, 0.76, uProgress));
+            vFade = keep * smoothstep(0.02, 0.16, uProgress) * (1.0 - smoothstep(0.42, 0.8, uProgress));
           }
         `,
         fragmentShader: /* glsl */ `
@@ -915,8 +932,8 @@ export default function HeroObject({
             vec2 c = gl_PointCoord - 0.5;
             float d = length(c);
             if (d > 0.5) discard;
-            vec3 silver = mix(vec3(0.62, 0.56, 0.82), vec3(0.9), gl_PointCoord.y);
-            gl_FragColor = vec4(silver, (1.0 - smoothstep(0.08, 0.5, d)) * vFade * 0.72);
+            vec3 silver = mix(vec3(0.48, 0.23, 1.0), vec3(0.96), gl_PointCoord.y);
+            gl_FragColor = vec4(silver, (1.0 - smoothstep(0.08, 0.5, d)) * vFade * 0.92);
           }
         `,
       }),
