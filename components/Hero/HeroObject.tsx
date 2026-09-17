@@ -1024,6 +1024,8 @@ export default function HeroObject({
     let pointerY = 0;
     let swayX = 0;
     let swayY = 0;
+    let driftX = 0;
+    let driftY = 0;
     const onPointer = (e: PointerEvent) => {
       pointerX = (e.clientX / window.innerWidth) * 2 - 1;
       pointerY = (e.clientY / window.innerHeight) * 2 - 1;
@@ -1059,7 +1061,8 @@ export default function HeroObject({
       previousFrame = now;
 
       // Damp toward the scroll value so fast scrolls still dissolve smoothly.
-      eased += (progress - eased) * 0.09;
+      const scrollDamping = 1 - Math.exp(-frameDelta * 7.2);
+      eased += (progress - eased) * scrollDamping;
       uniforms.uTime.value = t;
       uniforms.uProgress.value = eased;
       liquidUniforms.uTime.value = t;
@@ -1109,8 +1112,11 @@ export default function HeroObject({
        * The damping stays slow. The response should read as something heavy
        * being steered, not as an object stuck to the cursor.
        */
-      swayX += (pointerX * 0.24 - swayX) * 0.055;
-      swayY += (pointerY * 0.13 - swayY) * 0.055;
+      const pointerDamping = 1 - Math.exp(-frameDelta * 3.5);
+      swayX += (pointerX * 0.22 - swayX) * pointerDamping;
+      swayY += (pointerY * 0.12 - swayY) * pointerDamping;
+      driftX += (pointerX * 0.12 - driftX) * pointerDamping;
+      driftY += (-pointerY * 0.07 - driftY) * pointerDamping;
 
       /*
        * A fixed pose, not a drift.
@@ -1128,7 +1134,8 @@ export default function HeroObject({
        */
       solid.rotation.y = POSE_Y + swayX;
       solid.rotation.x = POSE_X + swayY;
-      solid.position.y = eased * 0.35;
+      solid.position.x = driftX;
+      solid.position.y = eased * 0.35 + driftY;
       // Shrinking as it goes hands the centre of the screen to the headline.
       const shrink = (1 - eased * 0.3) * reform;
       solid.scale.setScalar(shrink);
