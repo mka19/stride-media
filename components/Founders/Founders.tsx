@@ -83,7 +83,7 @@ function Memory({ item, index }: { item: (typeof copy.memories)[number]; index: 
   );
 }
 
-export default function Founders({ scrollLength = "300vh" }: { scrollLength?: string }) {
+export default function Founders({ scrollLength = "430vh" }: { scrollLength?: string }) {
   const stacked = useStacked();
   const compact = useBreakpoint() === "mobile";
   const rootRef = useGsapContext(
@@ -92,16 +92,19 @@ export default function Founders({ scrollLength = "300vh" }: { scrollLength?: st
       gsap.set(q(".founder-panel"), { opacity: 0, yPercent: 7, scale: 0.975 });
       gsap.set(q(".founder-panel")[0], { opacity: 1, yPercent: 0, scale: 1 });
       gsap.set(q(".founder-title"), { yPercent: 110 });
+      gsap.set(q(".founder-stage"), { opacity: 0, y: 26 });
+      gsap.set(q(".founder-memory-intro"), { opacity: 0, y: 24 });
 
       const tl = gsap.timeline({
         scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
       });
       tl.to(q(".founder-title"), { yPercent: 0, duration: 0.16, ease: "expo.out" }, 0.02)
-        .to(q(".founder-intro"), { opacity: 0, y: -28, duration: 0.12, ease: "power2.in" }, 0.2)
-        .to(q(".founder-panel")[0], { opacity: 0, yPercent: -7, scale: 0.975, duration: 0.16, ease: "power2.inOut" }, 0.46)
-        .to(q(".founder-panel")[1], { opacity: 1, yPercent: 0, scale: 1, duration: 0.18, ease: "power3.out" }, 0.53)
-        .to(q(".founder-stage"), { opacity: 0, y: -24, duration: 0.12 }, 0.83)
-        .fromTo(q(".founder-memory-intro"), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.12, ease: "expo.out" }, 0.86);
+        .to(q(".founder-intro"), { opacity: 0, scale: 0.96, y: -24, duration: 0.1, ease: "power2.in" }, 0.2)
+        .to(q(".founder-stage"), { opacity: 1, y: 0, duration: 0.14, ease: "expo.out" }, 0.27)
+        .to(q(".founder-panel")[0], { opacity: 0, yPercent: -6, scale: 0.98, duration: 0.14, ease: "power2.inOut" }, 0.51)
+        .to(q(".founder-panel")[1], { opacity: 1, yPercent: 0, scale: 1, duration: 0.16, ease: "power3.out" }, 0.55)
+        .to(q(".founder-stage"), { opacity: 0, y: -24, duration: 0.11, ease: "power2.in" }, 0.78)
+        .to(q(".founder-memory-intro"), { opacity: 1, y: 0, duration: 0.14, ease: "expo.out" }, 0.82);
     },
     [stacked],
     (root) => {
@@ -149,13 +152,15 @@ export default function Founders({ scrollLength = "300vh" }: { scrollLength?: st
     <section id="founders" ref={rootRef} style={{ position: "relative", height: scrollLength, background: color.black, color: color.textOnDark }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", padding: `${space.xl}px ${layout.pad}` }}>
         <Grain opacity={0.12} />
-        <div className="founder-intro" style={{ position: "relative", zIndex: 2 }}>
-          <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <div style={{ overflow: "hidden", marginTop: space.md }}>
-            <h2 className="founder-title" style={{ margin: 0, ...typeScale.displayLg, fontSize: "clamp(82px, 15vw, 270px)", lineHeight: 0.82, whiteSpace: "nowrap", letterSpacing: "-0.06em" }}>{copy.headline}</h2>
+        <div className="founder-intro" style={{ position: "absolute", inset: 0, zIndex: 3, display: "grid", placeItems: "center" }}>
+          <div style={{ position: "relative", width: "min(760px, 58vw)", height: "clamp(210px, 28vh, 330px)", display: "grid", placeItems: "center", overflow: "hidden", background: "#141417" }}>
+            <MicroLabel tone="accent" style={{ position: "absolute", top: space.xl, left: space.xl }}>{copy.label}</MicroLabel>
+            <div style={{ width: "100%", overflow: "hidden" }}>
+              <h2 className="founder-title" style={{ margin: 0, ...typeScale.displayLg, fontSize: "clamp(92px, 12vw, 210px)", lineHeight: 0.82, whiteSpace: "nowrap", letterSpacing: "-0.055em", transform: "translateX(-4%)" }}>{copy.headline}</h2>
+            </div>
           </div>
         </div>
-        <div className="founder-stage" style={{ position: "absolute", left: layout.pad, right: layout.pad, top: "25vh", bottom: space.xl }}>{copy.people.map(panel)}</div>
+        <div className="founder-stage" style={{ position: "absolute", left: layout.pad, right: layout.pad, top: "12vh", bottom: "7vh" }}>{copy.people.map(panel)}</div>
         <div className="founder-memory-intro" style={{ position: "absolute", inset: `${space.xxl}px ${layout.pad}`, opacity: 0, zIndex: 4 }}>
           <MicroLabel tone="accent">Shared history</MicroLabel>
           <h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1 }}>Built together.</h3>

@@ -65,10 +65,11 @@ const LOGO_SVG = `
 // changing the form feels like one machined object reconfiguring itself.
 const ABSTRACT_SVGS = [
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M18 31 31 18h16L34 31v10L22 53l-4-4Z"/><path d="m82 31-13-13H53l13 13v10l12 12 4-4Z"/><path d="m18 69 13 13h16L34 69V59L22 47l-4 4Z"/><path d="m82 69-13 13H53l13-13V59l12-12 4 4Z"/><path d="M50 32c0 13 5 18 18 18-13 0-18 5-18 18 0-13-5-18-18-18 13 0 18-5 18-18Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M17 24h50l16 16-16 16H17l14-16Z"/><path d="M33 60h50L69 76H19Z"/><path d="M47 31h16l9 9-9 9H47l8-9Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 11 63 37 89 50 63 63 50 89 37 63 11 50 37 37Z"/><path d="m50 27 7 16 16 7-16 7-7 16-7-16-16-7 16-7Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M13 25h24v10H23v14H13Z"/><path d="M87 25H63v10h14v14h10Z"/><path d="M13 75h24V65H23V51H13Z"/><path d="M87 75H63V65h14V51h10Z"/><path d="m42 34 25 16-25 16Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 12 61 31 83 28 72 50 88 66 63 68 54 90 42 69 18 75 28 51 12 35 36 32Z"/><path d="M50 32 58 44 72 50 58 56 50 70 42 56 28 50 42 44Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 15c0 18 6 24 24 24-18 0-24 6-24 24 0-18-6-24-24-24 18 0 24-6 24-24Z"/><path d="M21 62h12v12H21Z"/><path d="M67 62h12v12H67Z"/><path d="M44 74h12v12H44Z"/><path d="m31 65 17 12-5 7-17-12Z"/><path d="m69 65-17 12 5 7 17-12Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M22 13h43l13 13v61H22Zm12 24h32V29H34Zm0 17h32v-8H34Zm0 17h22v-8H34Z"/><path d="M65 13v14h13Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 9 62 38 91 50 62 62 50 91 38 62 9 50 38 38Zm0 24-7 17 7 17 7-17Z"/><path d="M46 13h8v13h-8ZM46 74h8v13h-8ZM13 46h13v8H13ZM74 46h13v8H74Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M12 22h76v56H12Zm14 12v32h48V34Z"/><path d="m43 38 24 12-24 12Z"/><path d="M19 15h62v7H19ZM19 78h62v7H19Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="m14 31 19 13 17-28 17 28 19-13-9 45H23Zm18 33h36l3-15-19 13-19-13Z"/><path d="M23 80h54v8H23Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 11c18 0 33 12 38 28l-12 4c-3-11-13-19-26-19-9 0-17 4-22 11l8 1-10 12-16-7 7-5C23 21 35 11 50 11Z"/><path d="M50 89c-18 0-33-12-38-28l12-4c3 11 13 19 26 19 9 0 17-4 22-11l-8-1 10-12 16 7-7 5C77 79 65 89 50 89Z"/><path d="M43 35h14v30H43Z"/><path d="M33 43h34v14H33Z"/></g></svg>`,
 ];
 
@@ -769,6 +770,20 @@ export default function HeroObject({
     const solid = new THREE.Mesh(markGeo, solidMat);
     scene.add(solid);
 
+    // The bridge between recognizable forms. It is a real reflective volume,
+    // rather than an opacity gap: each object draws inward into this chrome
+    // droplet, the hidden geometry is exchanged at maximum liquidity, and
+    // the next object grows back out of the same metal.
+    const morphGeo = new THREE.IcosahedronGeometry(1.28, 4);
+    const liquidMorphMat = solidMat.clone();
+    liquidMorphMat.roughness = 0.045;
+    liquidMorphMat.clearcoat = 0.34;
+    liquidMorphMat.clearcoatRoughness = 0.055;
+    liquidMorphMat.opacity = 0;
+    const liquidMorph = new THREE.Mesh(morphGeo, liquidMorphMat);
+    liquidMorph.visible = false;
+    scene.add(liquidMorph);
+
     // Lighting: a cool key from the upper left, accent fill from the right, so
     // the extrusion reads as a soft gradient rather than a flat silhouette.
     /*
@@ -1064,6 +1079,15 @@ export default function HeroObject({
       const reformOpacity = 1 - reformWave * 0.94;
       solidMat.opacity = (1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45)) * reformOpacity;
       solidMat.visible = solidMat.opacity > 0.01;
+      liquidMorph.visible = reformWave > 0.015 && eased < 0.5;
+      liquidMorphMat.opacity = (1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45)) * Math.pow(reformWave, 0.58);
+      liquidMorph.rotation.y = t * 0.34 + swayX * 0.4;
+      liquidMorph.rotation.x = t * 0.17 + swayY * 0.3;
+      liquidMorph.scale.set(
+        0.72 + reformWave * 0.26 + Math.sin(t * 2.1) * 0.025 * reformWave,
+        0.74 + reformWave * 0.24 + Math.cos(t * 1.7) * 0.035 * reformWave,
+        0.7 + reformWave * 0.3,
+      );
 
       // Damped toward the pointer so the mark follows the cursor without
       // snapping to it, and keeps drifting when the pointer is still.
@@ -1129,10 +1153,10 @@ export default function HeroObject({
       window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
       handleRef.current = null;
-      [...parts, ...variantParts, ...variantGeos, markGeo, cloudGeo, dustGeo, halo.geometry, liquidGeo].forEach((g) =>
+      [...parts, ...variantParts, ...variantGeos, markGeo, cloudGeo, dustGeo, halo.geometry, liquidGeo, morphGeo].forEach((g) =>
         g.dispose(),
       );
-      [solidMat, rim.material, cloud.material, dust.material, halo.material, liquidMat].forEach((m) =>
+      [solidMat, liquidMorphMat, rim.material, cloud.material, dust.material, halo.material, liquidMat].forEach((m) =>
         (m as THREE.Material).dispose(),
       );
       microTexture.dispose();

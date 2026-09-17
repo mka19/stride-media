@@ -40,9 +40,9 @@ export default function App() {
       <Marquee items={marquee.outcome} direction={1} />
       <Results />
       <Testimonials />
-      <FAQ />
       <Founders />
       <FinalCTA />
+      <FAQ />
       <Footer />
     </>
   );

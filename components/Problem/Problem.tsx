@@ -63,7 +63,7 @@ export default function Problem({
       // reaches them. A clipped fill was a second colour laid over the type;
       // this is the type's own colour, which is what the reference does.
       gsap.set(q(".pb-light"), { opacity: 0 });
-      gsap.set(q(".pb-word"), { opacity: 0.16 });
+      gsap.set(q(".pb-beat"), { opacity: 0.16 });
       /*
        * No blur, and a much smaller scale.
        *
@@ -116,21 +116,24 @@ export default function Problem({
        * movement: they should register as having appeared, not perform an
        * entrance of their own alongside the one already running.
        */
-      tl.to(
-        q(".pb-word"),
-        { opacity: 1, duration: 0.06, ease: "none", stagger: { amount: 0.3 } },
-        0.02,
-      ).to(
-        q(".pb-tile"),
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.05,
-          ease: reveal.ease,
-          stagger: { amount: 0.18 },
-        },
-        0.2,
-      );
+      // One reading sequence, including the inline objects. The old version
+      // lit every word first and brought all four boxes up afterwards, so the
+      // highlight had no relationship to the sentence. Now the playhead
+      // reaches a box in DOM order, lights it, and only then continues into
+      // the words after that box.
+      const beats = q(".pb-beat") as HTMLElement[];
+      beats.forEach((beat, i) => {
+        tl.to(
+          beat,
+          {
+            opacity: 1,
+            scale: beat.classList.contains("pb-tile") ? 1 : undefined,
+            duration: 0.035,
+            ease: beat.classList.contains("pb-tile") ? reveal.ease : "none",
+          },
+          0.02 + (i / Math.max(1, beats.length - 1)) * 0.34,
+        );
+      });
 
       tl
 
@@ -207,7 +210,7 @@ export default function Problem({
     // place, with the statement fully legible above it.
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".pb-word"), { opacity: 1 });
+      gsap.set(q(".pb-beat"), { opacity: 1 });
       gsap.set(q(".pb-tile"), { opacity: 1, scale: 1 });
       gsap.set(q(".pb-light"), { opacity: 1 });
       gsap.set(q(".pb-dark"), { opacity: 0 });
@@ -441,7 +444,7 @@ export default function Problem({
                 typeof token === "number" ? (
                   <span
                     key={i}
-                    className="pb-tile"
+                    className="pb-beat pb-tile"
                     aria-hidden="true"
                     style={{
                       position: "relative",
@@ -478,7 +481,7 @@ export default function Problem({
                 ) : (
                   <span
                     key={i}
-                    className="pb-word"
+                    className="pb-beat pb-word"
                     style={{ display: "inline-block", marginRight: "0.26em" }}
                   >
                     {token}
@@ -517,10 +520,11 @@ export default function Problem({
                 <p
                   style={{
                     margin: 0,
-                    ...typeScale.bodyLg,
-                    fontSize: fluid(13, 15),
+                    ...typeScale.eyebrow,
+                    lineHeight: fluid(19, 22),
                     color: color.textOnDarkMuted,
                     maxWidth: "44ch",
+                    textTransform: "uppercase",
                   }}
                 >
                   {copy.aboutMission}
