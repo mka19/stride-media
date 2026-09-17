@@ -312,6 +312,34 @@ export const faq = {
   ],
 } as const;
 
+/** Replace these fields and image URLs when the founder material arrives. */
+export const founders = {
+  label: "The people behind Stride",
+  headline: "FOUNDERS",
+  people: [
+    {
+      n: "01",
+      name: "Founder One",
+      role: "Co-founder · Strategy",
+      bio: "The point of view behind the positioning, scripts and systems that make every piece of content feel unmistakably yours.",
+      image: "",
+    },
+    {
+      n: "02",
+      name: "Founder Two",
+      role: "Co-founder · Creative",
+      bio: "The creative direction behind Stride’s visual language, production quality and the details that make people stop scrolling.",
+      image: "",
+    },
+  ],
+  memories: [
+    { n: "01", title: "The first working session", meta: "Where the Stride system started taking shape.", image: "" },
+    { n: "02", title: "Building the first campaign", meta: "Testing the ideas that became our process.", image: "" },
+    { n: "03", title: "A late studio night", meta: "One more pass became the final direction.", image: "" },
+    { n: "04", title: "The first client win", meta: "The moment the system proved itself.", image: "" },
+  ],
+} as const;
+
 /** The breather strips between major sections. */
 export const marquee = {
   process: ["Strategy", "Scripts", "Production", "Delivery"],

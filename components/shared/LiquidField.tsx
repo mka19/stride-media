@@ -41,7 +41,7 @@ export default function LiquidField({
       alpha: true,
       antialias: false,
       premultipliedAlpha: false,
-      powerPreference: "low-power",
+      powerPreference: "high-performance",
     });
     if (!gl) return;
 
@@ -105,7 +105,11 @@ export default function LiquidField({
 
         // Softest at the edges, so it never draws a boundary of its own.
         float vig = smoothstep(1.55, 0.05, length(uv - 0.5));
-        gl_FragColor = vec4(col, uAlpha * vig);
+        // Render an opaque dark ground with the liquid mixed into it. This is
+        // more robust than transparent WebGL compositing, which can flash
+        // white while Chromium recreates a graphics context.
+        vec3 ground = vec3(0.018, 0.010, 0.038);
+        gl_FragColor = vec4(mix(ground, col, uAlpha * vig), 1.0);
       }
     `;
 
@@ -139,11 +143,11 @@ export default function LiquidField({
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     const resize = () => {
-      /* The field is a slow, heavily blurred wash — nothing in it survives
-         being resolved. Rendering it at 45% of the canvas costs about half
-         the fragment work of 60% and is indistinguishable at any size. */
-      const w = Math.max(1, Math.round(canvas.clientWidth * 0.45));
-      const h = Math.max(1, Math.round(canvas.clientHeight * 0.45));
+      // Enough resolution for the folds to remain silky on large screens,
+      // while still far cheaper than rendering a full-size background quad.
+      const scale = window.innerWidth < 640 ? 0.58 : 0.66;
+      const w = Math.max(1, Math.round(canvas.clientWidth * scale));
+      const h = Math.max(1, Math.round(canvas.clientHeight * scale));
       if (canvas.width === w && canvas.height === h) return;
       canvas.width = w;
       canvas.height = h;
@@ -154,11 +158,12 @@ export default function LiquidField({
 
     const reduced = prefersReducedMotion();
     let raf = 0;
+    let active = false;
     const start = performance.now();
 
     const frame = () => {
+      if (!active) return;
       raf = requestAnimationFrame(frame);
-      resize();
       gl.uniform1f(uTime, ((performance.now() - start) / 1000) * speed);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
@@ -167,8 +172,22 @@ export default function LiquidField({
       // One frame, held: the texture without the motion.
       gl.uniform1f(uTime, 12);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-    } else {
-      frame();
+    }
+
+    const setActive = (next: boolean) => {
+      if (reduced || next === active) return;
+      active = next;
+      if (active) raf = requestAnimationFrame(frame);
+      else cancelAnimationFrame(raf);
+    };
+    const intersection = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting && !document.hidden),
+      { rootMargin: "15% 0px" },
+    );
+    const onVisibility = () => setActive(!document.hidden && canvas.getBoundingClientRect().bottom > 0);
+    if (!reduced) {
+      intersection.observe(canvas);
+      document.addEventListener("visibilitychange", onVisibility);
     }
 
     const ro = new ResizeObserver(resize);
@@ -176,6 +195,8 @@ export default function LiquidField({
 
     return () => {
       cancelAnimationFrame(raf);
+      intersection.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       ro.disconnect();
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
@@ -186,7 +207,13 @@ export default function LiquidField({
       ref={ref}
       aria-hidden="true"
       className={className}
-      style={{ display: "block", width: "100%", height: "100%", ...style }}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "100%",
+        background: "#09050f",
+        ...style,
+      }}
     />
   );
 }

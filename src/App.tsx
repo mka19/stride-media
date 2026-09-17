@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { initSmoothScroll } from "../components/shared/smoothScroll";
-import { ScrollTrigger } from "../components/shared/gsap";
 import Marquee from "../components/shared/Marquee";
-import Preloader from "../components/shared/Preloader";
 import { marquee } from "../components/shared/copy";
 import Nav from "../components/Nav/Nav";
 import Hero from "../components/Hero/Hero";
@@ -16,6 +14,7 @@ import Testimonials from "../components/Testimonials/Testimonials";
 import FinalCTA from "../components/FinalCTA/FinalCTA";
 import FAQ from "../components/FAQ/FAQ";
 import Footer from "../components/Footer/Footer";
+import Founders from "../components/Founders/Founders";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so the
@@ -30,9 +29,6 @@ export default function App() {
 
   return (
     <>
-      {/* Holds the page still while it finishes measuring itself, then
-          refreshes every trigger against the settled layout. */}
-      <Preloader onDone={() => ScrollTrigger.refresh()} />
       <Nav />
       <Hero />
       <Problem />
@@ -44,8 +40,9 @@ export default function App() {
       <Marquee items={marquee.outcome} direction={1} />
       <Results />
       <Testimonials />
-      <FinalCTA />
       <FAQ />
+      <Founders />
+      <FinalCTA />
       <Footer />
     </>
   );

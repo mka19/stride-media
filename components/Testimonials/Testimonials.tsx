@@ -253,11 +253,11 @@ export default function Testimonials() {
             return (
               <article
                 key={t.initials}
-                className="ts-card"
+                className={`ts-card${stacked && i < 4 ? " mobile-stack-card" : ""}`}
                 data-x={spot.x}
                 data-y={spot.y}
                 data-r={spot.r}
-                style={{ ...cardStyle, height: "100%" }}
+                style={{ ...cardStyle, height: "100%", top: 76 + i * 10 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
                 }}

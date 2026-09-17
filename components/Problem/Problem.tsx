@@ -28,7 +28,7 @@ export default function Problem({
   cardMedia = [],
   /** Footage for the objects that sit inline in the About statement. */
   objectMedia = [],
-  scrollLength = "1700vh",
+  scrollLength = "850vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
@@ -190,12 +190,12 @@ export default function Problem({
 
         // 3. the text goes, and the plate grows back out to cover
         // Leaving is the exact inverse of arriving, at the same distance.
-        tl.to(text, { opacity: 0, y: -16, duration: span * 0.16, ease: reveal.easeIn }, at + span * 0.66);
+        tl.to(text, { opacity: 0, y: -16, duration: span * 0.12, ease: reveal.easeIn }, at + span * 0.8);
         if (media) {
           tl.to(
             media,
             { scale: coverScale, duration: span * 0.32, ease: "power2.inOut" },
-            at + span * 0.68,
+            at + span * 0.82,
           );
         }
 
@@ -279,7 +279,8 @@ export default function Problem({
           {copy.cards.map((card, i) => (
             <article
               key={card.n}
-              style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline }}
+              className="mobile-stack-card"
+              style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, top: 76 + i * 10 }}
             >
               <CardIcon index={i} />
               <MicroLabel tone="light">Problem</MicroLabel>
@@ -420,7 +421,7 @@ export default function Problem({
                   justifyContent: "center",
                 }}
               >
-            <p
+            <div
               style={{
                 margin: 0,
                 ...typeScale.h3,
@@ -484,7 +485,7 @@ export default function Problem({
                   </span>
                 ),
               )}
-              </p>
+              </div>
               </div>
             </div>
 

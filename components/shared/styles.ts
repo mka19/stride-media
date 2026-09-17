@@ -153,6 +153,52 @@ body {
 }
 .stride-float { animation-name: stride-float; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
 
+@media (max-width: 768px) {
+  .mobile-stack-card {
+    position: sticky !important;
+    transform-origin: 50% 12%;
+    will-change: transform, opacity;
+    animation: stride-mobile-stack linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+  }
+  .mobile-parallax-media {
+    overflow: hidden;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    animation: stride-mobile-parallax linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+}
+@supports (animation-timeline: view()) {
+  .premium-rise-copy,
+  .premium-rise-number {
+    animation: premium-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 32%;
+    will-change: transform, opacity;
+  }
+  .premium-rise-number { animation-range: entry 4% cover 28%; }
+}
+@keyframes premium-rise {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes stride-mobile-stack {
+  from { opacity: 0; transform: translate3d(0, 54px, 0) scale(0.965) rotateX(3deg); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1) rotateX(0deg); }
+}
+@keyframes stride-mobile-parallax {
+  from { transform: translate3d(0, 18px, 0) scale(1.045); }
+  to   { transform: translate3d(0, -18px, 0) scale(1.015); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-stack-card,
+  .mobile-parallax-media { animation: none !important; transform: none !important; opacity: 1 !important; }
+}
+
 /*
  * No reduced-motion block here.
  *

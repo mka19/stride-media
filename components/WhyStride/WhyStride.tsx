@@ -23,7 +23,7 @@ import GradientRevealText from "../shared/GradientRevealText";
  * On phones the scatter is replaced by a plain crossfade and the labels
  * become a stacked list, per the responsive prompt.
  */
-export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: string }) {
+export default function WhyStride({ scrollLength = "980vh" }: { scrollLength?: string }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const bp = useBreakpoint();
@@ -42,12 +42,16 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
       gsap.set(q(".ws-word"), { yPercent: 108 });
       gsap.set(q(".ws-mask"), { overflow: "hidden" });
       gsap.set(q(".ws-dark"), { opacity: 0 });
-      // It opens as the biggest thing on the screen and settles back, so the
-      // section starts on the mark rather than on a line of type.
-      gsap.set(q(".ws-object"), { opacity: 0, scale: 1.62 });
+      // The mark is revealed as a physical object entering the scene: small
+      // at first, then smoothly growing into its final centred position.
+      gsap.set(q(".ws-object"), { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" });
       gsap.set(q(".ws-card"), { opacity: 0 });
       // The object never dissolves here: it is the fixed centrepiece.
       objectRef.current?.setProgress(0);
+      objectRef.current?.setVariant(0);
+
+      const variantFirst = 0.62;
+      const variantStep = (1 - variantFirst) / (copy.capabilities.length + 1.45);
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -55,7 +59,13 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
           start: "top top",
           end: "bottom bottom",
           scrub: SCRUB,
-          onUpdate: (self) => surface.current?.setTone(self.progress < 0.2 ? "light" : "dark"),
+          onUpdate: (self) => {
+            surface.current?.setTone(self.progress < 0.2 ? "light" : "dark");
+            const index = self.progress < variantFirst
+              ? 0
+              : Math.min(copy.capabilities.length - 1, Math.floor((self.progress - variantFirst) / variantStep));
+            objectRef.current?.setVariant(index);
+          },
         },
       });
 
@@ -193,14 +203,18 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
        */
       tl.fromTo(
         q(".ws-object"),
-        { opacity: 0, scale: 1.62 },
-        { opacity: 1, duration: 0.07, ease: "power2.out" },
-        0.48,
-      ).to(q(".ws-object"), { scale: 1, duration: 0.1, ease: "power2.inOut" }, 0.54);
+        { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.16, ease: "power3.out" },
+        0.46,
+      );
 
       // The label has done its job by the time the type has gone; leaving it
       // sat on top of the mark.
-      tl.to(q(".ws-label"), { opacity: 0, duration: 0.08 }, 0.56);
+      tl.to(
+        q(".ws-label"),
+        { opacity: 0, y: -14, scale: 0.92, filter: "blur(7px)", duration: 0.1, ease: "power2.in" },
+        0.455,
+      );
 
       /*
        * 5. The services advance like a ticker.
@@ -217,11 +231,11 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
        * again on every refresh.
        */
       const cards = q(".ws-card") as HTMLElement[];
-      const first = 0.62;
+      const first = variantFirst;
       // Each card spends one step arriving, one crossing, one leaving, and the
       // steps overlap by exactly one — so the whole run is n + 2 steps long
       // with a little tail.
-      const STEP = (1 - first) / (cards.length + 1.45);
+      const STEP = variantStep;
 
       /*
        * One pitch, four positions.
@@ -274,6 +288,7 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
           at,
         );
 
+
         // Across to the left-hand station, as the card ahead of it leaves.
         tl.to(card, { x: 0, ...leg }, at + STEP);
 
@@ -293,6 +308,7 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
       gsap.set(q(".ws-mask"), { overflow: "visible" });
       gsap.set(q(".ws-dark, .ws-object"), { opacity: 1, scale: 1 });
       gsap.set(q(".ws-card"), { opacity: 1, x: 0, y: 0 });
+      objectRef.current?.setVariant(0);
     },
   );
 
@@ -345,6 +361,7 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
       </svg>
     );
 
+
   /**
    * A service card — trionn.com's services panel: a translucent plate with a
    * hairline edge, the title set large against a line-art mark, and the copy
@@ -353,6 +370,7 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
    */
   const capability = (cap: (typeof copy.capabilities)[number], i = 0, className = "") => (
     <article
+      key={cap.n}
       className={className}
       style={{
         display: "flex",
@@ -366,6 +384,7 @@ export default function WhyStride({ scrollLength = "2200vh" }: { scrollLength?: 
         background: hexA("#FFFFFF", 0.05),
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
+        top: 76 + i * 10,
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: space.lg }}>

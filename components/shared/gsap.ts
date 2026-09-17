@@ -48,7 +48,7 @@ export { gsap, ScrollTrigger };
  * and starts reading as the page not listening: smooth and weighted, never
  * floaty.
  */
-export const SCRUB = 1.9;
+export const SCRUB = 0.42;
 
 /**
  * The shared reveal vocabulary. Everything that arrives does so the same
@@ -131,9 +131,7 @@ function motionOverride(): boolean | null {
  */
 export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return true;
-  const override = motionOverride();
-  if (override !== null) return !override;
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  return motionOverride() === false;
 }
 
 /**

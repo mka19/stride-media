@@ -78,3 +78,58 @@ body {
   .stride-nav-links { display: none !important; }
   .hero-copy { grid-template-columns: minmax(0, 1fr) !important; }
 }
+
+/* Natural-height sections use one restrained entrance vocabulary. Pinned
+   chapters keep their GSAP timelines; these selectors intentionally target
+   only editorial content that otherwise appeared without a transition. */
+@supports (animation-timeline: view()) {
+  .premium-rise-copy,
+  .premium-rise-number {
+    animation: premium-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 32%;
+    will-change: transform, opacity;
+  }
+  .premium-rise-number { animation-range: entry 4% cover 28%; }
+}
+
+@keyframes premium-rise {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@media (max-width: 768px) {
+  .mobile-stack-card {
+    position: sticky !important;
+    transform-origin: 50% 12%;
+    will-change: transform, opacity;
+    animation: stride-mobile-stack linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+  }
+
+  .mobile-parallax-media {
+    overflow: hidden;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    animation: stride-mobile-parallax linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+}
+
+@keyframes stride-mobile-stack {
+  from { opacity: 0; transform: translate3d(0, 54px, 0) scale(0.965) rotateX(3deg); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1) rotateX(0deg); }
+}
+
+@keyframes stride-mobile-parallax {
+  from { transform: translate3d(0, 18px, 0) scale(1.045); }
+  to   { transform: translate3d(0, -18px, 0) scale(1.015); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-stack-card,
+  .mobile-parallax-media { animation: none !important; transform: none !important; opacity: 1 !important; }
+}

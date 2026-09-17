@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBreakpoint, useNavRoom } from "../shared/responsive";
 import { brand, nav as navCopy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
@@ -55,6 +55,10 @@ export default function Nav({
   const [tone, setTone] = useState<Tone>("dark");
   const [pageProgress, setPageProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
+  const lastScroll = useRef(0);
+  const direction = useRef<1 | -1 | 0>(0);
+  const directionTravel = useRef(0);
   const bp = useBreakpoint();
   const isMobile = bp === "mobile";
   // The rail shows only where eight labels actually fit; below that the menu
@@ -67,7 +71,28 @@ export default function Nav({
 
     const measure = () => {
       frame = 0;
-      setLifted(window.scrollY > 24);
+      const y = Math.max(0, window.scrollY);
+      const delta = y - lastScroll.current;
+      setLifted(y > 24);
+      const nextDirection: 1 | -1 | 0 = delta > 0.5 ? 1 : delta < -0.5 ? -1 : 0;
+      if (nextDirection && nextDirection !== direction.current) {
+        direction.current = nextDirection;
+        directionTravel.current = 0;
+      }
+      if (nextDirection) directionTravel.current += Math.abs(delta);
+
+      // Accumulated travel prevents tiny trackpad/Lenis oscillations from
+      // making the bar flash. Upward intent reveals sooner than downward
+      // intent hides, which keeps navigation easy to recover.
+      if (menuOpen || y < height * 0.7) setNavHidden(false);
+      else if (direction.current === 1 && directionTravel.current > 30) {
+        setNavHidden(true);
+        directionTravel.current = 0;
+      } else if (direction.current === -1 && directionTravel.current > 16) {
+        setNavHidden(false);
+        directionTravel.current = 0;
+      }
+      lastScroll.current = y;
 
       // The section straddling this line owns the fill. A third of the way
       // down means handover happens when a section visually takes the screen.
@@ -110,11 +135,11 @@ export default function Nav({
       window.removeEventListener("resize", onScroll);
       unsubscribe();
     };
-  }, [height]);
+  }, [height, menuOpen]);
 
   const light = tone === "light";
   const ink = light ? color.textOnLight : color.textOnDark;
-  const inkMuted = light ? color.textOnLightMuted : color.textOnDarkMuted;
+  const inkMuted = light ? hexA(color.textOnLight, 0.72) : hexA(color.textOnDark, 0.64);
   const hairline = light ? color.hairlineOnLight : color.hairlineOnDark;
 
   // Nav links sit 32px apart; the underline segments tile the bar beneath them.
@@ -136,7 +161,9 @@ export default function Nav({
         background: lifted ? hexA(light ? color.bone : color.black, light ? 0.78 : 0.7) : "transparent",
         backdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
         WebkitBackdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
-        transition: `background 600ms ${ease.out}, color 600ms ${ease.out}`,
+        transform: `translate3d(0, ${navHidden ? -height : 0}px, 0)`,
+        willChange: "transform",
+        transition: `transform 460ms ${ease.out}, background 420ms ${ease.out}, color 320ms ${ease.out}`,
       }}
     >
       {/* Wordmark. No underline: the fill treatment belongs to section links. */}
@@ -235,19 +262,42 @@ export default function Nav({
           </button>
         )}
         {!isMobile && (
-          <>
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              transform: navHidden ? `translate3d(0, ${height}px, 0)` : "translate3d(0,0,0)",
+              transition: `transform 460ms ${ease.out}, background 360ms ${ease.out}, box-shadow 360ms ${ease.out}`,
+              ...(navHidden
+                ? {
+                    padding: 6,
+                    borderRadius: 16,
+                    background: "rgba(8,8,8,0.92)",
+                    backdropFilter: "blur(20px) saturate(1.25)",
+                    WebkitBackdropFilter: "blur(20px) saturate(1.25)",
+                    boxShadow: light
+                      ? "0 12px 34px rgba(10,10,10,0.22)"
+                      : "0 12px 34px rgba(0,0,0,0.32)",
+                  }
+                : {}),
+            }}
+          >
             {/* Sound sits beside the CTA, as a pair. It never starts on its
                 own — nothing plays until it is clicked. */}
-            <SoundButton src={soundtrack} style={{ marginRight: 8, marginLeft: railVisible ? 0 : 8 }} />
+            <SoundButton
+              src={soundtrack}
+              tone={navHidden ? "dark" : light ? "light" : "dark"}
+              style={{ marginRight: 8, marginLeft: railVisible ? 0 : 8 }}
+            />
             <GlowButton href="#contact">{navCopy.cta}</GlowButton>
-            <Segment fill={0} active={false} hairline={hairline} />
-          </>
+          </div>
         )}
       </div>
 
       {/* Collapsed nav: the whole page's progress, since the per-section
           underlines are not on screen to read. */}
-      {!railVisible && (
+      {!railVisible && !navHidden && (
         <span
           aria-hidden="true"
           style={{
@@ -255,7 +305,7 @@ export default function Nav({
             left: 0,
             right: 0,
             bottom: 0,
-            height: 2,
+            height: 1,
             background: hairline,
           }}
         >

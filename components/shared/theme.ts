@@ -89,7 +89,7 @@ export const typeScale = {
      */
     fontSize: fluid(22, 96),
     fontWeight: 500,
-    lineHeight: fluid(24, 100),
+    lineHeight: fluid(26, 102),
     letterSpacing: "-1px",
   },
   /** Every section and sub-section headline, and the About statement. */
@@ -97,7 +97,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(36, 64),
     fontWeight: 500,
-    lineHeight: fluid(41, 72),
+    lineHeight: fluid(44, 76),
     letterSpacing: "-1px",
   },
   /** Card headlines, questions, stats — the working headline size. */
@@ -105,7 +105,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(20, 26),
     fontWeight: 400,
-    lineHeight: fluid(23, 30),
+    lineHeight: fluid(25, 32),
     letterSpacing: "-1px",
   },
   /** Oversized numerals: 01/02/03 and the case-study metrics. */
@@ -121,7 +121,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(15, 18),
     fontWeight: 400,
-    lineHeight: fluid(18, 22),
+    lineHeight: fluid(22, 27),
     // Nothing at 18px or under takes tracking.
     letterSpacing: "0",
   },
@@ -130,7 +130,7 @@ export const typeScale = {
     fontFamily: SANS,
     fontSize: fluid(11, 12),
     fontWeight: 400,
-    lineHeight: fluid(14, 15),
+    lineHeight: fluid(15, 16),
     // Nothing at this size takes negative tracking — it closes the caps up.
     letterSpacing: "0",
     textTransform: "uppercase" as const,
@@ -160,7 +160,7 @@ export const rhythm = {
   headlineToBody: 24,
   bodyToCta: space.xl, // 32
   betweenCards: space.lg, // 24
-  headerToContent: space.h, // 64
+  headerToContent: space.xxl, // 48
 } as const;
 
 /**

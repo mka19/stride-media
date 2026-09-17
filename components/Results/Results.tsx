@@ -323,6 +323,7 @@ function ResultCard({
 
         {/* the stat that matters, over the reel */}
         <div
+          className="premium-rise-number"
           style={{
             position: "absolute",
             left: space.md,
@@ -337,7 +338,7 @@ function ResultCard({
         </div>
       </div>
 
-      <div style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>
+      <div className="premium-rise-copy" style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>
       <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{card.desc}</p>
       <div
         style={{

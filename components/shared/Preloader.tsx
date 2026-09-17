@@ -5,8 +5,7 @@ import { prefersReducedMotion } from "./gsap";
 /**
  * The opening hold.
  *
- * A camera sitting on the black ground with its lens turning, held for five
- * seconds while the page behind it finishes measuring itself. The build is
+ * A brief camera ident while the page behind it finishes measuring itself. The build is
  * the one from Uiverse's washing machine — a body drawn entirely in stacked
  * gradients, with a round element spinning inside it — redrawn as the thing
  * this studio actually points at people.
@@ -21,13 +20,11 @@ import { prefersReducedMotion } from "./gsap";
  *   - The scroller is locked while it is up, so a visitor cannot scroll
  *     through three pinned sections before they have been laid out.
  *
- * It never holds longer than it says it will: five seconds, or until the
- * window has loaded if that takes longer, and a hard ceiling at eight so a
- * stalled asset can never leave someone looking at a camera.
+ * It holds for just over one second, then refreshes the scroll measurements
+ * after the curtain has left.
  */
 
-const HOLD_MS = 5000;
-const CEILING_MS = 8000;
+const HOLD_MS = 1100;
 
 export default function Preloader({
   /** Runs once the curtain is gone and the page has been re-measured. */
@@ -66,23 +63,14 @@ export default function Preloader({
       window.setTimeout(() => {
         setGone(true);
         onDone?.();
-      }, 700);
+      }, 350);
     };
 
-    // The hold is a floor, not a fixed wait: if the window is still loading
-    // at five seconds it gets the time it needs, up to the ceiling.
-    let ceiling = 0;
-    const floor = window.setTimeout(() => {
-      if (document.readyState === "complete") finish();
-      else window.addEventListener("load", finish, { once: true });
-    }, HOLD_MS);
-    ceiling = window.setTimeout(finish, CEILING_MS);
+    const hold = window.setTimeout(finish, HOLD_MS);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.clearTimeout(floor);
-      window.clearTimeout(ceiling);
-      window.removeEventListener("load", finish);
+      window.clearTimeout(hold);
       document.body.style.overflow = prevOverflow;
     };
     /*
@@ -115,7 +103,7 @@ export default function Preloader({
         background: color.black,
         opacity: leaving ? 0 : 1,
         pointerEvents: leaving ? "none" : "auto",
-        transition: `opacity 700ms ${ease.out}`,
+        transition: `opacity 350ms ${ease.out}`,
       }}
     >
       <div className={still ? undefined : "stride-cam"} style={camera}>
@@ -135,9 +123,7 @@ export default function Preloader({
         <span style={{ ...typeScale.eyebrow, color: hexA("#FFFFFF", 0.5) }}>
           Stride Media
         </span>
-        {/* A line that fills rather than a spinner: five seconds of a spinner
-            reads as a page that is stuck, five seconds of a line that is
-            three quarters along reads as five seconds. */}
+        {/* A short progress line keeps the ident legible without delaying the hero. */}
         <span
           style={{
             position: "relative",

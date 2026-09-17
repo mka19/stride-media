@@ -23,7 +23,7 @@ export default function Solution({
   /** Landscape client reel. Falls back to a generated cinematic fill. */
   videoSrc,
   poster,
-  scrollLength = "1100vh",
+  scrollLength = "580vh",
 }: {
   videoSrc?: string;
   poster?: string;
@@ -207,7 +207,7 @@ export default function Solution({
           </p>
         </div>
 
-        <div ref={stageRef} style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
+        <div ref={stageRef} className="mobile-parallax-media" style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
           <MediaTile
             src={videoSrc}
             poster={poster}

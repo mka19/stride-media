@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import {
   mergeGeometries,
@@ -22,7 +22,10 @@ import { detailFor, type Breakpoint } from "../shared/responsive";
  * `progress` arrives through a ref rather than a prop so scrolling never
  * triggers a React render; the loop just reads the latest value.
  */
-export type HeroObjectHandle = { setProgress: (p: number) => void };
+export type HeroObjectHandle = {
+  setProgress: (p: number) => void;
+  setVariant: (index: number) => void;
+};
 
 /**
  * The logo, as SVG.
@@ -56,6 +59,18 @@ const LOGO_SVG = `
     <path d="M 59 37.25 C 59 48.5 62.75 52.25 74 52.25 C 62.75 52.25 59 56 59 67.25 C 59 56 55.25 52.25 44 52.25 C 55.25 52.25 59 48.5 59 37.25 Z"/>
   </g>
 </svg>`;
+
+// Complete alternate sculptures for the Why Stride capability sequence.
+// Every variant uses the same artboard, depth, bevel and chrome material, so
+// changing the form feels like one machined object reconfiguring itself.
+const ABSTRACT_SVGS = [
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M18 31 31 18h16L34 31v10L22 53l-4-4Z"/><path d="m82 31-13-13H53l13 13v10l12 12 4-4Z"/><path d="m18 69 13 13h16L34 69V59L22 47l-4 4Z"/><path d="m82 69-13 13H53l13-13V59l12-12 4 4Z"/><path d="M50 32c0 13 5 18 18 18-13 0-18 5-18 18 0-13-5-18-18-18 13 0 18-5 18-18Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M17 24h50l16 16-16 16H17l14-16Z"/><path d="M33 60h50L69 76H19Z"/><path d="M47 31h16l9 9-9 9H47l8-9Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 11 63 37 89 50 63 63 50 89 37 63 11 50 37 37Z"/><path d="m50 27 7 16 16 7-16 7-7 16-7-16-16-7 16-7Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M13 25h24v10H23v14H13Z"/><path d="M87 25H63v10h14v14h10Z"/><path d="M13 75h24V65H23V51H13Z"/><path d="M87 75H63V65h14V51h10Z"/><path d="m42 34 25 16-25 16Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 12 61 31 83 28 72 50 88 66 63 68 54 90 42 69 18 75 28 51 12 35 36 32Z"/><path d="M50 32 58 44 72 50 58 56 50 70 42 56 28 50 42 44Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 11c18 0 33 12 38 28l-12 4c-3-11-13-19-26-19-9 0-17 4-22 11l8 1-10 12-16-7 7-5C23 21 35 11 50 11Z"/><path d="M50 89c-18 0-33-12-38-28l12-4c3 11 13 19 26 19 9 0 17-4 22-11l-8-1 10-12 16 7-7 5C77 79 65 89 50 89Z"/><path d="M43 35h14v30H43Z"/><path d="M33 43h34v14H33Z"/></g></svg>`,
+];
 
 /**
  * Turn that SVG into shapes Three can extrude.
@@ -292,6 +307,7 @@ export default function HeroObject({
   className,
   breakpoint = "desktop",
   pointerTracking = true,
+  liquidBackground = false,
 }: {
   handleRef: React.MutableRefObject<HeroObjectHandle | null>;
   className?: string;
@@ -299,12 +315,30 @@ export default function HeroObject({
   breakpoint?: Breakpoint;
   /** Follow the pointer: the mark turns toward it as the cursor crosses. */
   pointerTracking?: boolean;
+  /** Full-frame liquid belongs to the opening hero only. */
+  liquidBackground?: boolean;
 }) {
   const mountRef = useRef<HTMLDivElement | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const mount = mountRef.current;
-    if (!mount) return;
+    if (!mount || ready) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setReady(true);
+        observer.disconnect();
+      },
+      { rootMargin: "100% 0px" },
+    );
+    observer.observe(mount);
+    return () => observer.disconnect();
+  }, [ready]);
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount || !ready) return;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     // Capping DPR matters more than anything else for battery on phones.
@@ -318,7 +352,11 @@ export default function HeroObject({
      * is a soft, glowing point cloud with no hard edges to alias, so the
      * extra resolution buys nothing you can see.
      */
-    renderer.setPixelRatio(1);
+    // A modest supersample keeps the polished silhouette crisp without the
+    // four-times fragment cost of blindly using a 2x phone/retina DPR.
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio || 1, breakpoint === "mobile" ? 1.25 : 1.4),
+    );
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     /*
@@ -332,12 +370,66 @@ export default function HeroObject({
      * softboxes in the upper range — the surface becomes mostly dark with
      * a few bright streaks, which is what polished metal actually is.
      */
-    renderer.toneMappingExposure = 0.85;
+    renderer.toneMappingExposure = 0.92;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.display = "block";
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, mount.clientWidth / mount.clientHeight, 0.1, 100);
+
+    // The liquid and the mark share one renderer. A second full-screen WebGL
+    // canvas caused Chromium to recycle contexts during long scroll sessions,
+    // producing white flashes and dropped frames. This camera-locked plane is
+    // visually identical, but costs no additional graphics context.
+    const liquidUniforms = {
+      uTime: { value: 0 },
+      uAspect: { value: camera.aspect },
+      uFade: { value: liquidBackground ? 1 : 0 },
+    };
+    const liquidMat = new THREE.ShaderMaterial({
+      uniforms: liquidUniforms,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+      vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+      fragmentShader: /* glsl */ `
+        precision mediump float;
+        uniform float uTime;
+        uniform float uAspect;
+        uniform float uFade;
+        varying vec2 vUv;
+        float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+        float noise(vec2 p){
+          vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+          return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);
+        }
+        float fbm(vec2 p){ float v=0.,a=.5; for(int i=0;i<4;i++){v+=a*noise(p);p*=2.02;a*=.5;}return v; }
+        void main(){
+          vec2 p=vUv*vec2(uAspect,1.)*1.7; float t=uTime*.65;
+          vec2 q=vec2(fbm(p+vec2(0.,t*.16)),fbm(p+vec2(4.7,-t*.13)));
+          vec2 r=vec2(fbm(p+3.*q+vec2(1.7,9.2)+t*.09),fbm(p+3.*q+vec2(8.3,2.8)-t*.075));
+          float f=fbm(p+3.4*r);
+          vec3 deep=vec3(.022,.012,.052), mid=vec3(.22,.09,.46), bright=vec3(.55,.35,.93);
+          vec3 col=mix(deep,mid,smoothstep(.24,.72,f));
+          col=mix(col,bright,smoothstep(.56,.96,f)*.78);
+          float vig=1.-smoothstep(.18,.76,length(vUv-.5));
+          gl_FragColor=vec4(col,uFade*(.62+.38*vig));
+        }
+      `,
+    });
+    const liquidGeo = new THREE.PlaneGeometry(2, 2);
+    const liquid = new THREE.Mesh(liquidGeo, liquidMat);
+    liquid.position.z = -1;
+    liquid.renderOrder = -100;
+    camera.add(liquid);
+    scene.add(camera);
+
+    const fitLiquid = () => {
+      const h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5));
+      liquid.scale.set(h * camera.aspect * 0.5, h * 0.5, 1);
+      liquidUniforms.uAspect.value = camera.aspect;
+    };
+    fitLiquid();
 
     /*
      * Something for the chrome to reflect.
@@ -375,9 +467,9 @@ export default function HeroObject({
      */
     const markPx = () => {
       const vmin = Math.min(window.innerWidth, window.innerHeight);
-      if (breakpoint === "mobile") return vmin * 0.4;
-      if (breakpoint === "tablet") return vmin * 0.58;
-      return Math.min(600, window.innerWidth * 0.66);
+      if (breakpoint === "mobile") return vmin * 0.37;
+      if (breakpoint === "tablet") return vmin * 0.52;
+      return Math.min(540, window.innerWidth * 0.6);
     };
     const zScale = () => Math.max(1, mount.clientHeight / Math.max(1, markPx()));
 
@@ -458,13 +550,13 @@ export default function HeroObject({
        * comes from the geometry — no amount of lighting produces it on a
        * flat face.
        */
-      depth: 0.34,
+      depth: 0.36,
       bevelEnabled: true,
       bevelThickness: 0.17,
       bevelSize: domeOf(shape),
       // Ten steps, because this is now the silhouette of a curve rather than
       // a chamfer, and a dome drawn in three steps is a faceted dome.
-      bevelSegments: Math.max(5, Math.round(10 * detail)),
+      bevelSegments: Math.max(6, Math.round(12 * detail)),
       /*
        * Halved from 24. The only curves in the mark are the star's four
        * gentle beziers, and at 12 segments they are indistinguishable from
@@ -555,6 +647,28 @@ export default function HeroObject({
     const fit = MARK_SIZE / Math.max(span.x, span.y);
     markGeo.scale(fit, fit, 1);
 
+    const variantParts: THREE.BufferGeometry[] = [];
+    const variantGeos = ABSTRACT_SVGS.slice(1).map((svg) => {
+      const geometries = logoShapes(svg).map((shape) => {
+        const raw = new THREE.ExtrudeGeometry(shape, extrudeFor(shape));
+        const welded = mergeVertices(raw, 1e-4);
+        raw.dispose();
+        welded.computeVertexNormals();
+        variantParts.push(welded);
+        return welded;
+      });
+      const geometry = mergeGeometries(geometries, false)!;
+      geometry.scale(1, -1, 1);
+      geometry.center();
+      const size = new THREE.Box3()
+        .setFromBufferAttribute(geometry.attributes.position as THREE.BufferAttribute)
+        .getSize(new THREE.Vector3());
+      const scale = MARK_SIZE / Math.max(size.x, size.y);
+      geometry.scale(scale, scale, 1);
+      return geometry;
+    });
+    const allMarkGeos = [markGeo, ...variantGeos];
+
     /*
      * No computeVertexNormals here.
      *
@@ -578,9 +692,28 @@ export default function HeroObject({
      * the glow on this mark now comes from the rim and the dust around it
      * rather than from the surface.
      */
-    const solidMat = new THREE.MeshStandardMaterial({
-      color: 0xf6f7fa,
-      metalness: 1,
+    // Fine, non-repeating surface variation breaks the mathematically perfect
+    // CG reflection. It is intentionally faint: visible as real machining in
+    // moving highlights, never as an obvious texture painted on the logo.
+    const microSize = 128;
+    const microData = new Uint8Array(microSize * microSize * 4);
+    for (let y = 0; y < microSize; y += 1) {
+      for (let x = 0; x < microSize; x += 1) {
+        const i = (y * microSize + x) * 4;
+        const grain = Math.sin(x * 1.73 + y * 0.19) * 7 + Math.sin(x * 0.11 + y * 2.41) * 4;
+        const value = Math.max(0, Math.min(255, 128 + grain + (Math.random() - 0.5) * 10));
+        microData[i] = microData[i + 1] = microData[i + 2] = value;
+        microData[i + 3] = 255;
+      }
+    }
+    const microTexture = new THREE.DataTexture(microData, microSize, microSize, THREE.RGBAFormat);
+    microTexture.wrapS = microTexture.wrapT = THREE.RepeatWrapping;
+    microTexture.repeat.set(3.5, 3.5);
+    microTexture.needsUpdate = true;
+
+    const solidMat = new THREE.MeshPhysicalMaterial({
+      color: 0xe7e9ee,
+      metalness: 0.96,
       /*
        * 0.05, not 0.015.
        *
@@ -615,7 +748,7 @@ export default function HeroObject({
        * which is the matte look; sharpening it lets the room's range show
        * through the only variation the shape has left.
        */
-      roughness: 0.045,
+      roughness: 0.075,
       /*
        * 1.0, not 1.35.
        *
@@ -623,7 +756,13 @@ export default function HeroObject({
        * multiplier above 1 pushes the ceiling past white, and a clipped
        * highlight throws away the shading that makes it read as metal.
        */
-      envMapIntensity: 1.0,
+      envMapIntensity: 1.12,
+      clearcoat: 0.18,
+      clearcoatRoughness: 0.1,
+      anisotropy: 0.14,
+      anisotropyRotation: Math.PI / 2,
+      bumpMap: microTexture,
+      bumpScale: 0.003,
       transparent: true,
       opacity: 1,
     });
@@ -844,7 +983,18 @@ export default function HeroObject({
     // --- loop -------------------------------------------------------------
     let progress = 0;
     let eased = 0;
-    handleRef.current = { setProgress: (p) => (progress = p) };
+    let activeVariant = 0;
+    let pendingVariant = 0;
+    let variantTransition = 1;
+    handleRef.current = {
+      setProgress: (p) => (progress = p),
+      setVariant: (index) => {
+        const next = THREE.MathUtils.clamp(Math.round(index), 0, allMarkGeos.length - 1);
+        if (next === activeVariant && variantTransition >= 1) return;
+        pendingVariant = next;
+        variantTransition = 0;
+      },
+    };
 
     // Pointer parallax: the mark turns toward the cursor. Tracked on the
     // window rather than the canvas, since the canvas sits behind the copy
@@ -879,16 +1029,40 @@ export default function HeroObject({
     const POSE_X = -0.05;
 
     const t0 = performance.now();
+    let previousFrame = t0;
     let raf = 0;
     const tick = (now: number = performance.now()) => {
       raf = requestAnimationFrame(tick);
       const t = (now - t0) / 1000;
+      const frameDelta = Math.min(0.05, Math.max(0, (now - previousFrame) / 1000));
+      previousFrame = now;
 
       // Damp toward the scroll value so fast scrolls still dissolve smoothly.
       eased += (progress - eased) * 0.09;
       uniforms.uTime.value = t;
       uniforms.uProgress.value = eased;
-      solidMat.opacity = 1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45);
+      liquidUniforms.uTime.value = t;
+      liquidUniforms.uFade.value = liquidBackground
+        ? 1 - THREE.MathUtils.smoothstep(eased, 0.12, 0.58)
+        : 0;
+      if (variantTransition < 1) {
+        const previous = variantTransition;
+        // Time based, so the reform takes the same 440ms on a 30Hz laptop
+        // and a 120Hz display. The previous frame based increment was one of
+        // the reasons the change felt jerky on slower devices.
+        variantTransition = Math.min(1, variantTransition + frameDelta / 0.44);
+        if (previous < 0.5 && variantTransition >= 0.5) {
+          activeVariant = pendingVariant;
+          solid.geometry = allMarkGeos[activeVariant];
+          rim.geometry = allMarkGeos[activeVariant];
+        }
+      }
+      const reformWave = Math.sin(variantTransition * Math.PI);
+      // Compress into a thin glint, exchange the machined form while it is
+      // visually hidden, then settle back with no pop at the midpoint.
+      const reform = 1 - reformWave * 0.24;
+      const reformOpacity = 1 - reformWave * 0.94;
+      solidMat.opacity = (1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45)) * reformOpacity;
       solidMat.visible = solidMat.opacity > 0.01;
 
       // Damped toward the pointer so the mark follows the cursor without
@@ -905,8 +1079,8 @@ export default function HeroObject({
        * The damping stays slow. The response should read as something heavy
        * being steered, not as an object stuck to the cursor.
        */
-      swayX += (pointerX * 0.5 - swayX) * 0.035;
-      swayY += (pointerY * 0.26 - swayY) * 0.035;
+      swayX += (pointerX * 0.24 - swayX) * 0.055;
+      swayY += (pointerY * 0.13 - swayY) * 0.055;
 
       /*
        * A fixed pose, not a drift.
@@ -926,7 +1100,7 @@ export default function HeroObject({
       solid.rotation.x = POSE_X + swayY;
       solid.position.y = eased * 0.35;
       // Shrinking as it goes hands the centre of the screen to the headline.
-      const shrink = 1 - eased * 0.3;
+      const shrink = (1 - eased * 0.3) * reform;
       solid.scale.setScalar(shrink);
       rim.visible = eased > 0.01 && eased < 0.98;
       rim.rotation.copy(solid.rotation);
@@ -944,6 +1118,7 @@ export default function HeroObject({
       if (!mount.clientWidth || !mount.clientHeight) return;
       camera.aspect = mount.clientWidth / mount.clientHeight;
       camera.updateProjectionMatrix();
+      fitLiquid();
       renderer.setSize(mount.clientWidth, mount.clientHeight);
     };
     const ro = new ResizeObserver(onResize);
@@ -954,18 +1129,19 @@ export default function HeroObject({
       window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
       handleRef.current = null;
-      [...parts, markGeo, cloudGeo, dustGeo, halo.geometry].forEach((g) =>
+      [...parts, ...variantParts, ...variantGeos, markGeo, cloudGeo, dustGeo, halo.geometry, liquidGeo].forEach((g) =>
         g.dispose(),
       );
-      [solidMat, rim.material, cloud.material, dust.material, halo.material].forEach((m) =>
+      [solidMat, rim.material, cloud.material, dust.material, halo.material, liquidMat].forEach((m) =>
         (m as THREE.Material).dispose(),
       );
+      microTexture.dispose();
       envRT.texture.dispose();
       envRT.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
     };
-  }, [handleRef, breakpoint, pointerTracking]);
+  }, [handleRef, breakpoint, pointerTracking, liquidBackground, ready]);
 
   return <div ref={mountRef} className={className} style={{ width: "100%", height: "100%" }} />;
 }

@@ -44,7 +44,7 @@ export function initSmoothScroll(): () => void {
      * while its contents snap, or contents that drift over a scroll position
      * that jumps.
      */
-    duration: 1.9,
+    duration: 1.2,
     // Heavy at the start, long settle — the weightless feel comes from the
     // tail of this curve, not from the duration.
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -60,9 +60,10 @@ export function initSmoothScroll(): () => void {
      * Lower than this and the page starts to feel like it is resisting the
      * user, which costs more than it buys.
      */
-    wheelMultiplier: 0.45,
+    wheelMultiplier: 0.55,
     // Touch devices already have their own momentum; adding ours fights it.
-    syncTouch: false,
+    syncTouch: true,
+    touchMultiplier: 0.82,
   });
 
   const onScroll = () => ScrollTrigger.update();

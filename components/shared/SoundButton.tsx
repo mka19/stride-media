@@ -17,15 +17,19 @@ import { color, ease, hexA } from "./theme";
 export default function SoundButton({
   src,
   size = 44,
+  tone = "dark",
   style,
 }: {
   /** The track. Without one the button toggles but stays silent. */
   src?: string;
   size?: number;
+  /** Surface behind the control. Light surfaces need an ink treatment. */
+  tone?: "dark" | "light";
   style?: CSSProperties;
 }) {
   const [on, setOn] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const onLight = tone === "light";
 
   useEffect(() => {
     const el = audioRef.current;
@@ -74,9 +78,13 @@ export default function SoundButton({
           padding: 0,
           borderRadius: 8,
           cursor: "pointer",
-          border: `1px solid ${hexA("#FFFFFF", on ? 0.3 : 0.14)}`,
-          background: on ? hexA(color.accent, 0.18) : hexA("#FFFFFF", 0.04),
-          color: on ? color.accentBright : hexA("#FFFFFF", 0.65),
+          border: `1px solid ${
+            on ? hexA(color.accent, onLight ? 0.45 : 0.3) : hexA(onLight ? color.black : "#FFFFFF", onLight ? 0.18 : 0.14)
+          }`,
+          background: on
+            ? hexA(color.accent, onLight ? 0.12 : 0.18)
+            : hexA(onLight ? color.black : "#FFFFFF", onLight ? 0.055 : 0.04),
+          color: on ? (onLight ? color.accent : color.accentBright) : hexA(onLight ? color.black : "#FFFFFF", onLight ? 0.76 : 0.65),
           transition: `background ${ease.hoverMs}ms ${ease.hover}, color ${ease.hoverMs}ms ${ease.hover}, border-color ${ease.hoverMs}ms ${ease.hover}, transform ${ease.pressMs}ms ${ease.out}`,
           ...style,
         }}

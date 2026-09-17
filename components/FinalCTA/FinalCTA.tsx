@@ -165,8 +165,8 @@ export default function FinalCTA({
           <MicroLabel tone="accent">{copy.calendlyHeader}</MicroLabel>
           <CalendlyEmbed
             url={calendly}
-            minHeight={stacked ? 820 : 760}
-            minHeightMobile={1040}
+            minHeight={stacked ? 680 : 620}
+            minHeightMobile={720}
           />
         </div>
       </div>

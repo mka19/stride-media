@@ -143,8 +143,8 @@ export default function Wordmark({
       render();
     };
 
-    const BLOCK = 6;
-    const RADIUS = 170;
+    const BLOCK = 4;
+    const RADIUS = 190;
 
     // A stable pseudo-random value per block, so a block's scatter is a
     // property of where it is rather than of which frame this is.
@@ -172,7 +172,7 @@ export default function Wordmark({
         sx = tx;
         sy = ty;
       }
-      const follow = approach(0.09);
+      const follow = approach(0.14);
       sx += (tx - sx) * follow;
       sy += (ty - sy) * follow;
 
@@ -183,7 +183,7 @@ export default function Wordmark({
       // Held at full while the blocks are still out, then released as they
       // land: the mark is only uncovered once there is something home to
       // uncover.
-      const veilTarget = pressed ? 1 : Math.min(1, spread * 3.2);
+      const veilTarget = pressed ? 1 : spread > 0.08 ? 1 : spread / 0.08;
       veil += (veilTarget - veil) * approach(pressed ? 0.09 : 0.1);
 
       // Both channels snap at the tail. An exponential never reaches zero,
@@ -251,7 +251,7 @@ export default function Wordmark({
           if (keep < t * 0.5) continue;
           if (spread > 0.02 && keep < spread * 0.22) continue;
 
-          const push = t * 30;
+          const push = t * 18;
           const dx = (hash(x, y, 1) - 0.5) * push + bx;
           const dy = (hash(x, y, 2) - 0.5) * push + by;
 

@@ -6,7 +6,6 @@ import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useCanHover } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 import SocialProof from "../shared/SocialProof";
-import LiquidField from "../shared/LiquidField";
 import HeroObject, { type HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
 
@@ -28,7 +27,7 @@ export default function Hero({
   tiles = [],
   /** Client photographs for the proof row. Gaps render as tinted discs. */
   clientFaces = [],
-  scrollLength = "700vh",
+  scrollLength = "320vh",
 }: {
   tiles?: MosaicTile[];
   clientFaces?: string[];
@@ -60,23 +59,24 @@ export default function Hero({
           end: "bottom bottom",
           scrub: SCRUB,
           onUpdate: (self) => {
-            // Feed the dissolve. 0 -> 1 across the first 55% of the scroll.
-            objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.55));
+            // Finish the expensive particle hand-off promptly, then let the
+            // headline composition breathe for the rest of the pinned scene.
+            objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.43));
             // Hover push only once the mosaic has actually arrived.
-            setInteractive(self.progress > 0.62);
+            setInteractive(self.progress > 0.54);
           },
         },
       });
 
-      tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" }, 0.18)
-        .to(q(".hero-veil"), { opacity: 0.55, duration: 0.5 }, 0.2)
+      tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 0.14)
+        .to(q(".hero-veil"), { opacity: 0.55, duration: 0.46 }, 0.17)
         .to(
           lines,
           { scale: 1, opacity: 1, duration: 0.42, stagger: 0.07, ease: "power3.out" },
-          0.3,
+          0.24,
         )
-        .to(q(".hero-glow"), { opacity: 1, duration: 0.4 }, 0.34)
-        .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 }, 0.52)
+        .to(q(".hero-glow"), { opacity: 1, duration: 0.4 }, 0.28)
+        .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 }, 0.46)
         .to(q(".hero-intro"), { opacity: 0, y: -20, duration: 0.25 }, 0.05)
         .to(q(".hero-hint"), { opacity: 0, duration: 0.2 }, 0.05);
 
@@ -141,12 +141,6 @@ export default function Hero({
           }}
         />
 
-        {/* Layer 0b — the liquid ground. Slow and low-contrast: it gives the
-            black somewhere to move without competing with anything on it. */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          <LiquidField opacity={0.68} speed={1.9} />
-        </div>
-
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
         <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
           <VideoMosaic
@@ -185,7 +179,7 @@ export default function Hero({
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
           <div style={{ position: "absolute", inset: 0 }}>
-            <HeroObject handleRef={objectRef} breakpoint={bp} />
+            <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
           </div>
         </div>
 
@@ -231,7 +225,7 @@ export default function Hero({
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
-            gap: rhythm.headlineToBody,
+            gap: 0,
             padding: `0 ${layout.pad}`,
             pointerEvents: "none",
           }}
@@ -266,6 +260,7 @@ export default function Hero({
             style={{
               position: "relative",
               margin: 0,
+              marginBottom: rhythm.headlineToBody,
               maxWidth: "26ch",
               ...typeScale.displayLg,
               textWrap: "balance",
@@ -293,6 +288,7 @@ export default function Hero({
             style={{
               position: "relative",
               margin: 0,
+              marginBottom: rhythm.bodyToCta,
               maxWidth: 640,
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
