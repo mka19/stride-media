@@ -833,7 +833,7 @@ export default function HeroObject({
       new THREE.ShaderMaterial({
         uniforms: {
           ...uniforms,
-          uDensity: { value: breakpoint === "mobile" ? 0.38 : 0.58 },
+          uDensity: { value: breakpoint === "mobile" ? 0.56 : 0.76 },
         },
         transparent: true,
         depthWrite: false,
@@ -903,7 +903,7 @@ export default function HeroObject({
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             gl_Position = projectionMatrix * mv;
             float keep = step(aSeed.x * 0.5 + 0.5, uDensity);
-            gl_PointSize = keep * (5.2 + aSeed.z * 2.0) * (1.0 / -mv.z) * 3.0;
+            gl_PointSize = keep * (5.8 + aSeed.z * 2.3) * (1.0 / -mv.z) * 3.0;
 
             vFade = keep * smoothstep(0.02, 0.16, uProgress) * (1.0 - smoothstep(0.38, 0.76, uProgress));
           }
@@ -916,7 +916,7 @@ export default function HeroObject({
             float d = length(c);
             if (d > 0.5) discard;
             vec3 silver = mix(vec3(0.62, 0.56, 0.82), vec3(0.9), gl_PointCoord.y);
-            gl_FragColor = vec4(silver, (1.0 - smoothstep(0.08, 0.5, d)) * vFade * 0.56);
+            gl_FragColor = vec4(silver, (1.0 - smoothstep(0.08, 0.5, d)) * vFade * 0.72);
           }
         `,
       }),

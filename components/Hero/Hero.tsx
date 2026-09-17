@@ -198,7 +198,7 @@ export default function Hero({
                owns the middle of the screen in phase 1. */
             justifyContent: "space-between",
             pointerEvents: "none",
-            padding: `23vh ${layout.pad} 14vh`,
+            padding: `19vh ${layout.pad} 16vh`,
           }}
         >
           <MicroLabel tone="accent">{heroCopy.label}</MicroLabel>
