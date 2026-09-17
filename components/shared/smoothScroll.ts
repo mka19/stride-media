@@ -49,18 +49,10 @@ export function initSmoothScroll(): () => void {
     // tail of this curve, not from the duration.
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    // A notch of the wheel moves slightly less than the browser default, so
-    // a single flick never jumps past a whole beat of a pinned section.
-    /*
-     * 0.45. A notch of the wheel covers a little under half of what the
-     * browser would move, so a single flick advances one beat of a pinned
-     * section rather than overshooting through two or three of them — which
-     * is most of why sections felt abrupt and hard to navigate.
-     *
-     * Lower than this and the page starts to feel like it is resisting the
-     * user, which costs more than it buys.
-     */
-    wheelMultiplier: 0.55,
+    // Calibrated from the real mouse test: 0.55 needed about 160 wheel steps
+    // for the document. 1.0 brings the same journey to roughly 86 while the
+    // duration and ScrollTrigger scrub continue to soften every arrival.
+    wheelMultiplier: 1,
     // Touch devices already have their own momentum; adding ours fights it.
     syncTouch: true,
     touchMultiplier: 0.82,
