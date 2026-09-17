@@ -2,7 +2,7 @@ import { useState } from "react";
 import { founders as copy } from "../shared/copy";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
-import { useStacked } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 import { Grain, MicroLabel } from "../shared/primitives";
 
 function Portrait({ person, index }: { person: (typeof copy.people)[number]; index: number }) {
@@ -85,6 +85,7 @@ function Memory({ item, index }: { item: (typeof copy.memories)[number]; index: 
 
 export default function Founders({ scrollLength = "300vh" }: { scrollLength?: string }) {
   const stacked = useStacked();
+  const compact = useBreakpoint() === "mobile";
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
@@ -116,7 +117,7 @@ export default function Founders({ scrollLength = "300vh" }: { scrollLength?: st
         position: stacked ? "relative" : "absolute",
         inset: stacked ? undefined : 0,
         display: "grid",
-        gridTemplateColumns: stacked ? "1fr" : "minmax(0, 1.08fr) minmax(320px, .92fr)",
+        gridTemplateColumns: stacked || compact ? "1fr" : "minmax(0, 1.08fr) minmax(320px, .92fr)",
         minHeight: stacked ? undefined : "70vh",
       }}
     >

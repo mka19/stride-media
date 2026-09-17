@@ -171,7 +171,7 @@ export default function Nav({
         href="#top"
         style={{
           position: "relative",
-          display: "flex",
+          display: isMobile ? "none" : "flex",
           alignItems: "center",
           gap: space.s,
           paddingRight: space.xxl,
@@ -261,7 +261,7 @@ export default function Nav({
             <span style={{ height: 1.5, background: ink, transition: `background 600ms ${ease.out}` }} />
           </button>
         )}
-        {!isMobile && (
+        {(
           <div
             style={{
               position: "relative",
@@ -288,9 +288,12 @@ export default function Nav({
             <SoundButton
               src={soundtrack}
               tone={navHidden ? "dark" : light ? "light" : "dark"}
-              style={{ marginRight: 8, marginLeft: railVisible ? 0 : 8 }}
+              size={isMobile ? 42 : 44}
+              style={{ marginRight: 8, marginLeft: isMobile ? 8 : railVisible ? 0 : 8 }}
             />
-            <GlowButton href="#contact">{navCopy.cta}</GlowButton>
+            <GlowButton href="#contact" style={isMobile ? { minHeight: 42, padding: "0 16px", whiteSpace: "nowrap" } : undefined}>
+              {isMobile ? "Book a call" : navCopy.cta}
+            </GlowButton>
           </div>
         )}
       </div>

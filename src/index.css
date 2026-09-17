@@ -26,6 +26,10 @@ html, body, #root {
   background: #080808;
 }
 
+/* Wide animated fields intentionally travel past their section edges. Clip
+   them at the app shell so they never create a sideways page on phones. */
+#root { overflow-x: clip; }
+
 /* Base size is the body token, so inherited text is on the scale too. */
 body {
   font-family: "Neue Haas Grotesk Display", "Familjen Grotesk", -apple-system, BlinkMacSystemFont,
