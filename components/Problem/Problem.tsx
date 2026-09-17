@@ -155,13 +155,11 @@ export default function Problem({
 
       // --- part 2: the footage never leaves the screen --------------------
       //
-      // Each state's plate arrives already covering the frame, shrinks into
-      // its slot while the card's text fades in around it, holds, then grows
-      // back out to cover — and the next plate fades up underneath it at the
-      // same size, so the handover happens between two full-bleed frames and
-      // there is never a moment without footage on screen. The last state
-      // expands too: the section leaves through the footage the same way
-      // every state inside it did.
+      // Each image begins as the centred plate the visitor can understand,
+      // expands once to fill the frame, then holds while its matching copy
+      // rises over it. The previous full-screen image remains underneath the
+      // next plate until that plate has covered the frame, which prevents a
+      // white flash between states.
       const start = 0.52;
       const span = (1 - start) / cards.length;
 
@@ -169,38 +167,31 @@ export default function Problem({
         const at = start + i * span;
         const media = card.querySelector(".pb-media") as HTMLElement | null;
         const text = card.querySelectorAll(".pb-text");
+        const shade = card.querySelector(".pb-media-shade") as HTMLElement | null;
 
         gsap.set(card, { opacity: 0 });
-        if (media) gsap.set(media, { scale: coverScale, transformOrigin: "50% 50%" });
+        if (media) gsap.set(media, { scale: 1, transformOrigin: "50% 50%" });
+        if (shade) gsap.set(shade, { opacity: 0 });
 
-        // 1. take over the screen from the plate before it, at the same size
+        // 1. show the plate in its resting position, then expand it to cover
         tl.to(card, { opacity: 1, duration: 0.05 }, at);
-        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.05 }, at + 0.03);
-
-        // 2. settle into the slot, and let the card build around it
         if (media) {
-          tl.to(media, { scale: 1, duration: span * 0.3, ease: "power2.inOut" }, at + 0.02);
+          tl.to(media, { scale: coverScale, duration: span * 0.3, ease: "power3.inOut" }, at + 0.02);
         }
+        if (shade) tl.to(shade, { opacity: 0.58, duration: span * 0.2, ease: "power2.out" }, at + span * 0.2);
+        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.025 }, at + span * 0.32);
+
+        // 2. once the image is full-screen, lift the content over it
         tl.fromTo(
           text,
-          // 16px, matching the shared reveal travel. This was 26 — the one
-          // place on the page where body copy travelled further than the
-          // headings did.
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: span * 0.22, ease: reveal.ease },
-          at + span * 0.18,
+          { opacity: 0, y: 34 },
+          { opacity: 1, y: 0, duration: span * 0.22, stagger: span * 0.025, ease: "power3.out" },
+          at + span * 0.34,
         );
 
-        // 3. the text goes, and the plate grows back out to cover
-        // Leaving is the exact inverse of arriving, at the same distance.
-        tl.to(text, { opacity: 0, y: -16, duration: span * 0.12, ease: reveal.easeIn }, at + span * 0.8);
-        if (media) {
-          tl.to(
-            media,
-            { scale: coverScale, duration: span * 0.32, ease: "power2.inOut" },
-            at + span * 0.82,
-          );
-        }
+        // 3. hold the composed frame, then clear only its text. The image
+        // remains full-screen beneath the next expanding plate.
+        tl.to(text, { opacity: 0, y: -20, duration: span * 0.12, ease: reveal.easeIn }, at + span * 0.84);
 
         tl.to(q(`.pb-tick-${i}`), { scaleX: 1, duration: span * 0.9, ease: "none" }, at);
       });
@@ -602,6 +593,7 @@ export default function Problem({
                     // 16:9 frame took most of the row's width and squeezed the
                     // two text columns either side of it.
                     height: "min(430px, 48vh)",
+                    isolation: "isolate",
                   }}
                 >
                   {/* ---- left: icon, eyebrow, sub-label, headline ---- */}
@@ -616,6 +608,10 @@ export default function Problem({
                       gridRow: bp === "tablet" ? "1" : undefined,
                       height: "100%",
                       minWidth: 0,
+                      position: "relative",
+                      zIndex: 3,
+                      color: color.textOnDark,
+                      textShadow: "0 2px 22px rgba(0,0,0,.42)",
                     }}
                   >
                     <CardIcon index={i} />
@@ -623,7 +619,7 @@ export default function Problem({
                     <div style={{ ...typeScale.h3 }}>{card.label}</div>
                     <GradientRevealText
                       as="h3"
-                      tone="light"
+                      tone="dark"
                       style={{
                         ...typeScale.h1,
                         // Sized to its own column rather than to a character
@@ -666,6 +662,8 @@ export default function Problem({
                         // card's hold; without the clip it would bleed past
                         // its own frame as it scales.
                         overflow: "hidden",
+                        zIndex: 1,
+                        willChange: "transform",
                       }}
                     >
                       <MediaTile
@@ -673,8 +671,18 @@ export default function Problem({
                         seed={i * 5 + 11}
                         style={{ position: "absolute", inset: 0 }}
                       />
+                      <div
+                        className="pb-media-shade"
+                        aria-hidden="true"
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: "linear-gradient(90deg, rgba(4,3,8,.76) 0%, rgba(4,3,8,.34) 48%, rgba(4,3,8,.72) 100%)",
+                          pointerEvents: "none",
+                        }}
+                      />
                     </div>
-                    <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>
+                    <span className="pb-text" style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, position: "relative", zIndex: 3, textShadow: "0 2px 16px rgba(0,0,0,.5)" }}>
                       {card.caption}
                     </span>
                   </div>
@@ -698,6 +706,10 @@ export default function Problem({
                       textAlign: "right",
                       gap: rhythm.headlineToBody,
                       height: "100%",
+                      position: "relative",
+                      zIndex: 3,
+                      color: color.textOnDark,
+                      textShadow: "0 2px 22px rgba(0,0,0,.42)",
                     }}
                   >
                     <div
@@ -719,7 +731,7 @@ export default function Problem({
                         maxWidth: "40ch",
                         textWrap: "balance",
                         ...typeScale.bodyLg,
-                        color: color.textOnLightMuted,
+                        color: color.textOnDarkMuted,
                       }}
                     >
                       {card.body}
