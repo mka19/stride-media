@@ -51,12 +51,17 @@ export default function Problem({
       approach(root, ".pb-frame");
       const cards = q(".pb-card");
 
-      // The plate is 16:9 at min(430px, 48vh) tall, so what it takes to
-      // cover the frame is known without measuring anything.
-      const plateH = Math.min(430, window.innerHeight * 0.48);
-      const plateW = (plateH * 16) / 9;
-      const coverScale =
-        Math.max(window.innerWidth / plateW, window.innerHeight / plateH) * 1.06;
+      // Measure each rendered plate when GSAP refreshes. The tablet grid and
+      // desktop grid give it different real dimensions, so a scale derived
+      // from an assumed 16:9 size can leave a white strip at the viewport
+      // edge. The extra 3% absorbs fractional-pixel rounding.
+      const scaleToCover = (media: HTMLElement) => {
+        const rect = media.getBoundingClientRect();
+        return Math.max(
+          window.innerWidth / Math.max(1, rect.width),
+          window.innerHeight / Math.max(1, rect.height),
+        ) * 1.03;
+      };
 
       // The statement resolves by opacity, not by a gradient: the words are
       // white throughout and simply come up from dim to full as the reading
@@ -170,23 +175,32 @@ export default function Problem({
         const shade = card.querySelector(".pb-media-shade") as HTMLElement | null;
 
         gsap.set(card, { opacity: 0 });
-        if (media) gsap.set(media, { scale: 1, transformOrigin: "50% 50%" });
+        if (media) gsap.set(media, { scale: 0.72, opacity: 0.72, transformOrigin: "50% 50%" });
         if (shade) gsap.set(shade, { opacity: 0 });
 
         // 1. show the plate in its resting position, then expand it to cover
         tl.to(card, { opacity: 1, duration: 0.05 }, at);
         if (media) {
-          tl.to(media, { scale: coverScale, duration: span * 0.3, ease: "power3.inOut" }, at + 0.02);
+          tl.to(
+            media,
+            {
+              scale: () => scaleToCover(media),
+              opacity: 1,
+              duration: span * 0.34,
+              ease: "power3.inOut",
+            },
+            at + 0.015,
+          );
         }
         if (shade) tl.to(shade, { opacity: 0.58, duration: span * 0.2, ease: "power2.out" }, at + span * 0.2);
-        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.025 }, at + span * 0.32);
+        if (i > 0) tl.to(cards[i - 1], { opacity: 0, duration: 0.025 }, at + span * 0.37);
 
         // 2. once the image is full-screen, lift the content over it
         tl.fromTo(
           text,
           { opacity: 0, y: 34 },
           { opacity: 1, y: 0, duration: span * 0.22, stagger: span * 0.025, ease: "power3.out" },
-          at + span * 0.34,
+          at + span * 0.4,
         );
 
         // 3. hold the composed frame, then clear only its text. The image
