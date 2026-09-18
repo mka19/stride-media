@@ -100,18 +100,6 @@ body {
   transform: translate3d(1px, -1px, 0) rotate(-45deg);
 }
 
-/* The case-study plate itself has surface tension: its silhouette slowly
-   redistributes under the pointer instead of remaining a rigid rectangle. */
-.cs-liquid-card { overflow: hidden; isolation: isolate; border-radius: 2px; }
-.cs-liquid-card:hover {
-  animation: stride-liquid-edge 2.8s cubic-bezier(.45,0,.2,1) infinite alternate;
-}
-@keyframes stride-liquid-edge {
-  0% { border-radius: 2px 34px 5px 24px / 3px 17px 31px 8px; transform: translate(-50%,-50%) scale(1); }
-  45% { border-radius: 28px 6px 38px 3px / 12px 32px 7px 26px; transform: translate(-50%,-50%) scale(1.006,.994); }
-  100% { border-radius: 7px 42px 12px 31px / 35px 8px 29px 4px; transform: translate(-50%,-50%) scale(.996,1.008); }
-}
-
 @keyframes stride-cam-settle {
   0% { opacity: 0; transform: perspective(800px) rotateX(9deg) rotateY(-12deg) translateY(14px) scale(.9); }
   65% { opacity: 1; transform: perspective(800px) rotateX(-1deg) rotateY(2deg) translateY(0) scale(1); }
