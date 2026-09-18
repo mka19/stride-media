@@ -373,7 +373,6 @@ export default function Solution({
                 style={{
                   margin: 0,
                   maxWidth: "22ch",
-                  textWrap: "balance",
                   ...typeScale.h1,
                 }}
               >

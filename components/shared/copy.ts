@@ -315,7 +315,7 @@ export const faq = {
 /** Replace these fields and image URLs when the founder material arrives. */
 export const founders = {
   label: "The people behind Stride",
-  headline: "FOUNDERS",
+  headline: "Founders",
   people: [
     {
       n: "01",

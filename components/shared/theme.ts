@@ -91,22 +91,25 @@ export const typeScale = {
     fontWeight: 500,
     lineHeight: fluid(26, 102),
     letterSpacing: "-1px",
+    textWrap: "balance" as const,
   },
   /** Every section and sub-section headline, and the About statement. */
   h1: {
     fontFamily: SANS,
     fontSize: fluid(36, 64),
     fontWeight: 500,
-    lineHeight: fluid(44, 76),
+    lineHeight: fluid(42, 70),
     letterSpacing: "-1px",
+    textWrap: "balance" as const,
   },
   /** Card headlines, questions, stats — the working headline size. */
   h3: {
     fontFamily: SANS,
     fontSize: fluid(20, 26),
     fontWeight: 400,
-    lineHeight: fluid(25, 32),
+    lineHeight: fluid(25, 30),
     letterSpacing: "-1px",
+    textWrap: "balance" as const,
   },
   /** Oversized numerals: 01/02/03 and the case-study metrics. */
   numberXl: {

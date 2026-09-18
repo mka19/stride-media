@@ -215,7 +215,6 @@ export default function HowItWorks({
           tone={stacked ? "light" : "dark"}
           style={{
             maxWidth: "24ch",
-            textWrap: "balance",
             ...typeScale.h1,
           }}
         >

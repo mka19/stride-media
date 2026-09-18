@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { founders as copy } from "../shared/copy";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
-import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
+import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 import { Grain, MicroLabel } from "../shared/primitives";
+import GradientRevealText from "../shared/GradientRevealText";
 
 function Portrait({ person, index }: { person: (typeof copy.people)[number]; index: number }) {
   return (
@@ -147,7 +148,9 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
     return (
       <section id="founders" ref={rootRef} style={{ position: "relative", padding: `${layout.section} ${layout.pad}`, background: color.black, overflow: "hidden" }}>
         <MicroLabel tone="accent">{copy.label}</MicroLabel>
-        <h2 style={{ margin: `${space.lg}px 0 ${space.xxl}px`, ...typeScale.displayLg, color: color.textOnDark }}>{copy.headline}</h2>
+        <GradientRevealText as="h2" tone="dark" style={{ margin: `${rhythm.eyebrowToHeadline}px 0 ${space.xxl}px`, ...typeScale.h1, color: color.textOnDark }}>
+          {copy.headline}
+        </GradientRevealText>
         <div style={{ display: "grid", gap: space.xxl }}>{copy.people.map(panel)}</div>
         <div style={{ marginTop: layout.section }}>
           <h3 style={{ ...typeScale.h1, color: color.textOnDark }}>Built together.</h3>
@@ -162,10 +165,10 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", padding: `${space.xl}px ${layout.pad}` }}>
         <Grain opacity={0.12} />
         <div className="founder-intro" style={{ position: "absolute", inset: 0, zIndex: 3, display: "grid", placeItems: "center" }}>
-          <div style={{ position: "relative", width: "min(1040px, 76vw)", height: "clamp(220px, 31vh, 360px)", display: "grid", placeItems: "center", overflow: "hidden", background: "#141417" }}>
+          <div style={{ position: "relative", width: "min(1040px, 76vw)", minHeight: "clamp(220px, 31vh, 360px)", display: "grid", placeItems: "center", overflow: "hidden", background: "#141417", padding: `clamp(56px, 8vw, 112px) ${layout.pad}` }}>
             <MicroLabel tone="accent" style={{ position: "absolute", top: space.xl, left: space.xl }}>{copy.label}</MicroLabel>
-            <div style={{ width: "100%", overflow: "hidden" }}>
-              <h2 className="founder-title" style={{ margin: 0, ...typeScale.displayLg, fontSize: "clamp(108px, 14vw, 230px)", fontWeight: 400, lineHeight: 0.78, whiteSpace: "nowrap", letterSpacing: "-0.065em", transform: "translateX(-7%)" }}>{copy.headline}</h2>
+            <div style={{ width: "100%", overflow: "hidden", textAlign: "center" }}>
+              <h2 className="founder-title" style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>{copy.headline}</h2>
             </div>
           </div>
         </div>
