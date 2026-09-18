@@ -8,6 +8,7 @@ import GradientRevealText from "../shared/GradientRevealText";
 import HoverBadge from "../shared/HoverBadge";
 import SlatCurtain, { type SlatHandle } from "../shared/SlatCurtain";
 import { useStacked } from "../shared/responsive";
+import FluidWake from "./FluidWake";
 
 /**
  * Case Study — sondaven.com reference.
@@ -519,6 +520,7 @@ export default function CaseStudy({
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
                 <MediaTile src={plate.src} seed={plate.w} style={{ position: "absolute", inset: 0 }} />
+                <FluidWake />
                 <figcaption
                   style={{
                     position: "absolute",
@@ -527,6 +529,7 @@ export default function CaseStudy({
                     ...typeScale.eyebrow,
                     color: hexA("#FFFFFF", 0.82),
                     textShadow: "0 1px 10px rgba(0,0,0,0.65)",
+                    zIndex: 3,
                   }}
                 >
                   {plate.caption}
