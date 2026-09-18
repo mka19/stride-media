@@ -23,7 +23,7 @@ export default function Solution({
   /** Landscape client reel. Falls back to a generated cinematic fill. */
   videoSrc,
   poster,
-  scrollLength = "580vh",
+  scrollLength = "300vh",
 }: {
   videoSrc?: string;
   poster?: string;

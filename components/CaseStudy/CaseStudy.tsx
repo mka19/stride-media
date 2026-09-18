@@ -27,7 +27,7 @@ import FluidWake from "./FluidWake";
 export default function CaseStudy({
   gallery = [],
   curtainImage,
-  scrollLength = "1250vh",
+  scrollLength = "620vh",
 }: {
   gallery?: string[];
   /**

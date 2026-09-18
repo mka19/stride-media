@@ -27,7 +27,7 @@ export default function Hero({
   tiles = [],
   /** Client photographs for the proof row. Gaps render as tinted discs. */
   clientFaces = [],
-  scrollLength = "320vh",
+  scrollLength = "220vh",
 }: {
   tiles?: MosaicTile[];
   clientFaces?: string[];

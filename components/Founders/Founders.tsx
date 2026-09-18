@@ -83,7 +83,7 @@ function Memory({ item, index }: { item: (typeof copy.memories)[number]; index: 
   );
 }
 
-export default function Founders({ scrollLength = "430vh" }: { scrollLength?: string }) {
+export default function Founders({ scrollLength = "250vh" }: { scrollLength?: string }) {
   const stacked = useStacked();
   const compact = useBreakpoint() === "mobile";
   const rootRef = useGsapContext(
