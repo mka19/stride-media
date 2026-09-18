@@ -120,16 +120,25 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
         position: stacked ? "relative" : "absolute",
         inset: stacked ? undefined : 0,
         display: "grid",
-        gridTemplateColumns: stacked || compact ? "1fr" : "minmax(0, 1.08fr) minmax(320px, .92fr)",
+        gridTemplateColumns: "1fr",
         minHeight: stacked ? undefined : "70vh",
+        overflow: "hidden",
+        background: i ? "#121215" : "#0d0d10",
       }}
     >
       <Portrait person={person} index={i} />
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: `clamp(28px, 5vw, 76px)`, background: i ? "#121215" : "#0d0d10" }}>
-        <span style={{ ...typeScale.numberXl, color: hexA(color.accentBright, 0.22) }}>{person.n}</span>
-        <h3 style={{ margin: `${space.lg}px 0 ${space.sm}px`, ...typeScale.h1, color: color.textOnDark }}>{person.name}</h3>
-        <p style={{ margin: 0, ...typeScale.eyebrow, color: color.accentOnDark }}>{person.role}</p>
-        <p style={{ margin: `${space.xl}px 0 0`, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "42ch" }}>{person.bio}</p>
+      <div style={{ position: stacked ? "relative" : "absolute", right: stacked || compact ? 0 : "4vw", bottom: stacked || compact ? 0 : "4vh", width: stacked || compact ? "100%" : "min(54vw, 760px)", padding: `clamp(26px, 4vw, 58px)`, background: "rgba(8,8,11,.9)", backdropFilter: "blur(24px)", border: `1px solid ${hexA("#fff", .13)}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: space.xl }}>
+          <div>
+            <p style={{ margin: 0, ...typeScale.eyebrow, color: color.accentOnDark }}>{person.role}</p>
+            <h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>{person.name}</h3>
+          </div>
+          <span style={{ ...typeScale.numberXl, lineHeight: .75, color: hexA(color.accentBright, 0.34) }}>{person.n}</span>
+        </div>
+        <p style={{ margin: `${space.xl}px 0 0`, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "48ch" }}>{person.bio}</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", marginTop: space.xl, borderTop: `1px solid ${hexA("#fff", .12)}` }}>
+          {["Strategy", "Direction", "Delivery"].map((item, n) => <span key={item} style={{ padding: `${space.md}px 0 0`, ...typeScale.eyebrow, color: n === i ? color.accentOnDark : color.textOnDarkMuted }}>{item}</span>)}
+        </div>
       </div>
     </article>
   );
@@ -153,10 +162,10 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", padding: `${space.xl}px ${layout.pad}` }}>
         <Grain opacity={0.12} />
         <div className="founder-intro" style={{ position: "absolute", inset: 0, zIndex: 3, display: "grid", placeItems: "center" }}>
-          <div style={{ position: "relative", width: "min(760px, 58vw)", height: "clamp(210px, 28vh, 330px)", display: "grid", placeItems: "center", overflow: "hidden", background: "#141417" }}>
+          <div style={{ position: "relative", width: "min(1040px, 76vw)", height: "clamp(220px, 31vh, 360px)", display: "grid", placeItems: "center", overflow: "hidden", background: "#141417" }}>
             <MicroLabel tone="accent" style={{ position: "absolute", top: space.xl, left: space.xl }}>{copy.label}</MicroLabel>
             <div style={{ width: "100%", overflow: "hidden" }}>
-              <h2 className="founder-title" style={{ margin: 0, ...typeScale.displayLg, fontSize: "clamp(92px, 12vw, 210px)", lineHeight: 0.82, whiteSpace: "nowrap", letterSpacing: "-0.055em", transform: "translateX(-4%)" }}>{copy.headline}</h2>
+              <h2 className="founder-title" style={{ margin: 0, ...typeScale.displayLg, fontSize: "clamp(108px, 14vw, 230px)", fontWeight: 400, lineHeight: 0.78, whiteSpace: "nowrap", letterSpacing: "-0.065em", transform: "translateX(-7%)" }}>{copy.headline}</h2>
             </div>
           </div>
         </div>
@@ -164,7 +173,7 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
         <div className="founder-memory-intro" style={{ position: "absolute", inset: `${space.xxl}px ${layout.pad}`, opacity: 0, zIndex: 4 }}>
           <MicroLabel tone="accent">Shared history</MicroLabel>
           <h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1 }}>Built together.</h3>
-          <div style={{ position: "absolute", left: 0, right: 0, top: "25vh", display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", alignItems: "center", gap: "clamp(12px, 3vw, 54px)" }}>
+          <div style={{ position: "absolute", left: "4vw", right: "2vw", top: "22vh", display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", alignItems: "center", gap: 0 }}>
             {copy.memories.map((m, i) => <Memory key={m.n} item={m} index={i} />)}
           </div>
         </div>

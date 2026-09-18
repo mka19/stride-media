@@ -5,7 +5,6 @@ import { caseStudy as copy } from "../shared/copy";
 import { color, ease, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
-import HoverBadge from "../shared/HoverBadge";
 import SlatCurtain, { type SlatHandle } from "../shared/SlatCurtain";
 import { useStacked } from "../shared/responsive";
 import FluidWake from "./FluidWake";
@@ -534,7 +533,22 @@ export default function CaseStudy({
                 >
                   {plate.caption}
                 </figcaption>
-                <HoverBadge top={copy.hoverTop}>{copy.hoverMain}</HoverBadge>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: space.s,
+                    bottom: space.s,
+                    zIndex: 3,
+                    padding: "9px 12px",
+                    ...typeScale.eyebrow,
+                    color: "#fff",
+                    background: "rgba(8,6,13,.56)",
+                    border: `1px solid ${hexA("#fff", .18)}`,
+                    backdropFilter: "blur(12px)",
+                  }}
+                >
+                  View case study ↗
+                </span>
               </div>
             </figure>
           ))}
