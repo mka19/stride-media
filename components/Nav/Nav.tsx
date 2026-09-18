@@ -163,7 +163,7 @@ export default function Nav({
         WebkitBackdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
         transform: `translate3d(0, ${navHidden ? -height : 0}px, 0)`,
         willChange: "transform",
-        transition: `transform 460ms ${ease.out}, background 420ms ${ease.out}, color 320ms ${ease.out}`,
+        transition: `transform 680ms cubic-bezier(.16,1,.3,1), background 520ms ${ease.out}, color 360ms ${ease.out}`,
       }}
     >
       {/* Wordmark. No underline: the fill treatment belongs to section links. */}
@@ -177,6 +177,9 @@ export default function Nav({
           paddingRight: space.xxl,
           textDecoration: "none",
           color: "inherit",
+          opacity: navHidden ? 0 : 1,
+          transform: navHidden ? "translateY(-8px)" : "translateY(0)",
+          transition: "opacity 240ms ease, transform 520ms cubic-bezier(.16,1,.3,1)",
         }}
       >
         <StrideMark size={26} glowing />
@@ -193,6 +196,10 @@ export default function Nav({
           alignItems: "stretch",
           flex: 1,
           minWidth: 0,
+          opacity: navHidden ? 0 : 1,
+          transform: navHidden ? "translateY(-8px)" : "translateY(0)",
+          pointerEvents: navHidden ? "none" : "auto",
+          transition: "opacity 240ms ease, transform 520ms cubic-bezier(.16,1,.3,1)",
         }}
       >
         {navCopy.items.map((item, i) => {
@@ -267,20 +274,22 @@ export default function Nav({
               position: "relative",
               display: "flex",
               alignItems: "center",
-              transform: navHidden ? `translate3d(0, ${height}px, 0)` : "translate3d(0,0,0)",
-              transition: `transform 460ms ${ease.out}, background 360ms ${ease.out}, box-shadow 360ms ${ease.out}`,
-              ...(navHidden
-                ? {
-                    padding: 6,
-                    borderRadius: 16,
-                    background: "rgba(8,8,8,0.92)",
-                    backdropFilter: "blur(20px) saturate(1.25)",
-                    WebkitBackdropFilter: "blur(20px) saturate(1.25)",
-                    boxShadow: light
-                      ? "0 12px 34px rgba(10,10,10,0.22)"
-                      : "0 12px 34px rgba(0,0,0,0.32)",
-                  }
-                : {}),
+              padding: 6,
+              borderRadius: 16,
+              transform: navHidden
+                ? `translate3d(0, ${height}px, 0) scale(1)`
+                : "translate3d(0,0,0) scale(.96)",
+              transformOrigin: "right center",
+              background: navHidden ? "rgba(8,8,8,0.94)" : "rgba(8,8,8,0)",
+              backdropFilter: navHidden ? "blur(20px) saturate(1.25)" : "blur(0px) saturate(1)",
+              WebkitBackdropFilter: navHidden ? "blur(20px) saturate(1.25)" : "blur(0px) saturate(1)",
+              boxShadow: "none",
+              willChange: "transform, background-color",
+              transition: [
+                "transform 680ms cubic-bezier(.16,1,.3,1)",
+                "background-color 520ms cubic-bezier(.16,1,.3,1)",
+                "backdrop-filter 520ms cubic-bezier(.16,1,.3,1)",
+              ].join(", "),
             }}
           >
             {/* Sound sits beside the CTA, as a pair. It never starts on its
