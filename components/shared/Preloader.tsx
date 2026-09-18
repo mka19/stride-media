@@ -24,7 +24,7 @@ import { prefersReducedMotion } from "./gsap";
  * after the curtain has left.
  */
 
-const HOLD_MS = 2300;
+const HOLD_MS = 3000;
 
 export default function Preloader({
   /** Runs once the curtain is gone and the page has been re-measured. */
@@ -63,7 +63,7 @@ export default function Preloader({
       window.setTimeout(() => {
         setGone(true);
         onDone?.();
-      }, 480);
+      }, 650);
     };
 
     const hold = window.setTimeout(finish, HOLD_MS);
@@ -103,16 +103,16 @@ export default function Preloader({
         background: color.black,
         opacity: leaving ? 0 : 1,
         pointerEvents: leaving ? "none" : "auto",
-        transition: `opacity 480ms ${ease.out}`,
+        transition: `opacity 650ms ${ease.out}`,
       }}
     >
       <div className={still ? undefined : "stride-cam"} style={camera}>
         {/* The barrel stands still and the glass turns inside it, which is
             what a lens actually does. */}
         <span style={lens}>
-          <span style={focusRing} />
+          <span className={still ? undefined : "stride-cam-lens"} style={focusRing} />
           <span style={glass}>
-            <span className={still ? undefined : "stride-cam-lens"} style={aperture} />
+            <span className={still ? undefined : "stride-cam-aperture"} style={aperture} />
             <span style={innerGlass} />
           </span>
           {/* The highlight belongs to the room, not to the glass, so it does
@@ -121,6 +121,8 @@ export default function Preloader({
         </span>
         {/* Record light: the one thing on the body that is not grey. */}
         <span className={still ? undefined : "stride-cam-rec"} style={rec} />
+        <span style={shutterButton} />
+        <span style={brandPlate}>STRIDE</span>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
@@ -287,4 +289,25 @@ const rec: React.CSSProperties = {
   borderRadius: "50%",
   background: color.accent,
   boxShadow: `0 0 10px ${hexA(color.accent, 0.9)}`,
+};
+
+const shutterButton: React.CSSProperties = {
+  position: "absolute",
+  top: 9,
+  right: 29,
+  width: 18,
+  height: 7,
+  borderRadius: "50% 50% 38% 38%",
+  background: "linear-gradient(#6A6A74, #2B2B32 58%, #16161B)",
+  boxShadow: "0 1px 0 rgba(255,255,255,.24) inset, 0 2px 3px rgba(0,0,0,.7)",
+};
+
+const brandPlate: React.CSSProperties = {
+  position: "absolute",
+  top: 39,
+  right: 15,
+  color: "rgba(255,255,255,.48)",
+  fontSize: 6,
+  fontWeight: 700,
+  letterSpacing: "0.16em",
 };

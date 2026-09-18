@@ -101,19 +101,26 @@ body {
 }
 
 @keyframes stride-cam-settle {
-  0% { opacity: 0; transform: perspective(800px) rotateX(9deg) rotateY(-12deg) translateY(14px) scale(.9); }
-  65% { opacity: 1; transform: perspective(800px) rotateX(-1deg) rotateY(2deg) translateY(0) scale(1); }
-  100% { opacity: 1; transform: perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1); }
+  0% { opacity: 0; transform: perspective(900px) rotateX(7deg) rotateY(-10deg) translateY(18px) scale(.92); }
+  72% { opacity: 1; transform: perspective(900px) rotateX(-.8deg) rotateY(1.5deg) translateY(-1px) scale(1.008); }
+  100% { opacity: 1; transform: perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1); }
 }
-.stride-cam { animation: stride-cam-settle 900ms cubic-bezier(.16,1,.3,1) both; }
+.stride-cam { animation: stride-cam-settle 1100ms cubic-bezier(.16,1,.3,1) both; }
 
 @keyframes stride-cam-focus {
-  0% { transform: rotate(0deg) scale(.94); filter: brightness(.7); }
-  38% { transform: rotate(118deg) scale(1.06); filter: brightness(1.16); }
-  72% { transform: rotate(245deg) scale(.98); filter: brightness(.9); }
-  100% { transform: rotate(360deg) scale(1); filter: brightness(1.06); }
+  0% { transform: rotate(0deg); filter: brightness(.72); }
+  34% { transform: rotate(104deg); filter: brightness(1.2); }
+  70% { transform: rotate(198deg); filter: brightness(.9); }
+  100% { transform: rotate(286deg); filter: brightness(1.08); }
 }
-.stride-cam-lens { animation: stride-cam-focus 1750ms cubic-bezier(.22,.74,.16,1) both; }
+.stride-cam-lens { animation: stride-cam-focus 2700ms cubic-bezier(.2,.72,.18,1) both; }
+
+@keyframes stride-cam-aperture {
+  0%, 100% { transform: scale(.96) rotate(0deg); }
+  42% { transform: scale(1.04) rotate(18deg); }
+  72% { transform: scale(.985) rotate(31deg); }
+}
+.stride-cam-aperture { animation: stride-cam-aperture 2700ms cubic-bezier(.2,.72,.18,1) both; }
 
 @keyframes stride-cam-rec { 0%, 100% { opacity: 1; } 50% { opacity: .28; } }
 .stride-cam-rec { animation: stride-cam-rec 1.1s ease-in-out infinite; }
@@ -130,6 +137,10 @@ body {
   .stride-drift { animation: none; }
   .stride-pulse { animation: none; }
   .stride-spin { animation: none; }
+  .stride-cam,
+  .stride-cam-lens,
+  .stride-cam-aperture,
+  .stride-cam-rec { animation: none; }
   .stride-float { animation: none; }
 }
 

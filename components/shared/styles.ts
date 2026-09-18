@@ -110,20 +110,27 @@ body {
  * inside it turns, fast then slow then fast, the way a lens racks focus
  * rather than the way a motor runs.
  */
-@keyframes stride-cam-spin {
-  0%   { transform: rotate(0deg); }
-  50%  { transform: rotate(360deg); }
-  75%  { transform: rotate(750deg); }
-  100% { transform: rotate(1800deg); }
+@keyframes stride-cam-focus {
+  0% { transform: rotate(0deg); filter: brightness(.72); }
+  34% { transform: rotate(104deg); filter: brightness(1.2); }
+  70% { transform: rotate(198deg); filter: brightness(.9); }
+  100% { transform: rotate(286deg); filter: brightness(1.08); }
 }
-.stride-cam-lens { animation: stride-cam-spin 5s ease-in-out infinite; }
+.stride-cam-lens { animation: stride-cam-focus 2700ms cubic-bezier(.2,.72,.18,1) both; }
 
-@keyframes stride-cam-shake {
-  0%, 50%, 100%       { transform: rotate(0deg); }
-  65%, 80%, 88%, 96%  { transform: rotate(0.5deg); }
-  50.1%, 75%, 84%, 92%{ transform: rotate(-0.5deg); }
+@keyframes stride-cam-settle {
+  0% { opacity: 0; transform: perspective(900px) rotateX(7deg) rotateY(-10deg) translateY(18px) scale(.92); }
+  72% { opacity: 1; transform: perspective(900px) rotateX(-.8deg) rotateY(1.5deg) translateY(-1px) scale(1.008); }
+  100% { opacity: 1; transform: perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1); }
 }
-.stride-cam { animation: stride-cam-shake 5s ease-in-out infinite; }
+.stride-cam { animation: stride-cam-settle 1100ms cubic-bezier(.16,1,.3,1) both; }
+
+@keyframes stride-cam-aperture {
+  0%, 100% { transform: scale(.96) rotate(0deg); }
+  42% { transform: scale(1.04) rotate(18deg); }
+  72% { transform: scale(.985) rotate(31deg); }
+}
+.stride-cam-aperture { animation: stride-cam-aperture 2700ms cubic-bezier(.2,.72,.18,1) both; }
 
 /* The record light breathes rather than blinks: a hard blink at this size
    reads as a fault indicator. */
