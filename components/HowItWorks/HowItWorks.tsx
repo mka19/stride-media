@@ -82,9 +82,9 @@ export default function HowItWorks({
       //    screen is never empty between the two.
       tl.to(
         q(".hw-intro-item"),
-        { opacity: 0, y: -reveal.y, duration: 0.14, stagger: 0.04, ease: reveal.easeIn },
+        { opacity: 0, y: -24, duration: 0.2, stagger: 0.035, ease: "power3.inOut" },
         0.12,
-      ).to(q(".hw-steps"), { opacity: 1, duration: 0.12, ease: reveal.ease }, 0.18);
+      ).to(q(".hw-steps"), { opacity: 1, duration: 0.16, ease: "power2.inOut" }, 0.2);
 
       // 2. the steps fly toward the viewer and past
       const steps = q(".hw-step");

@@ -135,13 +135,14 @@ export default function Solution({
       // from the group so the three lines stay set to each other.
       gsap.set(q(".sol-intro-group"), { transformOrigin: "50% 50%" });
       tl.to(
-        q(".sol-intro-group"),
-        /* 0.84, not 0.62. The recede has to be legible as the plate taking
-           over from the copy, and at 0.62 you watched the words shrink —
-           the movement announced itself instead of being felt. Nothing is
-           lost in the read, because the opacity is doing most of the work
-           and the plate growing behind it does the rest. */
-        { scale: 0.84, opacity: 0, duration: 0.3, ease: reveal.easeBoth },
+        q(".sol-intro"),
+        {
+          y: -24,
+          opacity: 0,
+          duration: 0.2,
+          stagger: 0.035,
+          ease: "power3.inOut",
+        },
         0.04,
       )
         .to(
@@ -346,7 +347,7 @@ export default function Solution({
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "min(840px, 56vw)",
+              width: "min(980px, 68vw)",
             }}
           >
             {/* The entry pass animates .sol-head and the pinned pass animates
@@ -363,24 +364,26 @@ export default function Solution({
                 gap: rhythm.headlineToBody,
               }}
             >
-            <MicroLabel tone="accent" className="sol-intro">
-              {copy.label}
-            </MicroLabel>
-            <h2
-              className="sol-intro"
-              style={{
-                margin: 0,
-                maxWidth: "28ch",
-                textWrap: "balance",
-                ...typeScale.h1,
-              }}
-            >
-              {copy.headline.map((line, i) => (
-                <GradientRevealText key={i} as="span" style={{ display: "block" }}>
-                  {line}
-                </GradientRevealText>
-              ))}
-            </h2>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: rhythm.eyebrowToHeadline }}>
+              <MicroLabel tone="accent" className="sol-intro">
+                {copy.label}
+              </MicroLabel>
+              <h2
+                className="sol-intro"
+                style={{
+                  margin: 0,
+                  maxWidth: "22ch",
+                  textWrap: "balance",
+                  ...typeScale.h1,
+                }}
+              >
+                {copy.headline.map((line, i) => (
+                  <GradientRevealText key={i} as="span" style={{ display: "block" }}>
+                    {line}
+                  </GradientRevealText>
+                ))}
+              </h2>
+            </div>
             <p
               className="sol-intro"
               style={{

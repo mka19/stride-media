@@ -115,7 +115,7 @@ export const problem = {
 
 export const solution = {
   label: "What we do",
-  headline: ["We build your personal brand.", "Start to finish."],
+  headline: ["We build your", "personal brand. Start to finish."],
   body: "Stride Media handles everything, so you never have to touch a camera, write a script, or guess what works.",
   videoCaption: "Watch how it comes together",
   // One plain cue, no controls: the film keeps playing while it holds the
