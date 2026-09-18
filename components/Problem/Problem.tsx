@@ -241,7 +241,7 @@ export default function Problem({
   if (stacked) {
     return (
       <section
-        id="problem"
+        id="about"
         style={{
           background: color.bone,
           color: color.textOnLight,
@@ -277,11 +277,13 @@ export default function Problem({
 
         {/* Part 2 — three full-width cards in reading order. */}
         <div
+          id="problem"
           style={{
             display: "flex",
             flexDirection: "column",
             gap: layout.section,
             padding: `${layout.section} ${layout.pad}`,
+            scrollMarginTop: layout.navHeight,
           }}
         >
           {copy.cards.map((card, i) => (
