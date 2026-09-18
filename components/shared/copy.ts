@@ -172,7 +172,7 @@ export const caseStudy = {
   client: "[Client]", // PLACEHOLDER — real client name pending
   clientContext: "Real estate",
   headline: ["Why [Client]", "trusted Stride"],
-  intro: "One entrepreneur. One invisible brand. One system that changed that.",
+  intro: ["One entrepreneur. One invisible brand.", "One system that changed that."],
   gallery: [
     { caption: "Strategy call — day one" },
     { caption: "Positioning frame" },

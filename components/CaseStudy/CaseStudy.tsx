@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap, useGsapContext, SCRUB, approach } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { caseStudy as copy } from "../shared/copy";
-import { color, ease, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
+import { color, ease, fluid, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
 import HoverBadge from "../shared/HoverBadge";
@@ -312,7 +312,9 @@ export default function CaseStudy({
         className="cs-intro-item"
         style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnLightMuted, maxWidth: "48ch" }}
       >
-        {copy.intro}
+        {copy.intro.map((line) => (
+          <span key={line} style={{ display: "block" }}>{line}</span>
+        ))}
       </p>
     </div>
   );
@@ -600,7 +602,7 @@ export default function CaseStudy({
               as="h3"
               tone="light"
               className="cs-results-head"
-              style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}
+              style={{ ...typeScale.h1, lineHeight: fluid(40, 68), maxWidth: "18ch", textWrap: "balance" }}
             >
               {copy.resultsHeadline}
             </GradientRevealText>
