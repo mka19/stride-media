@@ -44,10 +44,7 @@ export function initSmoothScroll(): () => void {
      * while its contents snap, or contents that drift over a scroll position
      * that jumps.
      */
-    // A low interpolation factor gives one continuous, weighted response to
-    // each wheel gesture. It also keeps ScrollTrigger on the exact same eased
-    // position instead of letting sections catch up in visible steps.
-    lerp: 0.072,
+    duration: 1.2,
     // Heavy at the start, long settle — the weightless feel comes from the
     // tail of this curve, not from the duration.
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -55,9 +52,9 @@ export function initSmoothScroll(): () => void {
     // Calibrated from the real mouse test: 0.55 needed about 160 wheel steps
     // for the document. 1.0 brings the same journey to roughly 86 while the
     // duration and ScrollTrigger scrub continue to soften every arrival.
-    wheelMultiplier: 1.08,
+    wheelMultiplier: 1,
     // Touch devices already have their own momentum; adding ours fights it.
-    syncTouch: false,
+    syncTouch: true,
     touchMultiplier: 0.82,
   });
   (window as Window & { __strideLenis?: Lenis }).__strideLenis = lenis;
@@ -70,6 +67,9 @@ export function initSmoothScroll(): () => void {
   // disagree until the next wheel event — which shows up as scrubbed
   // sections resolving at the wrong point in their timeline.
   const onClick = (e: MouseEvent) => {
+    // Components such as the navigation own their transition. Do not issue a
+    // second scroll command after they have already handled the click.
+    if (e.defaultPrevented) return;
     const link = (e.target as HTMLElement | null)?.closest?.('a[href^="#"]');
     const href = link?.getAttribute("href");
     if (!href || href === "#") return;

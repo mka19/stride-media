@@ -49,13 +49,22 @@ export type HeroObjectHandle = {
  * It is inlined as a string rather than fetched, which is what keeps this
  * component a single file with no asset to host when it moves into Framer.
  */
-const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="#000" d="M50 7C50 35 65 50 93 50 65 50 50 65 50 93 50 65 35 50 7 50 35 50 50 35 50 7Z"/></svg>`;
+const LOGO_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="19 12.25 80 80">
+  <g fill="#000000">
+    <path d="M 28 44 L 28 32 L 36 24 L 49 24 L 41 32 L 38 32 L 35.5 34.5 L 35.5 37 Z"/>
+    <path d="M 90 44 L 90 32 L 82 24 L 69 24 L 77 32 L 80 32 L 82.5 34.5 L 82.5 37 Z"/>
+    <path d="M 28 60.5 L 28 72.5 L 36 80.5 L 49 80.5 L 41 72.5 L 38 72.5 L 35.5 70 L 35.5 67.5 Z"/>
+    <path d="M 90 60.5 L 90 72.5 L 82 80.5 L 69 80.5 L 77 72.5 L 80 72.5 L 82.5 70 L 82.5 67.5 Z"/>
+    <path d="M 59 37.25 C 59 48.5 62.75 52.25 74 52.25 C 62.75 52.25 59 56 59 67.25 C 59 56 55.25 52.25 44 52.25 C 55.25 52.25 59 48.5 59 37.25 Z"/>
+  </g>
+</svg>`;
 
 // Complete alternate sculptures for the Why Stride capability sequence.
 // Every variant uses the same artboard, depth, bevel and chrome material, so
 // changing the form feels like one machined object reconfiguring itself.
 const ABSTRACT_SVGS = [
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="#000" d="M50 7C50 35 65 50 93 50 65 50 50 65 50 93 50 65 35 50 7 50 35 50 50 35 50 7Z"/></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M18 31 31 18h16L34 31v10L22 53l-4-4Z"/><path d="m82 31-13-13H53l13 13v10l12 12 4-4Z"/><path d="m18 69 13 13h16L34 69V59L22 47l-4 4Z"/><path d="m82 69-13 13H53l13-13V59l12-12 4 4Z"/><path d="M50 32c0 13 5 18 18 18-13 0-18 5-18 18 0-13-5-18-18-18 13 0 18-5 18-18Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 15c0 18 6 24 24 24-18 0-24 6-24 24 0-18-6-24-24-24 18 0 24-6 24-24Z"/><path d="M21 62h12v12H21Z"/><path d="M67 62h12v12H67Z"/><path d="M44 74h12v12H44Z"/><path d="m31 65 17 12-5 7-17-12Z"/><path d="m69 65-17 12 5 7 17-12Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M22 13h43l13 13v61H22Zm12 24h32V29H34Zm0 17h32v-8H34Zm0 17h22v-8H34Z"/><path d="M65 13v14h13Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 9 62 38 91 50 62 62 50 91 38 62 9 50 38 38Zm0 24-7 17 7 17 7-17Z"/><path d="M46 13h8v13h-8ZM46 74h8v13h-8ZM13 46h13v8H13ZM74 46h13v8H74Z"/></g></svg>`,
