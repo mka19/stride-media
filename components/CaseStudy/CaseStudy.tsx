@@ -506,7 +506,7 @@ export default function CaseStudy({
           {plates.map((plate) => (
             <figure
               key={plate.caption}
-              className="cs-plate"
+              className="cs-plate cs-liquid-card"
               style={{
                 position: "absolute",
                 top: "50%",

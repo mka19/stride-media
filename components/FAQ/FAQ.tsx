@@ -27,7 +27,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
       // The overlap with the section before this one. Runs on the frame,
       // which this section's own timelines only ever measure, never animate.
       approach(root, ".faq-frame");
-      gsap.set(q(".faq-item"), { opacity: 0, x: 40 });
+      gsap.set(q(".faq-item"), { opacity: 0, y: 28 });
 
       const tl = gsap.timeline({
         scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
@@ -41,18 +41,18 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
         0.05,
       )
         .to(q(".faq-letter"), { letterSpacing: "0.02em", duration: 0.3, stagger: 0.02 }, 0.05)
-        .to(q(".faq-item"), { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, ease: "power2.out" }, 0.18);
+        .to(q(".faq-item"), { opacity: 1, y: 0, duration: 0.28, stagger: 0.045, ease: "power3.out" }, 0.18);
     },
     [stacked],
     (root) => {
       const q = gsap.utils.selector(root);
-      gsap.set(q(".faq-item"), { opacity: 1, x: 0 });
+      gsap.set(q(".faq-item"), { opacity: 1, y: 0 });
       gsap.set(q(".faq-letters"), { scale: 0.2 });
     },
   );
 
   const list = (
-    <div style={{ width: "100%", maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ width: "100%", maxWidth: 1120, margin: "0 auto" }}>
       {copy.items.map((item, i) => {
         const isOpen = open === i;
         return (
@@ -77,7 +77,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
                 gridTemplateColumns: `64px 1fr 16px`,
                 alignItems: "center",
                 gap: space.lg,
-                padding: `${space.lg}px 0`,
+                padding: `clamp(22px, 2.25vh, 30px) 0`,
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
@@ -152,7 +152,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
                 <p
                   style={{
                     margin: 0,
-                    paddingBottom: space.lg,
+                    paddingBottom: "clamp(22px, 2.5vh, 32px)",
                     maxWidth: "62ch",
                     ...typeScale.bodyLg,
                     color: color.textOnDarkMuted,
@@ -250,7 +250,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "center",
-            paddingTop: `calc(${layout.navHeight}px + ${layout.section} + 96px)`,
+            paddingTop: `calc(${layout.navHeight}px + clamp(86px, 12vh, 132px))`,
             paddingLeft: layout.pad,
             paddingRight: layout.pad,
             paddingBottom: layout.section,
