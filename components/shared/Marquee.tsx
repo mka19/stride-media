@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { color, space, typeScale } from "./theme";
 import { prefersReducedMotion } from "./gsap";
+import { StrideMark } from "./primitives";
 
 /**
  * A strip of oversized text travelling continuously between two hairlines —
@@ -150,9 +151,9 @@ export default function Marquee({
                 {item}
                 <span
                   className="stride-spin"
-                  style={{ color: color.accent, opacity: 0.85, display: "inline-block" }}
+                  style={{ display: "inline-grid", placeItems: "center", flex: "0 0 auto", animationDuration: "7s" }}
                 >
-                  +
+                  <StrideMark size={48} tint={color.accent} />
                 </span>
               </span>
             ))}
