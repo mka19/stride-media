@@ -56,6 +56,7 @@ export default function Nav({
   const [pageProgress, setPageProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
+  const [jumpPhase, setJumpPhase] = useState<"idle" | "enter" | "cover" | "reveal">("idle");
   const lastScroll = useRef(0);
   const direction = useRef<1 | -1 | 0>(0);
   const directionTravel = useRef(0);
@@ -65,6 +66,23 @@ export default function Nav({
   // carries them, and a tablet keeps the sound toggle and the CTA in the bar.
   const navRoom = useNavRoom();
   const railVisible = !isMobile && navRoom;
+
+  const jumpTo = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    const target = document.getElementById(id);
+    if (!target || jumpPhase !== "idle") return;
+    event.preventDefault();
+    setMenuOpen(false);
+    setJumpPhase("enter");
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => setJumpPhase("cover")));
+
+    window.setTimeout(() => {
+      const top = target.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: "auto" });
+      window.history.replaceState(null, "", `#${id}`);
+      window.requestAnimationFrame(() => setJumpPhase("reveal"));
+      window.setTimeout(() => setJumpPhase("idle"), 720);
+    }, 480);
+  };
 
   useEffect(() => {
     let frame = 0;
@@ -169,6 +187,7 @@ export default function Nav({
       {/* Wordmark. No underline: the fill treatment belongs to section links. */}
       <a
         href="#top"
+        onClick={(event) => jumpTo(event, "top")}
         style={{
           position: "relative",
           display: isMobile ? "none" : "flex",
@@ -209,6 +228,7 @@ export default function Nav({
             <a
               key={item.id}
               href={`#${item.id}`}
+              onClick={(event) => jumpTo(event, item.id)}
               style={{
                 position: "relative",
                 flex: 1,
@@ -354,7 +374,7 @@ export default function Nav({
             <a
               key={item.id}
               href={`#${item.id}`}
-              onClick={() => setMenuOpen(false)}
+              onClick={(event) => jumpTo(event, item.id)}
               style={{ ...typeScale.h3, color: ink, textDecoration: "none" }}
             >
               {item.label}
@@ -364,6 +384,30 @@ export default function Nav({
             {navCopy.cta}
           </GlowButton>
         </div>
+      )}
+
+      {jumpPhase !== "idle" && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            pointerEvents: "auto",
+            background: `linear-gradient(135deg, ${color.black} 0%, ${color.accentDeep} 72%, ${color.accent} 140%)`,
+            transform: jumpPhase === "enter"
+              ? "translate3d(0,-100%,0)"
+              : jumpPhase === "cover"
+                ? "translate3d(0,0,0)"
+                : "translate3d(0,100%,0)",
+            transformOrigin: "50% 0%",
+            willChange: "transform",
+            boxShadow: `0 -3px 0 ${color.accentBright} inset`,
+            transition: jumpPhase === "cover"
+              ? "transform 420ms cubic-bezier(.76,0,.24,1)"
+              : "transform 680ms cubic-bezier(.16,1,.3,1)",
+          }}
+        />
       )}
     </header>
   );
