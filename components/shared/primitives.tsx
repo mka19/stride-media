@@ -225,7 +225,7 @@ export function GlowButton({
 
   const hoverIn = (el: HTMLElement) => {
     if (solid) {
-      el.style.background = "#FFFFFF";
+      el.style.color = color.textOnDark;
     } else {
       el.style.background = hexA("#FFFFFF", 0.06);
       el.style.borderColor = hexA("#FFFFFF", 0.3);
@@ -233,6 +233,7 @@ export function GlowButton({
   };
   const hoverOut = (el: HTMLElement) => {
     el.style.background = base.background as string;
+    el.style.color = base.color as string;
     if (!solid) el.style.borderColor = color.hairlineOnDark;
   };
 
@@ -247,17 +248,18 @@ export function GlowButton({
 
   const inner = (
     <>
-      {label}
-      {arrow && <ArrowIcon />}
+      {solid && <span className="stride-button-shimmer" aria-hidden="true" />}
+      <span className="stride-button-label">{label}</span>
+      {arrow && <span className="stride-button-arrow"><ArrowIcon /></span>}
     </>
   );
 
   return href ? (
-    <a href={href} className="stride-press" style={base} {...handlers}>
+    <a href={href} className="stride-press stride-glow-button" style={base} {...handlers}>
       {inner}
     </a>
   ) : (
-    <button type="button" className="stride-press" onClick={onClick} style={base} {...handlers}>
+    <button type="button" className="stride-press stride-glow-button" onClick={onClick} style={base} {...handlers}>
       {inner}
     </button>
   );
