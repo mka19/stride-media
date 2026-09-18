@@ -1097,7 +1097,6 @@ export default function HeroObject({
       const scrollDamping = 1 - Math.exp(-frameDelta * 7.2);
       eased += (progress - eased) * scrollDamping;
       uniforms.uTime.value = t;
-      uniforms.uProgress.value = eased;
       liquidUniforms.uTime.value = t;
       liquidUniforms.uFade.value = liquidBackground
         ? 1 - THREE.MathUtils.smoothstep(eased, 0.12, 0.58)
@@ -1115,21 +1114,17 @@ export default function HeroObject({
         }
       }
       const reformWave = Math.sin(variantTransition * Math.PI);
+      // Use the existing particle system as the bridge between capability
+      // forms. The solid dissolves, geometry swaps while hidden, then the
+      // particles converge into the next symbol.
+      uniforms.uProgress.value = Math.max(eased, reformWave * 0.9);
       // Compress into a thin glint, exchange the machined form while it is
       // visually hidden, then settle back with no pop at the midpoint.
       const reform = 1 - reformWave * 0.24;
       const reformOpacity = 1 - reformWave * 0.94;
       solidMat.opacity = (1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45)) * reformOpacity;
       solidMat.visible = solidMat.opacity > 0.01;
-      liquidMorph.visible = reformWave > 0.015 && eased < 0.5;
-      liquidMorphMat.opacity = (1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45)) * Math.pow(reformWave, 0.58);
-      liquidMorph.rotation.y = t * 0.34 + swayX * 0.4;
-      liquidMorph.rotation.x = t * 0.17 + swayY * 0.3;
-      liquidMorph.scale.set(
-        0.72 + reformWave * 0.26 + Math.sin(t * 2.1) * 0.025 * reformWave,
-        0.74 + reformWave * 0.24 + Math.cos(t * 1.7) * 0.035 * reformWave,
-        0.7 + reformWave * 0.3,
-      );
+      liquidMorph.visible = false;
 
       // Damped toward the pointer so the mark follows the cursor without
       // snapping to it, and keeps drifting when the pointer is still.
