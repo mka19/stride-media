@@ -59,7 +59,7 @@ export default function FAQ({ scrollLength = "380vh" }: { scrollLength?: string 
           <div
             key={item.q}
             className="faq-item"
-            style={{ borderTop: `1px solid ${color.hairlineOnDark}` }}
+            style={{ borderTop: i === 0 ? "none" : `1px solid ${color.hairlineOnDark}` }}
           >
             <button
               className="stride-press"
@@ -77,7 +77,7 @@ export default function FAQ({ scrollLength = "380vh" }: { scrollLength?: string 
                 gridTemplateColumns: `64px 1fr 16px`,
                 alignItems: "center",
                 gap: space.lg,
-                padding: `${space.md}px 0`,
+                padding: `${space.lg}px 0`,
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
@@ -152,7 +152,7 @@ export default function FAQ({ scrollLength = "380vh" }: { scrollLength?: string 
                 <p
                   style={{
                     margin: 0,
-                    paddingBottom: space.md,
+                    paddingBottom: space.lg,
                     maxWidth: "62ch",
                     ...typeScale.bodyLg,
                     color: color.textOnDarkMuted,
