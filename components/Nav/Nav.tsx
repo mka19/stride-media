@@ -56,7 +56,6 @@ export default function Nav({
   const [pageProgress, setPageProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
-  const [jumpPhase, setJumpPhase] = useState<"idle" | "enter" | "cover" | "reveal">("idle");
   const lastScroll = useRef(0);
   const direction = useRef<1 | -1 | 0>(0);
   const directionTravel = useRef(0);
@@ -69,19 +68,20 @@ export default function Nav({
 
   const jumpTo = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     const target = document.getElementById(id);
-    if (!target || jumpPhase !== "idle") return;
+    if (!target) return;
     event.preventDefault();
     setMenuOpen(false);
-    setJumpPhase("enter");
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => setJumpPhase("cover")));
-
-    window.setTimeout(() => {
-      const top = target.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top, behavior: "auto" });
-      window.history.replaceState(null, "", `#${id}`);
-      window.requestAnimationFrame(() => setJumpPhase("reveal"));
-      window.setTimeout(() => setJumpPhase("idle"), 720);
-    }, 480);
+    const lenis = (window as Window & { __strideLenis?: { scrollTo: (target: HTMLElement, options?: Record<string, unknown>) => void } }).__strideLenis;
+    if (lenis) {
+      lenis.scrollTo(target, {
+        offset: -height,
+        duration: 1.85,
+        easing: (t: number) => 1 - Math.pow(1 - t, 4),
+      });
+    } else {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    window.history.replaceState(null, "", `#${id}`);
   };
 
   useEffect(() => {
@@ -386,29 +386,6 @@ export default function Nav({
         </div>
       )}
 
-      {jumpPhase !== "idle" && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 1000,
-            pointerEvents: "auto",
-            background: `linear-gradient(135deg, ${color.black} 0%, ${color.accentDeep} 72%, ${color.accent} 140%)`,
-            transform: jumpPhase === "enter"
-              ? "translate3d(0,-100%,0)"
-              : jumpPhase === "cover"
-                ? "translate3d(0,0,0)"
-                : "translate3d(0,100%,0)",
-            transformOrigin: "50% 0%",
-            willChange: "transform",
-            boxShadow: `0 -3px 0 ${color.accentBright} inset`,
-            transition: jumpPhase === "cover"
-              ? "transform 420ms cubic-bezier(.76,0,.24,1)"
-              : "transform 680ms cubic-bezier(.16,1,.3,1)",
-          }}
-        />
-      )}
     </header>
   );
 }

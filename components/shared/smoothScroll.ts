@@ -60,6 +60,7 @@ export function initSmoothScroll(): () => void {
     syncTouch: false,
     touchMultiplier: 0.82,
   });
+  (window as Window & { __strideLenis?: Lenis }).__strideLenis = lenis;
 
   const onScroll = () => ScrollTrigger.update();
   lenis.on("scroll", onScroll);
@@ -89,5 +90,6 @@ export function initSmoothScroll(): () => void {
     gsap.ticker.remove(raf);
     gsap.ticker.lagSmoothing(500, 33);
     lenis.destroy();
+    delete (window as Window & { __strideLenis?: Lenis }).__strideLenis;
   };
 }
