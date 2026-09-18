@@ -774,7 +774,20 @@ export default function HeroObject({
     // rather than an opacity gap: each object draws inward into this chrome
     // droplet, the hidden geometry is exchanged at maximum liquidity, and
     // the next object grows back out of the same metal.
-    const morphGeo = new THREE.IcosahedronGeometry(1.28, 4);
+    const morphGeo = new THREE.IcosahedronGeometry(1.18, 5);
+    const morphPositions = morphGeo.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < morphPositions.count; i += 1) {
+      const x = morphPositions.getX(i);
+      const y = morphPositions.getY(i);
+      const z = morphPositions.getZ(i);
+      const length = Math.hypot(x, y, z) || 1;
+      const organic = 1
+        + Math.sin(x * 3.1 + y * 1.7) * 0.055
+        + Math.cos(y * 2.6 - z * 2.2) * 0.045
+        + Math.sin(z * 3.4 + x * 1.2) * 0.035;
+      morphPositions.setXYZ(i, (x / length) * 1.18 * organic, (y / length) * 1.18 * organic, (z / length) * 1.18 * organic);
+    }
+    morphGeo.computeVertexNormals();
     const liquidMorphMat = solidMat.clone();
     liquidMorphMat.roughness = 0.045;
     liquidMorphMat.clearcoat = 0.34;
@@ -1028,6 +1041,9 @@ export default function HeroObject({
       setProgress: (p) => (progress = p),
       setVariant: (index) => {
         const next = THREE.MathUtils.clamp(Math.round(index), 0, allMarkGeos.length - 1);
+        // ScrollTrigger calls this on every update. Re-requesting the same
+        // pending form must not restart the melt from frame zero.
+        if (next === pendingVariant && variantTransition < 1) return;
         if (next === activeVariant && variantTransition >= 1) return;
         pendingVariant = next;
         variantTransition = 0;
@@ -1088,10 +1104,10 @@ export default function HeroObject({
         : 0;
       if (variantTransition < 1) {
         const previous = variantTransition;
-        // Time based, so the reform takes the same 440ms on a 30Hz laptop
+        // Time based, so the reform takes the same 720ms on a 30Hz laptop
         // and a 120Hz display. The previous frame based increment was one of
         // the reasons the change felt jerky on slower devices.
-        variantTransition = Math.min(1, variantTransition + frameDelta / 0.44);
+        variantTransition = Math.min(1, variantTransition + frameDelta / 0.72);
         if (previous < 0.5 && variantTransition >= 0.5) {
           activeVariant = pendingVariant;
           solid.geometry = allMarkGeos[activeVariant];
