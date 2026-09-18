@@ -199,7 +199,7 @@ export default function Hero({
                owns the middle of the screen in phase 1. */
             justifyContent: "space-between",
             pointerEvents: "none",
-            padding: `19vh ${layout.pad} 16vh`,
+            padding: `19vh ${layout.pad} 20vh`,
           }}
         >
           <MicroLabel tone="accent">{heroCopy.label}</MicroLabel>
@@ -313,7 +313,7 @@ export default function Hero({
           style={{
             position: "absolute",
             left: "50%",
-            bottom: space.xxl,
+            bottom: space.lg,
             transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
