@@ -377,11 +377,15 @@ export default function Nav({
       {isMobile && menuOpen && (
         <div
           style={{
-            position: "fixed",
+            // The header's backdrop-filter creates a containing block on
+            // mobile browsers, so a fixed child only inherited the header's
+            // height. Size the panel explicitly from the header instead.
+            position: "absolute",
             top: height,
-            left: 0,
-            right: 0,
-            bottom: 0,
+            left: -layout.pad,
+            width: "100vw",
+            height: `calc(100dvh - ${height}px)`,
+            overflowY: "auto",
             background: color.black,
             display: "flex",
             flexDirection: "column",
