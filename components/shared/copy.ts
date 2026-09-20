@@ -322,21 +322,21 @@ export const founders = {
       name: "Founder One",
       role: "Co-founder · Strategy",
       bio: "The point of view behind the positioning, scripts and systems that make every piece of content feel unmistakably yours.",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=1600&q=86",
+      image: "",
     },
     {
       n: "02",
       name: "Founder Two",
       role: "Co-founder · Creative",
       bio: "The creative direction behind Stride’s visual language, production quality and the details that make people stop scrolling.",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1600&q=86",
+      image: "",
     },
   ],
   memories: [
-    { n: "01", title: "The first working session", meta: "Where the Stride system started taking shape.", image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=84" },
-    { n: "02", title: "Building the first campaign", meta: "Testing the ideas that became our process.", image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=84" },
-    { n: "03", title: "A late studio night", meta: "One more pass became the final direction.", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=84" },
-    { n: "04", title: "The first client win", meta: "The moment the system proved itself.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=84" },
+    { n: "01", title: "The first working session", meta: "Where the Stride system started taking shape.", image: "" },
+    { n: "02", title: "Building the first campaign", meta: "Testing the ideas that became our process.", image: "" },
+    { n: "03", title: "A late studio night", meta: "One more pass became the final direction.", image: "" },
+    { n: "04", title: "The first client win", meta: "The moment the system proved itself.", image: "" },
   ],
 } as const;
 

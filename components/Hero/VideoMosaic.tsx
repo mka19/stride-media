@@ -58,10 +58,7 @@ export default function VideoMosaic({
 }) {
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
-  const cells = Array.from(
-    { length: columns * rows },
-    (_, i) => (tiles.length ? tiles[i % tiles.length] : {}),
-  );
+  const cells = Array.from({ length: columns * rows }, (_, i) => tiles[i] ?? {});
   // Touch fires a hover on tap and then leaves it stuck on the tile the
   // finger last touched, so the push is for real pointers only.
   const pointer =

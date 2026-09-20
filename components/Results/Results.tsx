@@ -259,7 +259,7 @@ function Ticker({ children }: { children: ReactNode }) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "clamp(12px, 1.4vw, 22px)",
+          gap: layout.gutter,
           width: "max-content",
           transformStyle: "preserve-3d",
           willChange: "transform",

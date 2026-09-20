@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import { color, ease, hexA, space, typeScale } from "./theme";
-import { useBreakpoint, useCanHover } from "./responsive";
+import { useCanHover } from "./responsive";
 
 /**
  * The client-proof row: a run of overlapping faces, a rating, and a count.
@@ -33,7 +33,6 @@ export default function SocialProof({
 }) {
   const [open, setOpen] = useState(false);
   const canHover = useCanHover();
-  const mobile = useBreakpoint() === "mobile";
   const expanded = open && canHover;
 
   const SIZE = 36;
@@ -45,14 +44,7 @@ export default function SocialProof({
       className={className}
       onPointerEnter={() => setOpen(true)}
       onPointerLeave={() => setOpen(false)}
-      style={{
-        display: "inline-flex",
-        flexDirection: mobile ? "column" : "row",
-        alignItems: mobile ? "center" : "center",
-        justifyContent: "center",
-        gap: mobile ? space.sm : space.md,
-        ...style,
-      }}
+      style={{ display: "inline-flex", alignItems: "center", gap: space.md, ...style }}
     >
       <div
         style={{
@@ -91,7 +83,7 @@ export default function SocialProof({
         ))}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: space.s }}>
+      <div style={{ display: "flex", alignItems: "center", gap: space.s }}>
         <span style={{ display: "inline-flex", gap: 3 }} aria-hidden="true">
           {Array.from({ length: 5 }, (_, i) => (
             <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill={color.accentBright}>
