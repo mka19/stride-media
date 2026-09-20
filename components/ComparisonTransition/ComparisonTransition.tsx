@@ -12,7 +12,7 @@ import { useStacked } from "../shared/responsive";
  * the bottom edge so the footer receives the same symbol instead of starting
  * as an unrelated block.
  */
-export default function ComparisonTransition({ scrollLength = "180vh" }: { scrollLength?: string }) {
+export default function ComparisonTransition({ scrollLength = "220vh" }: { scrollLength?: string }) {
   const [split, setSplit] = useState(50);
   const drag = useRef(false);
   const stacked = useStacked();
@@ -28,10 +28,10 @@ export default function ComparisonTransition({ scrollLength = "180vh" }: { scrol
         scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
       });
       tl.to(q(".compare-shell"), { scale: 1, borderRadius: 0, duration: 0.32, ease: "power2.inOut" }, 0)
-        .to(q(".compare-copy"), { opacity: 0, y: -18, duration: 0.12, ease: "power2.in" }, 0.48)
-        .to(q(".compare-shell"), { scale: 0.18, opacity: 0, duration: 0.2, ease: "power3.in" }, 0.56)
-        .to(q(".compare-mark"), { opacity: 1, scale: 1, y: 0, duration: 0.22, ease: "expo.out" }, 0.66)
-        .to(q(".compare-mark"), { y: "32vh", scale: 0.72, duration: 0.2, ease: "power2.inOut" }, 0.8);
+        .to(q(".compare-copy"), { opacity: 0, y: -14, duration: 0.2, ease: "power1.inOut" }, 0.42)
+        .to(q(".compare-shell"), { scale: 0.56, borderRadius: 24, opacity: 0.08, duration: 0.32, ease: "power1.inOut" }, 0.52)
+        .to(q(".compare-mark"), { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.58)
+        .to(q(".compare-mark"), { y: "24vh", scale: 0.78, duration: 0.26, ease: "power1.inOut" }, 0.76);
     },
     [stacked],
     (root) => {
@@ -68,14 +68,17 @@ export default function ComparisonTransition({ scrollLength = "180vh" }: { scrol
       <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 76% 38%, ${hexA(color.accentBright, .72)}, transparent 17%), radial-gradient(circle at 52% 62%, ${hexA(color.accent, .48)}, transparent 30%), linear-gradient(125deg, #050507 0%, #23113f 52%, #08060d 100%)` }} />
       <div style={{ position: "absolute", inset: 0, width: `${split}%`, overflow: "hidden", background: "linear-gradient(125deg, #e8e5ee 0%, #bdb7ca 44%, #f7f5f8 100%)" }}>
         <div style={{ position: "absolute", inset: 0, width: "100vw", background: `radial-gradient(circle at 28% 36%, ${hexA(color.accent, .35)}, transparent 18%), radial-gradient(circle at 56% 72%, rgba(15,15,19,.18), transparent 26%), linear-gradient(135deg, rgba(255,255,255,.72), transparent 48%)` }} />
+        <MicroLabel tone="accent" style={{ position: "absolute", left: stacked ? 18 : 32, top: stacked ? 22 : 32, whiteSpace: "nowrap", opacity: Math.min(1, split / 28), transition: "opacity 420ms ease" }}>Without Stride</MicroLabel>
       </div>
+
+      <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 18 : 32, top: stacked ? 22 : 32, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
 
       <div className="compare-copy" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}>
         <div style={{ textAlign: "center", padding: layout.pad }}>
-          <MicroLabel tone="accent">Drag to compare</MicroLabel>
           <h2 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, color: "#fff", mixBlendMode: "difference" }}>
             From invisible to unmistakable.
           </h2>
+          <span style={{ display: "block", marginTop: space.lg, ...typeScale.eyebrow, color: "#fff", mixBlendMode: "difference", opacity: .72 }}>Drag to compare</span>
         </div>
       </div>
 

@@ -110,11 +110,11 @@ body {
 }
 .stride-glow-button:hover .stride-button-arrow,
 .stride-glow-button:focus-visible .stride-button-arrow {
-  transform: rotate(45deg);
+  transform: translate3d(3px, -3px, 0) scale(1.04);
 }
 .stride-glow-button:hover .stride-button-arrow svg,
 .stride-glow-button:focus-visible .stride-button-arrow svg {
-  transform: translate3d(1px, -1px, 0) rotate(-45deg);
+  transform: none;
 }
 
 @keyframes stride-cam-settle {

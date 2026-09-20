@@ -19,8 +19,8 @@ import type { CSSProperties } from "react";
 export default function SmearLabel({
   children,
   reach = 58,
-  pull = 0.42,
-  blur = 1.6,
+  pull = 0.24,
+  blur = 0.7,
   style,
 }: {
   children: string;

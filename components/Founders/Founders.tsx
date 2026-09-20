@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { founders as copy } from "../shared/copy";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
 import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
@@ -36,11 +36,24 @@ function Portrait({ person, index }: { person: (typeof copy.people)[number]; ind
   );
 }
 
-function Memory({ item, index }: { item: (typeof copy.memories)[number]; index: number }) {
+function Memory({ item, index, mobile = false }: { item: (typeof copy.memories)[number]; index: number; mobile?: boolean }) {
   const [active, setActive] = useState(false);
+  const root = useRef<HTMLElement | null>(null);
   const rotations = [-5, 4, -3, 6];
+
+  useEffect(() => {
+    if (!mobile || !root.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      { rootMargin: "-32% 0px -32% 0px", threshold: 0.12 },
+    );
+    observer.observe(root.current);
+    return () => observer.disconnect();
+  }, [mobile]);
+
   return (
     <article
+      ref={root}
       tabIndex={0}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
@@ -50,8 +63,9 @@ function Memory({ item, index }: { item: (typeof copy.memories)[number]; index: 
       style={{
         position: "relative",
         zIndex: active ? 5 : index + 1,
-        transform: `translate3d(0, ${active ? -24 : index % 2 ? 34 : 0}px, 0) rotate(${active ? 0 : rotations[index]}deg) scale(${active ? 1.035 : 1})`,
-        transition: `transform 620ms ${ease.out}, filter 420ms ${ease.out}`,
+        width: mobile ? "100%" : undefined,
+        transform: `translate3d(0, ${active ? -20 : mobile ? 0 : index % 2 ? 34 : 0}px, 0) rotate(${active ? 0 : mobile ? 0 : rotations[index]}deg) scale(${active ? 1.025 : 1})`,
+        transition: `transform 820ms ${ease.out}, filter 520ms ${ease.out}`,
         outline: "none",
       }}
     >
@@ -62,6 +76,8 @@ function Memory({ item, index }: { item: (typeof copy.memories)[number]; index: 
             background: item.image
               ? `url(${item.image}) center/cover no-repeat`
               : `linear-gradient(${135 + index * 28}deg, ${hexA(color.accent, 0.82)}, #18131f 52%, #050505)`,
+            transform: `scale(${active ? 1.02 : 1})`,
+            transition: `transform 1000ms ${ease.out}`,
           }}
         />
       </div>
@@ -93,6 +109,10 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+      if (stacked) {
+        gsap.set(q(".founder-panel, .founder-title, .founder-stage, .founder-memory-intro"), { opacity: 1, y: 0, yPercent: 0, scale: 1, rotateX: 0 });
+        return;
+      }
       gsap.set(q(".founder-panel"), { opacity: 0, yPercent: 7, scale: 0.975 });
       gsap.set(q(".founder-panel")[0], { opacity: 1, yPercent: 0, scale: 1 });
       gsap.set(q(".founder-title"), { yPercent: 112, rotateX: 12, transformOrigin: "50% 100%" });
@@ -130,9 +150,9 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
         background: i ? "#121215" : "#0d0d10",
       }}
     >
-      <div style={{ position: "absolute", inset: 0, width: stacked || compact ? "100%" : "58%" }}><Portrait person={person} index={i} /></div>
+      <div style={{ position: stacked ? "relative" : "absolute", inset: stacked ? undefined : 0, width: stacked || compact ? "100%" : "58%", height: stacked ? "58vh" : undefined }}><Portrait person={person} index={i} /></div>
       <div aria-hidden="true" style={{ position: "absolute", inset: 0, left: stacked || compact ? 0 : "48%", background: `radial-gradient(circle at 40% 50%, ${hexA(color.accent, .18)}, transparent 44%), linear-gradient(90deg, transparent, rgba(5,5,7,.9) 18%, #070709)` }} />
-      <div style={{ position: stacked ? "relative" : "absolute", right: stacked || compact ? 0 : "4vw", top: stacked || compact ? 320 : "19%", width: stacked || compact ? "100%" : "min(57vw, 860px)", padding: 0, background: "rgba(9,9,12,.82)", backdropFilter: "blur(28px) saturate(1.2)", border: `1px solid ${hexA("#fff", .16)}`, boxShadow: "0 34px 90px rgba(0,0,0,.42)", overflow: "hidden" }}>
+      <div style={{ position: stacked ? "relative" : "absolute", right: stacked || compact ? 0 : "4vw", top: stacked || compact ? 0 : "19%", width: stacked || compact ? "100%" : "min(57vw, 860px)", padding: 0, background: "rgba(9,9,12,.82)", backdropFilter: "blur(28px) saturate(1.2)", border: `1px solid ${hexA("#fff", .16)}`, boxShadow: stacked ? "none" : "0 34px 90px rgba(0,0,0,.42)", overflow: "hidden" }}>
         <div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "1.55fr .65fr", borderBottom: `1px solid ${hexA("#fff", .13)}` }}>
         <div style={{ padding: `clamp(24px, 3.2vw, 48px)` }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: space.xl }}>
@@ -165,7 +185,7 @@ export default function Founders({ scrollLength = "250vh" }: { scrollLength?: st
         <div style={{ display: "grid", gap: space.xxl }}>{copy.people.map(panel)}</div>
         <div style={{ marginTop: layout.section }}>
           <h3 style={{ ...typeScale.h1, color: color.textOnDark }}>Built together.</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: space.lg, paddingBottom: 120 }}>{copy.memories.map((m, i) => <Memory key={m.n} item={m} index={i} />)}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 96, padding: `${space.xl}px 0 140px` }}>{copy.memories.map((m, i) => <Memory key={m.n} item={m} index={i} mobile />)}</div>
         </div>
       </section>
     );
