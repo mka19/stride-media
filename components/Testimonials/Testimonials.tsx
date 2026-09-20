@@ -41,6 +41,13 @@ export default function Testimonials() {
       const q = gsap.utils.selector(root);
       const cards = q(".ts-card") as HTMLElement[];
 
+      // Mobile cards use native sticky positioning. Keep the desktop GSAP
+      // choreography completely isolated from that layout.
+      if (stacked) {
+        gsap.set(cards, { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1, clearProps: "transform" });
+        return;
+      }
+
       /*
        * Driven the way vishakha-sharma21/animation-gsap drives it: one
        * ScrollTrigger, and on every update each card's position is worked out
@@ -253,11 +260,18 @@ export default function Testimonials() {
             return (
               <article
                 key={t.initials}
-                className={`ts-card${stacked && i < 4 ? " mobile-stack-card" : ""}`}
+                className="ts-card"
                 data-x={spot.x}
                 data-y={spot.y}
                 data-r={spot.r}
-                style={{ ...cardStyle, height: "100%", top: 76 + i * 10 }}
+                style={{
+                  ...cardStyle,
+                  height: stacked ? "auto" : "100%",
+                  minHeight: stacked ? 286 : undefined,
+                  position: stacked ? "sticky" : undefined,
+                  top: stacked ? `calc(${layout.navHeight}px + ${space.md + i * 8}px)` : 76 + i * 10,
+                  zIndex: stacked ? i + 1 : undefined,
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
                 }}

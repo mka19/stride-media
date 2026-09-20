@@ -113,6 +113,12 @@ export default function Footer({
           justifyContent: "flex-start",
         }}
       >
+        {stacked && (
+          <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", paddingBottom: space.lg }}>
+            <StrideMark size={64} glowing />
+          </div>
+        )}
+
         {/* ---- links: numbered left, social right ---- */}
         <div
           style={{
@@ -180,10 +186,7 @@ export default function Footer({
              full width of the page; the height is set from the viewport so
              the word always reaches both edges rather than sitting as a
              small mark in the middle of an empty band. */}
-        <div className="ft-word" style={{ display: "grid", gridTemplateColumns: stacked ? "1fr" : "auto 1fr", alignItems: "center", gap: stacked ? space.s : space.xl }}>
-          <div aria-hidden="true" style={{ display: "grid", placeItems: "center", paddingTop: stacked ? 0 : space.md }}>
-            <StrideMark size={stacked ? 58 : 88} glowing />
-          </div>
+        <div className="ft-word" style={{ display: "block", width: "100%", textAlign: "center" }}>
           {/* Width only. The height used to be capped at 26vh as well, and on
               a short window that cap won — the type was sized down to fit the
               height and sat centred with a gap at each end instead of

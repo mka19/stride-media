@@ -348,6 +348,14 @@ export default function CaseStudy({
             background: hexA(color.textOnLight, 0.04),
             textAlign: "left",
             transition: `background ${ease.hoverMs}ms ${ease.hover}`,
+            ...(stacked ? {
+              position: "sticky",
+              top: `calc(${layout.navHeight}px + ${space.lg + i * 10}px)`,
+              zIndex: i + 1,
+              minHeight: "min(62vh, 520px)",
+              background: color.bone,
+              boxShadow: `0 -1px 0 ${hexA(color.black, .08)}, 0 -24px 60px ${hexA(color.black, .08)}`,
+            } : {}),
           }}
           /* One colour rising from the floor of the card, at an alpha you
              notice only next to a card that does not have it. The old hover
@@ -424,38 +432,35 @@ export default function CaseStudy({
           <div style={{ position: "relative", display: "grid", placeItems: "center" }}>{headline}</div>
         </div>
 
-        {/* A swipeable row rather than diagonal parallax. */}
+        {/* A slow cinematic ticker on mobile. */}
         <div
           style={{
-            display: "flex",
-            gap: layout.gutter,
-            overflowX: "auto",
-            scrollSnapType: "x mandatory",
-            padding: `0 ${layout.pad} ${layout.section}`,
-            background: color.warmNeutral,
+            overflow: "hidden",
+            padding: `${layout.section}px 0`,
+            background: color.black,
           }}
         >
-          {plates.map((plate) => (
+          <div className="mobile-case-ticker" style={{ display: "flex", gap: layout.gutter, width: "max-content", paddingInline: layout.pad }}>
+          {[...plates, ...plates].map((plate, index) => (
             <figure
-              key={plate.caption}
+              key={`${plate.caption}-${index}`}
               style={{
-                flex: "0 0 85%",
+                flex: "0 0 78vw",
                 margin: 0,
-                scrollSnapAlign: "center",
                 display: "flex",
                 flexDirection: "column",
                 gap: space.s,
-                paddingTop: layout.section,
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
                 <MediaTile src={plate.src} seed={plate.w} style={{ position: "absolute", inset: 0 }} />
               </div>
-              <figcaption style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>
+              <figcaption style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
                 {plate.caption}
               </figcaption>
             </figure>
           ))}
+          </div>
         </div>
 
         <div
@@ -463,7 +468,7 @@ export default function CaseStudy({
             display: "flex",
             flexDirection: "column",
             gap: rhythm.headerToContent,
-            padding: `${layout.section} ${layout.pad}`,
+            padding: `calc(${layout.navHeight}px + ${layout.section}px) ${layout.pad} ${layout.section}px`,
           }}
         >
           <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>

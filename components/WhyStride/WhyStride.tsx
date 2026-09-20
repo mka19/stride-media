@@ -26,6 +26,7 @@ import GradientRevealText from "../shared/GradientRevealText";
 export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: string }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const objectRef = useRef<HeroObjectHandle | null>(null);
+  const mobileRoot = useRef<HTMLElement | null>(null);
   const bp = useBreakpoint();
   const stacked = useStacked();
   const [, setTick] = useState(0);
@@ -326,6 +327,24 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     };
   }, [rootRef, stacked]);
 
+  useEffect(() => {
+    if (!stacked || !mobileRoot.current) return;
+    const cards = [...mobileRoot.current.querySelectorAll<HTMLElement>(".ws-mobile-card")];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const active = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => Math.abs(a.boundingClientRect.top - window.innerHeight * .58) - Math.abs(b.boundingClientRect.top - window.innerHeight * .58))[0];
+        if (!active) return;
+        objectRef.current?.setVariant(Number((active.target as HTMLElement).dataset.index ?? 0) + 1);
+      },
+      { rootMargin: "-38% 0px -38% 0px", threshold: 0 },
+    );
+    cards.forEach((card) => observer.observe(card));
+    objectRef.current?.setVariant(1);
+    return () => observer.disconnect();
+  }, [stacked]);
+
   /** A line-art mark in the corner of a card, alternating between two. */
   const cardGlyph = (i: number) =>
     i % 2 === 0 ? (
@@ -403,6 +422,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
     return (
       <section
         id="why-stride"
+        ref={mobileRoot}
         style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.bodyLg.fontFamily }}
       >
         <div
@@ -424,11 +444,26 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "relative", width: "100%", height: "44vh" }}>
+          <div style={{ position: "sticky", top: layout.navHeight, zIndex: 8, width: "100%", height: "42vh", background: color.black }}>
             <HeroObject handleRef={objectRef} breakpoint={bp} />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: layout.section }}>
-            {copy.capabilities.map((cap, i) => capability(cap, i))}
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {copy.capabilities.map((cap, i) => (
+              <div
+                key={cap.n}
+                className="ws-mobile-card"
+                data-index={i}
+                style={{
+                  position: "sticky",
+                  top: `calc(${layout.navHeight}px + 42vh + ${i * 8}px)`,
+                  zIndex: i + 1,
+                  minHeight: "58vh",
+                  paddingBottom: "18vh",
+                }}
+              >
+                {capability(cap, i)}
+              </div>
+            ))}
           </div>
         </div>
       </section>

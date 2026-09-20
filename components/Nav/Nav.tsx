@@ -156,7 +156,7 @@ export default function Nav({
   }, [height, menuOpen]);
 
   const light = tone === "light";
-  const ink = light ? color.textOnLight : color.textOnDark;
+  const ink = menuOpen ? color.textOnDark : light ? color.textOnLight : color.textOnDark;
   const inkMuted = light ? hexA(color.textOnLight, 0.72) : hexA(color.textOnDark, 0.64);
   const hairline = light ? color.hairlineOnLight : color.hairlineOnDark;
 
@@ -176,10 +176,10 @@ export default function Nav({
         paddingRight: layout.pad,
         fontFamily: typeScale.eyebrow.fontFamily,
         color: ink,
-        background: lifted ? hexA(light ? color.bone : color.black, light ? 0.78 : 0.7) : "transparent",
+        background: menuOpen ? color.black : lifted ? hexA(light ? color.bone : color.black, light ? 0.78 : 0.7) : "transparent",
         backdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
         WebkitBackdropFilter: lifted ? "blur(18px) saturate(1.2)" : "none",
-        transform: `translate3d(0, ${navHidden ? -height : 0}px, 0)`,
+        transform: navHidden ? `translate3d(0, ${-height}px, 0)` : "none",
         willChange: "transform",
         transition: `transform 680ms cubic-bezier(.16,1,.3,1), background 520ms ${ease.out}, color 360ms ${ease.out}`,
       }}
@@ -190,10 +190,10 @@ export default function Nav({
         onClick={(event) => jumpTo(event, "top")}
         style={{
           position: "relative",
-          display: isMobile ? "none" : "flex",
+          display: "flex",
           alignItems: "center",
           gap: space.s,
-          paddingRight: space.xxl,
+          paddingRight: isMobile ? 0 : space.xxl,
           textDecoration: "none",
           color: "inherit",
           opacity: navHidden ? 0 : 1,
@@ -265,7 +265,7 @@ export default function Nav({
           paddingLeft: space.xl,
         }}
       >
-        {!railVisible && (
+        {!railVisible && !isMobile && (
           <button
             type="button"
             className="stride-press"
@@ -320,10 +320,29 @@ export default function Nav({
               size={isMobile ? 42 : 44}
               style={{ marginRight: 8, marginLeft: isMobile ? 8 : railVisible ? 0 : 8 }}
             />
-            <GlowButton href="#contact" style={isMobile ? { minHeight: 42, padding: "0 16px", whiteSpace: "nowrap" } : undefined}>
-              {isMobile ? "Book a call" : navCopy.cta}
-            </GlowButton>
+            {!isMobile && <GlowButton href="#contact">{navCopy.cta}</GlowButton>}
           </div>
+        )}
+        {isMobile && (
+          <button
+            type="button"
+            className="stride-press"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            style={{
+              position: "relative",
+              width: 44,
+              height: 44,
+              padding: 12,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            <span style={{ position: "absolute", left: 11, right: 11, top: "50%", height: 1.5, background: ink, transform: menuOpen ? "rotate(45deg)" : "translateY(-4px)", transition: `transform 560ms ${ease.out}, background 400ms ${ease.out}` }} />
+            <span style={{ position: "absolute", left: 11, right: 11, top: "50%", height: 1.5, background: ink, transform: menuOpen ? "rotate(-45deg)" : "translateY(4px)", transition: `transform 560ms ${ease.out}, background 400ms ${ease.out}` }} />
+          </button>
         )}
       </div>
 
@@ -363,11 +382,15 @@ export default function Nav({
             left: 0,
             right: 0,
             bottom: 0,
-            background: light ? color.bone : color.black,
+            background: color.black,
             display: "flex",
             flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
             gap: space.lg,
             padding: `${space.xl}px ${layout.pad}`,
+            zIndex: 1000,
           }}
         >
           {navCopy.items.map((item) => (
@@ -375,14 +398,11 @@ export default function Nav({
               key={item.id}
               href={`#${item.id}`}
               onClick={(event) => jumpTo(event, item.id)}
-              style={{ ...typeScale.h3, color: ink, textDecoration: "none" }}
+              style={{ ...typeScale.h3, color: color.textOnDark, textDecoration: "none", width: "100%", textAlign: "center" }}
             >
               {item.label}
             </a>
           ))}
-          <GlowButton href="#contact" style={{ marginTop: space.md, alignSelf: "flex-start" }}>
-            {navCopy.cta}
-          </GlowButton>
         </div>
       )}
 
