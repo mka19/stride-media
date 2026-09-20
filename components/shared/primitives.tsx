@@ -314,7 +314,7 @@ export function Grain({ opacity = 0.16, blend = "overlay" as const }) {
  * query string on the end, falls through to video, which is the common case.
  */
 function isImage(src: string) {
-  return /\.(jpe?g|png|webp|avif|gif|svg)(\?|#|$)/i.test(src);
+  return /\.(jpe?g|png|webp|avif|gif|svg)(\?|#|$)/i.test(src) || /images\.unsplash\.com/i.test(src);
 }
 
 export function MediaTile({
@@ -378,11 +378,12 @@ export function MediaTile({
     >
       {src && isImage(src) ? (
         <img
+          className="stride-drift"
           src={src}
           alt=""
           loading="lazy"
           decoding="async"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", animationPlayState: play ? "running" : "paused" }}
         />
       ) : src ? (
         <video

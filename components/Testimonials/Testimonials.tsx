@@ -41,6 +41,11 @@ export default function Testimonials() {
       const q = gsap.utils.selector(root);
       const cards = q(".ts-card") as HTMLElement[];
 
+      if (stacked) {
+        gsap.set(cards, { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1, clearProps: "transform" });
+        return;
+      }
+
       /*
        * Driven the way vishakha-sharma21/animation-gsap drives it: one
        * ScrollTrigger, and on every update each card's position is worked out
@@ -204,7 +209,8 @@ export default function Testimonials() {
     padding: space.lg,
     background: color.bone,
     borderRadius: 4,
-    boxShadow: `0 24px 60px ${hexA("#0A0A0A", 0.14)}`,
+    border: `1px solid ${hexA("#0A0A0A", 0.055)}`,
+    boxShadow: `0 8px 24px ${hexA("#0A0A0A", 0.07)}`,
     transition: `box-shadow ${ease.hoverMs}ms ${ease.hover}`,
   };
 
@@ -253,13 +259,20 @@ export default function Testimonials() {
             return (
               <article
                 key={t.initials}
-                className={`ts-card${stacked && i < 4 ? " mobile-stack-card" : ""}`}
+                className="ts-card"
                 data-x={spot.x}
                 data-y={spot.y}
                 data-r={spot.r}
-                style={{ ...cardStyle, height: "100%", top: 76 + i * 10 }}
+                style={{
+                  ...cardStyle,
+                  height: stacked ? "auto" : "100%",
+                  minHeight: stacked ? 286 : undefined,
+                  position: stacked ? "sticky" : undefined,
+                  top: stacked ? `calc(${layout.navHeight}px + ${space.md + i * 8}px)` : undefined,
+                  zIndex: stacked ? i + 1 : undefined,
+                }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
+                  e.currentTarget.style.boxShadow = stacked ? cardStyle.boxShadow : `0 16px 36px ${hexA("#0A0A0A", 0.1)}`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = cardStyle.boxShadow;

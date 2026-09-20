@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap, useGsapContext, SCRUB, reveal, approach } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
@@ -36,6 +36,8 @@ export default function Problem({
   scrollLength?: string;
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
+  const [mobileCard, setMobileCard] = useState(0);
+  const swipeStart = useRef<number | null>(null);
   const bp = useBreakpoint();
   // Pinning is what janks on real phone hardware, and a cycling slot is
   // disorienting on a small screen, so below tablet the section becomes
@@ -275,53 +277,72 @@ export default function Problem({
           </div>
         </div>
 
-        {/* Part 2 — three full-width cards in reading order. */}
+        {/* Part 2 — one swipeable mobile stage. Image, number and copy move
+            as a single state so the next problem never leaks underneath. */}
         <div
           id="problem"
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: layout.section,
             padding: `${layout.section} ${layout.pad}`,
             scrollMarginTop: layout.navHeight,
+            overflow: "hidden",
+          }}
+          onTouchStart={(e) => { swipeStart.current = e.touches[0]?.clientX ?? null; }}
+          onTouchEnd={(e) => {
+            if (swipeStart.current == null) return;
+            const delta = e.changedTouches[0].clientX - swipeStart.current;
+            if (Math.abs(delta) > 42) {
+              setMobileCard((current) => delta < 0
+                ? Math.min(copy.cards.length - 1, current + 1)
+                : Math.max(0, current - 1));
+            }
+            swipeStart.current = null;
           }}
         >
-          {copy.cards.map((card, i) => (
-            <article
-              key={card.n}
-              className="mobile-stack-card"
-              style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, top: 76 + i * 10 }}
-            >
-              <CardIcon index={i} />
-              <MicroLabel tone="light">Problem</MicroLabel>
-              <div style={{ ...typeScale.h3 }}>{card.label}</div>
-              <GradientRevealText
-                as="h3"
-                tone="light"
-                style={{ ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}
+          {(() => {
+            const card = copy.cards[mobileCard];
+            return (
+              <article
+                key={card.n}
+                className="mobile-problem-enter"
+                style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, minHeight: "72vh" }}
               >
-                {card.headline}
-              </GradientRevealText>
-              <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
-                <MediaTile
-                  src={cardMedia[i]}
-                  seed={i * 5 + 11}
-                  style={{ position: "absolute", inset: 0 }}
-                />
-              </div>
-              <div style={{ ...typeScale.numberXl, ...numberGradient }}>{card.n}</div>
-              <p
-                style={{
-                  margin: 0,
-                  maxWidth: "40ch",
-                  ...typeScale.bodyLg,
-                  color: color.textOnLightMuted,
-                }}
-              >
-                {card.body}
-              </p>
-            </article>
-          ))}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
+                  <CardIcon index={mobileCard} />
+                  <div style={{ ...typeScale.numberXl, ...numberGradient, fontSize: fluid(54, 82), lineHeight: .8 }}>{card.n}</div>
+                </div>
+                <MicroLabel tone="light">Problem</MicroLabel>
+                <div style={{ ...typeScale.h3 }}>{card.label}</div>
+                <GradientRevealText
+                  as="h3"
+                  tone="light"
+                  style={{ ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}
+                >
+                  {card.headline}
+                </GradientRevealText>
+                <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3", overflow: "hidden" }}>
+                  <MediaTile src={cardMedia[mobileCard]} seed={mobileCard * 5 + 11} style={{ position: "absolute", inset: 0 }} />
+                </div>
+                <p style={{ margin: 0, maxWidth: "40ch", ...typeScale.bodyLg, color: color.textOnLightMuted }}>
+                  {card.body}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: space.md }}>
+                  <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>Swipe to explore</span>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {copy.cards.map((item, i) => (
+                      <button
+                        key={item.n}
+                        type="button"
+                        aria-label={`Show problem ${item.n}`}
+                        aria-current={i === mobileCard}
+                        onClick={() => setMobileCard(i)}
+                        style={{ width: i === mobileCard ? 28 : 8, height: 8, padding: 0, border: 0, borderRadius: 99, background: i === mobileCard ? color.accent : hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1), background 300ms ease" }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </article>
+            );
+          })()}
         </div>
       </section>
     );

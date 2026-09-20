@@ -182,7 +182,7 @@ export default function HowItWorks({
   const stepList = copy.steps.map((step, i) => (
     <div
       key={step.n}
-      className="hw-step"
+      className={`hw-step${stacked ? " mobile-how-step" : ""}`}
       style={{
         // Steps share a centre, so only the first rests visible.
         opacity: !stacked && i > 0 ? 0 : 1,
