@@ -59,6 +59,10 @@ export default function Hero({
           end: "bottom bottom",
           scrub: SCRUB,
           onUpdate: (self) => {
+            // The opening hero always owns the original Stride mark. Variant
+            // changes belong to Why Stride and must never leak back into the
+            // homepage object when scrolling in either direction.
+            objectRef.current?.setVariant(0);
             // Finish the expensive particle hand-off promptly, then let the
             // headline composition breathe for the rest of the pinned scene.
             objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.43));

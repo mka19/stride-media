@@ -16,6 +16,7 @@ import FAQ from "../components/FAQ/FAQ";
 import Footer from "../components/Footer/Footer";
 import Founders from "../components/Founders/Founders";
 import Preloader from "../components/shared/Preloader";
+import ComparisonTransition from "../components/ComparisonTransition/ComparisonTransition";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so the
@@ -45,6 +46,7 @@ export default function App() {
       <Founders />
       <FinalCTA />
       <FAQ />
+      <ComparisonTransition />
       <Footer />
     </>
   );
