@@ -3,7 +3,7 @@ import { gsap, useGsapContext, prefersReducedMotion } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, MediaTile, MicroLabel } from "../shared/primitives";
-import { useBreakpoint } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
 import GradientRevealText from "../shared/GradientRevealText";
 
@@ -26,11 +26,16 @@ const CLIP_HEADROOM = 70;
 
 export default function Results({ clips = [] }: { clips?: string[] }) {
   const bp = useBreakpoint();
+  const stacked = useStacked();
   const cardWidth = bp === "mobile" ? "85vw" : bp === "tablet" ? 240 : 280;
 
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+      if (stacked) {
+        gsap.set(q(".rs-card"), { opacity: 1, x: 0, clearProps: "transform" });
+        return;
+      }
       gsap.set(q(".rs-card"), { opacity: 0, x: 60 });
       gsap.to(q(".rs-card"), {
         opacity: 1,
@@ -41,7 +46,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         scrollTrigger: { trigger: root, start: "top 75%" },
       });
     },
-    [],
+    [stacked],
     (root) => gsap.set(gsap.utils.selector(root)(".rs-card"), { opacity: 1, x: 0 }),
   );
 
@@ -95,6 +100,28 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
       </div>
 
       {/* ---- the ticker ---- */}
+      {stacked ? (
+        <div
+          aria-label="Client results"
+          style={{
+            display: "flex",
+            gap: 14,
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            overscrollBehaviorInline: "contain",
+            WebkitOverflowScrolling: "touch",
+            padding: `10px ${layout.pad}px ${space.xl}px`,
+            scrollbarWidth: "none",
+            touchAction: "pan-x pan-y",
+          }}
+        >
+          {copy.cards.map((card, i) => (
+            <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
+              <ResultCard card={card} src={clips[i]} seed={i} width="100%" />
+            </div>
+          ))}
+        </div>
+      ) : (
       <Ticker>
         {/* The set is rendered twice so the wrap is seamless: when the first
             copy has travelled its full width, the offset resets to zero and
@@ -111,6 +138,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
           )),
         )}
       </Ticker>
+      )}
     </section>
   );
 }

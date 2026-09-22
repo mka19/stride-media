@@ -159,6 +159,31 @@ body {
   .stride-cam-aperture,
   .stride-cam-rec { animation: none; }
   .stride-float { animation: none; }
+  .mobile-problem-enter,
+  .mobile-case-ticker,
+  .mobile-how-step,
+  .premium-rise-copy,
+  .premium-rise-number { animation: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+html[data-motion="off"] .stride-drift,
+html[data-motion="off"] .stride-pulse,
+html[data-motion="off"] .stride-spin,
+html[data-motion="off"] .stride-cam,
+html[data-motion="off"] .stride-cam-lens,
+html[data-motion="off"] .stride-cam-aperture,
+html[data-motion="off"] .stride-cam-rec,
+html[data-motion="off"] .stride-float,
+html[data-motion="off"] .mobile-problem-enter,
+html[data-motion="off"] .mobile-case-ticker,
+html[data-motion="off"] .mobile-how-step,
+html[data-motion="off"] .premium-rise-copy,
+html[data-motion="off"] .premium-rise-number,
+html[data-motion="off"] .mobile-stack-card,
+html[data-motion="off"] .mobile-parallax-media {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
 }
 
 @media (max-width: 860px) {

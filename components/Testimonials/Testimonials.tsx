@@ -271,9 +271,11 @@ export default function Testimonials() {
                   position: stacked ? "sticky" : undefined,
                   top: stacked ? `calc(${layout.navHeight}px + ${space.md + i * 8}px)` : 76 + i * 10,
                   zIndex: stacked ? i + 1 : undefined,
+                  boxShadow: stacked ? `0 8px 24px ${hexA("#0A0A0A", 0.07)}` : cardStyle.boxShadow,
+                  border: stacked ? `1px solid ${hexA("#0A0A0A", 0.055)}` : undefined,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
+                  e.currentTarget.style.boxShadow = stacked ? `0 10px 28px ${hexA("#0A0A0A", 0.08)}` : `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = cardStyle.boxShadow;

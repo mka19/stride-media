@@ -55,6 +55,7 @@ export default function ComparisonTransition({ scrollLength = "220vh" }: { scrol
       onPointerMove={(e) => drag.current && update(e.clientX, e.currentTarget)}
       onPointerUp={() => (drag.current = false)}
       onPointerCancel={() => (drag.current = false)}
+      onLostPointerCapture={() => (drag.current = false)}
       style={{
         position: "absolute",
         inset: stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + space.xl}px ${layout.pad} ${space.xl}px`,
@@ -89,10 +90,14 @@ export default function ComparisonTransition({ scrollLength = "220vh" }: { scrol
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(split)}
+          aria-orientation="horizontal"
           role="slider"
           onKeyDown={(e) => {
+            if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) e.preventDefault();
             if (e.key === "ArrowLeft") setSplit((v) => Math.max(0, v - 5));
             if (e.key === "ArrowRight") setSplit((v) => Math.min(100, v + 5));
+            if (e.key === "Home") setSplit(0);
+            if (e.key === "End") setSplit(100);
           }}
           style={{ position: "absolute", left: "50%", top: "50%", width: 54, height: 54, transform: "translate(-50%, -50%)", borderRadius: "50%", border: `1px solid ${hexA("#fff", .45)}`, background: "rgba(8,8,12,.82)", color: "#fff", display: "grid", placeItems: "center", font: "inherit" }}
         >

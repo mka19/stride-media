@@ -66,6 +66,20 @@ export default function Nav({
   const navRoom = useNavRoom();
   const railVisible = !isMobile && navRoom;
 
+  useEffect(() => {
+    if (!isMobile || !menuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", close);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", close);
+    };
+  }, [isMobile, menuOpen]);
+
   const jumpTo = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     const target = document.getElementById(id);
     if (!target) return;

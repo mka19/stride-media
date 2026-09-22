@@ -27,7 +27,15 @@ export default function App() {
   // In Framer this call belongs in one code component that wraps the page,
   // or in a site-wide override — not in each section, or several instances
   // of Lenis end up fighting for the same scroller.
-  useEffect(() => initSmoothScroll(), []);
+  useEffect(() => {
+    const motion = new URLSearchParams(window.location.search).get("motion");
+    if (motion === "on" || motion === "off") document.documentElement.dataset.motion = motion;
+    const destroy = initSmoothScroll();
+    return () => {
+      destroy();
+      delete document.documentElement.dataset.motion;
+    };
+  }, []);
 
   // Media is limited to components that already own image/video slots. This
   // keeps every restored animation and the original hero mark untouched.
