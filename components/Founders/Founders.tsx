@@ -1,217 +1,51 @@
 import { useEffect, useRef, useState } from "react";
 import { founders as copy } from "../shared/copy";
-import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
 import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 import { Grain, MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
 
-function Portrait({ person, index }: { person: (typeof copy.people)[number]; index: number }) {
-  return (
-    <div
-      className="founder-portrait"
-      style={{
-        position: "relative",
-        height: "100%",
-        minHeight: 420,
-        overflow: "hidden",
-        background: person.image
-          ? `url(${person.image}) center/cover no-repeat`
-          : `radial-gradient(circle at ${index ? "68% 25%" : "32% 25%"}, ${hexA(color.accentBright, 0.72)}, transparent 20%), radial-gradient(circle at ${index ? "32% 78%" : "72% 76%"}, ${hexA(color.accentDeep, 0.52)}, transparent 34%), linear-gradient(145deg, #35156b 0%, #130f1a 48%, #050505 100%)`,
-      }}
-    >
-      {!person.image && (
-        <>
-          <div style={{ position: "absolute", left: index ? "48%" : "24%", top: "11%", width: "18%", height: "23%", borderRadius: "48% 48% 44% 44%", background: "radial-gradient(circle at 38% 28%, rgba(255,255,255,.29), rgba(255,255,255,.075) 44%, rgba(0,0,0,.28) 74%)", boxShadow: `0 0 90px ${hexA(color.accentBright, .2)}`, zIndex: 2 }} />
-          <div style={{ position: "absolute", left: index ? "52.5%" : "28.5%", top: "30%", width: "9%", height: "15%", borderRadius: "28%", background: "linear-gradient(110deg, rgba(255,255,255,.17), rgba(0,0,0,.34))", zIndex: 1 }} />
-          <div style={{ position: "absolute", left: index ? "25%" : "1%", bottom: "-18%", width: "64%", height: "68%", borderRadius: "50% 50% 8% 8% / 24% 24% 8% 8%", background: "linear-gradient(118deg, rgba(255,255,255,.18), rgba(255,255,255,.035) 38%, rgba(0,0,0,.5))", transform: `rotate(${index ? -2 : 2}deg)`, boxShadow: "0 -1px 0 rgba(255,255,255,.18) inset" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(100deg, rgba(255,255,255,.09), transparent 26%, transparent 68%, rgba(124,58,237,.13))", mixBlendMode: "screen" }} />
-          <span style={{ position: "absolute", left: space.lg, bottom: space.lg, ...typeScale.eyebrow, color: hexA("#fff", 0.58) }}>
-            Founder portrait · {person.n}
-          </span>
-        </>
-      )}
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 54%, rgba(0,0,0,.72))" }} />
+type Person = (typeof copy.people)[number];
+type MemoryItem = (typeof copy.memories)[number];
+
+function Portrait({ person, index }: { person: Person; index: number }) {
+  return <div style={{ position: "relative", width: "100%", height: "100%", minHeight: 360, overflow: "hidden", background: person.image ? `url(${person.image}) center/cover no-repeat` : `radial-gradient(circle at ${index ? "68% 24%" : "32% 24%"}, ${hexA(color.accentBright, .62)}, transparent 21%), radial-gradient(circle at ${index ? "30% 80%" : "72% 78%"}, ${hexA(color.accentDeep, .46)}, transparent 35%), linear-gradient(145deg, #30145f, #121017 48%, #050505)` }}>
+    {!person.image && <><div style={{ position: "absolute", left: index ? "53%" : "29%", top: "17%", width: "17%", aspectRatio: "1 / 1.16", borderRadius: "48%", background: "radial-gradient(circle at 38% 28%, rgba(255,255,255,.28), rgba(255,255,255,.07) 46%, rgba(0,0,0,.32) 76%)", boxShadow: `0 0 90px ${hexA(color.accentBright, .17)}` }} /><div style={{ position: "absolute", left: index ? "29%" : "5%", bottom: "-15%", width: "66%", height: "64%", borderRadius: "50% 50% 8% 8% / 25% 25% 8% 8%", background: "linear-gradient(118deg, rgba(255,255,255,.17), rgba(255,255,255,.03) 40%, rgba(0,0,0,.54))" }} /></>}
+    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 52%, rgba(0,0,0,.78))" }} />
+    <span style={{ position: "absolute", left: space.lg, bottom: space.lg, ...typeScale.eyebrow, color: hexA("#fff", .58) }}>Founder portrait · {person.n}</span>
+  </div>;
+}
+
+function ProfileCard({ person, index, compact }: { person: Person; index: number; compact: boolean }) {
+  return <article style={{ position: "relative", display: "grid", gridTemplateColumns: compact ? "1fr" : "minmax(300px, .9fr) minmax(420px, 1.1fr)", minHeight: compact ? undefined : "min(680px, 78vh)", overflow: "hidden", background: index ? "#111114" : "#0c0c0f", border: `1px solid ${hexA("#fff", .14)}`, boxShadow: "0 28px 90px rgba(0,0,0,.34)" }}>
+    <div style={{ minHeight: compact ? "clamp(360px, 54vh, 500px)" : undefined }}><Portrait person={person} index={index} /></div>
+    <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: compact ? "28px 22px 22px" : "clamp(36px, 5vw, 76px)", background: `radial-gradient(circle at 0 0, ${hexA(color.accent, .13)}, transparent 40%)` }}>
+      <div><div style={{ display: "flex", alignItems: "start", justifyContent: "space-between", gap: space.lg }}><p style={{ margin: 0, ...typeScale.eyebrow, color: color.accentOnDark }}>{person.role}</p><span style={{ ...typeScale.numberXl, fontSize: compact ? 66 : undefined, lineHeight: .72, color: hexA(color.accentBright, .31) }}>{person.n}</span></div><h3 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>{person.name}</h3><p style={{ margin: `${space.xl}px 0 0`, maxWidth: "48ch", ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{person.bio}</p></div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", marginTop: compact ? 46 : space.xxl, borderTop: `1px solid ${hexA("#fff", .13)}` }}>{["Strategy", "Direction", "Delivery"].map((item, n) => <span key={item} style={{ padding: `${space.md}px 0`, borderRight: n < 2 ? `1px solid ${hexA("#fff", .13)}` : 0, textAlign: "center", ...typeScale.eyebrow, color: n === index ? color.accentOnDark : color.textOnDarkMuted }}>{item}</span>)}</div>
     </div>
-  );
+  </article>;
 }
 
-function Memory({ item, index, mobile = false }: { item: (typeof copy.memories)[number]; index: number; mobile?: boolean }) {
-  const [active, setActive] = useState(false);
+function MemoryCard({ item, index, compact }: { item: MemoryItem; index: number; compact: boolean }) {
   const root = useRef<HTMLElement | null>(null);
-  const rotations = [-5, 4, -3, 6];
-
-  useEffect(() => {
-    if (!mobile || !root.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setActive(entry.isIntersecting),
-      { rootMargin: "-32% 0px -32% 0px", threshold: 0.12 },
-    );
-    observer.observe(root.current);
-    return () => observer.disconnect();
-  }, [mobile]);
-
-  return (
-    <article
-      ref={root}
-      tabIndex={0}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
-      onFocus={() => setActive(true)}
-      onBlur={() => setActive(false)}
-      onClick={() => setActive((v) => !v)}
-      style={{
-        position: "relative",
-        zIndex: active ? 5 : index + 1,
-        width: mobile ? "100%" : undefined,
-        transform: `translate3d(0, ${active ? -20 : mobile ? 0 : index % 2 ? 34 : 0}px, 0) rotate(${active ? 0 : mobile ? 0 : rotations[index]}deg) scale(${active ? 1.025 : 1})`,
-        transition: `transform 820ms ${ease.out}, filter 520ms ${ease.out}`,
-        outline: "none",
-      }}
-    >
-      <div style={{ padding: 9, background: "#ECECEF", boxShadow: active ? "0 30px 80px rgba(0,0,0,.5)" : "0 15px 35px rgba(0,0,0,.3)", transition: `box-shadow 500ms ${ease.out}` }}>
-        <div
-          style={{
-            aspectRatio: "4 / 5",
-            background: item.image
-              ? `url(${item.image}) center/cover no-repeat`
-              : `linear-gradient(${135 + index * 28}deg, ${hexA(color.accent, 0.82)}, #18131f 52%, #050505)`,
-            transform: `scale(${active ? 1.02 : 1})`,
-            transition: `transform 1000ms ${ease.out}`,
-          }}
-        />
-      </div>
-      <div
-        aria-hidden={!active}
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "calc(100% + 22px)",
-          width: "min(270px, 74vw)",
-          color: color.textOnDark,
-          opacity: active ? 1 : 0,
-          transform: `translate3d(-50%, ${active ? 0 : 12}px, 0)`,
-          transition: `opacity 300ms ${ease.out}, transform 500ms ${ease.out}`,
-          pointerEvents: "none",
-          textAlign: "center",
-        }}
-      >
-        <strong style={{ ...typeScale.bodyLg, fontWeight: 500 }}>{item.title}</strong>
-        <span style={{ display: "block", marginTop: 4, ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{item.meta}</span>
-      </div>
-    </article>
-  );
+  const [active, setActive] = useState(false);
+  const rotations = [-3.2, 2.6, -2.1, 3.4];
+  useEffect(() => { if (!compact || !root.current) return; const observer = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), { rootMargin: "-28% 0px -34%", threshold: .24 }); observer.observe(root.current); return () => observer.disconnect(); }, [compact]);
+  return <article ref={root} tabIndex={0} onMouseEnter={() => setActive(true)} onMouseLeave={() => setActive(false)} onFocus={() => setActive(true)} onBlur={() => setActive(false)} style={{ position: "relative", zIndex: active ? 10 : 4 - index, transform: `translate3d(0, ${active ? -14 : 0}px, 0) rotate(${active || compact ? 0 : rotations[index]}deg) scale(${active ? 1.025 : 1})`, filter: active ? "brightness(1)" : "brightness(.82)", transition: `transform 900ms ${ease.out}, filter 700ms ${ease.out}`, outline: "none" }}>
+    <div style={{ padding: compact ? 8 : 11, background: "#ededf0", boxShadow: active ? "0 32px 85px rgba(0,0,0,.52)" : "0 14px 38px rgba(0,0,0,.32)", transition: `box-shadow 700ms ${ease.out}` }}><div style={{ aspectRatio: "4 / 5", background: item.image ? `url(${item.image}) center/cover no-repeat` : `linear-gradient(${132 + index * 27}deg, ${hexA(color.accent, .88)}, #21162f 48%, #08080a)`, transform: `scale(${active ? 1.018 : 1})`, transition: `transform 1000ms ${ease.out}` }} /></div>
+    <div style={{ minHeight: compact ? 84 : 94, padding: `${space.lg}px ${space.s}px 0`, textAlign: "center", color: color.textOnDark, opacity: active || compact ? 1 : .42, transform: `translateY(${active || compact ? 0 : 8}px)`, transition: `opacity 600ms ${ease.out}, transform 700ms ${ease.out}` }}><strong style={{ ...typeScale.bodyLg, fontWeight: 500 }}>{item.title}</strong><span style={{ display: "block", marginTop: 5, ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{item.meta}</span></div>
+  </article>;
 }
 
-export default function Founders({ scrollLength = "250vh" }: { scrollLength?: string }) {
-  const stacked = useStacked();
-  const compact = useBreakpoint() === "mobile";
-  const rootRef = useGsapContext(
-    (root) => {
-      const q = gsap.utils.selector(root);
-      if (stacked) {
-        gsap.set(q(".founder-panel, .founder-title, .founder-stage, .founder-memory-intro"), { opacity: 1, y: 0, yPercent: 0, scale: 1, rotateX: 0 });
-        return;
-      }
-      gsap.set(q(".founder-panel"), { opacity: 0, yPercent: 7, scale: 0.975 });
-      gsap.set(q(".founder-panel")[0], { opacity: 1, yPercent: 0, scale: 1 });
-      gsap.set(q(".founder-title"), { yPercent: 112, rotateX: 12, transformOrigin: "50% 100%" });
-      gsap.set(q(".founder-stage"), { opacity: 0, y: 26 });
-      gsap.set(q(".founder-memory-intro"), { opacity: 0, y: 24 });
-
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
-      });
-      tl.to(q(".founder-title"), { yPercent: 0, rotateX: 0, duration: 0.18, ease: "expo.out" }, 0.02)
-        .to(q(".founder-intro"), { opacity: 0, scale: 0.96, y: -24, duration: 0.1, ease: "power2.in" }, 0.2)
-        .to(q(".founder-stage"), { opacity: 1, y: 0, duration: 0.14, ease: "expo.out" }, 0.27)
-        .to(q(".founder-panel")[0], { opacity: 0, yPercent: -6, scale: 0.98, duration: 0.14, ease: "power2.inOut" }, 0.51)
-        .to(q(".founder-panel")[1], { opacity: 1, yPercent: 0, scale: 1, duration: 0.16, ease: "power3.out" }, 0.55)
-        .to(q(".founder-stage"), { opacity: 0, y: -24, duration: 0.11, ease: "power2.in" }, 0.78)
-        .to(q(".founder-memory-intro"), { opacity: 1, y: 0, duration: 0.14, ease: "expo.out" }, 0.82);
-    },
-    [stacked],
-    (root) => {
-      gsap.set(root.querySelectorAll(".founder-panel, .founder-title, .founder-memory-intro"), { opacity: 1, y: 0, yPercent: 0, scale: 1 });
-    },
-  );
-
-  const panel = (person: (typeof copy.people)[number], i: number) => (
-    <article
-      key={person.n}
-      className="founder-panel"
-      style={{
-        position: stacked ? "relative" : "absolute",
-        inset: stacked ? undefined : 0,
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        minHeight: stacked ? undefined : "100%",
-        overflow: "hidden",
-        background: i ? "#121215" : "#0d0d10",
-      }}
-    >
-      <div style={{ position: stacked ? "relative" : "absolute", inset: stacked ? undefined : 0, width: stacked || compact ? "100%" : "58%", height: stacked ? "58vh" : undefined }}><Portrait person={person} index={i} /></div>
-      <div aria-hidden="true" style={{ position: "absolute", inset: 0, left: stacked || compact ? 0 : "48%", background: `radial-gradient(circle at 40% 50%, ${hexA(color.accent, .18)}, transparent 44%), linear-gradient(90deg, transparent, rgba(5,5,7,.9) 18%, #070709)` }} />
-      <div style={{ position: stacked ? "relative" : "absolute", right: stacked || compact ? 0 : "4vw", top: stacked || compact ? 0 : "19%", width: stacked || compact ? "100%" : "min(57vw, 860px)", padding: 0, background: "rgba(9,9,12,.82)", backdropFilter: "blur(28px) saturate(1.2)", border: `1px solid ${hexA("#fff", .16)}`, boxShadow: stacked ? "none" : "0 34px 90px rgba(0,0,0,.42)", overflow: "hidden" }}>
-        <div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "1.55fr .65fr", borderBottom: `1px solid ${hexA("#fff", .13)}` }}>
-        <div style={{ padding: `clamp(24px, 3.2vw, 48px)` }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: space.xl }}>
-          <div>
-            <p style={{ margin: 0, ...typeScale.eyebrow, color: color.accentOnDark }}>{person.role}</p>
-            <h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>{person.name}</h3>
-          </div>
-        </div>
-        <p style={{ margin: `${space.xl}px 0 0`, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "48ch" }}>{person.bio}</p>
-        </div>
-        <div style={{ display: "grid", placeItems: "center", padding: space.xl, borderLeft: compact ? 0 : `1px solid ${hexA("#fff", .13)}`, borderTop: compact ? `1px solid ${hexA("#fff", .13)}` : 0 }}>
-          <span style={{ ...typeScale.numberXl, lineHeight: .75, color: hexA(color.accentBright, 0.42) }}>{person.n}</span>
-          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Co-founder</span>
-        </div>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
-          {["Strategy", "Direction", "Delivery"].map((item, n) => <span key={item} style={{ padding: `${space.md}px clamp(14px, 2vw, 28px)`, borderRight: n < 2 ? `1px solid ${hexA("#fff", .13)}` : 0, ...typeScale.eyebrow, color: n === i ? color.accentOnDark : color.textOnDarkMuted }}>{item}</span>)}
-        </div>
-      </div>
-    </article>
-  );
-
-  if (stacked) {
-    return (
-      <section id="founders" ref={rootRef} style={{ position: "relative", padding: `${layout.section} ${layout.pad}`, background: color.black, overflow: "hidden" }}>
-        <MicroLabel tone="accent">{copy.label}</MicroLabel>
-        <GradientRevealText as="h2" tone="dark" style={{ margin: `${rhythm.eyebrowToHeadline}px 0 ${space.xxl}px`, ...typeScale.h1, color: color.textOnDark }}>
-          {copy.headline}
-        </GradientRevealText>
-        <div style={{ display: "grid", gap: space.xxl }}>{copy.people.map(panel)}</div>
-        <div style={{ marginTop: layout.section }}>
-          <h3 style={{ ...typeScale.h1, color: color.textOnDark }}>Built together.</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 96, padding: `${space.xl}px 0 140px` }}>{copy.memories.map((m, i) => <Memory key={m.n} item={m} index={i} mobile />)}</div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section id="founders" ref={rootRef} style={{ position: "relative", height: scrollLength, background: color.black, color: color.textOnDark }}>
-      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", padding: `${space.xl}px ${layout.pad}` }}>
-        <Grain opacity={0.12} />
-        <div className="founder-intro" style={{ position: "absolute", inset: 0, zIndex: 3, display: "grid", placeItems: "center", background: color.black }}>
-          <div style={{ position: "relative", width: "min(1500px, 94vw)", height: "clamp(250px, 40vh, 430px)", display: "grid", placeItems: "center", overflow: "hidden", background: "#141417", borderTop: `1px solid ${hexA("#fff", .08)}`, borderBottom: `1px solid ${hexA("#fff", .08)}` }}>
-            <MicroLabel tone="accent" style={{ position: "absolute", top: space.xl, left: space.xl, zIndex: 2 }}>{copy.label}</MicroLabel>
-            <div style={{ width: "112%", overflow: "hidden", textAlign: "center" }}>
-              <h2 className="founder-title" style={{ margin: 0, fontFamily: typeScale.h1.fontFamily, fontSize: "clamp(96px, 16vw, 244px)", lineHeight: .76, fontWeight: 400, letterSpacing: "-.065em", textTransform: "uppercase", whiteSpace: "nowrap", color: color.textOnDark }}>{copy.headline}</h2>
-            </div>
-          </div>
-        </div>
-        <div className="founder-stage" style={{ position: "absolute", left: 0, right: 0, top: layout.navHeight, bottom: 0 }}>{copy.people.map(panel)}</div>
-        <div className="founder-memory-intro" style={{ position: "absolute", inset: `${space.xxl}px ${layout.pad}`, opacity: 0, zIndex: 4 }}>
-          <MicroLabel tone="accent">Shared history</MicroLabel>
-          <h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1 }}>Built together.</h3>
-          <div style={{ position: "absolute", left: "3vw", right: "2vw", top: "20vh", display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", alignItems: "center", gap: "clamp(0px, 1vw, 18px)" }}>
-            {copy.memories.map((m, i) => <Memory key={m.n} item={m} index={i} />)}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+export default function Founders() {
+  const bp = useBreakpoint();
+  const compact = useStacked() || bp === "tablet";
+  return <section id="founders" style={{ position: "relative", padding: `${layout.section} ${layout.pad}`, background: color.black, color: color.textOnDark, overflow: "clip" }}>
+    <Grain opacity={.1} />
+    <div style={{ position: "relative", zIndex: 1, maxWidth: 1600, margin: "0 auto" }}>
+      <header style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}><MicroLabel tone="accent">{copy.label}</MicroLabel><GradientRevealText as="h2" tone="dark" style={{ margin: `${rhythm.eyebrowToHeadline}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>{copy.headline}</GradientRevealText><p style={{ margin: `${space.lg}px auto 0`, maxWidth: "52ch", ...typeScale.bodyLg, color: color.textOnDarkMuted }}>Two perspectives, one system, built to make expertise impossible to ignore.</p></header>
+      <div style={{ position: "relative", marginTop: compact ? space.xl : layout.section }}>{copy.people.map((person, index) => <div key={person.n} style={{ position: compact ? "relative" : "sticky", top: compact ? undefined : `calc(${layout.navHeight}px + ${28 + index * 20}px)`, zIndex: index + 1, marginTop: index ? (compact ? space.xl : "22vh") : 0 }}><ProfileCard person={person} index={index} compact={compact} /></div>)}</div>
+      <section style={{ marginTop: compact ? layout.section : "clamp(120px, 15vw, 230px)" }}><header style={{ textAlign: "center", marginBottom: compact ? space.xl : space.xxl }}><MicroLabel tone="accent">Shared history</MicroLabel><h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>Built together.</h3></header><div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "repeat(4, minmax(0, 1fr))", alignItems: "center", gap: compact ? space.xl : "clamp(12px, 1.5vw, 28px)", maxWidth: compact ? 560 : undefined, margin: "0 auto" }}>{copy.memories.map((item, index) => <MemoryCard key={item.n} item={item} index={index} compact={compact} />)}</div></section>
+    </div>
+  </section>;
 }

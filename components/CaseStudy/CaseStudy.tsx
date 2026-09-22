@@ -324,7 +324,7 @@ export default function CaseStudy({
       style={{
         display: "grid",
         gridTemplateColumns: stacked ? "1fr" : "repeat(4, 1fr)",
-        gap: layout.gutter,
+        gap: stacked ? 14 : layout.gutter,
         width: "100%",
         maxWidth: 1200,
         margin: "0 auto",
@@ -341,18 +341,18 @@ export default function CaseStudy({
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            gap: space.h,
+            gap: stacked ? space.xl : space.h,
             minHeight: 300,
-            padding: `${space.lg}px`,
+            padding: `${stacked ? 22 : space.lg}px`,
             borderRadius: 12,
             background: hexA(color.textOnLight, 0.04),
             textAlign: "left",
             transition: `background ${ease.hoverMs}ms ${ease.hover}`,
             ...(stacked ? {
               position: "sticky",
-              top: `calc(${layout.navHeight}px + ${space.lg + i * 10}px)`,
+              top: `calc(${layout.navHeight}px + ${16 + i * 8}px)`,
               zIndex: i + 1,
-              minHeight: "min(62vh, 520px)",
+              minHeight: "clamp(360px, 48vh, 430px)",
               background: color.bone,
               boxShadow: `0 -1px 0 ${hexA(color.black, .08)}, 0 -24px 60px ${hexA(color.black, .08)}`,
             } : {}),
@@ -468,7 +468,7 @@ export default function CaseStudy({
             display: "flex",
             flexDirection: "column",
             gap: rhythm.headerToContent,
-            padding: `calc(${layout.navHeight}px + ${layout.section}px) ${layout.pad} ${layout.section}px`,
+            padding: `calc(${layout.navHeight}px + ${space.lg}px) ${layout.pad} ${layout.section}px`,
           }}
         >
           <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>

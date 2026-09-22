@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
 import { color, hexA, layout, space, typeScale } from "../shared/theme";
 import { MicroLabel, StrideMark } from "../shared/primitives";
-import { useStacked } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 
 /**
  * A tactile before/after bridge between FAQ and the footer.
@@ -15,7 +15,8 @@ import { useStacked } from "../shared/responsive";
 export default function ComparisonTransition({ scrollLength = "220vh" }: { scrollLength?: string }) {
   const [split, setSplit] = useState(50);
   const drag = useRef(false);
-  const stacked = useStacked();
+  const bp = useBreakpoint();
+  const stacked = useStacked() || bp === "tablet";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -108,7 +109,7 @@ export default function ComparisonTransition({ scrollLength = "220vh" }: { scrol
   );
 
   if (stacked) {
-    return <section ref={rootRef} style={{ position: "relative", height: "80vh", minHeight: 620, background: color.black }}>{shell}</section>;
+    return <section ref={rootRef} style={{ position: "relative", height: "72vh", minHeight: 560, background: color.black }}>{shell}</section>;
   }
 
   return (

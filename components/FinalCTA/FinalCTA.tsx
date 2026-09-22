@@ -67,7 +67,7 @@ export default function FinalCTA({
           display: "grid",
           gridTemplateColumns: stacked ? "1fr" : "minmax(0, 38%) minmax(0, 58%)",
           justifyContent: "space-between",
-          gap: stacked ? space.h : "4%",
+          gap: stacked ? (bp === "mobile" ? space.xl : space.xxl) : "4%",
         }}
       >
         {/* ---- left ---- */}
@@ -156,7 +156,7 @@ export default function FinalCTA({
             display: "flex",
             flexDirection: "column",
             gap: space.md,
-            padding: stacked ? space.xl : space.lg,
+            padding: stacked ? (bp === "mobile" ? space.md : space.xl) : space.lg,
             background: color.ink,
             border: `1px solid ${color.hairlineOnDark}`,
             borderRadius: 4,
@@ -166,7 +166,7 @@ export default function FinalCTA({
           <CalendlyEmbed
             url={calendly}
             minHeight={680}
-            minHeightMobile={720}
+            minHeightMobile={680}
           />
         </div>
       </div>

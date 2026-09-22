@@ -5,6 +5,14 @@ import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { GlowButton, StrideMark } from "../shared/primitives";
 import SoundButton from "../shared/SoundButton";
 import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
+import { prefersReducedMotion } from "../shared/gsap";
+
+type NavTransition = {
+  phase: "enter" | "cover" | "reveal";
+  label: string;
+  x: number;
+  y: number;
+};
 
 /**
  * Sticky nav — designxhand.com/experience reference, locked.
@@ -56,6 +64,7 @@ export default function Nav({
   const [pageProgress, setPageProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
+  const [transition, setTransition] = useState<NavTransition | null>(null);
   const lastScroll = useRef(0);
   const direction = useRef<1 | -1 | 0>(0);
   const directionTravel = useRef(0);
@@ -86,16 +95,28 @@ export default function Nav({
     event.preventDefault();
     setMenuOpen(false);
     const lenis = (window as Window & { __strideLenis?: { scrollTo: (target: HTMLElement, options?: Record<string, unknown>) => void } }).__strideLenis;
-    if (lenis) {
-      lenis.scrollTo(target, {
-        offset: -height,
-        duration: 1.85,
-        easing: (t: number) => 1 - Math.pow(1 - t, 4),
-      });
-    } else {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    const label = id === "top" ? "STRIDE MEDIA" : navCopy.items.find((item) => item.id === id)?.label ?? id.replaceAll("-", " ");
+
+    if (prefersReducedMotion()) {
+      if (lenis) lenis.scrollTo(target, { offset: -height, immediate: true, force: true });
+      else window.scrollTo({ top: Math.max(0, target.offsetTop - height), behavior: "auto" });
+      window.history.replaceState(null, "", `#${id}`);
+      return;
     }
-    window.history.replaceState(null, "", `#${id}`);
+
+    if (transition) return;
+    const x = event.clientX || window.innerWidth / 2;
+    const y = event.clientY || height / 2;
+    setTransition({ phase: "enter", label, x, y });
+    window.requestAnimationFrame(() => setTransition((current) => current ? { ...current, phase: "cover" } : current));
+
+    window.setTimeout(() => {
+      if (lenis) lenis.scrollTo(target, { offset: -height, immediate: true, force: true });
+      else window.scrollTo({ top: Math.max(0, target.offsetTop - height), behavior: "auto" });
+      window.history.replaceState(null, "", `#${id}`);
+      window.requestAnimationFrame(() => setTransition((current) => current ? { ...current, phase: "reveal" } : current));
+    }, 470);
+    window.setTimeout(() => setTransition(null), 1160);
   };
 
   useEffect(() => {
@@ -421,6 +442,49 @@ export default function Nav({
               {item.label}
             </a>
           ))}
+        </div>
+      )}
+
+      {transition && (
+        <div
+          aria-live="polite"
+          aria-label={`Opening ${transition.label}`}
+          style={{
+            position: "absolute",
+            left: -layout.pad,
+            top: 0,
+            width: "100vw",
+            height: "100dvh",
+            zIndex: 3000,
+            display: "grid",
+            placeItems: "center",
+            overflow: "hidden",
+            pointerEvents: "all",
+            background: color.black,
+            clipPath: transition.phase === "enter"
+              ? `circle(0 at ${transition.x}px ${transition.y}px)`
+              : transition.phase === "cover"
+                ? `circle(150vmax at ${transition.x}px ${transition.y}px)`
+                : "circle(0 at 50% 50%)",
+            transition: transition.phase === "reveal"
+              ? `clip-path 680ms cubic-bezier(.16,1,.3,1)`
+              : `clip-path 460ms cubic-bezier(.65,0,.35,1)`,
+            willChange: "clip-path",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              justifyItems: "center",
+              gap: space.md,
+              opacity: transition.phase === "cover" ? 1 : 0,
+              transform: transition.phase === "cover" ? "translateY(0) scale(1)" : "translateY(10px) scale(.96)",
+              transition: `opacity 260ms ${ease.out}, transform 520ms ${ease.out}`,
+            }}
+          >
+            <StrideMark size={72} glowing />
+            <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, letterSpacing: ".12em" }}>{transition.label}</span>
+          </div>
         </div>
       )}
 

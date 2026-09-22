@@ -250,6 +250,19 @@ html[data-motion="off"] .mobile-parallax-media {
 
 }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+  section h1,
+  section h2,
+  section h3 {
+    line-height: 1.08 !important;
+    text-wrap: balance;
+  }
+
+  section p {
+    line-height: 1.5 !important;
+  }
+}
+
 @supports (animation-timeline: view()) {
   @media (max-width: 768px) {
     .mobile-how-step {

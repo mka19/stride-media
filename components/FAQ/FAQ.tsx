@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gsap, useGsapContext, SCRUB, approach } from "../shared/gsap";
 import { faq as copy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
-import { useStacked } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 
 /**
@@ -18,7 +18,8 @@ import GradientRevealText from "../shared/GradientRevealText";
  */
 export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string }) {
   const [open, setOpen] = useState<number | null>(0);
-  const stacked = useStacked();
+  const bp = useBreakpoint();
+  const stacked = useStacked() || bp === "tablet";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -74,10 +75,10 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
                 // column as the question rather than guessing at a padding
                 // that has to match a min-width plus a flex gap.
                 display: "grid",
-                gridTemplateColumns: `64px 1fr 16px`,
+                gridTemplateColumns: stacked ? `36px 1fr 16px` : `64px 1fr 16px`,
                 alignItems: "center",
-                gap: space.lg,
-                padding: `clamp(22px, 2.25vh, 30px) 0`,
+                gap: stacked ? space.s : space.lg,
+                padding: stacked ? `${space.lg}px 0` : `clamp(22px, 2.25vh, 30px) 0`,
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
@@ -90,7 +91,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
                 style={{
                   ...typeScale.eyebrow,
                   color: color.accentOnDark,
-                  minWidth: 64,
+                  minWidth: stacked ? 36 : 64,
                 }}
               >
                 {String(i + 1).padStart(2, "0")}
@@ -144,15 +145,15 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
                 style={{
                   overflow: "hidden",
                   display: "grid",
-                  gridTemplateColumns: `64px 1fr 16px`,
-                  gap: space.lg,
+                  gridTemplateColumns: stacked ? `36px 1fr 16px` : `64px 1fr 16px`,
+                  gap: stacked ? space.s : space.lg,
                 }}
               >
                 <span />
                 <p
                   style={{
                     margin: 0,
-                    paddingBottom: "clamp(22px, 2.5vh, 32px)",
+                    paddingBottom: stacked ? space.lg : "clamp(22px, 2.5vh, 32px)",
                     maxWidth: "62ch",
                     ...typeScale.bodyLg,
                     color: color.textOnDarkMuted,
