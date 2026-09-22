@@ -21,6 +21,11 @@ export default function ComparisonTransition({ scrollLength = "220vh" }: { scrol
   const rootRef = useGsapContext(
     (root) => {
       const q = gsap.utils.selector(root);
+      if (stacked) {
+        gsap.set(q(".compare-shell, .compare-copy"), { opacity: 1, scale: 1, y: 0, borderRadius: 0 });
+        gsap.set(q(".compare-mark"), { opacity: 0 });
+        return;
+      }
       gsap.set(q(".compare-shell"), { scale: 0.9, borderRadius: 18 });
       gsap.set(q(".compare-copy"), { opacity: 1, y: 0 });
       gsap.set(q(".compare-mark"), { opacity: 0, scale: 0.55, y: 30 });
@@ -109,7 +114,7 @@ export default function ComparisonTransition({ scrollLength = "220vh" }: { scrol
   );
 
   if (stacked) {
-    return <section ref={rootRef} style={{ position: "relative", height: "72vh", minHeight: 560, background: color.black }}>{shell}</section>;
+    return <section ref={rootRef} style={{ position: "relative", height: "clamp(520px, 68vh, 640px)", background: color.black }}>{shell}</section>;
   }
 
   return (

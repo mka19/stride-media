@@ -155,6 +155,8 @@ export default function FinalCTA({
           style={{
             display: "flex",
             flexDirection: "column",
+            width: "100%",
+            minWidth: 0,
             gap: space.md,
             padding: stacked ? (bp === "mobile" ? space.md : space.xl) : space.lg,
             background: color.ink,
@@ -166,7 +168,8 @@ export default function FinalCTA({
           <CalendlyEmbed
             url={calendly}
             minHeight={680}
-            minHeightMobile={680}
+            minHeightMobile={700}
+            style={{ width: "100%", minWidth: 0 }}
           />
         </div>
       </div>

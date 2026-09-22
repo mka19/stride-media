@@ -444,10 +444,10 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "sticky", top: layout.navHeight, zIndex: 8, width: "100%", height: "42vh", background: color.black }}>
+          <div style={{ position: "sticky", top: layout.navHeight, zIndex: 8, width: "100%", height: "clamp(220px, 30vh, 290px)", background: color.black }}>
             <HeroObject handleRef={objectRef} breakpoint={bp} />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9 }}>
             {copy.capabilities.map((cap, i) => (
               <div
                 key={cap.n}
@@ -455,10 +455,10 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
                 data-index={i}
                 style={{
                   position: "sticky",
-                  top: `calc(${layout.navHeight}px + 42vh + ${i * 8}px)`,
+                  top: `calc(${layout.navHeight}px + clamp(220px, 30vh, 290px) + ${12 + i * 6}px)`,
                   zIndex: i + 1,
-                  minHeight: "58vh",
-                  paddingBottom: "18vh",
+                  minHeight: 290,
+                  paddingBottom: 0,
                 }}
               >
                 {capability(cap, i)}

@@ -341,18 +341,18 @@ export default function CaseStudy({
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            gap: stacked ? space.xl : space.h,
+            gap: stacked ? space.lg : space.h,
             minHeight: 300,
-            padding: `${stacked ? 22 : space.lg}px`,
+            padding: `${stacked ? 20 : space.lg}px`,
             borderRadius: 12,
             background: hexA(color.textOnLight, 0.04),
             textAlign: "left",
             transition: `background ${ease.hoverMs}ms ${ease.hover}`,
             ...(stacked ? {
               position: "sticky",
-              top: `calc(${layout.navHeight}px + ${16 + i * 8}px)`,
+              top: `calc(${layout.navHeight}px + ${12 + i * 6}px)`,
               zIndex: i + 1,
-              minHeight: "clamp(360px, 48vh, 430px)",
+              minHeight: "clamp(320px, 43vh, 380px)",
               background: color.bone,
               boxShadow: `0 -1px 0 ${hexA(color.black, .08)}, 0 -24px 60px ${hexA(color.black, .08)}`,
             } : {}),
@@ -427,7 +427,7 @@ export default function CaseStudy({
         id="case-study"
         style={{ background: color.bone, color: color.textOnLight, fontFamily: typeScale.bodyLg.fontFamily }}
       >
-        <div style={{ position: "relative", padding: `${layout.section} ${layout.pad}` }}>
+        <div style={{ position: "relative", padding: `${space.xxl}px ${layout.pad}` }}>
           <Grain opacity={0.18} />
           <div style={{ position: "relative", display: "grid", placeItems: "center" }}>{headline}</div>
         </div>
@@ -436,7 +436,7 @@ export default function CaseStudy({
         <div
           style={{
             overflow: "hidden",
-            padding: `${layout.section}px 0`,
+            padding: `${space.xxl}px 0`,
             background: color.black,
           }}
         >
@@ -468,7 +468,7 @@ export default function CaseStudy({
             display: "flex",
             flexDirection: "column",
             gap: rhythm.headerToContent,
-            padding: `calc(${layout.navHeight}px + ${space.lg}px) ${layout.pad} ${layout.section}px`,
+            padding: `${space.xxl}px ${layout.pad} ${layout.section}px`,
           }}
         >
           <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>

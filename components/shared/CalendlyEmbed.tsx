@@ -205,6 +205,7 @@ export default function CalendlyEmbed({
       <>
         <style>{`
           .stride-calendly { min-height: ${minHeightMobile}px; }
+          .stride-calendly iframe { width: 100% !important; min-width: 0 !important; }
           @media (min-width: 769px) { .stride-calendly { min-height: ${minHeight}px; } }
         `}</style>
         <iframe
@@ -248,6 +249,7 @@ export default function CalendlyEmbed({
           has to come from here. The media query cannot be an inline style. */}
       <style>{`
         .stride-calendly { min-height: ${minHeightMobile}px; }
+        .stride-calendly iframe { width: 100% !important; min-width: 0 !important; }
         @media (min-width: 769px) { .stride-calendly { min-height: ${minHeight}px; } }
       `}</style>
       <div
