@@ -353,12 +353,18 @@ export default function HeroObject({
      * is a soft, glowing point cloud with no hard edges to alias, so the
      * extra resolution buys nothing you can see.
      */
-    // A modest supersample keeps the polished silhouette crisp without the
-    // four-times fragment cost of blindly using a 2x phone/retina DPR.
-    renderer.setPixelRatio(
-      Math.min(window.devicePixelRatio || 1, 1),
+    // Keep the silhouette sharp on high-density phones without rendering at
+    // the full (often 3x) device ratio. The mobile loop is still capped near
+    // 30fps below, so this improves edge quality without restoring the old
+    // battery-heavy render cadence. Desktop gets a little more headroom for
+    // the fine bevel and reflected highlights that make the chrome feel real.
+    const renderDpr = () => Math.min(
+      window.devicePixelRatio || 1,
+      breakpoint === "mobile" ? 1.5 : breakpoint === "tablet" ? 1.6 : 1.75,
     );
+    renderer.setPixelRatio(renderDpr());
     renderer.setSize(mount.clientWidth, mount.clientHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     /*
      * 0.85, down from 1.15.
@@ -1189,6 +1195,7 @@ export default function HeroObject({
       camera.aspect = mount.clientWidth / mount.clientHeight;
       camera.updateProjectionMatrix();
       fitLiquid();
+      renderer.setPixelRatio(renderDpr());
       renderer.setSize(mount.clientWidth, mount.clientHeight);
     };
     const ro = new ResizeObserver(onResize);
