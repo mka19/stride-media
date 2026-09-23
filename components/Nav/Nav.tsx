@@ -332,7 +332,9 @@ export default function Nav({
               padding: 6,
               borderRadius: 16,
               transform: navHidden
-                ? `translate3d(0, ${height}px, 0) scale(1)`
+                ? isMobile
+                  ? "translate3d(0,0,0) scale(.96)"
+                  : `translate3d(0, ${height}px, 0) scale(1)`
                 : "translate3d(0,0,0) scale(.96)",
               transformOrigin: "right center",
               background: navHidden ? "rgba(8,8,8,0.94)" : "rgba(8,8,8,0)",

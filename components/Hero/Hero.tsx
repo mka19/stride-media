@@ -203,16 +203,24 @@ export default function Hero({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            /* Label above the object, supporting line below it — the object
-               owns the middle of the screen in phase 1. */
-            justifyContent: "space-between",
+            justifyContent: "center",
             pointerEvents: "none",
-            padding: `19vh ${layout.pad} 20vh`,
+            padding: `0 ${layout.pad}`,
           }}
         >
-          <MicroLabel tone="accent">{heroCopy.label}</MicroLabel>
+          <MicroLabel
+            tone="accent"
+            style={{
+              position: "absolute",
+              bottom: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : bp === "tablet" ? "calc(50% + 29vmin + 34px)" : "calc(50% + min(270px, 30vw) + 40px)",
+            }}
+          >
+            {heroCopy.label}
+          </MicroLabel>
           <div
             style={{
+              position: "absolute",
+              top: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : bp === "tablet" ? "calc(50% + 29vmin + 34px)" : "calc(50% + min(270px, 30vw) + 40px)",
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
               maxWidth: 640,

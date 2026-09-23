@@ -53,7 +53,10 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
   );
 
   const list = (
-    <div style={{ width: "100%", maxWidth: 1120, margin: "0 auto" }}>
+    <div style={stacked
+      ? { width: "100%", maxWidth: 1120, margin: "0 auto" }
+      : { width: "auto", marginLeft: "clamp(300px, 24vw, 440px)", marginRight: 0 }
+    }>
       {copy.items.map((item, i) => {
         const isOpen = open === i;
         return (

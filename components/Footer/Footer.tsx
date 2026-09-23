@@ -179,6 +179,20 @@ export default function Footer({
           </nav>
         </div>
 
+        {!stacked && (
+          <div
+            className="ft-item"
+            aria-hidden="true"
+            style={{
+              display: "grid",
+              placeItems: "center",
+              paddingBlock: "clamp(16px, 2vw, 28px)",
+            }}
+          >
+            <StrideMark size={72} glowing />
+          </div>
+        )}
+
         {/* ---- the wordmark, dissolving under the cursor ----
              Pulled out of the column's side padding so the type runs the
              full width of the page; the height is set from the viewport so

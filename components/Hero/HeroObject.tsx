@@ -1044,11 +1044,17 @@ export default function HeroObject({
     // --- loop -------------------------------------------------------------
     let progress = 0;
     let eased = 0;
+    let dormant = false;
     let activeVariant = 0;
     let pendingVariant = 0;
     let variantTransition = 1;
     handleRef.current = {
-      setProgress: (p) => (progress = p),
+      setProgress: (p) => {
+        progress = p;
+        // The final hero composition no longer shows the object or liquid
+        // field. Wake only when scrolling back into the dissolve.
+        if (p < 0.995) dormant = false;
+      },
       setVariant: (index) => {
         const next = THREE.MathUtils.clamp(Math.round(index), 0, allMarkGeos.length - 1);
         // ScrollTrigger calls this on every update. Re-requesting the same
@@ -1102,6 +1108,7 @@ export default function HeroObject({
     const tick = (now: number = performance.now()) => {
       raf = requestAnimationFrame(tick);
       if (!inViewport) return;
+      if (dormant) return;
       if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 41 : 32)) return;
       previousRender = now;
       const t = (now - t0) / 1000;
@@ -1111,6 +1118,12 @@ export default function HeroObject({
       // Damp toward the scroll value so fast scrolls still dissolve smoothly.
       const scrollDamping = 1 - Math.exp(-frameDelta * 7.2);
       eased += (progress - eased) * scrollDamping;
+      if (progress >= 0.995 && eased >= 0.995 && variantTransition >= 1) {
+        // Render one settled final frame, then stop all WebGL work until the
+        // scroll handle wakes the scene again.
+        eased = 1;
+        dormant = true;
+      }
       uniforms.uTime.value = t;
       liquidUniforms.uTime.value = t;
       liquidUniforms.uFade.value = liquidBackground
