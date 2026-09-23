@@ -47,6 +47,9 @@ export default function Footer({
     ...typeScale.bodyLg,
     color: color.textOnDarkMuted,
     textDecoration: "none",
+    minHeight: 44,
+    display: "inline-flex",
+    alignItems: "center",
     transition: `color 400ms ${ease.out}`,
   };
 
@@ -138,7 +141,7 @@ export default function Footer({
               <a
                 key={item.n}
                 href={item.href}
-                style={{ ...linkStyle, display: "flex", gap: space.s }}
+                style={{ ...linkStyle, gap: space.s }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
                 onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
               >
@@ -220,13 +223,13 @@ export default function Footer({
           </span>
           <a
             href={`mailto:${brand.email}`}
-            style={{ color: "inherit", textDecoration: "none", textTransform: "none" }}
+            style={{ color: "inherit", textDecoration: "none", textTransform: "none", minHeight: 44, display: "inline-flex", alignItems: "center" }}
           >
             {brand.email}
           </a>
           <span style={{ display: "flex", justifyContent: mobile ? "center" : undefined, gap: mobile ? 20 : space.md }}>
             {copy.legal.map((item) => (
-              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none" }}>
+              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none", minHeight: 44, display: "inline-flex", alignItems: "center" }}>
                 {item.label}
               </a>
             ))}

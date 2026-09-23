@@ -352,7 +352,7 @@ export default function Nav({
             <SoundButton
               src={soundtrack}
               tone={navHidden ? "dark" : light ? "light" : "dark"}
-              size={isMobile ? 42 : 44}
+              size={46}
               style={{ marginRight: 8, marginLeft: isMobile ? 8 : railVisible ? 0 : 8 }}
             />
             {!isMobile && <GlowButton href="#contact">{navCopy.cta}</GlowButton>}

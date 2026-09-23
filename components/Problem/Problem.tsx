@@ -355,8 +355,8 @@ export default function Problem({
                         aria-label={`Show problem ${item.n}`}
                         aria-current={i === mobileCard}
                         onClick={() => setMobileCard(i)}
-                        style={{ width: i === mobileCard ? 28 : 8, height: 8, padding: 0, border: 0, borderRadius: 99, background: i === mobileCard ? color.accent : hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1), background 300ms ease" }}
-                      />
+                        style={{ width: 44, height: 44, padding: 0, border: 0, display: "grid", placeItems: "center", background: "transparent", cursor: "pointer" }}
+                      ><span aria-hidden="true" style={{ display: "block", width: i === mobileCard ? 28 : 8, height: 8, borderRadius: 99, background: i === mobileCard ? color.accent : hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1), background 300ms ease" }} /></button>
                     ))}
                   </div>
                 </div>

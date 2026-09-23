@@ -114,7 +114,7 @@ export default function FinalCTA({
             <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
               {brand.phoneLabel}
             </span>
-            <a href={`tel:${brand.phone}`} style={{ ...typeScale.h3, color: color.textOnDark, textDecoration: "none" }}>
+            <a href={`tel:${brand.phone}`} style={{ ...typeScale.h3, minHeight: 44, display: "inline-flex", alignItems: "center", color: color.textOnDark, textDecoration: "none" }}>
               {brand.phone}
             </a>
             <a
@@ -124,6 +124,9 @@ export default function FinalCTA({
                 textTransform: "none",
                 color: color.textOnDarkMuted,
                 textDecoration: "none",
+                minHeight: 44,
+                display: "inline-flex",
+                alignItems: "center",
               }}
             >
               {brand.email}

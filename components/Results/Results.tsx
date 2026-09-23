@@ -146,8 +146,8 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
                   const card = el?.children[i] as HTMLElement | undefined;
                   card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
                 }}
-                style={{ width: mobileIndex === i ? 28 : 7, height: 7, padding: 0, border: 0, borderRadius: 999, background: mobileIndex === i ? color.accent : hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}, background 400ms ${ease.out}`, cursor: "pointer" }}
-              />
+                style={{ width: 44, height: 44, padding: 0, border: 0, display: "grid", placeItems: "center", background: "transparent", cursor: "pointer" }}
+              ><span aria-hidden="true" style={{ display: "block", width: mobileIndex === i ? 28 : 7, height: 7, borderRadius: 999, background: mobileIndex === i ? color.accent : hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}, background 400ms ${ease.out}` }} /></button>
             ))}
           </div>
         </div>
