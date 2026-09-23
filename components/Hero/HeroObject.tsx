@@ -298,7 +298,7 @@ function logoShapes(svg: string): THREE.Shape[] {
   const paths = new SVGLoader().parse(svg).paths;
   const shapes: THREE.Shape[] = [];
   for (const path of paths) {
-    for (const shape of SVGLoader.createShapes(path)) shapes.push(shape);
+    for (const shape of path.toShapes()) shapes.push(shape);
   }
   return shapes;
 }
@@ -1086,9 +1086,14 @@ export default function HeroObject({
 
     const t0 = performance.now();
     let previousFrame = t0;
+    let previousRender = 0;
+    let inViewport = true;
     let raf = 0;
     const tick = (now: number = performance.now()) => {
       raf = requestAnimationFrame(tick);
+      if (!inViewport) return;
+      if (breakpoint === "mobile" && now - previousRender < 32) return;
+      previousRender = now;
       const t = (now - t0) / 1000;
       const frameDelta = Math.min(0.05, Math.max(0, (now - previousFrame) / 1000));
       previousFrame = now;
@@ -1188,11 +1193,17 @@ export default function HeroObject({
     };
     const ro = new ResizeObserver(onResize);
     ro.observe(mount);
+    const visibility = new IntersectionObserver(([entry]) => {
+      inViewport = entry.isIntersecting;
+      if (inViewport) previousFrame = performance.now();
+    }, { rootMargin: "20% 0px" });
+    visibility.observe(mount);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onPointer);
       ro.disconnect();
+      visibility.disconnect();
       handleRef.current = null;
       [...parts, ...variantParts, ...variantGeos, markGeo, cloudGeo, dustGeo, halo.geometry, liquidGeo, morphGeo].forEach((g) =>
         g.dispose(),

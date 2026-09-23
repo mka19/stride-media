@@ -159,25 +159,19 @@ export default function Footer({
           >
             {/* A name with no URL behind it is rendered as a name. Anything
                 that looks like a link has to go somewhere. */}
-            {copy.socials.map((item) =>
-              item.href ? (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  style={linkStyle}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <span key={item.label} style={linkStyle}>
-                  {item.label}
-                </span>
-              ),
-            )}
+            {copy.socials.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                style={linkStyle}
+                onMouseEnter={(e) => (e.currentTarget.style.color = color.textOnDark)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = color.textOnDarkMuted)}
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
         </div>
 
@@ -228,8 +222,8 @@ export default function Footer({
           </a>
           <span style={{ display: "flex", gap: space.md }}>
             {copy.legal.map((item) => (
-              <a key={item} href="#top" style={{ color: "inherit", textDecoration: "none" }}>
-                {item}
+              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none" }}>
+                {item.label}
               </a>
             ))}
           </span>

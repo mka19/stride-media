@@ -15,7 +15,7 @@ export const brand = {
   /* The bar carries the full name, not a shortening of it. */
   mark: "STRIDE MEDIA",
   tagline: "AI Creators. Real Recognition.",
-  phone: "+1 (000) 000-0000", // PLACEHOLDER
+  phone: "+1 (415) 555-0136", // Demo contact
   phoneLabel: "Call us 24/7",
   email: "hello@stridemedia.co", // PLACEHOLDER
   url: "stridemedia.co",
@@ -169,9 +169,9 @@ export const howItWorks = {
 
 export const caseStudy = {
   label: "Case study",
-  client: "[Client]", // PLACEHOLDER — real client name pending
-  clientContext: "Real estate",
-  headline: ["Why [Client]", "trusted Stride"],
+  client: "Atlas Realty", // Demo client
+  clientContext: "Real estate · Demo profile",
+  headline: ["Why Atlas Realty", "trusted Stride"],
   intro: ["One entrepreneur. One invisible brand.", "One system that changed that."],
   gallery: [
     { caption: "Strategy call — day one" },
@@ -187,7 +187,7 @@ export const caseStudy = {
   /** The hover badge over each gallery plate. */
   hoverTop: "View",
   hoverMain: "case study",
-  resultsLabel: "Ninety days later",
+  resultsLabel: "Demo outcome · ninety days later",
   resultsHeadline: "The number that mattered moved.",
   /** The sentence on the floor of each metric card. */
   /* Two lines each, at the card's measure — the cards sit in a row and an
@@ -247,15 +247,15 @@ export const whyStride = {
 export const results = {
   label: "Client Results",
   headline: "Real videos, real numbers",
-  body: "Every video below was strategized, scripted and delivered by our team. The numbers speak for themselves.",
+  body: "Demo campaign media and sample metrics, ready to replace with verified client results.",
   link: "See More Works",
   cards: [
-    { views: "758K", metric: "2.3× engagement growth", desc: "Optimized content structure for better watch time.", handle: "@client-handle", client: "01" },
-    { views: "1.2M", metric: "+10K followers in 30 days", desc: "Consistent strategy with high-retention edits.", handle: "@client-handle", client: "02" },
-    { views: "623K", metric: "+5K followers in 1 month", desc: "Content system built for consistency and growth.", handle: "@client-handle", client: "03" },
-    { views: "2.2M", metric: "18K saves", desc: "Off-market segment with the highest save rate of the quarter.", handle: "@client-handle", client: "04" },
-    { views: "880K", metric: "4.2K shares", desc: "Buyer-myth series, run as a four-part hook test.", handle: "@client-handle", client: "05" },
-    { views: "510K", metric: "11 weeks, zero missed", desc: "Ninety-second market update, delivered weekly.", handle: "@client-handle", client: "06" },
+    { views: "758K", metric: "2.3× engagement growth", desc: "Demo campaign · optimized content structure for better watch time.", handle: "@atlasrealty.demo", client: "AR" },
+    { views: "1.2M", metric: "+10K followers in 30 days", desc: "Demo campaign · consistent strategy with high-retention edits.", handle: "@northstar.demo", client: "NS" },
+    { views: "623K", metric: "+5K followers in 1 month", desc: "Demo campaign · a system built for consistency and growth.", handle: "@founderframe.demo", client: "FF" },
+    { views: "2.2M", metric: "18K saves", desc: "Demo campaign · highest save rate of the quarter.", handle: "@urbanledger.demo", client: "UL" },
+    { views: "880K", metric: "4.2K shares", desc: "Demo campaign · a four-part buyer-myth hook test.", handle: "@studioeight.demo", client: "S8" },
+    { views: "510K", metric: "11 weeks, zero missed", desc: "Demo campaign · a weekly market update delivered on time.", handle: "@marketbrief.demo", client: "MB" },
   ],
 } as const;
 
@@ -263,14 +263,14 @@ export const testimonials = {
   label: "Testimonials",
   headline: "What entrepreneurs say after working with Stride",
   cards: [
-    { quote: "Before Stride, we were posting randomly with no real strategy. Now every video has a purpose, and it shows in the results.", name: "[Client Name]", handle: "Real estate", stat: "2.3× engagement", initials: "01" },
-    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "[Client Name]", handle: "Real estate", stat: "41× reach", initials: "02" },
-    { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "[Client Name]", handle: "Coaching", stat: "11 weeks straight", initials: "03" },
-    { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "[Client Name]", handle: "Consulting", stat: "Calendar full", initials: "04" },
-    { quote: "The scripts are the thing. They write like they want it watched.", name: "[Client Name]", handle: "Founder", stat: "18K saves", initials: "05" },
-    { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "[Client Name]", handle: "Real estate", stat: "9 listings", initials: "06" },
-    { quote: "We stopped guessing what to post. There is a plan, and the plan is working.", name: "[Client Name]", handle: "Fitness", stat: "4× saves", initials: "07" },
-    { quote: "The first batch landed in five days. Two of them are still my best performing videos.", name: "[Client Name]", handle: "Property", stat: "5-day first batch", initials: "08" },
+    { quote: "Before Stride, we were posting randomly with no real strategy. Now every video has a purpose, and it shows in the results.", name: "Avery Stone · Demo", handle: "Real estate", stat: "2.3× engagement", initials: "AS" },
+    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "Noah Bennett · Demo", handle: "Real estate", stat: "41× reach", initials: "NB" },
+    { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "Leila Hart · Demo", handle: "Coaching", stat: "11 weeks straight", initials: "LH" },
+    { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "Marcus Reed · Demo", handle: "Consulting", stat: "Calendar full", initials: "MR" },
+    { quote: "The scripts are the thing. They write like they want it watched.", name: "Sofia Lane · Demo", handle: "Founder", stat: "18K saves", initials: "SL" },
+    { quote: "Nine listings last quarter came out of content. None of them were cold.", name: "Ethan Cole · Demo", handle: "Real estate", stat: "9 listings", initials: "EC" },
+    { quote: "We stopped guessing what to post. There is a plan, and the plan is working.", name: "Mila Brooks · Demo", handle: "Fitness", stat: "4× saves", initials: "MB" },
+    { quote: "The first batch landed in five days. Two of them are still my best performing videos.", name: "Theo Grant · Demo", handle: "Property", stat: "5-day first batch", initials: "TG" },
   ],
 } as const;
 
@@ -307,7 +307,7 @@ export const faq = {
     },
     {
       q: "Do you offer month-to-month or contracts?",
-      a: "[Confirm terms — placeholder pending your input.]", // PLACEHOLDER
+      a: "Demo terms: flexible month-to-month service after the initial strategy sprint, with 30 days’ notice to pause or cancel.",
     },
   ],
 } as const;
@@ -319,17 +319,17 @@ export const founders = {
   people: [
     {
       n: "01",
-      name: "Founder One",
+      name: "Maya Chen",
       role: "Co-founder · Strategy",
       bio: "The point of view behind the positioning, scripts and systems that make every piece of content feel unmistakably yours.",
-      image: "",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=82",
     },
     {
       n: "02",
-      name: "Founder Two",
+      name: "Elias Morgan",
       role: "Co-founder · Creative",
       bio: "The creative direction behind Stride’s visual language, production quality and the details that make people stop scrolling.",
-      image: "",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=82",
     },
   ],
   memories: [
@@ -367,13 +367,16 @@ export const footer = {
    * ── PASTE THE PROFILE URLS HERE ──────────────────────────────────────────
    */
   socials: [
-    { label: "Instagram", href: "" },
-    { label: "YouTube", href: "" },
-    { label: "TikTok", href: "" },
-    { label: "LinkedIn", href: "" },
+    { label: "Instagram", href: "https://www.instagram.com/" },
+    { label: "YouTube", href: "https://www.youtube.com/" },
+    { label: "TikTok", href: "https://www.tiktok.com/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/" },
   ],
   rights: "all rights reserved",
   basedLabel: "Based in",
-  basedIn: "[City]", // PLACEHOLDER
-  legal: ["Terms & conditions", "Privacy policy"],
+  basedIn: "Austin, TX · Demo",
+  legal: [
+    { label: "Terms & conditions", href: "https://example.com/terms" },
+    { label: "Privacy policy", href: "https://example.com/privacy" },
+  ],
 } as const;
