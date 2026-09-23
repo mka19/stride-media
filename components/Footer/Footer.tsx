@@ -21,6 +21,7 @@ export default function Footer({
 }) {
   const bp = useBreakpoint();
   const stacked = useStacked();
+  const mobile = bp === "mobile";
   const dots = Math.round(14 * detailFor(bp));
 
   const rootRef = useGsapContext(
@@ -105,8 +106,8 @@ export default function Footer({
           // Tighter than a section token either side of the mark: it is the
           // largest thing on the page and does not need to be held off the
           // rule beneath it as well.
-          gap: `${space.md}px`,
-          padding: `${space.hh}px ${layout.pad} ${space.lg}px`,
+          gap: mobile ? 22 : `${space.md}px`,
+          padding: mobile ? `48px 28px 28px` : `${space.hh}px ${layout.pad} ${space.lg}px`,
           // Not space-between with a min-height: that distributes the spare
           // height into the gaps, so tightening the gap around the mark did
           // nothing — the column simply gave the space back.
@@ -114,8 +115,8 @@ export default function Footer({
         }}
       >
         {stacked && (
-          <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", paddingBottom: space.lg }}>
-            <StrideMark size={64} glowing />
+          <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", paddingBottom: mobile ? 4 : space.lg }}>
+            <StrideMark size={mobile ? 56 : 64} glowing />
           </div>
         )}
 
@@ -125,13 +126,13 @@ export default function Footer({
             display: "grid",
             gridTemplateColumns: stacked ? "1fr 1fr" : "auto auto",
             justifyContent: "space-between",
-            gap: space.xl,
+            gap: mobile ? 28 : space.xl,
           }}
         >
           <nav
             className="ft-item"
             aria-label="Footer"
-            style={{ display: "flex", flexDirection: "column", gap: space.s }}
+            style={{ display: "flex", flexDirection: "column", gap: mobile ? 12 : space.s }}
           >
             {copy.nav.map((item) => (
               <a
@@ -153,7 +154,7 @@ export default function Footer({
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: space.s,
+              gap: mobile ? 12 : space.s,
               textAlign: stacked ? "left" : "right",
             }}
           >
@@ -196,8 +197,11 @@ export default function Footer({
             display: "flex",
             flexWrap: "wrap",
             justifyContent: "space-between",
-            gap: space.md,
-            paddingTop: space.lg,
+            flexDirection: mobile ? "column" : "row",
+            alignItems: mobile ? "center" : undefined,
+            textAlign: mobile ? "center" : undefined,
+            gap: mobile ? 12 : space.md,
+            paddingTop: mobile ? 22 : space.lg,
             borderTop: `1px solid ${color.hairlineOnDark}`,
             ...typeScale.eyebrow,
             color: color.textOnDarkMuted,
@@ -220,7 +224,7 @@ export default function Footer({
           >
             {brand.email}
           </a>
-          <span style={{ display: "flex", gap: space.md }}>
+          <span style={{ display: "flex", justifyContent: mobile ? "center" : undefined, gap: mobile ? 20 : space.md }}>
             {copy.legal.map((item) => (
               <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none" }}>
                 {item.label}

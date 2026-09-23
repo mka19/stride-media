@@ -1,7 +1,7 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { gsap, useGsapContext, prefersReducedMotion } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
-import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
+import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
@@ -28,6 +28,8 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const bp = useBreakpoint();
   const stacked = useStacked();
   const cardWidth = bp === "mobile" ? "85vw" : bp === "tablet" ? 240 : 280;
+  const mobileTrack = useRef<HTMLDivElement | null>(null);
+  const [mobileIndex, setMobileIndex] = useState(0);
 
   const rootRef = useGsapContext(
     (root) => {
@@ -101,25 +103,53 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
 
       {/* ---- the ticker ---- */}
       {stacked ? (
-        <div
-          aria-label="Client results"
-          style={{
-            display: "flex",
-            gap: 14,
-            overflowX: "auto",
-            scrollSnapType: "x mandatory",
-            overscrollBehaviorInline: "contain",
-            WebkitOverflowScrolling: "touch",
-            padding: `10px ${layout.pad}px ${space.xl}px`,
-            scrollbarWidth: "none",
-            touchAction: "pan-x pan-y",
-          }}
-        >
-          {copy.cards.map((card, i) => (
-            <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
-              <ResultCard card={card} src={clips[i]} seed={i} width="100%" />
-            </div>
-          ))}
+        <div>
+          <div
+            ref={mobileTrack}
+            aria-label="Client results — swipe horizontally"
+            onScroll={(event) => {
+              const el = event.currentTarget;
+              const card = el.firstElementChild as HTMLElement | null;
+              if (!card) return;
+              const step = card.offsetWidth + 14;
+              setMobileIndex(Math.max(0, Math.min(copy.cards.length - 1, Math.round(el.scrollLeft / step))));
+            }}
+            style={{
+              display: "flex",
+              gap: 14,
+              overflowX: "auto",
+              scrollSnapType: "x mandatory",
+              scrollBehavior: "smooth",
+              overscrollBehaviorInline: "contain",
+              WebkitOverflowScrolling: "touch",
+              padding: `10px ${layout.pad}px ${space.lg}px`,
+              scrollbarWidth: "none",
+              cursor: "grab",
+              touchAction: "pan-x pan-y",
+            }}
+          >
+            {copy.cards.map((card, i) => (
+              <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
+                <ResultCard card={card} src={clips[i]} seed={i} width="100%" />
+              </div>
+            ))}
+          </div>
+          <div aria-label={`Result ${mobileIndex + 1} of ${copy.cards.length}`} style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, paddingTop: 6 }}>
+            {copy.cards.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Show result ${i + 1}`}
+                aria-current={mobileIndex === i ? "true" : undefined}
+                onClick={() => {
+                  const el = mobileTrack.current;
+                  const card = el?.children[i] as HTMLElement | undefined;
+                  card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                }}
+                style={{ width: mobileIndex === i ? 28 : 7, height: 7, padding: 0, border: 0, borderRadius: 999, background: mobileIndex === i ? color.accent : hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}, background 400ms ${ease.out}`, cursor: "pointer" }}
+              />
+            ))}
+          </div>
         </div>
       ) : (
       <Ticker>

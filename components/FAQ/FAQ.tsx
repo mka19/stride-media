@@ -11,8 +11,8 @@ export default function FAQ() {
     <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 82% 12%, ${hexA(color.accent, .13)}, transparent 28%)`, pointerEvents: "none" }} />
     <div style={{ position: "relative", width: "100%", maxWidth: 1280, margin: "0 auto" }}>
       <header style={{ display: "grid", gridTemplateColumns: "minmax(0, .72fr) minmax(280px, 1.28fr)", gap: "clamp(32px, 7vw, 110px)", alignItems: "end", paddingBottom: "clamp(34px, 5vw, 70px)", borderBottom: `1px solid ${color.hairlineOnDark}` }} className="faq-premium-header">
-        <div><MicroLabel tone="accent">Questions, answered</MicroLabel><GradientRevealText as="h2" tone="dark" style={{ margin: `${rhythm.eyebrowToHeadline}px 0 0`, ...typeScale.h1, lineHeight: 1.02, color: color.textOnDark }}>{copy.label}</GradientRevealText></div>
-        <p style={{ margin: 0, maxWidth: "48ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>Everything you need to know before building a consistent content system with Stride.</p>
+        <div className="faq-premium-title"><MicroLabel tone="accent">Questions, answered</MicroLabel><GradientRevealText as="h2" tone="dark" style={{ margin: `${rhythm.eyebrowToHeadline}px 0 0`, ...typeScale.h1, lineHeight: 1.02, color: color.textOnDark }}>{copy.label}</GradientRevealText></div>
+        <p className="faq-premium-intro" style={{ margin: 0, maxWidth: "48ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>Everything you need to know before building a consistent content system with Stride.</p>
       </header>
 
       <div style={{ marginTop: space.lg }}>
@@ -29,6 +29,6 @@ export default function FAQ() {
         })}
       </div>
     </div>
-    <style>{`@media (max-width: 768px){.faq-premium-header{grid-template-columns:1fr!important;gap:18px!important}.faq-premium-header + div button{grid-template-columns:36px minmax(0,1fr) 32px!important;gap:10px!important}.faq-premium-header + div article p{padding-left:46px!important;padding-right:8px!important}}`}</style>
+    <style>{`@media (max-width: 768px){.faq-premium-header{grid-template-columns:1fr!important;gap:18px!important;text-align:center;padding-bottom:32px!important}.faq-premium-title{display:flex;flex-direction:column;align-items:center}.faq-premium-title h2{margin-top:16px!important;line-height:1!important}.faq-premium-intro{max-width:32ch!important;margin:0 auto!important;line-height:1.55!important}.faq-premium-header + div{margin-top:12px!important}.faq-premium-header + div button{grid-template-columns:36px minmax(0,1fr) 32px!important;gap:10px!important}.faq-premium-header + div article p{padding-left:46px!important;padding-right:8px!important}}`}</style>
   </section>;
 }

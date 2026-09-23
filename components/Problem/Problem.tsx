@@ -38,11 +38,26 @@ export default function Problem({
   const surface = useRef<SurfaceHandle | null>(null);
   const [mobileCard, setMobileCard] = useState(0);
   const swipeStart = useRef<number | null>(null);
+  const mobilePaused = useRef(false);
+  const resumeTimer = useRef<number | null>(null);
   const bp = useBreakpoint();
   // Pinning is what janks on real phone hardware, and a cycling slot is
   // disorienting on a small screen, so below tablet the section becomes
   // ordinary sequential scroll instead of a shortened version of the pin.
   const stacked = useStacked();
+
+  useEffect(() => {
+    if (!stacked) return;
+    const timer = window.setInterval(() => {
+      if (!mobilePaused.current && !document.hidden) {
+        setMobileCard((current) => (current + 1) % copy.cards.length);
+      }
+    }, 4200);
+    return () => {
+      window.clearInterval(timer);
+      if (resumeTimer.current != null) window.clearTimeout(resumeTimer.current);
+    };
+  }, [stacked]);
 
   const rootRef = useGsapContext(
     (root) => {
@@ -286,7 +301,11 @@ export default function Problem({
             scrollMarginTop: layout.navHeight,
             overflow: "hidden",
           }}
-          onTouchStart={(e) => { swipeStart.current = e.touches[0]?.clientX ?? null; }}
+          onTouchStart={(e) => {
+            mobilePaused.current = true;
+            if (resumeTimer.current != null) window.clearTimeout(resumeTimer.current);
+            swipeStart.current = e.touches[0]?.clientX ?? null;
+          }}
           onTouchEnd={(e) => {
             if (swipeStart.current == null) return;
             const delta = e.changedTouches[0].clientX - swipeStart.current;
@@ -296,6 +315,7 @@ export default function Problem({
                 : Math.max(0, current - 1));
             }
             swipeStart.current = null;
+            resumeTimer.current = window.setTimeout(() => { mobilePaused.current = false; }, 5000);
           }}
         >
           {(() => {

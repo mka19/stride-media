@@ -396,14 +396,13 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         flexDirection: "column",
         justifyContent: "space-between",
         gap: space.h,
-        minHeight: 290,
-        padding: `${space.xl}px`,
+        minHeight: stacked ? 252 : 290,
+        padding: `${stacked ? 24 : space.xl}px`,
         // A plate, not a framed box: the fill is what separates the card
         // from the ground, and an outline on top of it only draws a rectangle.
         background: hexA("#FFFFFF", 0.05),
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
-        top: 76 + i * 10,
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: space.lg }}>
@@ -429,36 +428,32 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: rhythm.headerToContent,
             padding: `${layout.section} ${layout.pad}`,
           }}
         >
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.displayLg }}>
+          <h2 style={{ margin: "18px 0 0", ...typeScale.displayLg, fontSize: "clamp(38px, 11vw, 52px)", lineHeight: .92, letterSpacing: "-.045em" }}>
             {copy.headline.map((w) => (
               <GradientRevealText key={w} as="span" style={{ display: "block" }}>
                 {w}
               </GradientRevealText>
             ))}
           </h2>
-          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
+          <p style={{ margin: "24px 0 0", maxWidth: "30ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "sticky", top: `calc(${layout.navHeight}px + 12px)`, zIndex: 8, width: "min(100%, 420px)", margin: "0 auto", height: "clamp(220px, 30vh, 290px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
+          <div style={{ position: "sticky", top: `calc(${layout.navHeight}px + 12px)`, zIndex: 8, width: "min(100%, 420px)", margin: "32px auto 0", height: "clamp(210px, 28vh, 260px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
             <div style={{ position: "absolute", inset: "8%" }}><HeroObject handleRef={objectRef} breakpoint={bp} /></div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 16 }}>
             {copy.capabilities.map((cap, i) => (
               <div
                 key={cap.n}
                 className="ws-mobile-card"
                 data-index={i}
                 style={{
-                  position: "sticky",
-                  top: `calc(${layout.navHeight}px + clamp(220px, 30vh, 290px) + ${12 + i * 6}px)`,
+                  position: "relative",
                   zIndex: i + 1,
-                  minHeight: 290,
-                  paddingBottom: 0,
                 }}
               >
                 {capability(cap, i)}

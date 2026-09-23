@@ -77,28 +77,11 @@ export default function FinalCTA({
         <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: stacked ? 0 : `0 clamp(12px, 2vw, 32px)` }}>
           <WorldMap />
 
-          <div
-            className="cta-item"
-            style={{
-              alignSelf: "flex-start",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: space.s,
-              padding: `${space.s}px ${space.md}px`,
-              borderRadius: 999,
-              border: `1px solid ${color.hairlineOnDark}`,
-            }}
-          >
-            <span
-              style={{ width: 6, height: 6, borderRadius: "50%", background: color.accent }}
-              aria-hidden="true"
-            />
-            <MicroLabel tone="dark" style={{ color: color.textOnDark }}>
-              {copy.pill}
-            </MicroLabel>
+          <div className="cta-item" style={{ alignSelf: "flex-start" }}>
+            <MicroLabel tone="accent">{copy.pill}</MicroLabel>
           </div>
 
-          <div style={{ position: "relative", marginTop: rhythm.eyebrowToHeadline }}>
+          <div style={{ position: "relative", marginTop: bp === "mobile" ? 18 : rhythm.eyebrowToHeadline }}>
             {copy.headline.map((line) => (
               <GradientRevealText
                 key={line}
@@ -115,7 +98,7 @@ export default function FinalCTA({
             className="cta-item"
             style={{
               position: "relative",
-              margin: `${rhythm.headlineToBody}px 0 0`,
+              margin: `${bp === "mobile" ? 20 : rhythm.headlineToBody}px 0 0`,
               maxWidth: "40ch",
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
@@ -126,7 +109,7 @@ export default function FinalCTA({
 
           <div
             className="cta-item"
-            style={{ position: "relative", marginTop: space.xxl, display: "flex", flexDirection: "column", gap: space.xs }}
+            style={{ position: "relative", marginTop: bp === "mobile" ? 34 : space.xxl, display: "flex", flexDirection: "column", gap: space.xs }}
           >
             <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
               {brand.phoneLabel}
@@ -147,7 +130,7 @@ export default function FinalCTA({
             </a>
           </div>
 
-          <div className="cta-item" style={{ position: "relative", marginTop: space.xl }}>
+          <div className="cta-item" style={{ position: "relative", marginTop: bp === "mobile" ? 28 : space.xl }}>
             <GlowButton href={calendly}>{copy.button}</GlowButton>
           </div>
         </div>

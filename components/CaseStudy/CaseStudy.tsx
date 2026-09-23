@@ -343,7 +343,7 @@ export default function CaseStudy({
             justifyContent: "space-between",
             gap: stacked ? space.lg : space.h,
             minHeight: 300,
-            padding: `${stacked ? 20 : space.lg}px`,
+            padding: `${stacked ? 24 : space.lg}px`,
             borderRadius: 12,
             background: hexA(color.textOnLight, 0.04),
             textAlign: "left",
@@ -432,20 +432,26 @@ export default function CaseStudy({
           <div style={{ position: "relative", display: "grid", placeItems: "center" }}>{headline}</div>
         </div>
 
-        {/* A slow cinematic ticker on mobile. */}
+        {/* A direct, native horizontal gallery on mobile. */}
         <div
           style={{
-            overflow: "hidden",
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            overscrollBehaviorInline: "contain",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            touchAction: "pan-x pan-y",
             padding: `${space.xxl}px 0`,
             background: color.black,
           }}
         >
-          <div className="mobile-case-ticker" style={{ display: "flex", gap: layout.gutter, width: "max-content", paddingInline: layout.pad }}>
-          {[...plates, ...plates].map((plate, index) => (
+          <div style={{ display: "flex", gap: 14, width: "max-content", paddingInline: layout.pad }}>
+          {plates.map((plate, index) => (
             <figure
               key={`${plate.caption}-${index}`}
               style={{
                 flex: "0 0 78vw",
+                scrollSnapAlign: "center",
                 margin: 0,
                 display: "flex",
                 flexDirection: "column",
