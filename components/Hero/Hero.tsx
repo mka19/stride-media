@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
@@ -6,8 +6,10 @@ import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useCanHover } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 import SocialProof from "../shared/SocialProof";
-import HeroObject, { type HeroObjectHandle } from "./HeroObject";
+import type { HeroObjectHandle } from "./HeroObject";
 import VideoMosaic, { type MosaicTile } from "./VideoMosaic";
+
+const HeroObject = lazy(() => import("./HeroObject"));
 
 /**
  * Hero — three phases across one tall scroll, pinned with position: sticky.
@@ -184,7 +186,9 @@ export default function Hero({
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
           <div style={{ position: "absolute", inset: 0 }}>
-            <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+            <Suspense fallback={null}>
+              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+            </Suspense>
           </div>
         </div>
 

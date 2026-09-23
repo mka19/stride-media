@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { gsap, useGsapContext, SCRUB, approach } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { whyStride as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { Grain, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
-import HeroObject, { type HeroObjectHandle } from "../Hero/HeroObject";
+import type { HeroObjectHandle } from "../Hero/HeroObject";
 import GradientRevealText from "../shared/GradientRevealText";
+
+const HeroObject = lazy(() => import("../Hero/HeroObject"));
 
 /**
  * Why Stride — trionn.com capabilities reference.
@@ -443,7 +445,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             {copy.transition}
           </p>
           <div style={{ position: "sticky", top: `calc(${layout.navHeight}px + 12px)`, zIndex: 8, width: "min(100%, 420px)", margin: "32px auto 0", height: "clamp(210px, 28vh, 260px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
-            <div style={{ position: "absolute", inset: "8%" }}><HeroObject handleRef={objectRef} breakpoint={bp} /></div>
+            <div style={{ position: "absolute", inset: "8%" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 16 }}>
             {copy.capabilities.map((cap, i) => (
@@ -497,7 +499,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           }}
         >
           <div style={{ width: "min(560px, 46vw)", height: "min(560px, 60vh)" }}>
-            <HeroObject handleRef={objectRef} breakpoint={bp} />
+            <Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense>
           </div>
         </div>
 

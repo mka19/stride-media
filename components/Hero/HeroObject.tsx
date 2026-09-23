@@ -341,6 +341,10 @@ export default function HeroObject({
     const mount = mountRef.current;
     if (!mount || !ready) return;
 
+    const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
+    const lowPowerMobile = breakpoint === "mobile"
+      && (deviceMemory <= 4 || (navigator.hardwareConcurrency || 8) <= 4);
+
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     // Capping DPR matters more than anything else for battery on phones.
     /*
@@ -360,7 +364,7 @@ export default function HeroObject({
     // the fine bevel and reflected highlights that make the chrome feel real.
     const renderDpr = () => Math.min(
       window.devicePixelRatio || 1,
-      breakpoint === "mobile" ? 1.5 : breakpoint === "tablet" ? 1.6 : 1.75,
+      breakpoint === "mobile" ? (lowPowerMobile ? 1.25 : 1.5) : breakpoint === "tablet" ? 1.6 : 1.75,
     );
     renderer.setPixelRatio(renderDpr());
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -1098,7 +1102,7 @@ export default function HeroObject({
     const tick = (now: number = performance.now()) => {
       raf = requestAnimationFrame(tick);
       if (!inViewport) return;
-      if (breakpoint === "mobile" && now - previousRender < 32) return;
+      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 41 : 32)) return;
       previousRender = now;
       const t = (now - t0) / 1000;
       const frameDelta = Math.min(0.05, Math.max(0, (now - previousFrame) / 1000));

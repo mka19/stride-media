@@ -376,7 +376,7 @@ export const footer = {
   basedLabel: "Based in",
   basedIn: "Austin, TX · Demo",
   legal: [
-    { label: "Terms & conditions", href: "https://example.com/terms" },
-    { label: "Privacy policy", href: "https://example.com/privacy" },
+    { label: "Terms & conditions", href: "/terms.html" },
+    { label: "Privacy policy", href: "/privacy.html" },
   ],
 } as const;

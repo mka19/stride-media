@@ -432,30 +432,24 @@ export default function CaseStudy({
           <div style={{ position: "relative", display: "grid", placeItems: "center" }}>{headline}</div>
         </div>
 
-        {/* A direct, native horizontal gallery on mobile. */}
+        {/* A direct vertical gallery on mobile: every study remains visible
+            in the normal reading flow, with no ticker or clipped neighbours. */}
         <div
           style={{
-            overflowX: "auto",
-            scrollSnapType: "x mandatory",
-            overscrollBehaviorInline: "contain",
-            WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "none",
-            touchAction: "pan-x pan-y",
-            padding: `${space.xxl}px 0`,
+            padding: `${space.xl}px ${layout.pad}`,
             background: color.black,
           }}
         >
-          <div style={{ display: "flex", gap: 14, width: "max-content", paddingInline: layout.pad }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%" }}>
           {plates.map((plate, index) => (
             <figure
               key={`${plate.caption}-${index}`}
               style={{
-                flex: "0 0 78vw",
-                scrollSnapAlign: "center",
+                width: "100%",
                 margin: 0,
                 display: "flex",
                 flexDirection: "column",
-                gap: space.s,
+                gap: 10,
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
