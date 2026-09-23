@@ -208,7 +208,7 @@ export default function Solution({
           </p>
         </div>
 
-        <div ref={stageRef} className="mobile-parallax-media" style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
+        <div ref={stageRef} className="mobile-parallax-media" style={{ position: "relative", width: "100%", maxWidth: 860, margin: "0 auto", aspectRatio: "16 / 9", overflow: "hidden", borderRadius: 10 }}>
           <MediaTile
             src={videoSrc}
             poster={poster}

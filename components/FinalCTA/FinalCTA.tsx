@@ -64,6 +64,9 @@ export default function FinalCTA({
       <div
         style={{
           position: "relative",
+          width: "100%",
+          maxWidth: 1500,
+          margin: "0 auto",
           display: "grid",
           gridTemplateColumns: stacked ? "1fr" : "minmax(0, 38%) minmax(0, 58%)",
           justifyContent: "space-between",
@@ -71,7 +74,7 @@ export default function FinalCTA({
         }}
       >
         {/* ---- left ---- */}
-        <div style={{ position: "relative", display: "flex", flexDirection: "column" }}>
+        <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: stacked ? 0 : `0 clamp(12px, 2vw, 32px)` }}>
           <WorldMap />
 
           <div
@@ -161,7 +164,8 @@ export default function FinalCTA({
             padding: stacked ? (bp === "mobile" ? space.md : space.xl) : space.lg,
             background: color.ink,
             border: `1px solid ${color.hairlineOnDark}`,
-            borderRadius: 4,
+            borderRadius: stacked ? 12 : 20,
+            boxShadow: "0 28px 90px rgba(0,0,0,.35)",
           }}
         >
           <MicroLabel tone="accent">{copy.calendlyHeader}</MicroLabel>

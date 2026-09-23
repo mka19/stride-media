@@ -44,7 +44,7 @@ export function initSmoothScroll(): () => void {
      * while its contents snap, or contents that drift over a scroll position
      * that jumps.
      */
-    duration: 1.2,
+    duration: 1.65,
     // Heavy at the start, long settle — the weightless feel comes from the
     // tail of this curve, not from the duration.
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -52,7 +52,7 @@ export function initSmoothScroll(): () => void {
     // Calibrated from the real mouse test: 0.55 needed about 160 wheel steps
     // for the document. 1.0 brings the same journey to roughly 86 while the
     // duration and ScrollTrigger scrub continue to soften every arrival.
-    wheelMultiplier: 1,
+    wheelMultiplier: 0.9,
     // Touch devices already have their own momentum; adding ours fights it.
     syncTouch: true,
     touchMultiplier: 0.82,

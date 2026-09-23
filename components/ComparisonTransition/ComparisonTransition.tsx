@@ -12,7 +12,7 @@ import { useBreakpoint, useStacked } from "../shared/responsive";
  * the bottom edge so the footer receives the same symbol instead of starting
  * as an unrelated block.
  */
-export default function ComparisonTransition({ scrollLength = "220vh" }: { scrollLength?: string }) {
+export default function ComparisonTransition({ scrollLength = "170vh" }: { scrollLength?: string }) {
   const [split, setSplit] = useState(50);
   const drag = useRef(false);
   const bp = useBreakpoint();
@@ -37,7 +37,8 @@ export default function ComparisonTransition({ scrollLength = "220vh" }: { scrol
         .to(q(".compare-copy"), { opacity: 0, y: -14, duration: 0.2, ease: "power1.inOut" }, 0.42)
         .to(q(".compare-shell"), { scale: 0.56, borderRadius: 24, opacity: 0.08, duration: 0.32, ease: "power1.inOut" }, 0.52)
         .to(q(".compare-mark"), { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.58)
-        .to(q(".compare-mark"), { y: "24vh", scale: 0.78, duration: 0.26, ease: "power1.inOut" }, 0.76);
+        .to(q(".compare-mark"), { y: "12vh", scale: 0.78, duration: 0.18, ease: "power1.inOut" }, 0.76)
+        .to(q(".compare-shell, .compare-mark"), { opacity: 0, scale: 0.92, duration: 0.12, ease: "power2.in" }, 0.88);
     },
     [stacked],
     (root) => {

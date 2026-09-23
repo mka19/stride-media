@@ -444,8 +444,8 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "sticky", top: layout.navHeight, zIndex: 8, width: "100%", height: "clamp(220px, 30vh, 290px)", background: color.black }}>
-            <HeroObject handleRef={objectRef} breakpoint={bp} />
+          <div style={{ position: "sticky", top: `calc(${layout.navHeight}px + 12px)`, zIndex: 8, width: "min(100%, 420px)", margin: "0 auto", height: "clamp(220px, 30vh, 290px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
+            <div style={{ position: "absolute", inset: "8%" }}><HeroObject handleRef={objectRef} breakpoint={bp} /></div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9 }}>
             {copy.capabilities.map((cap, i) => (
