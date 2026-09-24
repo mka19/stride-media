@@ -23,7 +23,7 @@ export default function Solution({
   /** Landscape client reel. Falls back to a generated cinematic fill. */
   videoSrc,
   poster,
-  scrollLength = "300vh",
+  scrollLength = "190vh",
 }: {
   videoSrc?: string;
   poster?: string;
@@ -121,8 +121,9 @@ export default function Solution({
           end: "bottom bottom",
           scrub: SCRUB,
           invalidateOnRefresh: true,
-          // The reel stops exactly where the pillars begin to settle over it.
-          onUpdate: (self) => setPastReel(self.progress > 0.5),
+          // With the post-VSL panel removed, the reel stays active until the
+          // section releases directly into the next chapter.
+          onUpdate: () => setPastReel(false),
           onLeaveBack: () => setPastReel(false),
         },
       });
@@ -158,16 +159,7 @@ export default function Solution({
           },
           0.04,
         )
-
-        // 2. Full screen: the cue to keep going. It used to arrive six
-        //    percent after the frame landed and then sit unchanged for a
-        //    fifth of the section — two screens where nothing moved at all.
-        .to(q(".sol-cue"), { opacity: 1, y: 0, duration: 0.07 }, 0.34)
-
-        // 3. The pillars settle over the footage, which dims to carry them.
-        .to(q(".sol-cue"), { opacity: 0, duration: 0.09 }, 0.48)
-        .to(q(".sol-scrim"), { opacity: 1, duration: 0.09 }, 0.5)
-        .to(q(".sol-pillar"), { opacity: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.55);
+        .to(q(".sol-cue"), { opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }, 0.34);
     },
     [],
     // Reduced motion: full-bleed video, header and pillars all simply present.
@@ -219,9 +211,7 @@ export default function Solution({
           />
         </div>
 
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: space.s }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: space.s }}>
           {/* One plain line, no controls. The film is already playing; this
               only says what the two ways on are. */}
           <span
@@ -239,7 +229,7 @@ export default function Solution({
           </svg>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: layout.section }}>
+        <div aria-hidden="true" style={{ display: "none" }}>
           {copy.pillars.map((pillar) => (
             <div
               key={pillar.n}
@@ -305,6 +295,7 @@ export default function Solution({
               className="sol-scrim"
               aria-hidden="true"
               style={{
+                display: "none",
                 position: "absolute",
                 inset: 0,
                 background: `linear-gradient(180deg, ${hexA(color.black, 0.5)} 0%, ${hexA(color.black, 0.82)} 100%)`,
@@ -400,8 +391,9 @@ export default function Solution({
 
           {/* ---- the three pillars, over the full-bleed footage ---- */}
           <div
+            aria-hidden="true"
             style={{
-              display: "grid",
+              display: "none",
               gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
               gap: space.lg,
               alignItems: "start",

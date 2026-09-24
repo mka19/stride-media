@@ -31,13 +31,12 @@ export const brand = {
 
 export const nav = {
   items: [
-    { id: "about", label: "About" },
-    { id: "problem", label: "Problem" },
-    { id: "what-we-do", label: "What We Do" },
-    { id: "how-it-works", label: "How It Works" },
-    { id: "case-study", label: "Case Study" },
     { id: "results", label: "Results" },
-    { id: "faq", label: "FAQ" },
+    { id: "what-we-do", label: "What We Do" },
+    { id: "case-study", label: "Case Study" },
+    { id: "how-it-works", label: "How It Works" },
+    { id: "problem", label: "Problem" },
+    { id: "about", label: "About" },
   ],
   cta: "Book a call",
 } as const;
@@ -48,7 +47,7 @@ export const hero = {
   proofCount: "115+",
   proofLabel: "happy clients",
   headline: ["BUILD A BRAND", "THAT GETS RECOGNIZED"],
-  sub: "AI-powered video content for entrepreneurs who want authority, engagement and results. You never pick up a camera.",
+  sub: "350M+ views organic. AED 20M+ in property sales driven by content. Stride Media creates short-form video that turns attention into clients.",
   cta: "Book your free strategy call",
   scrollHint: "Scroll",
 } as const;
@@ -57,7 +56,7 @@ export const problem = {
   /** The dark opening chapter is the studio's About statement. */
   label: "About",
   intro:
-    "Stride Media exists because talented entrepreneurs keep losing to louder, less capable competitors. Not on skill, on visibility. We build the video presence that makes recognition inevitable, using AI to move faster than any traditional agency, without cutting corners on quality.",
+    "We make good businesses impossible to ignore. Stride Media is a Dubai-based short-form video agency. We handle everything from strategy and scripting to shooting, editing, and posting, so you can focus on running your business. 350M+ views later, we know what makes people stop scrolling and start buying.",
   /**
    * The same statement, broken where it should break. The pinned chapter
    * reveals one of these at a time, so the break points are a writing
@@ -76,11 +75,12 @@ export const problem = {
    * line is a line of copy and not two words trailing off the end.
    */
   introSequence: [
-    "STRIDE", "MEDIA", "EXISTS", "BECAUSE", "ENTREPRENEURS", 0,
-    "KEEP", "LOSING", "TO", "LOUDER,", "LESS", 1,
-    "CAPABLE", "COMPETITORS.", "NOT", "ON", "SKILL,", 2,
-    "ON", "VISIBILITY.", "WE", "MAKE", "IT", 3,
-    "IMPOSSIBLE", "TO", "IGNORE.",
+    "WE", "MAKE", "GOOD", "BUSINESSES", 0, "IMPOSSIBLE", "TO", "IGNORE.",
+    "STRIDE", "MEDIA", "IS", "A", "DUBAI-BASED", 1, "SHORT-FORM", "VIDEO", "AGENCY.",
+    "WE", "HANDLE", "EVERYTHING", "FROM", "STRATEGY", "AND", "SCRIPTING", "TO", 2,
+    "SHOOTING,", "EDITING,", "AND", "POSTING,", "SO", "YOU", "CAN", "FOCUS", "ON", "RUNNING", "YOUR", "BUSINESS.",
+    "350M+", "VIEWS", "LATER,", "WE", "KNOW", "WHAT", "MAKES", "PEOPLE", 3,
+    "STOP", "SCROLLING", "AND", "START", "BUYING.",
   ] as (string | number)[]
 ,
   introAside: "Built for entrepreneurs who are good at the work and invisible because of it.",

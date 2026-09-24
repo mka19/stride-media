@@ -1,292 +1,217 @@
-import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "../shared/gsap";
-import { useEffect, useRef } from "react";
-import { registerSurface, type SurfaceHandle } from "../shared/surface";
+import { useRef, useState } from "react";
 import { testimonials as copy } from "../shared/copy";
-import { color, ease, hexA, layout, numberGradient, rhythm, space, typeScale } from "../shared/theme";
-import { MicroLabel } from "../shared/primitives";
+import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
+import { MediaTile, MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
 import { useStacked } from "../shared/responsive";
+import { useInView } from "../shared/useInView";
 
 /**
- * Testimonials — trionn.com scattered gallery reference.
+ * Synthesia-inspired video testimonial carousel.
  *
- * Cards fly in one at a time from randomised off-screen offsets and settle
- * into an overlapping mosaic. Each card's arrival is tied to its own scroll
- * checkpoint rather than a timer, so the build-up is paced by the visitor.
- * By the end of the section the whole mosaic is on screen together.
- *
- * On phones the scatter is dropped for sequential fade-ups in one column:
- * scatter physics read as drift on a narrow viewport.
+ * Every card begins as a cinematic thumbnail with a key quote and client
+ * identity. Real video URLs play inline; until those arrive, MediaTile keeps
+ * the final composition visible without inventing client footage.
  */
-export default function Testimonials() {
-  const surface = useRef<SurfaceHandle | null>(null);
+export default function Testimonials({ videos = [] }: { videos?: string[] }) {
   const stacked = useStacked();
+  const { ref } = useInView<HTMLElement>({ threshold: 0.18 }, false);
+  const track = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const [playing, setPlaying] = useState<number | null>(null);
+  const items = copy.cards.slice(0, 6);
 
-  // Resting positions: a loose mosaic, deliberately not a grid, with cards
-  // overlapping by a little rather than tiling.
-  // Resting scatter is a small transform offset per card, not a position:
-  // the layout below is a column flow, so cards can never collide no matter
-  // how tall their quote runs. Percentage spots could not know that, which
-  // is what put cards through each other and off the frame.
-  // Vertical offsets only, and small. The cards used to carry a rotation
-  // each as well, which put eight different baselines on one row and read as
-  // misalignment rather than as a scatter.
-  // No resting offset at all. A per-card y offset on top of a stretched grid
-  // row moved each card off the row it had just been aligned to, which read
-  // as eight cards that had missed their marks rather than as a scatter.
-  const rest = Array.from({ length: 8 }, () => ({ x: 0, y: 0, r: 0 }));
-
-  const rootRef = useGsapContext(
-    (root) => {
-      const q = gsap.utils.selector(root);
-      const cards = q(".ts-card") as HTMLElement[];
-
-      // Mobile cards use native sticky positioning. Keep the desktop GSAP
-      // choreography completely isolated from that layout.
-      if (stacked) {
-        gsap.set(cards, { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1, clearProps: "transform" });
-        return;
-      }
-
-      /*
-       * Driven the way vishakha-sharma21/animation-gsap drives it: one
-       * ScrollTrigger, and on every update each card's position is worked out
-       * from the section's progress by hand.
-       *
-       * The tween version of this was not the same thing. Eight cards with
-       * three tweens each is twenty-four curves resolving against one another,
-       * every one of them lagging the scrub by its own amount — which is what
-       * made the arrival read as stepped. Here there is a single number, and
-       * every card is a pure function of it. Nothing can drift, because there
-       * is nothing to drift against.
-       *
-       * smoothStep is the reference's easing: 3t² − 2t³, flat at both ends,
-       * so a card leaves and reaches its place without a corner at either.
-       */
-      const smoothStep = (p: number) => p * p * (3 - 2 * p);
-      const lerp = gsap.utils.interpolate;
-      const clamp = gsap.utils.clamp;
-
-      ScrollTrigger.create({
-        trigger: root,
-        start: "top 78%",
-        end: "bottom bottom",
-        scrub: SCRUB,
-        // will-change is a hint, not a free win: held on every card for the
-        // life of the page it keeps eight layers promoted for nothing, so it
-        // goes on while the section is live and comes off when it is not.
-        onToggle: ({ isActive }) =>
-          cards.forEach((card) => {
-            card.style.willChange = isActive ? "transform, opacity" : "auto";
-          }),
-        onUpdate: (self) => {
-          const progress = self.progress;
-
-          cards.forEach((card, i) => {
-            const col = i % 4;
-            /*
-             * One card at a time, in reading order.
-             *
-             * The delay used to be the row plus a fraction of the column, and
-             * the formula below multiplies it by 0.1 — so the eight of them
-             * were spread across eight hundredths of the section and arrived
-             * as one block, every card mid-lean at the same moment. Stepping
-             * a full unit per card spreads them over about six tenths of the
-             * run, which is what makes them land one after another.
-             */
-            const delay = i * 0.8;
-            const cardProgress = clamp(0, 1, (progress - delay * 0.1) / (0.9 - delay * 0.1));
-
-            // Up from below, overshooting its place and settling back into
-            // it — the two-stage move is what stops it arriving flat.
-            let y: string;
-            if (cardProgress < 0.4) {
-              y = lerp("14%", "-4%", smoothStep(cardProgress / 0.4));
-            } else if (cardProgress < 0.6) {
-              y = lerp("-4%", "0%", smoothStep((cardProgress - 0.4) / 0.2));
-            } else {
-              y = "0%";
-            }
-
-            // Small, then most of the way, then the last of it.
-            let scale: number;
-            if (cardProgress < 0.4) {
-              scale = lerp(0.62, 0.92, smoothStep(cardProgress / 0.4));
-            } else if (cardProgress < 0.6) {
-              scale = lerp(0.92, 1, smoothStep((cardProgress - 0.4) / 0.2));
-            } else {
-              scale = 1;
-            }
-
-            // Legible for most of the travel rather than arriving already
-            // there: presence resolves in the first fifth of the card's run.
-            const opacity = cardProgress < 0.2 ? smoothStep(cardProgress / 0.2) : 1;
-
-            // Fanned out to the side the card belongs to, converging on its
-            // own column over the last two fifths.
-            const lean = [-1, -0.4, 0.4, 1][col];
-            let x: string;
-            let rotate: number;
-            if (cardProgress < 0.6) {
-              x = `${lean * 26}%`;
-              rotate = lean * 5;
-            } else {
-              const n = smoothStep((cardProgress - 0.6) / 0.4);
-              x = lerp(`${lean * 26}%`, "0%", n);
-              rotate = lerp(lean * 5, 0, n);
-            }
-
-            gsap.set(card, { x, y, rotate, scale, opacity, force3D: true });
-          });
-        },
-      });
-    },
-    [stacked],
-    (root) =>
-      gsap.set(gsap.utils.selector(root)(".ts-card"), { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1 }),
-  );
-
-  useEffect(() => {
-    const frame = rootRef.current?.querySelector<HTMLElement>(".ts-frame");
-    if (!frame) return;
-    const handle = registerSurface(frame, "light");
-    surface.current = handle;
-    return () => {
-      handle.release();
-      surface.current = null;
-    };
-  }, [rootRef, stacked]);
-
-  const card = (t: (typeof copy.cards)[number]) => (
-    <>
-      <div style={{ display: "flex", alignItems: "center", gap: space.s }}>
-        <span
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: "50%",
-            display: "grid",
-            placeItems: "center",
-            background: color.accent,
-            color: "#fff",
-            ...typeScale.eyebrow,
-            fontWeight: 500,
-          }}
-        >
-          {t.initials}
-        </span>
-        <span style={{ ...typeScale.eyebrow, fontWeight: 500 }}>{t.name}</span>
-      </div>
-      {/* Four lines of room whether the quote needs them or not, so every
-          card in the row puts its figure on the same line. */}
-      <p
-        style={{
-          margin: 0,
-          ...typeScale.bodyLg,
-          flex: "1 1 auto",
-          display: "-webkit-box",
-          WebkitBoxOrient: "vertical",
-          WebkitLineClamp: 4,
-          overflow: "hidden",
-        }}
-      >
-        “{t.quote}”
-      </p>
-      {/* The figure gets its own line rather than sharing one with the
-          sector: side by side, a long figure wrapped to three lines and the
-          card turned into a stack of purple. */}
-      <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
-        <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>{t.handle}</span>
-        <span style={{ ...typeScale.h3, fontWeight: 500, whiteSpace: "nowrap", ...numberGradient }}>
-          {t.stat}
-        </span>
-      </div>
-    </>
-  );
-
-  const cardStyle = {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: space.md,
-    padding: space.lg,
-    background: color.bone,
-    borderRadius: 4,
-    boxShadow: `0 24px 60px ${hexA("#0A0A0A", 0.14)}`,
-    transition: `box-shadow ${ease.hoverMs}ms ${ease.hover}`,
+  const goTo = (index: number) => {
+    const next = Math.max(0, Math.min(items.length - 1, index));
+    const card = track.current?.children[next] as HTMLElement | undefined;
+    card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    setActive(next);
+    setPlaying(null);
   };
 
   return (
     <section
       id="testimonials"
-      ref={rootRef}
+      ref={ref}
       style={{
-        position: "relative",
-        background: color.boneSoft,
-        color: color.textOnLight,
+        background: color.black,
+        color: color.textOnDark,
         fontFamily: typeScale.bodyLg.fontFamily,
-        padding: `${layout.section} ${layout.pad}`,
+        padding: `${layout.section} 0`,
+        overflow: "hidden",
       }}
     >
-      <div className="ts-frame" style={{ display: "flex", flexDirection: "column", gap: rhythm.headerToContent }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 900 }}>
-          <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <GradientRevealText as="h2" tone="light" style={{ ...typeScale.h1, maxWidth: "26ch", textWrap: "balance" }}>
-            {copy.headline}
-          </GradientRevealText>
-        </div>
-
-        {/* A grid rather than CSS columns: columns balance by height, which
-            left a void at the foot and ran the cards vertically (01 above 02)
-            instead of in reading order. Rows align at the top, so the stagger
-            comes from each card's own resting offset. */}
-        <div
+      <div style={{ display: "flex", flexDirection: "column", gap: rhythm.headerToContent }}>
+        <header
           style={{
-            display: "grid",
-            // A fixed four across rather than auto-fit: auto-fit re-flows at
-            // every width and the run of eight landed as 3 + 3 + 2 with a
-            // hole in it. Rows stretch, so every card in a row is the same
-            // height and the type sits on one baseline.
-            gridTemplateColumns: stacked ? "1fr" : "repeat(4, 1fr)",
-            // Every row the same height, not just every card within a row:
-            // stretch alone gave the two rows 240 and 214, which read as two
-            // different card sizes rather than as one set.
-            gridAutoRows: stacked ? "auto" : "1fr",
-            gap: layout.gutter,
-            alignItems: "stretch",
+            paddingInline: layout.pad,
+            display: "flex",
+            flexDirection: stacked ? "column" : "row",
+            alignItems: stacked ? "flex-start" : "flex-end",
+            justifyContent: "space-between",
+            gap: space.lg,
           }}
         >
-          {copy.cards.map((t, i) => {
-            const spot = rest[i % rest.length];
+          <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 850 }}>
+            <MicroLabel tone="accent">Client stories</MicroLabel>
+            <GradientRevealText as="h2" style={{ ...typeScale.h1, maxWidth: "22ch", textWrap: "balance" }}>
+              Real people. Real results. In their own words.
+            </GradientRevealText>
+          </div>
+          {!stacked && (
+            <div style={{ display: "flex", gap: space.s }}>
+              <Arrow label="Previous testimonial" direction={-1} onClick={() => goTo(active - 1)} disabled={active === 0} />
+              <Arrow label="Next testimonial" direction={1} onClick={() => goTo(active + 1)} disabled={active === items.length - 1} />
+            </div>
+          )}
+        </header>
+
+        <div
+          ref={track}
+          onScroll={(event) => {
+            const el = event.currentTarget;
+            const first = el.firstElementChild as HTMLElement | null;
+            const step = (first?.offsetWidth ?? 1) + (stacked ? 16 : 24);
+            setActive(Math.max(0, Math.min(items.length - 1, Math.round(el.scrollLeft / step))));
+          }}
+          style={{
+            display: "grid",
+            gridAutoFlow: "column",
+            gridAutoColumns: stacked ? "84vw" : "clamp(360px, 42vw, 680px)",
+            gap: stacked ? 16 : 24,
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            scrollBehavior: "smooth",
+            overscrollBehaviorInline: "contain",
+            scrollbarWidth: "none",
+            paddingInline: stacked ? "8vw" : layout.pad,
+            paddingBottom: space.md,
+          }}
+        >
+          {items.map((item, index) => {
+            const src = videos[index];
+            const isPlaying = playing === index && Boolean(src);
             return (
               <article
-                key={t.initials}
-                className="ts-card"
-                data-x={spot.x}
-                data-y={spot.y}
-                data-r={spot.r}
+                key={`${item.name}-${index}`}
                 style={{
-                  ...cardStyle,
-                  height: stacked ? "auto" : "100%",
-                  minHeight: stacked ? 286 : undefined,
-                  position: stacked ? "sticky" : undefined,
-                  top: stacked ? `calc(${layout.navHeight}px + ${space.md + i * 8}px)` : 76 + i * 10,
-                  zIndex: stacked ? i + 1 : undefined,
-                  boxShadow: stacked ? `0 8px 24px ${hexA("#0A0A0A", 0.07)}` : cardStyle.boxShadow,
-                  border: stacked ? `1px solid ${hexA("#0A0A0A", 0.055)}` : undefined,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = stacked ? `0 10px 28px ${hexA("#0A0A0A", 0.08)}` : `0 34px 80px ${hexA("#0A0A0A", 0.2)}`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = cardStyle.boxShadow;
+                  position: "relative",
+                  aspectRatio: stacked ? "4 / 5" : "16 / 10",
+                  overflow: "hidden",
+                  borderRadius: stacked ? 12 : 16,
+                  background: "#111",
+                  scrollSnapAlign: "center",
+                  border: `1px solid ${active === index ? hexA(color.accent, .75) : hexA("#fff", .12)}`,
+                  boxShadow: active === index ? `0 28px 90px ${hexA(color.accent, .18)}` : "none",
+                  transform: active === index ? "scale(1)" : "scale(.965)",
+                  opacity: active === index ? 1 : .7,
+                  transition: "transform 600ms cubic-bezier(.16,1,.3,1), opacity 450ms ease, border-color 450ms ease, box-shadow 600ms ease",
                 }}
               >
-                {card(t)}
+                {isPlaying ? (
+                  <video
+                    src={src}
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                    onEnded={() => setPlaying(null)}
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }}
+                  />
+                ) : (
+                  <>
+                    <MediaTile
+                      src={src}
+                      seed={41 + index * 9}
+                      play={false}
+                      style={{ position: "absolute", inset: 0, transform: "scale(1.02)" }}
+                    />
+                    <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black, .08)} 10%, ${hexA(color.black, .9)} 100%)` }} />
+                    <div style={{ position: "absolute", top: space.lg, left: space.lg, right: space.lg, display: "flex", justifyContent: "space-between", alignItems: "center", gap: space.md }}>
+                      <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Client story · {String(index + 1).padStart(2, "0")}</span>
+                      <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em" }}>STRIDE</span>
+                    </div>
+                    <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: space.md }}>
+                      <p style={{ margin: 0, ...typeScale.h3, maxWidth: "30ch", textWrap: "balance" }}>“{item.quote}”</p>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: space.md }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
+                          <span style={{ ...typeScale.eyebrow, color: color.accentOnDark }}>{item.name}</span>
+                          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{item.handle}</span>
+                        </div>
+                        <span style={{ ...typeScale.h3, color: color.textOnDark }}>{item.stat}</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={src ? `Play testimonial from ${item.name}` : "Video coming soon"}
+                      disabled={!src}
+                      onClick={() => setPlaying(index)}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        margin: "auto",
+                        width: 68,
+                        height: 68,
+                        borderRadius: "50%",
+                        border: `1px solid ${hexA("#fff", .3)}`,
+                        background: hexA(color.black, .56),
+                        color: "#fff",
+                        display: "grid",
+                        placeItems: "center",
+                        cursor: src ? "pointer" : "default",
+                        backdropFilter: "blur(12px)",
+                      }}
+                    >
+                      <span aria-hidden="true" style={{ marginLeft: 4, width: 0, height: 0, borderTop: "9px solid transparent", borderBottom: "9px solid transparent", borderLeft: "14px solid currentColor" }} />
+                    </button>
+                  </>
+                )}
               </article>
             );
           })}
         </div>
+
+        <div style={{ paddingInline: layout.pad, display: "flex", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
+          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{stacked ? "Swipe to watch" : "Drag to explore"}</span>
+          <div style={{ display: "flex", gap: 7 }}>
+            {items.map((item, index) => (
+              <button
+                key={item.name}
+                type="button"
+                aria-label={`Show testimonial ${index + 1}`}
+                aria-current={active === index}
+                onClick={() => goTo(index)}
+                style={{ width: 44, height: 44, padding: 0, border: 0, background: "transparent", display: "grid", placeItems: "center", cursor: "pointer" }}
+              >
+                <span aria-hidden="true" style={{ width: active === index ? 26 : 8, height: 8, borderRadius: 99, background: active === index ? color.accent : hexA("#fff", .22), transition: "width 360ms cubic-bezier(.16,1,.3,1)" }} />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
+  );
+}
+
+function Arrow({ label, direction, onClick, disabled }: { label: string; direction: -1 | 1; onClick: () => void; disabled: boolean }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        width: 48,
+        height: 48,
+        borderRadius: "50%",
+        border: `1px solid ${hexA("#fff", .2)}`,
+        background: disabled ? hexA("#fff", .03) : hexA("#fff", .08),
+        color: color.textOnDark,
+        cursor: disabled ? "default" : "pointer",
+        opacity: disabled ? .35 : 1,
+      }}
+    >
+      {direction < 0 ? "←" : "→"}
+    </button>
   );
 }

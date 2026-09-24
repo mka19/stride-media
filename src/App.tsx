@@ -62,14 +62,14 @@ export default function App() {
       <Preloader />
       <Nav />
       <Hero tiles={heroTiles} />
-      <Problem />
+      <Results clips={resultMedia} />
       <Solution />
-      <HowItWorks />
-      <Marquee items={marquee.process} />
       <CaseStudy />
+      <HowItWorks />
+      <Problem />
+      <Marquee items={marquee.process} />
       <WhyStride />
       <Marquee items={marquee.outcome} direction={1} />
-      <Results clips={resultMedia} />
       <Testimonials />
       <Founders />
       <FinalCTA />
