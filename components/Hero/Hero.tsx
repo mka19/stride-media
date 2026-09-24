@@ -212,7 +212,12 @@ export default function Hero({
             tone="accent"
             style={{
               position: "absolute",
-              bottom: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : bp === "tablet" ? "calc(50% + 29vmin + 34px)" : "calc(50% + min(270px, 30vw) + 40px)",
+              // On wide, shallow screens the model-relative calculation can
+              // rise into the transparent navbar. Anchor the label below the
+              // bar on tablet/desktop; the compact phone composition keeps
+              // its model-relative spacing.
+              top: bp === "mobile" ? undefined : `calc(${layout.navHeight}px + ${space.lg}px)`,
+              bottom: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : undefined,
             }}
           >
             {heroCopy.label}
