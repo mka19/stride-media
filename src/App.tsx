@@ -66,8 +66,8 @@ export default function App() {
       <Solution />
       <CaseStudy />
       <HowItWorks />
-      <Problem />
       <Marquee items={marquee.process} />
+      <Problem />
       <WhyStride />
       <Marquee items={marquee.outcome} direction={1} />
       <Testimonials />
