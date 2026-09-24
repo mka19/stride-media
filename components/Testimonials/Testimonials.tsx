@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { testimonials as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MediaTile, MicroLabel } from "../shared/primitives";
@@ -20,7 +20,6 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
   const items = copy.cards.slice(0, 6);
 
   const goTo = (index: number) => {
@@ -29,26 +28,7 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
     card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     setActive(next);
     setPlaying(null);
-    setProgress(0);
   };
-
-  useEffect(() => {
-    if (paused || playing !== null) return;
-    const tickMs = 50;
-    const durationMs = 5600;
-    const timer = window.setInterval(() => {
-      setProgress((current) => {
-        const nextProgress = current + (tickMs / durationMs) * 100;
-        if (nextProgress < 100) return nextProgress;
-        const nextIndex = (active + 1) % items.length;
-        const card = track.current?.children[nextIndex] as HTMLElement | undefined;
-        card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-        setActive(nextIndex);
-        return 0;
-      });
-    }, tickMs);
-    return () => window.clearInterval(timer);
-  }, [active, items.length, paused, playing]);
 
   return (
     <section
@@ -98,15 +78,12 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
             const first = el.firstElementChild as HTMLElement | null;
             const step = (first?.offsetWidth ?? 1) + (stacked ? 16 : 24);
             const next = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollLeft / step)));
-            setActive((current) => {
-              if (current !== next) setProgress(0);
-              return next;
-            });
+            setActive(next);
           }}
           style={{
             display: "grid",
             gridAutoFlow: "column",
-            gridAutoColumns: stacked ? "84vw" : "clamp(360px, 42vw, 680px)",
+            gridAutoColumns: stacked ? "78vw" : "clamp(300px, 31vw, 460px)",
             gap: stacked ? 16 : 24,
             overflowX: "auto",
             scrollSnapType: "x mandatory",
@@ -125,16 +102,16 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
                 key={`${item.name}-${index}`}
                 style={{
                   position: "relative",
-                  aspectRatio: stacked ? "4 / 5" : "16 / 10",
+                  aspectRatio: "4 / 5",
                   overflow: "hidden",
-                  borderRadius: stacked ? 12 : 16,
+                  borderRadius: stacked ? 10 : 12,
                   background: "#111",
                   scrollSnapAlign: "center",
-                  border: `1px solid ${active === index ? hexA(color.accent, .75) : hexA("#fff", .12)}`,
+                  border: 0,
                   boxShadow: active === index ? `0 28px 90px ${hexA(color.accent, .18)}` : "none",
                   transform: active === index ? "scale(1)" : "scale(.965)",
                   opacity: active === index ? 1 : .7,
-                  transition: "transform 600ms cubic-bezier(.16,1,.3,1), opacity 450ms ease, border-color 450ms ease, box-shadow 600ms ease",
+                  transition: "transform 600ms cubic-bezier(.16,1,.3,1), opacity 450ms ease, box-shadow 600ms ease",
                 }}
               >
                 {isPlaying ? (
@@ -227,13 +204,16 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
                 >
                   {active === index && (
                     <span
+                      className="testimonial-progress-fill"
+                      onAnimationEnd={() => {
+                        if (!paused && playing === null) goTo((active + 1) % items.length);
+                      }}
                       style={{
                         position: "absolute",
                         inset: 0,
-                        width: `${progress}%`,
                         borderRadius: "inherit",
                         background: color.accent,
-                        transition: "width 60ms linear",
+                        animationPlayState: paused || playing !== null ? "paused" : "running",
                       }}
                     />
                   )}

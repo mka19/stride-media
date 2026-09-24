@@ -290,6 +290,16 @@ html[data-motion="off"] .mobile-parallax-media {
   to   { transform: translate3d(0, -18px, 0) scale(1.015); }
 }
 
+@keyframes testimonial-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.testimonial-progress-fill {
+  transform-origin: left center;
+  animation: testimonial-progress 5.6s linear forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mobile-stack-card,
   .mobile-parallax-media { animation: none !important; transform: none !important; opacity: 1 !important; }
