@@ -35,12 +35,13 @@ export default function ComparisonTransition({ scrollLength = "170vh" }: { scrol
       });
       tl.to(q(".compare-shell"), { scale: 1, borderRadius: 0, duration: 0.32, ease: "power2.inOut" }, 0)
         .to(q(".compare-copy"), { opacity: 0, y: -14, duration: 0.2, ease: "power1.inOut" }, 0.42)
-        .to(q(".compare-shell"), { scale: 0.56, borderRadius: 24, opacity: 0.08, duration: 0.32, ease: "power1.inOut" }, 0.52)
+        .to(q(".compare-shell"), { scale: 0.56, borderRadius: 0, opacity: 0.08, duration: 0.32, ease: "power1.inOut" }, 0.52)
         .to(q(".compare-mark"), { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.58)
-        .to(q(".compare-mark"), { y: "24vh", scale: 0.78, duration: 0.26, ease: "power1.inOut" }, 0.76)
+        .to(q(".compare-mark"), { y: "38vh", scale: 0.56, duration: 0.3, ease: "power2.inOut" }, 0.74)
         // The comparison card clears completely. The Stride mark is the
         // handoff into the footer, so it remains visible and settled.
-        .to(q(".compare-shell"), { opacity: 0, duration: 0.12, ease: "power2.in" }, 0.88);
+        .to(q(".compare-shell"), { opacity: 0, duration: 0.12, ease: "power2.in" }, 0.88)
+        .to(q(".compare-mark"), { opacity: 0, duration: 0.1, ease: "power2.in" }, 0.9);
     },
     [stacked],
     (root) => {

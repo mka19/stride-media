@@ -127,7 +127,7 @@ export default function Footer({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: stacked ? "1fr 1fr" : "auto auto",
+            gridTemplateColumns: stacked ? "1fr 1fr" : "1fr auto 1fr",
             justifyContent: "space-between",
             gap: mobile ? 28 : space.xl,
           }}
@@ -151,6 +151,12 @@ export default function Footer({
             ))}
           </nav>
 
+          {!stacked && (
+            <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", alignSelf: "center", paddingInline: space.xl }}>
+              <StrideMark size={72} glowing />
+            </div>
+          )}
+
           <nav
             className="ft-item"
             aria-label="Social"
@@ -159,6 +165,7 @@ export default function Footer({
               flexDirection: "column",
               gap: mobile ? 12 : space.s,
               textAlign: stacked ? "left" : "right",
+              justifySelf: stacked ? undefined : "end",
             }}
           >
             {/* A name with no URL behind it is rendered as a name. Anything
@@ -178,20 +185,6 @@ export default function Footer({
             ))}
           </nav>
         </div>
-
-        {!stacked && (
-          <div
-            className="ft-item"
-            aria-hidden="true"
-            style={{
-              display: "grid",
-              placeItems: "center",
-              paddingBlock: "clamp(16px, 2vw, 28px)",
-            }}
-          >
-            <StrideMark size={72} glowing />
-          </div>
-        )}
 
         {/* ---- the wordmark, dissolving under the cursor ----
              Pulled out of the column's side padding so the type runs the
