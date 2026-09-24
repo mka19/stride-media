@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { testimonials as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MediaTile, MicroLabel } from "../shared/primitives";
@@ -19,6 +19,8 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
   const items = copy.cards.slice(0, 6);
 
   const goTo = (index: number) => {
@@ -27,7 +29,26 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
     card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     setActive(next);
     setPlaying(null);
+    setProgress(0);
   };
+
+  useEffect(() => {
+    if (paused || playing !== null) return;
+    const tickMs = 50;
+    const durationMs = 5600;
+    const timer = window.setInterval(() => {
+      setProgress((current) => {
+        const nextProgress = current + (tickMs / durationMs) * 100;
+        if (nextProgress < 100) return nextProgress;
+        const nextIndex = (active + 1) % items.length;
+        const card = track.current?.children[nextIndex] as HTMLElement | undefined;
+        card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        setActive(nextIndex);
+        return 0;
+      });
+    }, tickMs);
+    return () => window.clearInterval(timer);
+  }, [active, items.length, paused, playing]);
 
   return (
     <section
@@ -68,11 +89,19 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
 
         <div
           ref={track}
+          onPointerEnter={() => setPaused(true)}
+          onPointerLeave={() => setPaused(false)}
+          onPointerDown={() => setPaused(true)}
+          onPointerUp={() => setPaused(false)}
           onScroll={(event) => {
             const el = event.currentTarget;
             const first = el.firstElementChild as HTMLElement | null;
             const step = (first?.offsetWidth ?? 1) + (stacked ? 16 : 24);
-            setActive(Math.max(0, Math.min(items.length - 1, Math.round(el.scrollLeft / step))));
+            const next = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollLeft / step)));
+            setActive((current) => {
+              if (current !== next) setProgress(0);
+              return next;
+            });
           }}
           style={{
             display: "grid",
@@ -183,7 +212,32 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
                 onClick={() => goTo(index)}
                 style={{ width: 44, height: 44, padding: 0, border: 0, background: "transparent", display: "grid", placeItems: "center", cursor: "pointer" }}
               >
-                <span aria-hidden="true" style={{ width: active === index ? 26 : 8, height: 8, borderRadius: 99, background: active === index ? color.accent : hexA("#fff", .22), transition: "width 360ms cubic-bezier(.16,1,.3,1)" }} />
+                <span
+                  aria-hidden="true"
+                  style={{
+                    position: "relative",
+                    display: "block",
+                    width: active === index ? 34 : 8,
+                    height: 8,
+                    overflow: "hidden",
+                    borderRadius: 99,
+                    background: hexA("#fff", .22),
+                    transition: "width 360ms cubic-bezier(.16,1,.3,1)",
+                  }}
+                >
+                  {active === index && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: `${progress}%`,
+                        borderRadius: "inherit",
+                        background: color.accent,
+                        transition: "width 60ms linear",
+                      }}
+                    />
+                  )}
+                </span>
               </button>
             ))}
           </div>
