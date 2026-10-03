@@ -17,6 +17,8 @@ import Footer from "../components/Footer/Footer";
 import Founders from "../components/Founders/Founders";
 import Preloader from "../components/shared/Preloader";
 import ComparisonTransition from "../components/ComparisonTransition/ComparisonTransition";
+import CaseStudyDetail from "../components/CaseStudyDetail/CaseStudyDetail";
+import { findCaseStudy } from "../components/CaseStudyDetail/caseStudies";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so the
@@ -24,6 +26,8 @@ import ComparisonTransition from "../components/ComparisonTransition/ComparisonT
  * scroll lengths before being pasted into Framer, in the locked order.
  */
 export default function App() {
+  const caseStudySlug = window.location.pathname.match(/^\/case-studies\/([^/]+)\/?$/)?.[1];
+  const selectedStudy = caseStudySlug ? findCaseStudy(caseStudySlug) : undefined;
   // In Framer this call belongs in one code component that wraps the page,
   // or in a site-wide override — not in each section, or several instances
   // of Lenis end up fighting for the same scroller.
@@ -56,6 +60,8 @@ export default function App() {
     "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=82",
     "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=82",
   ];
+
+  if (selectedStudy) return <CaseStudyDetail study={selectedStudy} />;
 
   return (
     <>

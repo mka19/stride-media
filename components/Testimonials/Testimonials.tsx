@@ -83,7 +83,7 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
           style={{
             display: "grid",
             gridAutoFlow: "column",
-            gridAutoColumns: stacked ? "78vw" : "clamp(300px, 31vw, 460px)",
+            gridAutoColumns: stacked ? "78vw" : "clamp(290px, 27vw, 390px)",
             gap: stacked ? 16 : 24,
             overflowX: "auto",
             scrollSnapType: "x mandatory",
@@ -102,13 +102,13 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
                 key={`${item.name}-${index}`}
                 style={{
                   position: "relative",
-                  aspectRatio: "4 / 5",
+                  aspectRatio: "9 / 14",
                   overflow: "hidden",
                   borderRadius: stacked ? 10 : 12,
                   background: "#111",
                   scrollSnapAlign: "center",
                   border: 0,
-                  boxShadow: active === index ? `0 28px 90px ${hexA(color.accent, .18)}` : "none",
+                  boxShadow: "none",
                   transform: active === index ? "scale(1)" : "scale(.965)",
                   opacity: active === index ? 1 : .7,
                   transition: "transform 600ms cubic-bezier(.16,1,.3,1), opacity 450ms ease, box-shadow 600ms ease",

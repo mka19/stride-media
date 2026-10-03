@@ -8,6 +8,7 @@ import GradientRevealText from "../shared/GradientRevealText";
 import SlatCurtain, { type SlatHandle } from "../shared/SlatCurtain";
 import { useStacked } from "../shared/responsive";
 import FluidWake from "./FluidWake";
+import { caseStudies as detailStudies } from "../CaseStudyDetail/caseStudies";
 
 /**
  * Case Study — sondaven.com reference.
@@ -442,11 +443,13 @@ export default function CaseStudy({
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%" }}>
           {plates.map((plate, index) => (
-            <figure
+            <a
               key={`${plate.caption}-${index}`}
+              href={`/case-studies/${detailStudies[index]?.slug ?? detailStudies[0].slug}`}
               style={{
                 width: "100%",
-                margin: 0,
+                color: "inherit",
+                textDecoration: "none",
                 display: "flex",
                 flexDirection: "column",
                 gap: 10,
@@ -458,7 +461,7 @@ export default function CaseStudy({
               <figcaption style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
                 {plate.caption}
               </figcaption>
-            </figure>
+            </a>
           ))}
           </div>
         </div>
@@ -508,10 +511,12 @@ export default function CaseStudy({
               then translating them is what used to put two of them on top of
               each other: a percentage translate is a share of the element's
               own width, so equal percentages moved unequal distances. */}
-          {plates.map((plate) => (
-            <figure
+          {plates.map((plate, index) => (
+            <a
               key={plate.caption}
               className="cs-plate"
+              href={`/case-studies/${detailStudies[index]?.slug ?? detailStudies[0].slug}`}
+              aria-label={`View ${detailStudies[index]?.client ?? "case study"}`}
               style={{
                 position: "absolute",
                 top: "50%",
@@ -520,6 +525,8 @@ export default function CaseStudy({
                 margin: 0,
                 transform: "translate(-50%, -50%)",
                 opacity: 0,
+                color: "inherit",
+                textDecoration: "none",
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
@@ -555,7 +562,7 @@ export default function CaseStudy({
                   View case study ↗
                 </span>
               </div>
-            </figure>
+            </a>
           ))}
         </div>
 
