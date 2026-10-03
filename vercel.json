@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/case-studies/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}
