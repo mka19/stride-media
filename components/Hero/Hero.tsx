@@ -185,7 +185,7 @@ export default function Hero({
           {/* The canvas fills the frame. It used to be a square the size of
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
-          <div style={{ position: "absolute", inset: 0 }}>
+          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "scale(1.12)" : undefined }}>
             <Suspense fallback={null}>
               <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
             </Suspense>
@@ -205,7 +205,8 @@ export default function Hero({
             alignItems: "center",
             justifyContent: "center",
             pointerEvents: "none",
-            padding: `0 ${layout.pad}`,
+            paddingInline: bp === "mobile" ? 24 : layout.pad,
+            boxSizing: "border-box",
           }}
         >
           <MicroLabel
@@ -229,6 +230,7 @@ export default function Hero({
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
               maxWidth: 640,
+              width: bp === "mobile" ? "calc(100% - 48px)" : undefined,
               textAlign: "center",
             }}
           >

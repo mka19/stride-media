@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { gsap, useGsapContext, SCRUB, reveal, approach } from "../shared/gsap";
 import { registerSurface, type SurfaceHandle } from "../shared/surface";
 import { problem as copy } from "../shared/copy";
@@ -26,13 +26,10 @@ export default function Problem({
   backgroundSrc,
   /** One image per pain point, in order. */
   cardMedia = [],
-  /** Footage for the objects that sit inline in the About statement. */
-  objectMedia = [],
   scrollLength = "430vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
-  objectMedia?: string[];
   scrollLength?: string;
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
@@ -340,7 +337,7 @@ export default function Problem({
                   {card.headline}
                 </GradientRevealText>
                 <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3", overflow: "hidden" }}>
-                  <MediaTile src={cardMedia[mobileCard]} seed={mobileCard * 5 + 11} style={{ position: "absolute", inset: 0 }} />
+                  <MediaTile src={cardMedia[mobileCard]} mediaFit="contain" seed={mobileCard * 5 + 11} style={{ position: "absolute", inset: 0, background: color.black }} />
                 </div>
                 <p style={{ margin: 0, maxWidth: "40ch", ...typeScale.bodyLg, color: color.textOnLightMuted }}>
                   {card.body}
@@ -519,21 +516,15 @@ export default function Problem({
                       willChange: "transform, filter",
                     }}
                   >
-                    <MediaTile
-                      src={objectMedia[token]}
-                      seed={token * 9 + 3}
-                      radius={0}
-                      style={{ position: "absolute", inset: 0 }}
-                    />
+                    <AboutIcon index={token} />
                   </span>
+                ) : i === 8 ? (
+                  <Fragment key={i}>
+                    <br />
+                    <span className="pb-beat pb-word" style={{ display: "inline-block", marginRight: "0.26em" }}>{token}</span>
+                  </Fragment>
                 ) : (
-                  <span
-                    key={i}
-                    className="pb-beat pb-word"
-                    style={{ display: "inline-block", marginRight: "0.26em" }}
-                  >
-                    {token}
-                  </span>
+                  <span key={i} className="pb-beat pb-word" style={{ display: "inline-block", marginRight: "0.26em" }}>{token}</span>
                 ),
               )}
               </div>
@@ -725,8 +716,9 @@ export default function Problem({
                     >
                       <MediaTile
                         src={cardMedia[i]}
+                        mediaFit="contain"
                         seed={i * 5 + 11}
-                        style={{ position: "absolute", inset: 0 }}
+                        style={{ position: "absolute", inset: 0, background: color.black }}
                       />
                       <div
                         className="pb-media-shade"
@@ -828,6 +820,17 @@ export default function Problem({
       </div>
     </section>
   );
+}
+
+function AboutIcon({ index }: { index: number }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.65, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const icons = [
+    <><circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2.5" /><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3" /></>,
+    <><path d="M7 3.5h7l3 3V20.5H7z" /><path d="M14 3.5v4h4M9.5 11h5M9.5 14.5h5" /></>,
+    <><rect x="3" y="7" width="14" height="11" rx="2" /><path d="m17 10 4-2v9l-4-2M7 7l1.5-3h3L13 7" /></>,
+    <><path d="M4 19V5M4 19h16" /><path d="m7 15 4-4 3 2 5-6" /><path d="M16 7h3v3" /></>,
+  ];
+  return <span aria-hidden="true" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "#fff", background: "linear-gradient(145deg,#8b5cf6,#37146d)" }}><svg width="62%" height="62%" viewBox="0 0 24 24" {...common}>{icons[index] ?? icons[0]}</svg></span>;
 }
 
 /**

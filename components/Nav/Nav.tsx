@@ -452,11 +452,8 @@ export default function Nav({
           aria-live="polite"
           aria-label={`Opening ${transition.label}`}
           style={{
-            position: "absolute",
-            left: -layout.pad,
-            top: 0,
-            width: "100vw",
-            height: "100dvh",
+            position: "fixed",
+            inset: 0,
             zIndex: 3000,
             display: "grid",
             placeItems: "center",

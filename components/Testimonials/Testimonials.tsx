@@ -49,9 +49,10 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
           style={{
             paddingInline: layout.pad,
             display: "flex",
-            flexDirection: stacked ? "column" : "row",
-            alignItems: stacked ? "flex-start" : "flex-end",
-            justifyContent: "space-between",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
             gap: space.lg,
           }}
         >
@@ -61,7 +62,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
               Real people. Real results. In their own words.
             </GradientRevealText>
           </div>
-          {!stacked && (
+          {!stacked && items.length > 1 && (
             <div style={{ display: "flex", gap: space.s }}>
               <Arrow label="Previous testimonial" direction={-1} onClick={() => goTo(active - 1)} disabled={active === 0} />
               <Arrow label="Next testimonial" direction={1} onClick={() => goTo(active + 1)} disabled={active === items.length - 1} />
@@ -92,8 +93,12 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
             scrollBehavior: "smooth",
             overscrollBehaviorInline: "contain",
             scrollbarWidth: "none",
+            WebkitOverflowScrolling: "touch",
+            touchAction: "pan-x pan-y",
+            cursor: items.length > 1 ? "grab" : "default",
             paddingInline: stacked ? "8vw" : layout.pad,
             paddingBottom: space.md,
+            justifyContent: items.length === 1 ? "center" : undefined,
           }}
         >
           {items.map((item, index) => {

@@ -347,7 +347,8 @@ export default function CaseStudy({
             padding: `${stacked ? 24 : space.lg}px`,
             borderRadius: 12,
             background: hexA(color.textOnLight, 0.04),
-            textAlign: "left",
+            textAlign: "center",
+            alignItems: "center",
             transition: `background ${ease.hoverMs}ms ${ease.hover}`,
             ...(stacked ? {
               position: "sticky",
@@ -376,7 +377,7 @@ export default function CaseStudy({
             style={{
               ...typeScale.h3,
               color: color.textOnLight,
-              maxWidth: "12ch",
+              maxWidth: "15ch",
               display: "-webkit-box",
               WebkitBoxOrient: "vertical",
               WebkitLineClamp: 2,
@@ -404,7 +405,7 @@ export default function CaseStudy({
               margin: 0,
               ...typeScale.bodyLg,
               color: color.textOnLightMuted,
-              maxWidth: "26ch",
+              maxWidth: "28ch",
               display: "-webkit-box",
               WebkitBoxOrient: "vertical",
               WebkitLineClamp: 2,
@@ -470,12 +471,14 @@ export default function CaseStudy({
           style={{
             display: "flex",
             flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
             gap: rhythm.headerToContent,
             padding: `${space.xxl}px ${layout.pad} ${layout.section}px`,
           }}
         >
           <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
-          <GradientRevealText as="h3" tone="light" style={{ ...typeScale.h1 }}>
+          <GradientRevealText as="h3" tone="light" style={{ ...typeScale.h1, maxWidth: "18ch" }}>
             {copy.resultsHeadline}
           </GradientRevealText>
           {metrics}

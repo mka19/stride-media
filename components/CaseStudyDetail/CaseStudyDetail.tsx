@@ -39,22 +39,24 @@ export default function CaseStudyDetail({ study }: { study: CaseStudyRecord }) {
     <main className="study-page">
       <header className="study-topbar">
         <a className="study-brand" href="/" aria-label="Stride Media home"><StrideMark size={34} /><span>STRIDE MEDIA</span></a>
-        <a className="study-back" href="/#case-study">← Back to case studies</a>
+        <a className="study-back" href="/#case-study"><span aria-hidden="true">←</span><span>Back to case studies</span></a>
       </header>
 
       <div className="study-shell">
         <aside className="study-rail" aria-label="Case study contents">
-          <a className="study-rail-back" href="/#case-study">← Back</a>
+          <a className="study-rail-back" href="/#case-study"><span aria-hidden="true">←</span><span>Back</span></a>
           <nav>{sectionLinks.map(([id, label], index) => <a key={id} href={`#${id}`} className={activeSection === id ? "is-active" : undefined} aria-current={activeSection === id ? "location" : undefined}><span>{String(index + 1).padStart(2, "0")}</span>{label}</a>)}</nav>
         </aside>
 
         <article className="study-content">
-          <section className="study-hero" id="summary">
+          <section className={`study-hero${study.portrait ? "" : " study-hero--no-portrait"}`} id="summary">
             {study.portrait && <div className="study-hero-portrait" aria-hidden="true"><img src={study.portrait} alt="" /></div>}
-            <div className="study-meta"><span>{study.client}</span><span>{study.year}</span></div>
-            {study.demo && <MicroLabel tone="accent">Demo case study</MicroLabel>}
-            <h1>{study.headline}</h1>
-            <p className="study-summary">{study.summary}</p>
+            <div className="study-hero-copy">
+              <div className="study-meta"><span>{study.client}</span><span>{study.year}</span></div>
+              {study.demo && <MicroLabel tone="accent">Demo case study</MicroLabel>}
+              <h1>{study.headline}</h1>
+              <p className="study-summary">{study.summary}</p>
+            </div>
             <div className="study-context">
               <div><span>Client</span><strong>{study.client}</strong><a href={study.demo ? undefined : `https://instagram.com/${study.handle.replace("@", "")}`} target="_blank" rel="noreferrer">{study.handle}</a></div>
               <div><span>Focus</span><strong>{study.descriptor}</strong></div>

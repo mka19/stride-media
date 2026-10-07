@@ -430,24 +430,26 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           style={{
             display: "flex",
             flexDirection: "column",
-            padding: `${layout.section} ${layout.pad}`,
+            alignItems: "center",
+            textAlign: "center",
+            padding: `${space.xxl}px ${layout.pad} ${layout.section}px`,
           }}
         >
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <h2 style={{ margin: "18px 0 0", ...typeScale.displayLg, fontSize: "clamp(38px, 11vw, 52px)", lineHeight: .92, letterSpacing: "-.045em" }}>
+          <h2 style={{ margin: `${rhythm.eyebrowToHeadline}px 0 0`, ...typeScale.h1, fontSize: "clamp(36px, 10vw, 48px)", lineHeight: .96, letterSpacing: "-.04em" }}>
             {copy.headline.map((w) => (
               <GradientRevealText key={w} as="span" style={{ display: "block" }}>
                 {w}
               </GradientRevealText>
             ))}
           </h2>
-          <p style={{ margin: "24px 0 0", maxWidth: "30ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>
+          <p style={{ margin: `${rhythm.headlineToBody}px 0 0`, maxWidth: "34ch", ...typeScale.bodyLg, lineHeight: 1.5, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "sticky", top: `calc(${layout.navHeight}px + 12px)`, zIndex: 8, width: "min(100%, 420px)", margin: "32px auto 0", height: "clamp(210px, 28vh, 260px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
+          <div style={{ position: "relative", zIndex: 8, width: "min(100%, 420px)", margin: "28px auto 0", height: "clamp(170px, 24vh, 220px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
             <div style={{ position: "absolute", inset: "8%" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 16 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 16, width: "100%", textAlign: "left" }}>
             {copy.capabilities.map((cap, i) => (
               <div
                 key={cap.n}

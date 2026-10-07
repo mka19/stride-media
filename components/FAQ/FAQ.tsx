@@ -182,11 +182,13 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
           fontFamily: typeScale.bodyLg.fontFamily,
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
           gap: space.xl,
           padding: `${layout.section} ${layout.pad}`,
         }}
       >
-        <GradientRevealText as="h2" style={{ ...typeScale.h1 }}>
+        <GradientRevealText as="h2" style={{ ...typeScale.h1, maxWidth: "18ch" }}>
           {copy.label}
         </GradientRevealText>
         {list}

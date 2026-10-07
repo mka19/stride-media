@@ -30,6 +30,13 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const cardWidth = bp === "mobile" ? "85vw" : bp === "tablet" ? 240 : 280;
   const mobileTrack = useRef<HTMLDivElement | null>(null);
   const [mobileIndex, setMobileIndex] = useState(0);
+  const [mobilePaused, setMobilePaused] = useState(false);
+
+  const goToMobile = (index: number) => {
+    const el = mobileTrack.current;
+    const card = el?.children[index] as HTMLElement | undefined;
+    card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  };
 
   const rootRef = useGsapContext(
     (root) => {
@@ -107,6 +114,10 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
           <div
             ref={mobileTrack}
             aria-label="Client results — swipe horizontally"
+            onPointerDown={() => setMobilePaused(true)}
+            onPointerUp={() => setMobilePaused(false)}
+            onPointerCancel={() => setMobilePaused(false)}
+            onTouchEnd={() => setMobilePaused(false)}
             onScroll={(event) => {
               const el = event.currentTarget;
               const card = el.firstElementChild as HTMLElement | null;
@@ -141,13 +152,15 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
                 type="button"
                 aria-label={`Show result ${i + 1}`}
                 aria-current={mobileIndex === i ? "true" : undefined}
-                onClick={() => {
-                  const el = mobileTrack.current;
-                  const card = el?.children[i] as HTMLElement | undefined;
-                  card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-                }}
+                onClick={() => goToMobile(i)}
                 style={{ width: 44, height: 44, padding: 0, border: 0, display: "grid", placeItems: "center", background: "transparent", cursor: "pointer" }}
-              ><span aria-hidden="true" style={{ display: "block", width: mobileIndex === i ? 28 : 7, height: 7, borderRadius: 999, background: mobileIndex === i ? color.accent : hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}, background 400ms ${ease.out}` }} /></button>
+              >
+                <span aria-hidden="true" style={{ position: "relative", display: "block", width: mobileIndex === i ? 32 : 7, height: 7, overflow: "hidden", borderRadius: 999, background: hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}` }}>
+                  {mobileIndex === i && (
+                    <span className="testimonial-progress-fill" onAnimationEnd={() => { if (!mobilePaused) goToMobile((mobileIndex + 1) % copy.cards.length); }} style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationPlayState: mobilePaused ? "paused" : "running" }} />
+                  )}
+                </span>
+              </button>
             ))}
           </div>
         </div>
@@ -340,16 +353,33 @@ function ResultCard({
   seed: number;
   width: number | string;
 }) {
-  // Each reel plays only while its own card is on screen.
+  const [playing, setPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.4 }, false);
+  const videoSrc = src?.replace(/\.jpg(?:\?.*)?$/i, ".mp4");
+
+  useEffect(() => {
+    if (!inView && videoRef.current) {
+      videoRef.current.pause();
+      setPlaying(false);
+    }
+  }, [inView]);
+
+  const togglePlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      void video.play();
+      setPlaying(true);
+    } else {
+      video.pause();
+      setPlaying(false);
+    }
+  };
 
   return (
-    <a
+    <article
       className="rs-card"
-      href={card.link}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`Watch ${card.handle} reel with ${card.views} views on Instagram`}
       style={{
         flex: `0 0 ${typeof width === "number" ? `${width}px` : width}`,
         display: "flex",
@@ -362,8 +392,9 @@ function ResultCard({
         textDecoration: "none",
       }}
     >
-      <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh" }}>
-        <MediaTile src={src} seed={seed + 21} play={inView} radius={4} style={{ position: "absolute", inset: 0 }} />
+      <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
+        {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
         {/* client avatar, top-left */}
         <div
@@ -400,6 +431,7 @@ function ResultCard({
         >
           {card.views} Views
         </div>
+        {videoSrc && <button type="button" onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, margin: "auto", width: 64, height: 64, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .68), color: "#fff", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 11, fontWeight: 600, textTransform: "uppercase" }}>{playing ? "Pause" : "Play"}</button>}
       </div>
 
       <div className="premium-rise-copy" style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>
@@ -412,8 +444,8 @@ function ResultCard({
           marginTop: "auto",
         }}
       >
-        {card.handle}
+        <a href={card.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4 }} aria-label={`Open ${card.handle} reel on Instagram`}>{card.handle} · Instagram ↗</a>
       </div>
-    </a>
+    </article>
   );
 }

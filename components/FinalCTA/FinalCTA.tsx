@@ -74,10 +74,10 @@ export default function FinalCTA({
         }}
       >
         {/* ---- left ---- */}
-        <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: stacked ? 0 : `0 clamp(12px, 2vw, 32px)` }}>
+        <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: stacked ? "center" : undefined, textAlign: stacked ? "center" : undefined, padding: stacked ? 0 : `0 clamp(12px, 2vw, 32px)` }}>
           <WorldMap />
 
-          <div className="cta-item" style={{ alignSelf: "flex-start" }}>
+          <div className="cta-item" style={{ alignSelf: stacked ? "center" : "flex-start" }}>
             <MicroLabel tone="accent">{copy.pill}</MicroLabel>
           </div>
 
@@ -99,7 +99,7 @@ export default function FinalCTA({
             style={{
               position: "relative",
               margin: `${bp === "mobile" ? 20 : rhythm.headlineToBody}px 0 0`,
-              maxWidth: "40ch",
+              maxWidth: "36ch",
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
             }}
@@ -109,7 +109,7 @@ export default function FinalCTA({
 
           <div
             className="cta-item"
-            style={{ position: "relative", marginTop: bp === "mobile" ? 34 : space.xxl, display: "flex", flexDirection: "column", gap: space.xs }}
+            style={{ position: "relative", marginTop: bp === "mobile" ? 20 : space.xxl, display: "flex", flexDirection: "column", alignItems: stacked ? "center" : undefined, gap: space.xs }}
           >
             {brand.phone && <>
               <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
@@ -135,7 +135,7 @@ export default function FinalCTA({
             </a>
           </div>
 
-          <div className="cta-item" style={{ position: "relative", marginTop: bp === "mobile" ? 28 : space.xl }}>
+          <div className="cta-item" style={{ position: "relative", marginTop: bp === "mobile" ? 18 : space.xl }}>
             <GlowButton href={calendly}>{copy.button}</GlowButton>
           </div>
         </div>
@@ -156,11 +156,11 @@ export default function FinalCTA({
             boxShadow: "0 28px 90px rgba(0,0,0,.35)",
           }}
         >
-          <MicroLabel tone="accent">{copy.calendlyHeader}</MicroLabel>
+          <div style={{ alignSelf: "center" }}><MicroLabel tone="accent">{copy.calendlyHeader}</MicroLabel></div>
           <CalendlyEmbed
             url={calendly}
-            minHeight={680}
-            minHeightMobile={700}
+            minHeight={560}
+            minHeightMobile={440}
             style={{ width: "100%", minWidth: 0 }}
           />
         </div>

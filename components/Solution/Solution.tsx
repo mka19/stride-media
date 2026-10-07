@@ -186,16 +186,16 @@ export default function Solution({
           padding: `${layout.section} ${layout.pad}`,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: rhythm.headlineToBody }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: rhythm.headlineToBody }}>
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
-          <h2 style={{ margin: 0, ...typeScale.h1 }}>
+          <h2 style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>
             {copy.headline.map((line, i) => (
               <GradientRevealText key={i} as="span" style={{ display: "block" }}>
                 {line}
               </GradientRevealText>
             ))}
           </h2>
-          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "52ch" }}>
+          <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "42ch" }}>
             {copy.body}
           </p>
         </div>
