@@ -3,7 +3,7 @@ import { gsap, useGsapContext, prefersReducedMotion } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
 import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, MediaTile, MicroLabel } from "../shared/primitives";
-import { useBreakpoint, useStacked } from "../shared/responsive";
+import { useBreakpoint, useCanHover, useStacked } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
 import GradientRevealText from "../shared/GradientRevealText";
 
@@ -31,6 +31,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const mobileTrack = useRef<HTMLDivElement | null>(null);
   const [mobileIndex, setMobileIndex] = useState(0);
   const [mobilePaused, setMobilePaused] = useState(false);
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   const goToMobile = (index: number) => {
     const el = mobileTrack.current;
@@ -141,7 +142,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
           >
             {copy.cards.map((card, i) => (
               <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
-                <ResultCard card={card} src={clips[i]} seed={i} width="100%" />
+                <ResultCard card={card} src={clips[i]} seed={i} width="100%" instanceKey={`mobile-${i}`} activeVideo={activeVideo} setActiveVideo={setActiveVideo} />
               </div>
             ))}
           </div>
@@ -177,6 +178,9 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               src={clips[i]}
               seed={i}
               width={cardWidth}
+              instanceKey={`ticker-${copyIndex}-${i}`}
+              activeVideo={activeVideo}
+              setActiveVideo={setActiveVideo}
             />
           )),
         )}
@@ -347,36 +351,40 @@ function ResultCard({
   src,
   seed,
   width,
+  instanceKey,
+  activeVideo,
+  setActiveVideo,
 }: {
   card: (typeof copy.cards)[number];
   src?: string;
   seed: number;
   width: number | string;
+  instanceKey: string;
+  activeVideo: string | null;
+  setActiveVideo: (key: string | null) => void;
 }) {
-  const [playing, setPlaying] = useState(false);
+  const canHover = useCanHover();
+  const playing = activeVideo === instanceKey;
+  const [hovered, setHovered] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.4 }, false);
   const videoSrc = src?.replace(/\.jpg(?:\?.*)?$/i, ".mp4");
 
   useEffect(() => {
-    if (!inView && videoRef.current) {
-      videoRef.current.pause();
-      setPlaying(false);
-    }
-  }, [inView]);
-
-  const togglePlayback = async () => {
     const video = videoRef.current;
     if (!video) return;
-    if (video.paused) {
-      try {
-        await video.play();
-      } catch {
-        setPlaying(false);
-      }
+    if (playing && inView) {
+      void video.play().catch(() => setActiveVideo(null));
     } else {
       video.pause();
     }
+  }, [inView, playing, setActiveVideo]);
+
+  const togglePlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    setActiveVideo(playing ? null : instanceKey);
   };
 
   return (
@@ -395,7 +403,7 @@ function ResultCard({
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
         {/* client avatar, top-left */}
@@ -434,8 +442,8 @@ function ResultCard({
           {card.views} Views
         </div>
         {videoSrc && (
-          <button type="button" onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: "pointer", display: "grid", placeItems: "center" }}>
-            <span style={{ width: 68, height: 68, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .68), display: "grid", placeItems: "center", backdropFilter: "blur(10px)", fontSize: 11, fontWeight: 600, textTransform: "uppercase" }}>{playing ? "Pause" : "Play"}</span>
+          <button type="button" onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>
+            <span style={{ position: "absolute", left: canHover ? cursorPos.x : "50%", top: canHover ? cursorPos.y : "50%", transform: "translate(-50%, -50%)", width: 78, height: 78, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .72), display: canHover && !hovered ? "none" : "grid", placeItems: "center", backdropFilter: "blur(10px)", fontSize: 10, lineHeight: 1.1, fontWeight: 600, textTransform: "uppercase", pointerEvents: "none" }}>{playing ? "Pause video" : "Play video"}</span>
           </button>
         )}
       </div>
@@ -450,7 +458,7 @@ function ResultCard({
           marginTop: "auto",
         }}
       >
-        <a href={card.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4 }} aria-label={`Open ${card.handle} reel on Instagram`}>{card.handle} · Instagram ↗</a>
+        <a className="result-instagram-link" href={card.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4 }} aria-label={`Open ${card.handle} reel on Instagram`}>{card.handle} · Instagram <span aria-hidden="true">↗</span></a>
       </div>
     </article>
   );

@@ -127,14 +127,20 @@ body {
 .video-library-card { min-width: 0; }
 .video-library-frame { position: relative; overflow: hidden; aspect-ratio: 9 / 16; background: #151515; }
 .video-library-frame .video-library-play { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.video-library-frame .video-library-play.has-hover-cursor { cursor: none; }
 .video-library-frame img, .video-library-frame video { width: 100%; height: 100%; display: block; object-fit: cover; }
-.video-library-frame .video-library-play span { position: absolute; left: 50%; top: 50%; translate: -50% -50%; min-width: 76px; height: 58px; padding: 0 14px; display: grid; place-items: center; border-radius: 999px; color: #fff; background: rgba(8,8,8,.76); backdrop-filter: blur(10px); font-size: 10px; font-weight: 600; text-transform: uppercase; }
+.video-library-frame .video-library-play span { position: absolute; translate: -50% -50%; width: 78px; height: 78px; padding: 0 10px; place-items: center; border-radius: 999px; color: #fff; background: rgba(8,8,8,.76); border: 1px solid rgba(255,255,255,.35); backdrop-filter: blur(10px); font-size: 10px; line-height: 1.1; font-weight: 600; text-transform: uppercase; pointer-events: none; }
 .video-library-copy { padding: 18px 0 28px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .video-library-copy > span { color: #a78bfa; font-size: 11px; line-height: 15px; text-transform: uppercase; }
 .video-library-copy h2 { min-height: 2.3em; margin: 7px 0 12px; font-size: clamp(20px, 1.5vw, 26px); line-height: 1.14; font-weight: 500; }
 .video-library-copy > div { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .video-library-copy strong, .video-library-copy a { color: rgba(255,255,255,.62); font-size: 12px; line-height: 16px; font-weight: 400; text-decoration: none; }
+.video-library-copy strong { color: rgba(255,255,255,.88); font-size: clamp(17px, 1.3vw, 22px); line-height: 1.1; font-weight: 500; }
 .video-library-copy a { display: inline-flex; align-items: center; gap: 7px; color: #fff; }
+.video-library-copy a, .result-instagram-link { transition: color 220ms ease; }
+.video-library-copy a svg, .result-instagram-link span { transition: transform 220ms ease; }
+.video-library-copy a:hover, .result-instagram-link:hover { color: #a78bfa !important; }
+.video-library-copy a:hover svg, .result-instagram-link:hover span { transform: translate(3px,-3px); }
 
 @media (max-width: 1100px) { .video-library-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (max-width: 760px) {
