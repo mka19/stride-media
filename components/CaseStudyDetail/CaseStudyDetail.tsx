@@ -50,6 +50,7 @@ export default function CaseStudyDetail({ study }: { study: CaseStudyRecord }) {
 
         <article className="study-content">
           <section className="study-hero" id="summary">
+            {study.portrait && <div className="study-hero-portrait" aria-hidden="true"><img src={study.portrait} alt="" /></div>}
             <div className="study-meta"><span>{study.client}</span><span>{study.year}</span></div>
             {study.demo && <MicroLabel tone="accent">Demo case study</MicroLabel>}
             <h1>{study.headline}</h1>

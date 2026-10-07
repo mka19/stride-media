@@ -14,7 +14,7 @@ export const brand = {
   name: "Stride Media",
   /* The bar carries the full name, not a shortening of it. */
   mark: "STRIDE MEDIA",
-  tagline: "AI Creators. Real Recognition.",
+  tagline: "Strategy. Content. Recognition.",
   phone: "+1 (000) 000-0000", // PLACEHOLDER
   phoneLabel: "Call us 24/7",
   email: "hello@stridemedia.co", // PLACEHOLDER
@@ -48,7 +48,7 @@ export const hero = {
   proofCount: "115+",
   proofLabel: "happy clients",
   headline: ["BUILD A BRAND", "THAT GETS RECOGNIZED"],
-  sub: "AI-powered video content for entrepreneurs who want authority, engagement and results. You never pick up a camera.",
+  sub: "Short-form video content for entrepreneurs who want authority, engagement and results. Stride handles the complete production.",
   cta: "Book your free strategy call",
   scrollHint: "Scroll",
 } as const;
@@ -57,7 +57,7 @@ export const problem = {
   /** The dark opening chapter is the studio's About statement. */
   label: "About",
   intro:
-    "Stride Media exists because talented entrepreneurs keep losing to louder, less capable competitors. Not on skill, on visibility. We build the video presence that makes recognition inevitable, using AI to move faster than any traditional agency, without cutting corners on quality.",
+    "Stride Media exists because talented entrepreneurs keep losing to louder, less capable competitors. Not on skill, on visibility. We build the video presence that makes recognition inevitable through strategy, production and consistent delivery.",
   /**
    * The same statement, broken where it should break. The pinned chapter
    * reveals one of these at a time, so the break points are a writing
@@ -134,8 +134,8 @@ export const solution = {
     },
     {
       n: "03",
-      title: "AI-Powered Production",
-      body: "High-quality video content, delivered fast, without filming a single second yourself.",
+      title: "End-to-End Production",
+      body: "High-quality video content, planned, shot and delivered by one team.",
     },
   ],
 } as const;
@@ -208,13 +208,13 @@ export const caseStudy = {
 
 export const whyStride = {
   label: "Why Stride",
-  headline: ["AI", "VIDEO", "SCRIPTS", "POSITIONING"],
+  headline: ["STRATEGY", "VIDEO", "SCRIPTS", "POSITIONING"],
   transition: "Not another content factory.",
   capabilities: [
     {
       n: "01",
-      title: "AI-Powered Content Creation",
-      body: "Faster than traditional production, without sacrificing quality.",
+      title: "High-Volume Content Creation",
+      body: "A reliable production system that delivers quality at a consistent pace.",
     },
     {
       n: "02",
@@ -287,7 +287,7 @@ export const faq = {
   items: [
     {
       q: "Do I need to film anything?",
-      a: "No. Everything is AI-powered. No camera, no filming, no stress.",
+      a: "No. Stride plans and runs the shoot, then handles editing and delivery end to end.",
     },
     {
       q: "What industries do you work with?",
@@ -320,7 +320,7 @@ export const marquee = {
 
 export const footer = {
   wordmark: "STRIDE MEDIA",
-  tagline: "AI Creators. Real Recognition.",
+  tagline: "Strategy. Content. Recognition.",
   /** Numbered, down the left. */
   nav: [
     { n: "01", label: "Home", href: "#top" },

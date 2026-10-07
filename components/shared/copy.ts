@@ -14,8 +14,8 @@ export const brand = {
   name: "Stride Media",
   /* The bar carries the full name, not a shortening of it. */
   mark: "STRIDE MEDIA",
-  tagline: "AI Creators. Real Recognition.",
-  phone: "+1 (415) 555-0136", // Demo contact
+  tagline: "Strategy. Content. Recognition.",
+  phone: "",
   phoneLabel: "Call us 24/7",
   email: "hello@stridemedia.co", // PLACEHOLDER
   url: "stridemedia.co",
@@ -134,8 +134,8 @@ export const solution = {
     },
     {
       n: "03",
-      title: "AI-Powered Production",
-      body: "High-quality video content, delivered fast, without filming a single second yourself.",
+      title: "End-to-End Production",
+      body: "High-quality video content, planned, shot and delivered by one team.",
     },
   ],
 } as const;
@@ -174,12 +174,12 @@ export const caseStudy = {
   headline: ["Why Atlas Realty", "trusted Stride"],
   intro: ["One entrepreneur. One invisible brand.", "One system that changed that."],
   gallery: [
-    { caption: "Strategy call — day one" },
-    { caption: "Positioning frame" },
-    { caption: "Hook test — variant B" },
-    { caption: "Ep. 09 — Buyer myths" },
-    { caption: "Studio pass — colour" },
-    { caption: "Ep. 12 — The 3% rule" },
+    { caption: "Anna Herbst · 15K organic followers" },
+    { caption: "Monish Bakhru · 12.1M top-reel views" },
+    { caption: "Imtaz Ahmed · AED 20M+ in sales" },
+    { caption: "Yasmin Shafi · 101K followers" },
+    { caption: "Maaz Kadri · 12M-view breakthrough" },
+    { caption: "Anonymous · What the process taught us" },
     { caption: "Thumbnail set" },
     { caption: "Ep. 17 — Off-market" },
   ],
@@ -187,34 +187,34 @@ export const caseStudy = {
   /** The hover badge over each gallery plate. */
   hoverTop: "View",
   hoverMain: "case study",
-  resultsLabel: "Demo outcome · ninety days later",
-  resultsHeadline: "The number that mattered moved.",
+  resultsLabel: "Verified client outcomes",
+  resultsHeadline: "The numbers that mattered moved.",
   /** The sentence on the floor of each metric card. */
   /* Two lines each, at the card's measure — the cards sit in a row and an
      odd one running to three broke the line they share. */
   metricNotes: [
-    "Reach from month one to month three, same cadence.",
-    "Views across the quarter, from a standing start.",
-    "Inbound conversations that began with content.",
-    "Listings sourced from the feed, no cold outreach.",
+    "Anna Herbst grew from 800 to 15K followers with zero paid promotion.",
+    "Monny's four top-performing reels generated 12.1M combined views.",
+    "Imtaz Ahmed sold more than AED 20M in property through content in three months.",
+    "Yasmin Shafi grew from roughly 100 to 101K followers in eight months.",
   ],
   metrics: [
-    { value: "41", suffix: "×", label: "Reach in ninety days" },
-    { value: "2.4", suffix: "M", label: "Views across the quarter" },
-    { value: "68", suffix: "", label: "Inbound conversations" },
-    { value: "9", suffix: "", label: "Listings sourced" },
+    { value: "14.2", suffix: "K", label: "Organic followers gained · Anna" },
+    { value: "12.1", suffix: "M", label: "Top-four reel views · Monny" },
+    { value: "20", suffix: "M+", label: "AED in property sales · Imtaz" },
+    { value: "100.9", suffix: "K", label: "Followers gained · Yasmin" },
   ],
 } as const;
 
 export const whyStride = {
   label: "Why Stride",
-  headline: ["AI", "VIDEO", "SCRIPTS", "POSITIONING"],
+  headline: ["STRATEGY", "VIDEO", "SCRIPTS", "POSITIONING"],
   transition: "Not another content factory.",
   capabilities: [
     {
       n: "01",
-      title: "AI-Powered Content Creation",
-      body: "Faster than traditional production, without sacrificing quality.",
+      title: "High-Volume Content Creation",
+      body: "A reliable production system that delivers quality at a consistent pace.",
     },
     {
       n: "02",
@@ -247,15 +247,15 @@ export const whyStride = {
 export const results = {
   label: "Client Results",
   headline: "Real videos, real numbers",
-  body: "Demo campaign media and sample metrics, ready to replace with verified client results.",
-  link: "See More Works",
+  body: "The highest-performing verified reels from Stride client accounts.",
+  link: "View all videos",
   cards: [
-    { views: "758K", metric: "2.3× engagement growth", desc: "Demo campaign · optimized content structure for better watch time.", handle: "@atlasrealty.demo", client: "AR" },
-    { views: "1.2M", metric: "+10K followers in 30 days", desc: "Demo campaign · consistent strategy with high-retention edits.", handle: "@northstar.demo", client: "NS" },
-    { views: "623K", metric: "+5K followers in 1 month", desc: "Demo campaign · a system built for consistency and growth.", handle: "@founderframe.demo", client: "FF" },
-    { views: "2.2M", metric: "18K saves", desc: "Demo campaign · highest save rate of the quarter.", handle: "@urbanledger.demo", client: "UL" },
-    { views: "880K", metric: "4.2K shares", desc: "Demo campaign · a four-part buyer-myth hook test.", handle: "@studioeight.demo", client: "S8" },
-    { views: "510K", metric: "11 weeks, zero missed", desc: "Demo campaign · a weekly market update delivered on time.", handle: "@marketbrief.demo", client: "MB" },
+    { views: "6.2M", metric: "Top-performing reel", desc: "First-time investor content built for reach and trust.", handle: "@yasmin_dxb_", client: "YS", link: "https://www.instagram.com/reel/DVdxAsbD1g7/" },
+    { views: "5.8M", metric: "Top-performing reel", desc: "Hindi-led property content reaching investors worldwide.", handle: "@monny.bullandbear", client: "MB", link: "https://www.instagram.com/reel/DY2K7TMMHux/" },
+    { views: "3.8M", metric: "Verified result", desc: "A warm, direct explanation made for first-time buyers.", handle: "@yasmin_dxb_", client: "YS", link: "https://www.instagram.com/reel/DSaEmRggv4u/" },
+    { views: "3.5M", metric: "Verified result", desc: "A high-retention property reel delivered through a consistent system.", handle: "@monny.bullandbear", client: "MB", link: "https://www.instagram.com/reel/DZ0E4ncMOrE/" },
+    { views: "2.5M", metric: "+27K followers", desc: "One reel that turned clear advice into sustained account growth.", handle: "@yasmin_dxb_", client: "YS", link: "https://www.instagram.com/reel/DW1U7cEE8W1/" },
+    { views: "1.7M", metric: "Verified result", desc: "Investor-focused content with a direct conversation trigger.", handle: "@monny.bullandbear", client: "MB", link: "https://www.instagram.com/reel/DdMXsvtsQxX/" },
   ],
 } as const;
 
@@ -263,7 +263,7 @@ export const testimonials = {
   label: "Testimonials",
   headline: "What entrepreneurs say after working with Stride",
   cards: [
-    { quote: "Before Stride, we were posting randomly with no real strategy. Now every video has a purpose, and it shows in the results.", name: "Avery Stone · Demo", handle: "Real estate", stat: "2.3× engagement", initials: "AS" },
+    { quote: "Watch their experience working with Stride Media.", name: "Client testimonial", handle: "Dubai", stat: "Real story", initials: "ST" },
     { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "Noah Bennett · Demo", handle: "Real estate", stat: "41× reach", initials: "NB" },
     { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "Leila Hart · Demo", handle: "Coaching", stat: "11 weeks straight", initials: "LH" },
     { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "Marcus Reed · Demo", handle: "Consulting", stat: "Calendar full", initials: "MR" },
@@ -287,7 +287,7 @@ export const faq = {
   items: [
     {
       q: "Do I need to film anything?",
-      a: "No. Everything is AI-powered. No camera, no filming, no stress.",
+      a: "No. Stride plans and runs the shoot, then handles editing and delivery end to end.",
     },
     {
       q: "What industries do you work with?",
@@ -307,7 +307,7 @@ export const faq = {
     },
     {
       q: "Do you offer month-to-month or contracts?",
-      a: "Demo terms: flexible month-to-month service after the initial strategy sprint, with 30 days’ notice to pause or cancel.",
+      a: "Engagements are structured around the scope, production volume and campaign goals agreed at the start.",
     },
   ],
 } as const;
@@ -319,17 +319,10 @@ export const founders = {
   people: [
     {
       n: "01",
-      name: "Maya Chen",
-      role: "Co-founder · Strategy",
-      bio: "The point of view behind the positioning, scripts and systems that make every piece of content feel unmistakably yours.",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=82",
-    },
-    {
-      n: "02",
-      name: "Elias Morgan",
-      role: "Co-founder · Creative",
-      bio: "The creative direction behind Stride’s visual language, production quality and the details that make people stop scrolling.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=82",
+      name: "Ayub Shaikh",
+      role: "Founder",
+      bio: "Dubai-based founder of Stride Media. Full profile details will be added once the final founder biography is confirmed.",
+      image: "/founders/ayub-shaikh.webp",
     },
   ],
   memories: [
@@ -348,7 +341,7 @@ export const marquee = {
 
 export const footer = {
   wordmark: "STRIDE MEDIA",
-  tagline: "AI Creators. Real Recognition.",
+  tagline: "Strategy. Content. Recognition.",
   /** Numbered, down the left. */
   nav: [
     { n: "01", label: "Home", href: "#top" },
@@ -374,7 +367,7 @@ export const footer = {
   ],
   rights: "all rights reserved",
   basedLabel: "Based in",
-  basedIn: "Austin, TX · Demo",
+  basedIn: "Dubai, UAE",
   legal: [
     { label: "Terms & conditions", href: "/terms.html" },
     { label: "Privacy policy", href: "/privacy.html" },

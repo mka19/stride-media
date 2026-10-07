@@ -456,7 +456,7 @@ export default function CaseStudy({
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
-                <MediaTile src={plate.src} seed={plate.w} style={{ position: "absolute", inset: 0 }} />
+                <MediaTile src={plate.src} seed={plate.w} mediaFit="contain" style={{ position: "absolute", inset: 0, background: color.ink }} />
               </div>
               <figcaption style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
                 {plate.caption}
@@ -530,7 +530,7 @@ export default function CaseStudy({
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
-                <MediaTile src={plate.src} seed={plate.w} style={{ position: "absolute", inset: 0 }} />
+                <MediaTile src={plate.src} seed={plate.w} mediaFit="contain" style={{ position: "absolute", inset: 0, background: color.ink }} />
                 <FluidWake />
                 <figcaption
                   style={{

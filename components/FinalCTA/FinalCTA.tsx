@@ -111,12 +111,14 @@ export default function FinalCTA({
             className="cta-item"
             style={{ position: "relative", marginTop: bp === "mobile" ? 34 : space.xxl, display: "flex", flexDirection: "column", gap: space.xs }}
           >
-            <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
-              {brand.phoneLabel}
-            </span>
-            <a href={`tel:${brand.phone}`} style={{ ...typeScale.h3, minHeight: 44, display: "inline-flex", alignItems: "center", color: color.textOnDark, textDecoration: "none" }}>
-              {brand.phone}
-            </a>
+            {brand.phone && <>
+              <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
+                {brand.phoneLabel}
+              </span>
+              <a href={`tel:${brand.phone}`} style={{ ...typeScale.h3, minHeight: 44, display: "inline-flex", alignItems: "center", color: color.textOnDark, textDecoration: "none" }}>
+                {brand.phone}
+              </a>
+            </>}
             <a
               href={`mailto:${brand.email}`}
               style={{

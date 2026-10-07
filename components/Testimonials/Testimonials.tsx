@@ -13,14 +13,16 @@ import { useInView } from "../shared/useInView";
  * identity. Real video URLs play inline; until those arrive, MediaTile keeps
  * the final composition visible without inventing client footage.
  */
-export default function Testimonials({ videos = [] }: { videos?: string[] }) {
+export default function Testimonials({ videos = [], posters = [] }: { videos?: string[]; posters?: string[] }) {
   const stacked = useStacked();
   const { ref } = useInView<HTMLElement>({ threshold: 0.18 }, false);
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
-  const items = copy.cards.slice(0, 6);
+  // Only render supplied client footage. This prevents placeholder stories
+  // from appearing as real testimonials while additional interviews arrive.
+  const items = copy.cards.slice(0, videos.length);
 
   const goTo = (index: number) => {
     const next = Math.max(0, Math.min(items.length - 1, index));
@@ -102,7 +104,7 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
                 key={`${item.name}-${index}`}
                 style={{
                   position: "relative",
-                  aspectRatio: "9 / 14",
+                  aspectRatio: "9 / 16",
                   overflow: "hidden",
                   borderRadius: stacked ? 10 : 12,
                   background: "#111",
@@ -127,7 +129,7 @@ export default function Testimonials({ videos = [] }: { videos?: string[] }) {
                 ) : (
                   <>
                     <MediaTile
-                      src={src}
+                      src={posters[index]}
                       seed={41 + index * 9}
                       play={false}
                       style={{ position: "absolute", inset: 0, transform: "scale(1.02)" }}

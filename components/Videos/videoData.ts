@@ -1,0 +1,28 @@
+export type Reel = { id: string; client: string; handle: string; title: string; views?: string; instagram: string };
+
+export const reels: Reel[] = [
+  { id: "DVdxAsbD1g7", client: "Yasmin Shafi", handle: "@yasmin_dxb_", title: "First-time investor reel", views: "6.2M", instagram: "https://www.instagram.com/reel/DVdxAsbD1g7/" },
+  { id: "DY2K7TMMHux", client: "Monish Bakhru", handle: "@monny.bullandbear", title: "Dubai property reel", views: "5.8M", instagram: "https://www.instagram.com/reel/DY2K7TMMHux/" },
+  { id: "DSaEmRggv4u", client: "Yasmin Shafi", handle: "@yasmin_dxb_", title: "First-time investor reel", views: "3.8M", instagram: "https://www.instagram.com/reel/DSaEmRggv4u/" },
+  { id: "DZ0E4ncMOrE", client: "Monish Bakhru", handle: "@monny.bullandbear", title: "Investor education reel", views: "3.5M", instagram: "https://www.instagram.com/reel/DZ0E4ncMOrE/" },
+  { id: "DW1U7cEE8W1", client: "Yasmin Shafi", handle: "@yasmin_dxb_", title: "Dubai property breakdown", views: "2.5M", instagram: "https://www.instagram.com/reel/DW1U7cEE8W1/" },
+  { id: "DdMXsvtsQxX", client: "Monish Bakhru", handle: "@monny.bullandbear", title: "Investor-focused property reel", views: "1.7M", instagram: "https://www.instagram.com/reel/DdMXsvtsQxX/" },
+  { id: "DaX_ktTMDQr", client: "Monish Bakhru", handle: "@monny.bullandbear", title: "Dubai investor reel", views: "1.1M", instagram: "https://www.instagram.com/reel/DaX_ktTMDQr/" },
+  { id: "DaS18_JMXYx", client: "Imtaz Ahmed", handle: "@realtyguru_", title: "Bangla property reel", views: "680K", instagram: "https://www.instagram.com/reel/DaS18_JMXYx/" },
+  { id: "DbbCMviJ4oY", client: "Imtaz Ahmed", handle: "@realtyguru_", title: "Investor property reel", views: "429K", instagram: "https://www.instagram.com/reel/DbbCMviJ4oY/" },
+  { id: "DclmArLMpTv", client: "Imtaz Ahmed", handle: "@realtyguru_", title: "Dubai real estate reel", views: "243K", instagram: "https://www.instagram.com/reel/DclmArLMpTv/" },
+  { id: "DbI8fPNAvvT", client: "Imtaz Ahmed", handle: "@realtyguru_", title: "Property call-to-action reel", views: "209K", instagram: "https://www.instagram.com/reel/DbI8fPNAvvT/" },
+  { id: "DHJFa7mTX94", client: "Monish Bakhru", handle: "@monny.bullandbear", title: "Dubai investor reel", instagram: "https://www.instagram.com/reel/DHJFa7mTX94/" },
+  { id: "DItnxyFTqwF", client: "Monish Bakhru", handle: "@monny.bullandbear", title: "Property advisor reel", instagram: "https://www.instagram.com/reel/DItnxyFTqwF/" },
+  { id: "DZaJxRRh6kp", client: "Yasmin Shafi", handle: "@yasmin_dxb_", title: "Dubai buyer education", instagram: "https://www.instagram.com/reel/DZaJxRRh6kp/" },
+  { id: "Dci9AJEhJGd", client: "Yasmin Shafi", handle: "@yasmin_dxb_", title: "First-time buyer reel", instagram: "https://www.instagram.com/reel/Dci9AJEhJGd/" },
+  { id: "DTNkjYcE_pD", client: "Yasmin Shafi", handle: "@yasmin_dxb_", title: "Dubai investment reel", instagram: "https://www.instagram.com/reel/DTNkjYcE_pD/" },
+  { id: "DYzkwqhAkY1", client: "Imtaz Ahmed", handle: "@realtyguru_", title: "Bangla real estate reel", instagram: "https://www.instagram.com/reel/DYzkwqhAkY1/" },
+  { id: "DaYCxKjMEPo", client: "Imtaz Ahmed", handle: "@realtyguru_", title: "Dubai property reel", instagram: "https://www.instagram.com/reel/DaYCxKjMEPo/" },
+  { id: "DRZkSxOj3oh", client: "Anna Herbst", handle: "@_annaherbst", title: "German investor reel", instagram: "https://www.instagram.com/reel/DRZkSxOj3oh/" },
+  { id: "DTvRUy8Dy5w", client: "Anna Herbst", handle: "@_annaherbst", title: "Dubai investment reel", instagram: "https://www.instagram.com/reel/DTvRUy8Dy5w/" },
+  { id: "DSH_yDNE7d_", client: "Maaz Kadri", handle: "@maaz.realtor", title: "Dubai real estate reel", instagram: "https://www.instagram.com/reel/DSH_yDNE7d_/" },
+  { id: "DSm8pjwEzMT", client: "Maaz Kadri", handle: "@maaz.realtor", title: "Property education reel", instagram: "https://www.instagram.com/reel/DSm8pjwEzMT/" },
+  { id: "DaSY-ElqB3n", client: "Maaz Kadri", handle: "@maaz.realtor", title: "Dubai property reel", instagram: "https://www.instagram.com/reel/DaSY-ElqB3n/" },
+  { id: "DaxsOkLKZ7L", client: "Maaz Kadri", handle: "@maaz.realtor", title: "Investor content reel", instagram: "https://www.instagram.com/reel/DaxsOkLKZ7L/" },
+];

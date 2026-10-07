@@ -96,7 +96,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         </p>
         {/* The same plate as every other call to action on the site — a
             coloured text link here read as a different kind of control. */}
-        <GlowButton href="#contact" style={{ marginTop: space.sm }}>
+        <GlowButton href="/videos" style={{ marginTop: space.sm }}>
           {copy.link}
         </GlowButton>
       </div>
@@ -344,8 +344,12 @@ function ResultCard({
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.4 }, false);
 
   return (
-    <article
+    <a
       className="rs-card"
+      href={card.link}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Watch ${card.handle} reel with ${card.views} views on Instagram`}
       style={{
         flex: `0 0 ${typeof width === "number" ? `${width}px` : width}`,
         display: "flex",
@@ -354,6 +358,8 @@ function ResultCard({
         userSelect: "none",
         transformStyle: "preserve-3d",
         willChange: "transform, opacity",
+        color: "inherit",
+        textDecoration: "none",
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh" }}>
@@ -408,6 +414,6 @@ function ResultCard({
       >
         {card.handle}
       </div>
-    </article>
+    </a>
   );
 }

@@ -1,5 +1,6 @@
 export type CaseStudyRecord = {
   slug: string; client: string; handle: string; descriptor: string; year: string; demo?: boolean;
+  portrait?: string;
   headline: string; summary: string; metrics: { label: string; before: string; after: string }[];
   chapters: { id: string; label: string; title: string; body: string; bullets?: { title: string; body: string }[] }[];
   results: string[]; reels?: { url: string; views: string }[];
@@ -14,7 +15,7 @@ const serviceBullets = [
 
 export const caseStudies: CaseStudyRecord[] = [
   {
-    slug: "anna-herbst", client: "Anna Herbst", handle: "@_annaherbst", year: "2026",
+    slug: "anna-herbst", client: "Anna Herbst", handle: "@_annaherbst", year: "2026", portrait: "/case-studies/portraits/anna-herbst.webp",
     descriptor: "Dubai real estate expert · German-speaking investors across Germany, Austria and Switzerland",
     headline: "From 800 to 15K organic followers with a content system built to convert.",
     summary: "Anna was posting without direction. Stride built her positioning, production and lead-generation system from zero, then scaled it to more than 200 pieces a month.",
@@ -38,7 +39,7 @@ export const caseStudies: CaseStudyRecord[] = [
     results: ["800 to 15K followers, all organic with zero paid promotion", "1.55M views and 768K accounts reached", "92.9% of views from non-followers", "11,972 likes, 3,556 shares, 2,016 saves and 1,954 comments", "Real leads, closed deals and new property listings"],
   },
   {
-    slug: "monish-bakhru", client: "Monish Bakhru", handle: "@monny.bullandbear", year: "2026",
+    slug: "monish-bakhru", client: "Monish Bakhru", handle: "@monny.bullandbear", year: "2026", portrait: "/case-studies/portraits/monish-bakhru.webp",
     descriptor: "RERA-certified Dubai property advisor · Indian investors worldwide · With Stride since May 2026",
     headline: "A quiet 30K account became a 55.6K verified growth engine in four months.",
     summary: "Monny already had an audience. Stride restored the rhythm, sharpened the language and turned consistent publishing into millions of monthly views.",
@@ -66,7 +67,7 @@ export const caseStudies: CaseStudyRecord[] = [
     ],
   },
   {
-    slug: "imtaz-ahmed", client: "Imtaz Ahmed", handle: "@realtyguru_", year: "2026",
+    slug: "imtaz-ahmed", client: "Imtaz Ahmed", handle: "@realtyguru_", year: "2026", portrait: "/case-studies/portraits/imtaz-ahmed.webp",
     descriptor: "Founder, Prime Level Real Estate · Bangladeshi audience in the UAE and worldwide",
     headline: "AED 20M+ in property sold through content in three months.",
     summary: "Imtaz already had attention. Stride rebuilt the content around investor intent and clear calls to action, turning viewers into buyers.",
@@ -93,7 +94,7 @@ export const caseStudies: CaseStudyRecord[] = [
     ],
   },
   {
-    slug: "yasmin-shafi", client: "Yasmin Shafi", handle: "@yasmin_dxb_", year: "2026",
+    slug: "yasmin-shafi", client: "Yasmin Shafi", handle: "@yasmin_dxb_", year: "2026", portrait: "/case-studies/portraits/yasmin-shafi.webp",
     descriptor: "Dubai property advisor · First-time NRI and UAE investors · With Stride since January 2026",
     headline: "From 100 followers to 101K in eight months.",
     summary: "Stride positioned Yasmin as the trusted elder sister of Dubai property and built a warm, useful content system around the questions first-time investors actually ask.",
@@ -121,30 +122,30 @@ export const caseStudies: CaseStudyRecord[] = [
     ],
   },
   {
-    slug: "demo-founder", client: "Nadia Kareem", handle: "Demo profile", year: "Demo", demo: true,
-    descriptor: "Founder-led education brand · Demonstration case study",
-    headline: "A clear founder voice turned scattered ideas into a repeatable growth system.",
-    summary: "This sample shows how a future Stride client story will appear once approved client material is supplied.",
-    metrics: [{ label: "Publishing", before: "Ad hoc", after: "20 videos/month" }, { label: "Positioning", before: "Broad", after: "One clear audience" }, { label: "Workflow", before: "Founder-led", after: "Managed end to end" }],
+    slug: "maaz-kadri", client: "Maaz Kadri", handle: "@maaz.realtor", year: "2026", portrait: "/case-studies/portraits/maaz-kadri.webp",
+    descriptor: "Dubai real estate professional · Instagram and Facebook growth",
+    headline: "One breakthrough reel turned consistency into 12 million views.",
+    summary: "Research built the ideas, consistency built the base and Maaz gave the team room to experiment until the format clicked.",
+    metrics: [{ label: "Instagram", before: "~6K followers", after: "26.3K followers" }, { label: "Facebook", before: "0 followers", after: "10,684 in ~3 months" }, { label: "Average views", before: "500–600", after: "10K–15K per video" }, { label: "Top reel", before: "No breakout video", after: "12M views" }],
     chapters: [
-      { id: "client", label: "The client", title: "A founder with expertise and no repeatable channel.", body: "Demo content for layout review. Replace with confirmed client information before publishing." },
-      { id: "challenge", label: "The challenge", title: "Strong ideas were trapped in an inconsistent workflow.", body: "The brand needed a clear point of view, dependable production and a measured call to action." },
-      { id: "strategy", label: "The strategy", title: "Build one recognisable content system.", body: "A focused audience, repeatable formats and a sustainable cadence shaped the plan.", bullets: serviceBullets },
-      { id: "work", label: "What we did", title: "A complete demonstration workflow.", body: "Sample strategy, scripting, production and publishing content for design review." },
-    ], results: ["Demo result · consistent monthly publishing", "Demo result · clearer audience positioning", "Demo result · repeatable production workflow"],
+      { id: "client", label: "The client", title: "A Dubai real estate professional ready to scale beyond Instagram.", body: "Maaz Kadri built his personal brand around practical Dubai property content and stayed open to testing new formats." },
+      { id: "challenge", label: "The challenge", title: "Good information was averaging 500 to 600 views.", body: "The page needed consistency, stronger research and enough creative freedom to discover a repeatable breakthrough format." },
+      { id: "strategy", label: "Why it worked", title: "Consistency built the base. Experimentation found the winner.", body: "Research shaped the ideas and an open creative partnership gave Stride room to test. When the 12-million-view reel hit, older property videos began generating leads too.", bullets: serviceBullets },
+      { id: "work", label: "Facebook", title: "An untapped channel became a second growth engine.", body: "Stride launched Maaz's Facebook page from zero. In one 28-day period it delivered 4M views, 2.4M viewers, 69,831 engagements and 5,074 net new followers." },
+    ], results: ["Instagram grew from ~6K to 26.3K followers", "Facebook grew from 0 to 10,684 followers in about three months", "Average views rose from 500–600 to 10K–15K", "One reel reached 12M views", "Older property videos generated more leads than he could handle"],
   },
   {
-    slug: "demo-advisor", client: "Omar Rahman", handle: "Demo profile", year: "Demo", demo: true,
-    descriptor: "Independent financial educator · Demonstration case study",
-    headline: "Complex advice became simple, watchable and easy to act on.",
-    summary: "This sample preserves the six-project case-study system while final client approval and media are pending.",
-    metrics: [{ label: "Content", before: "Technical", after: "Clear short-form series" }, { label: "Cadence", before: "Irregular", after: "5 posts/week" }, { label: "CTA", before: "None", after: "One action per video" }],
+    slug: "anonymous-learning", client: "Anonymous client", handle: "Client kept anonymous", year: "3 months",
+    descriptor: "Dubai real estate professional · A transparent project retrospective",
+    headline: "Not every project works. This one changed how every partnership starts.",
+    summary: "The same team and process produced a very different outcome when creative roles became blurred and testing stopped.",
+    metrics: [{ label: "Followers", before: "~100", after: "~150 after 3 months" }, { label: "Script length", before: "Under 1 minute planned", after: "2+ minute rewrites" }, { label: "Average views", before: "Growth target", after: "500–600" }],
     chapters: [
-      { id: "client", label: "The client", title: "Deep expertise that needed a simpler delivery.", body: "Demo content for layout review. Replace with confirmed client information before publishing." },
-      { id: "challenge", label: "The challenge", title: "Useful information was hard to scan and easy to skip.", body: "The content needed stronger hooks, simpler explanations and a clear action at the end." },
-      { id: "strategy", label: "The strategy", title: "Teach one useful idea at a time.", body: "We shaped a demonstration system around concise scripts, repeatable series and a direct CTA.", bullets: serviceBullets },
-      { id: "work", label: "What we did", title: "A demonstration content engine.", body: "Sample positioning, scripting, editing and distribution content for design review." },
-    ], results: ["Demo result · simplified educational series", "Demo result · consistent weekly cadence", "Demo result · clearer viewer actions"],
+      { id: "client", label: "The client", title: "An experienced professional starting with a small Instagram page.", body: "The client wanted to build a personal brand in Dubai real estate and began at roughly 100 followers." },
+      { id: "challenge", label: "What happened", title: "The process lost clarity at every creative handoff.", body: "Short scripts were repeatedly rewritten into report-style versions over two minutes. Ideas and edits went through repeated changes, proven formats were declined and there was little room left to test or optimise." },
+      { id: "strategy", label: "What we learned", title: "A script is only half the video.", body: "Strong content needs clear roles and an on-camera delivery that feels owned rather than read. Confidence grows with coaching, simpler formats and practice, but the creative system needs room to work.", bullets: [{ title: "Agree direction first", body: "Hooks, formats, script structure and length are aligned during the discovery call." }, { title: "Show the reasoning", body: "Clients see where ideas come from and why each format is chosen." }, { title: "Listen, then lead", body: "Client goals and boundaries come first; inside them, Stride leads the creative direction." }] },
+      { id: "work", label: "What we set up", title: "The full Stride process was in place.", body: "The same team behind the strongest results handled strategy, researched ideas, short-form scripting, shooting, editing and posting." },
+    ], results: ["Around 150 followers after three months", "Videos averaged 500–600 views", "Creative direction is now agreed before the first shoot", "Every client now sees how formats and ideas are selected", "On-camera coaching is introduced earlier when needed"],
   },
 ];
 

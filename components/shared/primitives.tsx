@@ -324,6 +324,7 @@ export function MediaTile({
   caption,
   play = true,
   radius = 0,
+  mediaFit = "cover",
   style,
   children,
 }: {
@@ -333,6 +334,7 @@ export function MediaTile({
   caption?: string;
   play?: boolean;
   radius?: number;
+  mediaFit?: "cover" | "contain";
   style?: CSSProperties;
   children?: ReactNode;
 }) {
@@ -382,7 +384,7 @@ export function MediaTile({
           alt=""
           loading="lazy"
           decoding="async"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: mediaFit, display: "block" }}
         />
       ) : src ? (
         <video
@@ -396,7 +398,7 @@ export function MediaTile({
           // Nothing below the fold decodes until it is near the viewport.
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           {...({ loading: "lazy" } as any)}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: mediaFit, display: "block" }}
         />
       ) : (
         <div
