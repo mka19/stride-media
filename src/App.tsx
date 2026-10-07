@@ -85,8 +85,8 @@ export default function App() {
       <HowItWorks />
       <Marquee items={marquee.process} />
       <Problem
-        backgroundSrc="/problem-transition.webp"
-        cardMedia={["/problem-01.webp", "/problem-02.webp", "/problem-03.webp"]}
+        backgroundSrc="/problem-transition.png"
+        cardMedia={["/problem-01.png", "/problem-02.png", "/problem-03.png"]}
       />
       <WhyStride />
       <Marquee items={marquee.outcome} direction={1} />

@@ -226,7 +226,7 @@ export default function Hero({
           <div
             style={{
               position: "absolute",
-              top: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : bp === "tablet" ? "calc(50% + 29vmin + 34px)" : "calc(50% + min(270px, 30vw) + 40px)",
+              bottom: bp === "mobile" ? 124 : 118,
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
               maxWidth: 640,

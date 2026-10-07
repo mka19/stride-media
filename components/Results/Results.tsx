@@ -365,15 +365,17 @@ function ResultCard({
     }
   }, [inView]);
 
-  const togglePlayback = () => {
+  const togglePlayback = async () => {
     const video = videoRef.current;
     if (!video) return;
     if (video.paused) {
-      void video.play();
-      setPlaying(true);
+      try {
+        await video.play();
+      } catch {
+        setPlaying(false);
+      }
     } else {
       video.pause();
-      setPlaying(false);
     }
   };
 
@@ -393,7 +395,7 @@ function ResultCard({
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
         {/* client avatar, top-left */}
@@ -431,7 +433,11 @@ function ResultCard({
         >
           {card.views} Views
         </div>
-        {videoSrc && <button type="button" onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, margin: "auto", width: 64, height: 64, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .68), color: "#fff", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 11, fontWeight: 600, textTransform: "uppercase" }}>{playing ? "Pause" : "Play"}</button>}
+        {videoSrc && (
+          <button type="button" onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: "pointer", display: "grid", placeItems: "center" }}>
+            <span style={{ width: 68, height: 68, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .68), display: "grid", placeItems: "center", backdropFilter: "blur(10px)", fontSize: 11, fontWeight: 600, textTransform: "uppercase" }}>{playing ? "Pause" : "Play"}</span>
+          </button>
+        )}
       </div>
 
       <div className="premium-rise-copy" style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>

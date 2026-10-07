@@ -324,7 +324,7 @@ export default function CaseStudy({
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: stacked ? "1fr" : "repeat(4, 1fr)",
+        gridTemplateColumns: stacked ? "1fr" : "repeat(4, minmax(0, 1fr))",
         gap: stacked ? 14 : layout.gutter,
         width: "100%",
         maxWidth: 1200,
@@ -470,6 +470,7 @@ export default function CaseStudy({
         <div
           style={{
             display: "flex",
+            minWidth: 0,
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",

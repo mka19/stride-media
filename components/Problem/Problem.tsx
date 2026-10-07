@@ -830,7 +830,7 @@ function AboutIcon({ index }: { index: number }) {
     <><rect x="3" y="7" width="14" height="11" rx="2" /><path d="m17 10 4-2v9l-4-2M7 7l1.5-3h3L13 7" /></>,
     <><path d="M4 19V5M4 19h16" /><path d="m7 15 4-4 3 2 5-6" /><path d="M16 7h3v3" /></>,
   ];
-  return <span aria-hidden="true" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "#fff", background: "linear-gradient(145deg,#8b5cf6,#37146d)" }}><svg width="62%" height="62%" viewBox="0 0 24 24" {...common}>{icons[index] ?? icons[0]}</svg></span>;
+  return <span aria-hidden="true" className="about-icon-tile" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "#fff", background: "linear-gradient(145deg,#8b5cf6,#37146d)", animationDelay: `${index * -0.7}s` }}><svg className="about-icon-glyph" width="62%" height="62%" viewBox="0 0 24 24" {...common}>{icons[index] ?? icons[0]}</svg></span>;
 }
 
 /**
