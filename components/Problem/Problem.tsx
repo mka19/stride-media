@@ -65,18 +65,6 @@ export default function Problem({
       approach(root, ".pb-frame");
       const cards = q(".pb-card");
 
-      // Measure each rendered plate when GSAP refreshes. The tablet grid and
-      // desktop grid give it different real dimensions, so a scale derived
-      // from an assumed 16:9 size can leave a white strip at the viewport
-      // edge. The extra 3% absorbs fractional-pixel rounding.
-      const scaleToCover = (media: HTMLElement) => {
-        const rect = media.getBoundingClientRect();
-        return Math.max(
-          window.innerWidth / Math.max(1, rect.width),
-          window.innerHeight / Math.max(1, rect.height),
-        ) * 1.03;
-      };
-
       // The statement resolves by opacity, not by a gradient: the words are
       // white throughout and simply come up from dim to full as the reading
       // reaches them. A clipped fill was a second colour laid over the type;
@@ -189,7 +177,7 @@ export default function Problem({
         const shade = card.querySelector(".pb-media-shade") as HTMLElement | null;
 
         gsap.set(card, { opacity: 0 });
-        if (media) gsap.set(media, { scale: 0.72, opacity: 0.72, transformOrigin: "50% 50%" });
+        if (media) gsap.set(media, { scale: 0.96, opacity: 0.72, transformOrigin: "50% 50%" });
         if (shade) gsap.set(shade, { opacity: 0 });
 
         // 1. show the plate in its resting position, then expand it to cover
@@ -198,7 +186,7 @@ export default function Problem({
           tl.to(
             media,
             {
-              scale: () => scaleToCover(media),
+              scale: 1,
               opacity: 1,
               duration: span * 0.34,
               ease: "power3.inOut",
@@ -264,7 +252,7 @@ export default function Problem({
       >
         {/* Part 1 — a normal block over the background, no pin, no reveal. */}
         <div style={{ position: "relative", background: color.black }}>
-          <MediaTile src={backgroundSrc} seed={7} style={{ position: "absolute", inset: 0 }} />
+          <MediaTile src={backgroundSrc} mediaFit="contain" imageLoading="eager" seed={7} style={{ position: "absolute", inset: 0, background: color.black }} />
           <div
             aria-hidden="true"
             style={{
@@ -337,7 +325,7 @@ export default function Problem({
                   {card.headline}
                 </GradientRevealText>
                 <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3", overflow: "hidden" }}>
-                  <MediaTile src={cardMedia[mobileCard]} mediaFit="contain" seed={mobileCard * 5 + 11} style={{ position: "absolute", inset: 0, background: color.black }} />
+                  <MediaTile src={cardMedia[mobileCard]} mediaFit="contain" imageLoading="eager" seed={mobileCard * 5 + 11} style={{ position: "absolute", inset: 0, background: color.black }} />
                 </div>
                 <p style={{ margin: 0, maxWidth: "40ch", ...typeScale.bodyLg, color: color.textOnLightMuted }}>
                   {card.body}
@@ -407,7 +395,7 @@ export default function Problem({
       >
         {/* ---------------- part 1 — dark, fixed background ---------------- */}
         <div className="pb-dark" style={{ position: "absolute", inset: 0 }}>
-          <MediaTile src={backgroundSrc} seed={7} style={{ position: "absolute", inset: 0 }} />
+          <MediaTile src={backgroundSrc} mediaFit="contain" imageLoading="eager" seed={7} style={{ position: "absolute", inset: 0, background: color.black }} />
           <div
             aria-hidden="true"
             style={{
@@ -482,7 +470,8 @@ export default function Problem({
                 textAlign: "center",
                 textTransform: "uppercase",
                 fontWeight: 500,
-                maxWidth: "min(1680px, 94vw)",
+                maxWidth: `calc(100vw - (${layout.pad} * 2))`,
+                overflowWrap: "anywhere",
               }}
             >
               {copy.introSequence.map((token, i) =>
@@ -705,7 +694,7 @@ export default function Problem({
                       style={{
                         position: "relative",
                         height: "100%",
-                        aspectRatio: "16 / 9",
+                        aspectRatio: "4 / 3",
                         // The portrait settles out of a push-in across the
                         // card's hold; without the clip it would bleed past
                         // its own frame as it scales.
@@ -717,6 +706,7 @@ export default function Problem({
                       <MediaTile
                         src={cardMedia[i]}
                         mediaFit="contain"
+                        imageLoading="eager"
                         seed={i * 5 + 11}
                         style={{ position: "absolute", inset: 0, background: color.black }}
                       />

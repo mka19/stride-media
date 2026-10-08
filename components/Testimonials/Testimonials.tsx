@@ -56,7 +56,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
             gap: space.lg,
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, maxWidth: 850 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: rhythm.eyebrowToHeadline, maxWidth: 850 }}>
             <MicroLabel tone="accent">Client stories</MicroLabel>
             <GradientRevealText as="h2" style={{ ...typeScale.h1, maxWidth: "22ch", textWrap: "balance" }}>
               Real people. Real results. In their own words.
@@ -84,7 +84,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
             setActive(next);
           }}
           style={{
-            display: "grid",
+            display: items.length === 1 ? "flex" : "grid",
             gridAutoFlow: "column",
             gridAutoColumns: stacked ? "78vw" : "clamp(290px, 27vw, 390px)",
             gap: stacked ? 16 : 24,
@@ -109,7 +109,9 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                 key={`${item.name}-${index}`}
                 style={{
                   position: "relative",
-                  aspectRatio: "9 / 16",
+                  width: stacked ? "78vw" : "clamp(290px, 27vw, 390px)",
+                  flex: "0 0 auto",
+                  aspectRatio: "9 / 11.2",
                   overflow: "hidden",
                   borderRadius: stacked ? 10 : 12,
                   background: "#111",

@@ -391,6 +391,12 @@ export default function CaseStudy({
             style={{
               ...typeScale.numberXl,
               ...numberGradient,
+              width: "100%",
+              fontSize: stacked ? "clamp(58px, 18vw, 96px)" : "clamp(48px, 5.2vw, 88px)",
+              lineHeight: 0.92,
+              letterSpacing: "-.055em",
+              whiteSpace: "nowrap",
+              textAlign: "center",
               fontVariantNumeric: "tabular-nums",
             }}
           >

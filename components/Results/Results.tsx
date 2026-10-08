@@ -433,10 +433,18 @@ function ResultCard({
             position: "absolute",
             left: space.md,
             bottom: space.md,
-            ...typeScale.h3,
-            fontWeight: 500,
-            color: color.textOnDark,
-            textShadow: `0 2px 18px ${hexA(color.black, 0.8)}`,
+            padding: "9px 12px",
+            borderRadius: 999,
+            fontSize: "clamp(17px, 1.4vw, 22px)",
+            lineHeight: 1,
+            fontWeight: 600,
+            color: "#fff",
+            background: hexA(color.accent, .88),
+            border: `1px solid ${hexA("#fff", .22)}`,
+            boxShadow: `0 8px 26px ${hexA(color.black, .38)}`,
+            textShadow: `0 1px 8px ${hexA(color.black, 0.35)}`,
+            backdropFilter: "blur(8px)",
+            zIndex: 2,
           }}
         >
           {card.views} Views
@@ -458,7 +466,7 @@ function ResultCard({
           marginTop: "auto",
         }}
       >
-        <a className="result-instagram-link" href={card.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4 }} aria-label={`Open ${card.handle} reel on Instagram`}>{card.handle} · Instagram <span aria-hidden="true">↗</span></a>
+        <a className="result-instagram-link" href={card.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4, minHeight: 44, display: "inline-flex", alignItems: "center" }} aria-label={`Open ${card.handle} reel on Instagram`}>{card.handle} · Instagram <span aria-hidden="true">↗</span></a>
       </div>
     </article>
   );

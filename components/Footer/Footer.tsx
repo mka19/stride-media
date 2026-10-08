@@ -230,13 +230,13 @@ export default function Footer({
           </span>
           <a
             href={`mailto:${brand.email}`}
-            style={{ color: "inherit", textDecoration: "none", textTransform: "none", minHeight: mobile ? 30 : 44, display: "inline-flex", alignItems: "center" }}
+            style={{ color: "inherit", textDecoration: "none", textTransform: "none", minHeight: 44, display: "inline-flex", alignItems: "center" }}
           >
             {brand.email}
           </a>
           <span style={{ display: "flex", justifyContent: mobile ? "center" : undefined, gap: mobile ? 20 : space.md }}>
             {copy.legal.map((item) => (
-              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none", minHeight: mobile ? 30 : 44, display: "inline-flex", alignItems: "center" }}>
+              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none", minHeight: 44, display: "inline-flex", alignItems: "center" }}>
                 {item.label}
               </a>
             ))}

@@ -325,6 +325,7 @@ export function MediaTile({
   play = true,
   radius = 0,
   mediaFit = "cover",
+  imageLoading = "lazy",
   style,
   children,
 }: {
@@ -335,6 +336,7 @@ export function MediaTile({
   play?: boolean;
   radius?: number;
   mediaFit?: "cover" | "contain";
+  imageLoading?: "eager" | "lazy";
   style?: CSSProperties;
   children?: ReactNode;
 }) {
@@ -382,9 +384,9 @@ export function MediaTile({
         <img
           src={src}
           alt=""
-          loading="lazy"
+          loading={imageLoading}
           decoding="async"
-          style={{ width: "100%", height: "100%", objectFit: mediaFit, display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: mediaFit, objectPosition: "center", display: "block" }}
         />
       ) : src ? (
         <video
