@@ -647,8 +647,8 @@ export default function Problem({
                       minWidth: 0,
                       position: "relative",
                       zIndex: 3,
-                      color: color.textOnDark,
-                      textShadow: "0 2px 22px rgba(0,0,0,.42)",
+                      color: color.textOnLight,
+                      textShadow: "none",
                     }}
                   >
                     <CardIcon index={i} />
@@ -656,7 +656,7 @@ export default function Problem({
                     <div style={{ ...typeScale.h3 }}>{card.label}</div>
                     <GradientRevealText
                       as="h3"
-                      tone="dark"
+                      tone="light"
                       style={{
                         ...typeScale.h1,
                         // Sized to its own column rather than to a character
@@ -721,7 +721,7 @@ export default function Problem({
                         }}
                       />
                     </div>
-                    <span className="pb-text" style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, position: "relative", zIndex: 3, textShadow: "0 2px 16px rgba(0,0,0,.5)" }}>
+                    <span className="pb-text" style={{ ...typeScale.eyebrow, color: color.textOnLightMuted, position: "relative", zIndex: 3, textShadow: "none" }}>
                       {card.caption}
                     </span>
                   </div>
@@ -747,8 +747,8 @@ export default function Problem({
                       height: "100%",
                       position: "relative",
                       zIndex: 3,
-                      color: color.textOnDark,
-                      textShadow: "0 2px 22px rgba(0,0,0,.42)",
+                      color: color.textOnLight,
+                      textShadow: "none",
                     }}
                   >
                     <div
@@ -770,7 +770,7 @@ export default function Problem({
                         maxWidth: "40ch",
                         textWrap: "balance",
                         ...typeScale.bodyLg,
-                        color: color.textOnDarkMuted,
+                        color: color.textOnLightMuted,
                       }}
                     >
                       {card.body}
