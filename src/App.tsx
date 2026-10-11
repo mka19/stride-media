@@ -46,13 +46,13 @@ export default function App() {
   // Media is limited to components that already own image/video slots. This
   // keeps every restored animation and the original hero mark untouched.
   const heroTiles = [
-    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=82",
-    "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
-    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=82",
-    "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=82",
-    "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=82",
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=82",
-  ].map((src, i) => ({ src, caption: ["Scripting workflow", "Creative direction", "Production system", "Content strategy", "Campaign review", "Creator direction"][i] }));
+    { src: "/case-studies/videos/ig-DVdxAsbD1g7.jpg", caption: "First-time investor reel", views: "6.2M views", href: "https://www.instagram.com/reel/DVdxAsbD1g7/" },
+    { src: "/case-studies/videos/ig-DY2K7TMMHux.jpg", caption: "Hindi property reel", views: "5.8M views", href: "https://www.instagram.com/reel/DY2K7TMMHux/" },
+    { src: "/case-studies/videos/ig-DSaEmRggv4u.jpg", caption: "First-time buyer reel", views: "3.8M views", href: "https://www.instagram.com/reel/DSaEmRggv4u/" },
+    { src: "/case-studies/videos/ig-DZ0E4ncMOrE.jpg", caption: "Property results reel", views: "3.5M views", href: "https://www.instagram.com/reel/DZ0E4ncMOrE/" },
+    { src: "/case-studies/videos/ig-DW1U7cEE8W1.jpg", caption: "Dubai advice reel", views: "2.5M views", href: "https://www.instagram.com/reel/DW1U7cEE8W1/" },
+    { src: "/case-studies/videos/ig-DdMXsvtsQxX.jpg", caption: "Investor conversation reel", views: "1.7M views", href: "https://www.instagram.com/reel/DdMXsvtsQxX/" },
+  ];
 
   const resultMedia = [
     "/case-studies/videos/ig-DVdxAsbD1g7.jpg",

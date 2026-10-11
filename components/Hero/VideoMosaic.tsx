@@ -14,7 +14,7 @@ import { color, ease, hexA } from "../shared/theme";
  * long ease is the whole point of the effect — nothing snaps.
  */
 
-export type MosaicTile = { src?: string; caption?: string };
+export type MosaicTile = { src?: string; caption?: string; views?: string; href?: string };
 
 
 /**
@@ -74,7 +74,7 @@ export default function VideoMosaic({
 
   return (
     <div
-      aria-hidden="true"
+      aria-label="Featured Stride reels"
       onMouseLeave={() => setHover(null)}
       style={{
         position: "absolute",
@@ -102,49 +102,60 @@ export default function VideoMosaic({
           {Array.from({ length: columns }, (_, col) => {
             const i = row * columns + col;
             const isHovered = hover?.col === col && hover?.row === row;
-            return (
-              <div
-                key={col}
-                onMouseEnter={() => interactive && pointer && setHover({ col, row })}
-                style={{
-                  position: "relative",
-                  flexGrow: weight(col, hover?.col ?? null),
-                  flexBasis: 0,
-                  minWidth: 0,
-                  // A containment boundary per cell: the tile's own layout
-                  // and paint cannot escape it, so growing one does not
-                  // invalidate the inside of the other forty-seven.
-                  contain: "layout paint",
-                  transition,
-                }}
-              >
+            const tile = cells[i];
+            const tileContent = (
+              <>
                 <MediaTile
-                  src={cells[i].src}
-                  caption={isHovered ? cells[i].caption : undefined}
+                  src={tile.src}
                   seed={i + 3}
                   play={active}
                   radius={6}
+                  style={{ position: "absolute", inset: 0 }}
+                />
+                <div
+                  className="hero-liquid-field"
+                  aria-hidden="true"
                   style={{
                     position: "absolute",
                     inset: 0,
-                    boxShadow: isHovered
-                      ? `0 0 0 1px ${hexA(color.accent, 0.55)}, 0 18px 60px ${hexA(color.black, 0.6)}`
-                      : "none",
-                    transition: `box-shadow 700ms ${ease.out}`,
+                    opacity: isHovered ? 0 : 1,
+                    background: `radial-gradient(90% 120% at ${18 + (i * 17) % 68}% ${16 + (i * 29) % 62}%, ${hexA(color.accentBright,.72)} 0%, transparent 52%), radial-gradient(110% 90% at ${82 - (i * 13) % 62}% ${80 - (i * 19) % 58}%, ${hexA(color.accentDeep,.86)} 0%, transparent 58%), linear-gradient(${125 + (i * 23) % 110}deg, #07070a, #24103f 52%, #080808)`,
+                    transition: `opacity 520ms ${ease.out}`,
+                    animationDelay: `${-(i % 8) * .7}s`,
                   }}
-                >
-                  {/* Unhovered tiles sit back behind a wash so the headline
-                      keeps the foreground; the hovered one clears. */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: hexA(color.black, isHovered ? 0.12 : 0.52),
-                      transition: `background 700ms ${ease.out}`,
-                    }}
-                  />
-                </MediaTile>
-              </div>
+                />
+                <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black,.12)}, ${hexA(color.black,isHovered ? .7 : .22)})` }} />
+                <span className="hero-tile-views" style={{ position: "absolute", left: 12, top: 11, color: "#fff", fontSize: 13, lineHeight: 1.1, fontWeight: 600, textShadow: "0 2px 12px rgba(0,0,0,.7)" }}>{tile.views}</span>
+                <span style={{ position: "absolute", left: 12, right: 12, bottom: 11, display: "flex", justifyContent: "space-between", gap: 12, color: "#fff", fontSize: 12, lineHeight: 1.25, fontWeight: 500, opacity: isHovered ? 1 : 0, transform: `translateY(${isHovered ? 0 : 8}px)`, transition: `opacity 320ms ease, transform 420ms ${ease.out}` }}><span>{tile.caption}</span><span aria-hidden="true">↗</span></span>
+              </>
+            );
+            const frameStyle = {
+              position: "relative" as const,
+              flexGrow: weight(col, hover?.col ?? null),
+              flexBasis: 0,
+              minWidth: 0,
+              contain: "layout paint" as const,
+              transition,
+              borderRadius: 6,
+              overflow: "hidden",
+              boxShadow: isHovered ? `0 0 0 1px ${hexA(color.accentBright,.55)}, 0 20px 60px ${hexA(color.accent,.22)}` : "none",
+            };
+            return tile.href ? (
+              <a
+                key={col}
+                href={tile.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${tile.caption}, ${tile.views}. Open on Instagram`}
+                onMouseEnter={() => interactive && pointer && setHover({ col, row })}
+                onFocus={() => interactive && setHover({ col, row })}
+                onBlur={() => setHover(null)}
+                style={frameStyle}
+              >
+                {tileContent}
+              </a>
+            ) : (
+              <div key={col} onMouseEnter={() => interactive && pointer && setHover({ col, row })} style={frameStyle}>{tileContent}</div>
             );
           })}
         </div>
