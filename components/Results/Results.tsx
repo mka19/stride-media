@@ -36,7 +36,10 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const goToMobile = (index: number) => {
     const el = mobileTrack.current;
     const card = el?.children[index] as HTMLElement | undefined;
-    card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    if (el && card) {
+      const left = card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2;
+      el.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    }
   };
 
   const rootRef = useGsapContext(
@@ -441,7 +444,7 @@ function ResultCard({
 
         {/* the stat that matters, over the reel */}
         <div
-          className="premium-rise-number"
+          className="result-view-strip"
           style={{
             position: "absolute",
             left: 0,
@@ -459,6 +462,8 @@ function ResultCard({
             textShadow: `0 1px 8px ${hexA(color.black, 0.35)}`,
             textAlign: "center",
             zIndex: 4,
+            opacity: 1,
+            isolation: "isolate",
           }}
         >
           {card.views} Views
