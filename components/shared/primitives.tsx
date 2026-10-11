@@ -225,7 +225,7 @@ export function GlowButton({
 
   const hoverIn = (el: HTMLElement) => {
     if (solid) {
-      el.style.color = color.textOnDark;
+      el.style.color = color.textOnLight;
     } else {
       el.style.background = hexA("#FFFFFF", 0.06);
       el.style.borderColor = hexA("#FFFFFF", 0.3);

@@ -82,7 +82,7 @@ body {
 @keyframes stride-spin { to { transform: rotate(360deg); } }
 .stride-spin { animation: stride-spin 20s linear infinite; }
 
-/* CTA shimmer: one purple light pass, with the arrow following its direction. */
+/* CTA shimmer: one purple light pass. The arrow stays anchored and grows. */
 .stride-button-shimmer {
   position: absolute;
   inset: -35%;
@@ -100,7 +100,8 @@ body {
 }
 .stride-button-arrow {
   display: inline-flex;
-  overflow: hidden;
+  overflow: visible;
+  transform-origin: center;
   transition: transform 620ms cubic-bezier(.16,1,.3,1);
 }
 .stride-button-arrow svg {
@@ -112,8 +113,9 @@ body {
 }
 .stride-glow-button:hover .stride-button-arrow,
 .stride-glow-button:focus-visible .stride-button-arrow {
-  transform: translate3d(3px, -3px, 0) scale(1.04);
+  transform: scale(1.5);
 }
+.stride-glow-button { color: #090909 !important; }
 
 /* Video archive: isolated from the homepage so it cannot alter any existing
    section measurements or scroll timelines. */
@@ -142,7 +144,7 @@ body {
 .video-library-copy a, .result-instagram-link { transition: color 220ms ease; }
 .video-library-copy a svg, .result-instagram-link span { transition: transform 220ms ease; }
 .video-library-copy a:hover, .result-instagram-link:hover { color: #a78bfa !important; }
-.video-library-copy a:hover svg, .result-instagram-link:hover span { transform: translate(3px,-3px); }
+.video-library-copy a:hover svg, .result-instagram-link:hover span { transform: scale(1.5); transform-origin: center; }
 
 @media (max-width: 1100px) { .video-library-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (max-width: 760px) {
@@ -363,8 +365,10 @@ html[data-motion="off"] .mobile-parallax-media {
    purple depth cue, while the CTA carries a moving gradient highlight. */
 .cs-plate-media { background: #000; transition: box-shadow 320ms cubic-bezier(.16,1,.3,1); }
 .cs-plate:hover .cs-plate-media { box-shadow: 0 13px 38px rgba(124,58,237,.24), 0 0 0 1px rgba(167,139,250,.15); }
-.cs-view-study { overflow: hidden; background-size: 240% 100% !important; background-position: 100% 50% !important; transition: background-position 520ms cubic-bezier(.16,1,.3,1), border-color 260ms ease, box-shadow 260ms ease !important; }
-.cs-plate:hover .cs-view-study { background-image: linear-gradient(110deg, #08060d 0%, #4c1d95 35%, #7c3aed 52%, #08060d 100%) !important; background-position: 0% 50% !important; border-color: rgba(167,139,250,.58) !important; box-shadow: 0 8px 28px rgba(124,58,237,.3); }
+.cs-view-study { display: inline-flex; align-items: center; gap: 9px; overflow: visible; color: #090909 !important; background: linear-gradient(110deg, #f8f7fb 0%, #eee8ff 44%, #b792ff 100%) !important; background-size: 240% 100% !important; background-position: 100% 50% !important; transition: background-position 520ms cubic-bezier(.16,1,.3,1), border-color 260ms ease, box-shadow 260ms ease !important; }
+.cs-view-study .cta-arrow { display: inline-flex; transform-origin: center; transition: transform 420ms cubic-bezier(.16,1,.3,1); }
+.cs-plate:hover .cs-view-study { background-image: linear-gradient(110deg, #fff 0%, #d9c7ff 38%, #8b5cf6 68%, #c9adff 100%) !important; background-position: 0% 50% !important; border-color: rgba(167,139,250,.68) !important; box-shadow: 0 8px 28px rgba(124,58,237,.3); }
+.cs-plate:hover .cs-view-study .cta-arrow { transform: scale(1.5); }
 @media (prefers-reduced-motion: reduce) {
   .about-icon-tile, .about-icon-glyph, .pb-floating-icon, .hero-liquid-field { animation: none !important; }
 }
@@ -431,11 +435,11 @@ html[data-motion="off"] .mobile-parallax-media {
 .study-reels > div { margin-top: 48px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
 .study-reels a { min-height: 140px; padding: 24px; display: grid; grid-template-columns: 1fr auto; align-content: space-between; gap: 16px; background: #151515; border: 1px solid transparent; transition: transform 300ms cubic-bezier(.16,1,.3,1), background 300ms ease, border-color 300ms ease, box-shadow 300ms ease; }
 .study-reels a:hover { transform: translateY(-6px); background: linear-gradient(135deg, rgba(76,29,149,.72), #151515 68%); border-color: rgba(167,139,250,.38); box-shadow: 0 14px 36px rgba(124,58,237,.18); }
-.study-reels a svg { transition: transform 300ms cubic-bezier(.16,1,.3,1); }.study-reels a:hover svg { transform: translate(5px,-5px); }
+.study-reels a svg { transform-origin: center; transition: transform 300ms cubic-bezier(.16,1,.3,1); }.study-reels a:hover svg { transform: scale(1.5); }
 .study-reels a span { grid-column: 1/-1; color: rgba(255,255,255,.58); font-size: 12px; text-transform: uppercase; }.study-reels strong { font-size: 24px; font-weight: 500; }
 .study-next { position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 12px; background: #fff; color: #0a0a0a !important; transition: background 420ms ease, color 320ms ease, box-shadow 320ms ease; }
 .study-next:hover { background: linear-gradient(120deg, #fff 0%, #eee7ff 52%, #d8c8ff 100%); box-shadow: inset 0 0 0 1px rgba(124,58,237,.2); }
-.study-next strong, .study-next svg { transition: transform 420ms cubic-bezier(.16,1,.3,1); }.study-next:hover strong { transform: translateX(10px); }.study-next:hover svg { transform: translate(8px,-8px) rotate(4deg); }
+.study-next strong, .study-next svg { transition: transform 420ms cubic-bezier(.16,1,.3,1); }.study-next:hover strong { transform: translateX(10px); }.study-next svg { transform-origin: center; }.study-next:hover svg { transform: scale(1.5); }
 .study-next span { grid-column: 1/-1; font-size: 12px; text-transform: uppercase; color: rgba(10,10,10,.58); }.study-next strong { font-size: clamp(42px, 7vw, 112px); line-height: .95; letter-spacing: -.045em; font-weight: 500; }
 
 @media (max-width: 768px) {

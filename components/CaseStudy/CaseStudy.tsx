@@ -572,7 +572,7 @@ export default function CaseStudy({
                     backdropFilter: "blur(12px)",
                   }}
                 >
-                  View case study ↗
+                  <span>View case study</span><span className="cta-arrow" aria-hidden="true">↗</span>
                 </span>
               </div>
             </a>
