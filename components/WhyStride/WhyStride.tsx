@@ -54,7 +54,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       objectRef.current?.setProgress(0);
       objectRef.current?.setVariant(0);
 
-      const variantFirst = 0.18;
+      // Give the opening mark and the text-scatter their own readable beats
+      // before the capability ticker begins.
+      const variantFirst = 0.36;
       const variantStep = (1 - variantFirst) / (copy.capabilities.length + 1.45);
 
       const tl = gsap.timeline({
@@ -81,13 +83,14 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * arriving first was tried and it inverts the argument: the object is
        * the answer to the words, so it cannot precede them.
        */
-      tl.to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.08)
+      tl.to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.06)
+        .set(q(".ws-headline"), { opacity: 1 }, 0.1)
 
         /* The window that uncovers each word would also clip it on the way
            out — the letters travel well past the block they belong to. It is
            opened once the last word has landed and before the scatter begins,
            and closes again on the way back up. */
-        .set(q(".ws-mask"), { overflow: "visible" }, 0.12);
+        .set(q(".ws-mask"), { overflow: "visible" }, 0.17);
 
       // 3. The letters scatter — trionn.com's services reveal: they are
       //    thrown right out of the frame, turning as they go.
@@ -128,7 +131,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
 
       // The scatter starts once the ground has turned and the words have
       // been readable on it for a beat.
-      const at = 0.12;
+      const at = 0.18;
 
       letters.forEach((letter, i) => {
         const box = letter.getBoundingClientRect();
@@ -204,7 +207,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       tl.to(
         q(".ws-label"),
         { opacity: 0, y: -14, scale: 0.92, filter: "blur(7px)", duration: 0.1, ease: "power2.in" },
-        0.16,
+        0.3,
       );
 
       /*
@@ -506,7 +509,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             justifyContent: "center",
             textAlign: "center",
             padding: `0 ${layout.pad}`,
-            color: color.textOnLight,
+            color: color.textOnDark,
+            zIndex: 4,
+            pointerEvents: "none",
           }}
         >
           <MicroLabel
