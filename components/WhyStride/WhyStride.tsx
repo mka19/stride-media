@@ -50,6 +50,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       gsap.set(q(".ws-object"), { opacity: 1, scale: 1, transformOrigin: "50% 50%" });
       gsap.set(q(".ws-headline"), { opacity: 0 });
       gsap.set(q(".ws-card"), { opacity: 0 });
+      gsap.set(q(".ws-transition"), { opacity: 0 });
       // The object never dissolves here: it is the fixed centrepiece.
       objectRef.current?.setProgress(0);
       objectRef.current?.setVariant(0);
@@ -84,6 +85,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * the answer to the words, so it cannot precede them.
        */
       tl.to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.06)
+        .to(q(".ws-object"), { opacity: 0, scale: 0.92, duration: 0.045, ease: "power1.in" }, 0.08)
         .set(q(".ws-headline"), { opacity: 1 }, 0.1)
 
         /* The window that uncovers each word would also clip it on the way
@@ -200,7 +202,8 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * back to its resting size — so it reads as having been behind them all
        * along rather than as a fifth thing arriving.
        */
-      tl.set(q(".ws-object"), { opacity: 1, scale: 1 }, 0);
+      tl.to(q(".ws-object"), { opacity: 1, scale: 1, duration: 0.045, ease: "power1.out" }, 0.32)
+        .to(q(".ws-transition"), { opacity: 1, duration: 0.04 }, 0.34);
 
       // The label has done its job by the time the type has gone; leaving it
       // sat on top of the mark.
@@ -302,6 +305,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       gsap.set(q(".ws-mask"), { overflow: "visible" });
       gsap.set(q(".ws-dark, .ws-object"), { opacity: 1, scale: 1 });
       gsap.set(q(".ws-card"), { opacity: 1, x: 0, y: 0 });
+      gsap.set(q(".ws-transition"), { opacity: 1 });
       objectRef.current?.setVariant(0);
     },
   );
@@ -418,6 +422,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
         style={{ background: color.black, color: color.textOnDark, fontFamily: typeScale.bodyLg.fontFamily }}
       >
         <div
+          className="ws-transition"
           style={{
             display: "flex",
             flexDirection: "column",

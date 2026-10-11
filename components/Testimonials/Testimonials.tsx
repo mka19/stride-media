@@ -27,7 +27,14 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
   const goTo = (index: number) => {
     const next = Math.max(0, Math.min(items.length - 1, index));
     const card = track.current?.children[next] as HTMLElement | undefined;
-    card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const rail = track.current;
+    if (rail && card) {
+      // Horizontal-only movement. scrollIntoView also moved the document on
+      // the block axis, so the timed carousel could pull visitors down to the
+      // testimonial section while they were reading somewhere else.
+      const left = card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2;
+      rail.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    }
     setActive(next);
     setPlaying(null);
   };
