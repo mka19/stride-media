@@ -253,7 +253,10 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
         const t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - viewBox.left - mid) / mid));
         const a = Math.abs(t);
         card.style.transform = `perspective(1500px) rotateY(${-t * 34}deg) translateZ(${-a * 210}px) scale(${1 - a * 0.1})`;
-        card.style.opacity = String(1 - a * 0.35);
+        // Keep every reel and its proof strip fully opaque. Perspective and
+        // scale provide enough depth; fading the whole card also faded the
+        // view count and made verified results look disabled.
+        card.style.opacity = "1";
       }
     };
     raf = requestAnimationFrame(frame);
@@ -444,11 +447,11 @@ function ResultCard({
             left: 0,
             right: 0,
             bottom: 0,
-            padding: "12px 14px",
+            padding: "14px 16px",
             borderRadius: 0,
-            fontSize: "clamp(17px, 1.4vw, 22px)",
+            fontSize: "clamp(20px, 1.65vw, 28px)",
             lineHeight: 1,
-            fontWeight: 600,
+            fontWeight: 700,
             color: "#fff",
             background: color.accent,
             border: 0,
