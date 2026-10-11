@@ -351,6 +351,13 @@ html[data-motion="off"] .mobile-parallax-media {
 .about-icon-glyph { animation: about-icon-breathe 3.2s ease-in-out infinite; }
 .about-icon-glyph * { stroke-dasharray: none; stroke-dashoffset: 0; }
 .pb-floating-icon { animation: about-icon-float 3.2s ease-in-out infinite; box-shadow: 0 10px 28px rgba(91,33,182,.32); }
+
+/* Case-study covers stay true black at their edges. Hover adds one restrained
+   purple depth cue, while the CTA carries a moving gradient highlight. */
+.cs-plate-media { background: #080808; transition: box-shadow 320ms cubic-bezier(.16,1,.3,1); }
+.cs-plate:hover .cs-plate-media { box-shadow: 0 18px 54px rgba(124,58,237,.34), 0 0 0 1px rgba(167,139,250,.22); }
+.cs-view-study { overflow: hidden; background-size: 240% 100% !important; background-position: 100% 50% !important; transition: background-position 520ms cubic-bezier(.16,1,.3,1), border-color 260ms ease, box-shadow 260ms ease !important; }
+.cs-plate:hover .cs-view-study { background-image: linear-gradient(110deg, #08060d 0%, #4c1d95 35%, #7c3aed 52%, #08060d 100%) !important; background-position: 0% 50% !important; border-color: rgba(167,139,250,.58) !important; box-shadow: 0 8px 28px rgba(124,58,237,.3); }
 @media (prefers-reduced-motion: reduce) {
   .about-icon-tile, .about-icon-glyph, .pb-floating-icon { animation: none !important; }
 }
@@ -382,7 +389,7 @@ html[data-motion="off"] .mobile-parallax-media {
 .study-hero--no-portrait .study-hero-copy { grid-column: 1 / -1; max-width: 1060px; }
 .study-meta { display: flex; justify-content: space-between; gap: 24px; color: rgba(255,255,255,.58); font-size: 12px; line-height: 16px; text-transform: uppercase; }
 .study-hero h1, .study-content h2, .study-content h3, .study-content p { margin: 0; }
-.study-hero h1 { max-width: 16ch; font-size: clamp(44px, 5vw, 86px); line-height: .98; letter-spacing: -.045em; font-weight: 500; text-wrap: balance; }
+.study-hero h1 { max-width: 18ch; font-size: clamp(38px, 3.7vw, 64px); line-height: 1.02; letter-spacing: -.04em; font-weight: 500; text-wrap: balance; }
 .study-summary { max-width: 52ch; font-size: clamp(18px, 1.5vw, 26px); line-height: 1.35; color: rgba(255,255,255,.64); }
 .study-context { grid-column: 1 / -1; margin-top: clamp(12px, 2vw, 32px); padding-top: 24px; display: grid; grid-template-columns: .7fr 1.15fr 1.3fr; gap: 32px; border-top: 1px solid rgba(255,255,255,.12); }
 .study-context > div { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -418,7 +425,7 @@ html[data-motion="off"] .mobile-parallax-media {
   .study-topbar { height: 68px; }.study-brand span { display: none; }.study-back { max-width: 18ch; text-align: right; }
   .study-shell { display: block; padding-inline: 0; }.study-rail { display: none; }
   .study-hero, .study-glance, .study-chapter, .study-results, .study-reels, .study-next { padding: 64px 24px; }
-  .study-hero { min-height: auto; grid-template-columns: 1fr; gap: 28px; }.study-hero h1 { font-size: clamp(42px, 12vw, 62px); }
+  .study-hero { min-height: auto; grid-template-columns: 1fr; gap: 28px; }.study-hero h1 { font-size: clamp(36px, 10vw, 50px); }
   .study-hero-portrait { width: min(78vw, 360px); justify-self: center; aspect-ratio: 4 / 5; }
   .study-hero-copy { align-items: center; text-align: center; }.study-meta { width: 100%; }.study-summary { text-align: center; }
   .study-context { grid-template-columns: 1fr; gap: 24px; }.study-context > div { padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.12); }

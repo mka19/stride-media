@@ -463,7 +463,7 @@ export default function CaseStudy({
               }}
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
-                <MediaTile src={plate.src} seed={plate.w} mediaFit="contain" style={{ position: "absolute", inset: 0, background: color.ink }} />
+                <MediaTile src={plate.src} seed={plate.w} mediaFit="contain" style={{ position: "absolute", inset: 0, background: color.black }} />
               </div>
               <figcaption style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
                 {plate.caption}
@@ -539,8 +539,8 @@ export default function CaseStudy({
                 textDecoration: "none",
               }}
             >
-              <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
-                <MediaTile src={plate.src} seed={plate.w} mediaFit="contain" style={{ position: "absolute", inset: 0, background: color.ink }} />
+              <div className="cs-plate-media" style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
+                <MediaTile src={plate.src} seed={plate.w} mediaFit="contain" style={{ position: "absolute", inset: 0, background: color.black }} />
                 <FluidWake />
                 <figcaption
                   style={{
@@ -558,6 +558,7 @@ export default function CaseStudy({
                   <span style={{ display: "block", marginTop: 5, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>{plate.caption.split(" · ")[1]}</span>
                 </figcaption>
                 <span
+                  className="cs-view-study"
                   style={{
                     position: "absolute",
                     right: space.s,
@@ -566,7 +567,7 @@ export default function CaseStudy({
                     padding: "9px 12px",
                     ...typeScale.eyebrow,
                     color: "#fff",
-                    background: "rgba(8,6,13,.56)",
+                    background: "rgba(8,6,13,.9)",
                     border: `1px solid ${hexA("#fff", .18)}`,
                     backdropFilter: "blur(12px)",
                   }}
