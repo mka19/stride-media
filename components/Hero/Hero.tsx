@@ -217,7 +217,7 @@ export default function Hero({
               // rise into the transparent navbar. Anchor the label below the
               // bar on tablet/desktop; the compact phone composition keeps
               // its model-relative spacing.
-              top: bp === "mobile" ? undefined : `calc(${layout.navHeight}px + ${space.lg}px)`,
+              top: bp === "mobile" ? undefined : `calc(${layout.navHeight}px + ${space.xl}px + 18px)`,
               bottom: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : undefined,
             }}
           >

@@ -166,7 +166,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
           </div>
         </div>
       ) : (
-      <Ticker>
+      <Ticker paused={activeVideo !== null}>
         {/* The set is rendered twice so the wrap is seamless: when the first
             copy has travelled its full width, the offset resets to zero and
             the second copy is already sitting exactly where it left off. */}
@@ -200,9 +200,13 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
  * throw settles. It halts under prefers-reduced-motion and while a pointer
  * is held down.
  */
-function Ticker({ children }: { children: ReactNode }) {
+function Ticker({ children, paused = false }: { children: ReactNode; paused?: boolean }) {
   const viewport = useRef<HTMLDivElement | null>(null);
   const track = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (viewport.current) viewport.current.dataset.paused = paused ? "true" : "false";
+  }, [paused]);
 
   useEffect(() => {
     const el = track.current;
@@ -230,7 +234,7 @@ function Ticker({ children }: { children: ReactNode }) {
       if (!dragging) {
         // A throw decays into the steady drift rather than stopping dead.
         velocity *= Math.pow(0.0015, dt);
-        const drift = reduced ? 0 : 34; // px per second
+        const drift = reduced || view.dataset.paused === "true" ? 0 : 34; // px per second
         offset += (drift + velocity) * dt;
       }
 
@@ -384,7 +388,13 @@ function ResultCard({
   const togglePlayback = () => {
     const video = videoRef.current;
     if (!video) return;
-    setActiveVideo(playing ? null : instanceKey);
+    if (playing) {
+      video.pause();
+      setActiveVideo(null);
+      return;
+    }
+    setActiveVideo(instanceKey);
+    void video.play().catch(() => setActiveVideo(null));
   };
 
   return (
@@ -431,26 +441,27 @@ function ResultCard({
           className="premium-rise-number"
           style={{
             position: "absolute",
-            left: space.md,
-            bottom: space.md,
-            padding: "9px 12px",
-            borderRadius: 999,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            padding: "12px 14px",
+            borderRadius: 0,
             fontSize: "clamp(17px, 1.4vw, 22px)",
             lineHeight: 1,
             fontWeight: 600,
             color: "#fff",
-            background: hexA(color.accent, .88),
-            border: `1px solid ${hexA("#fff", .22)}`,
-            boxShadow: `0 8px 26px ${hexA(color.black, .38)}`,
+            background: color.accent,
+            border: 0,
+            boxShadow: "none",
             textShadow: `0 1px 8px ${hexA(color.black, 0.35)}`,
-            backdropFilter: "blur(8px)",
-            zIndex: 2,
+            textAlign: "center",
+            zIndex: 4,
           }}
         >
           {card.views} Views
         </div>
         {videoSrc && (
-          <button type="button" onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>
+          <button type="button" onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, zIndex: 3, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>
             <span style={{ position: "absolute", left: canHover ? cursorPos.x : "50%", top: canHover ? cursorPos.y : "50%", transform: "translate(-50%, -50%)", width: 78, height: 78, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .72), display: canHover && !hovered ? "none" : "grid", placeItems: "center", backdropFilter: "blur(10px)", fontSize: 10, lineHeight: 1.1, fontWeight: 600, textTransform: "uppercase", pointerEvents: "none" }}>{playing ? "Pause video" : "Play video"}</span>
           </button>
         )}

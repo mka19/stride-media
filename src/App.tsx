@@ -64,11 +64,11 @@ export default function App() {
   ];
 
   const caseStudyPortraits = [
-    "/case-studies/portraits/anna-herbst.webp",
-    "/case-studies/portraits/monish-bakhru.webp",
-    "/case-studies/portraits/imtaz-ahmed.webp",
-    "/case-studies/portraits/yasmin-shafi.webp",
-    "/case-studies/portraits/maaz-home-cover.png",
+    "/case-studies/portraits/anna-herbst-cover.png",
+    "/case-studies/portraits/monish-bakhru-cover.png",
+    "/case-studies/portraits/imtaz-ahmed-cover.png",
+    "/case-studies/portraits/yasmin-shafi-cover.png",
+    "/case-studies/portraits/maaz-kadri-cover.png",
   ];
 
   if (selectedStudy) return <CaseStudyDetail study={selectedStudy} />;

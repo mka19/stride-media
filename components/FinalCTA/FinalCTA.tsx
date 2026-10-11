@@ -81,13 +81,13 @@ export default function FinalCTA({
             <MicroLabel tone="accent">{copy.pill}</MicroLabel>
           </div>
 
-          <div style={{ position: "relative", marginTop: bp === "mobile" ? 18 : rhythm.eyebrowToHeadline }}>
-            {copy.headline.map((line) => (
+          <div style={{ position: "relative", marginTop: bp === "mobile" ? 12 : Math.round(rhythm.eyebrowToHeadline * .65) }}>
+            {copy.headline.map((line, index) => (
               <GradientRevealText
                 key={line}
                 as="h2"
                 tone="dark"
-                style={{ ...typeScale.h1, display: "block", margin: 0 }}
+                style={{ ...typeScale.h1, display: "block", margin: index ? "-.12em 0 0" : 0 }}
               >
                 {line}
               </GradientRevealText>

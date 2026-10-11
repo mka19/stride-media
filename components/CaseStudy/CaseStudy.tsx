@@ -384,7 +384,7 @@ export default function CaseStudy({
               overflow: "hidden",
             }}
           >
-            {m.label}
+            {(i === 0 ? ["Organic views", "generated"] : i === 1 ? ["AED in", "property sales"] : i === 2 ? ["Followers", "gained"] : ["Lead-trigger", "comments"]).map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}
           </div>
 
           <div
@@ -545,15 +545,17 @@ export default function CaseStudy({
                 <figcaption
                   style={{
                     position: "absolute",
-                    left: space.s,
-                    bottom: space.s,
-                    ...typeScale.eyebrow,
-                    color: hexA("#FFFFFF", 0.82),
-                    textShadow: "0 1px 10px rgba(0,0,0,0.65)",
+                    left: space.lg,
+                    right: space.lg,
+                    bottom: space.lg,
+                    ...typeScale.h3,
+                    color: "#FFFFFF",
+                    textShadow: "0 2px 18px rgba(0,0,0,.9)",
                     zIndex: 3,
                   }}
                 >
-                  {plate.caption}
+                  <span style={{ display: "block" }}>{detailStudies[index]?.client ?? plate.caption.split(" · ")[0]}</span>
+                  <span style={{ display: "block", marginTop: 5, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>{plate.caption.split(" · ")[1]}</span>
                 </figcaption>
                 <span
                   style={{

@@ -629,7 +629,7 @@ export default function Problem({
                     // Shorter, because the plate is landscape now: at the old height a
                     // 16:9 frame took most of the row's width and squeezed the
                     // two text columns either side of it.
-                    height: "min(430px, 48vh)",
+                    height: "min(520px, 60vh)",
                     isolation: "isolate",
                   }}
                 >
@@ -666,9 +666,10 @@ export default function Problem({
                         lineHeight: fluid(31, 50),
                         maxWidth: "100%",
                         textWrap: "balance",
+                        whiteSpace: i === 2 ? "pre-line" : undefined,
                       }}
                     >
-                      {card.headline}
+                      {i === 2 ? "Stride delivers,\nevery time." : card.headline}
                     </GradientRevealText>
                   </div>
 
@@ -693,7 +694,8 @@ export default function Problem({
                       className="pb-media"
                       style={{
                         position: "relative",
-                        height: "100%",
+                        width: "min(39vw, 580px)",
+                        height: "min(500px, 58vh)",
                         aspectRatio: "4 / 3",
                         // The portrait settles out of a push-in across the
                         // card's hold; without the clip it would bleed past
@@ -710,13 +712,16 @@ export default function Problem({
                         seed={i * 5 + 11}
                         style={{ position: "absolute", inset: 0, background: color.black }}
                       />
+                      {[0, 1, 2, 3].map((icon) => (
+                        <span key={icon} className="pb-floating-icon" style={{ position: "absolute", zIndex: 3, width: 42, height: 42, borderRadius: 10, overflow: "hidden", left: icon % 2 === 0 ? 14 : undefined, right: icon % 2 ? 14 : undefined, top: icon < 2 ? 14 : undefined, bottom: icon >= 2 ? 14 : undefined, animationDelay: `${icon * -.55}s` }}><AboutIcon index={icon} /></span>
+                      ))}
                       <div
                         className="pb-media-shade"
                         aria-hidden="true"
                         style={{
                           position: "absolute",
                           inset: 0,
-                          background: "linear-gradient(90deg, rgba(4,3,8,.76) 0%, rgba(4,3,8,.34) 48%, rgba(4,3,8,.72) 100%)",
+                          background: "linear-gradient(90deg, rgba(4,3,8,.18) 0%, rgba(4,3,8,.04) 48%, rgba(4,3,8,.16) 100%)",
                           pointerEvents: "none",
                         }}
                       />

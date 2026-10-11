@@ -144,10 +144,10 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                     <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black, .08)} 10%, ${hexA(color.black, .9)} 100%)` }} />
                     <div style={{ position: "absolute", top: space.lg, left: space.lg, right: space.lg, display: "flex", justifyContent: "space-between", alignItems: "center", gap: space.md }}>
                       <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Client story · {String(index + 1).padStart(2, "0")}</span>
-                      <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em" }}>STRIDE</span>
+                      <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
                     </div>
                     <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: space.md }}>
-                      <p style={{ margin: 0, ...typeScale.h3, maxWidth: "30ch", textWrap: "balance" }}>“{item.quote}”</p>
+                      <p style={{ margin: 0, ...typeScale.h3, maxWidth: "30ch", textWrap: "balance" }}>“Watch and listen to their experience working with <span style={{ color: color.accentOnDark }}>Stride Media.</span>”</p>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: space.md }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
                           <span style={{ ...typeScale.eyebrow, color: color.accentOnDark }}>{item.name}</span>

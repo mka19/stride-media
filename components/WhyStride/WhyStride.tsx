@@ -42,18 +42,19 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       approach(root, ".ws-frame");
 
       // Parked a full line below its window, not nudged and faded.
-      gsap.set(q(".ws-word"), { yPercent: 108 });
+      gsap.set(q(".ws-word"), { yPercent: 0 });
       gsap.set(q(".ws-mask"), { overflow: "hidden" });
       gsap.set(q(".ws-dark"), { opacity: 0 });
       // The mark is revealed as a physical object entering the scene: small
       // at first, then smoothly growing into its final centred position.
-      gsap.set(q(".ws-object"), { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" });
+      gsap.set(q(".ws-object"), { opacity: 1, scale: 1, transformOrigin: "50% 50%" });
+      gsap.set(q(".ws-headline"), { opacity: 0 });
       gsap.set(q(".ws-card"), { opacity: 0 });
       // The object never dissolves here: it is the fixed centrepiece.
       objectRef.current?.setProgress(0);
       objectRef.current?.setVariant(0);
 
-      const variantFirst = 0.62;
+      const variantFirst = 0.18;
       const variantStep = (1 - variantFirst) / (copy.capabilities.length + 1.45);
 
       const tl = gsap.timeline({
@@ -64,9 +65,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           scrub: SCRUB,
           onUpdate: (self) => {
             surface.current?.setTone(self.progress < 0.2 ? "light" : "dark");
-            const index = self.progress < variantFirst
+            const index = self.progress < variantFirst + variantStep * 0.45
               ? 0
-              : 1 + Math.min(copy.capabilities.length - 1, Math.floor((self.progress - variantFirst) / variantStep));
+              : 1 + Math.min(copy.capabilities.length - 1, Math.floor((self.progress - variantFirst - variantStep * 0.45) / variantStep));
             objectRef.current?.setVariant(index);
           },
         },
@@ -80,21 +81,13 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * arriving first was tried and it inverts the argument: the object is
        * the answer to the words, so it cannot precede them.
        */
-      tl.to(
-        q(".ws-word"),
-        { yPercent: 0, duration: 0.07, stagger: 0.03, ease: "power3.out" },
-        0.03,
-      )
-
-        // 2. The ground turns over under them, and the type inverts with it.
-        .to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.22)
-        .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.07 }, 0.22)
+      tl.to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.08)
 
         /* The window that uncovers each word would also clip it on the way
            out — the letters travel well past the block they belong to. It is
            opened once the last word has landed and before the scatter begins,
            and closes again on the way back up. */
-        .set(q(".ws-mask"), { overflow: "visible" }, 0.30);
+        .set(q(".ws-mask"), { overflow: "visible" }, 0.12);
 
       // 3. The letters scatter — trionn.com's services reveal: they are
       //    thrown right out of the frame, turning as they go.
@@ -135,7 +128,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
 
       // The scatter starts once the ground has turned and the words have
       // been readable on it for a beat.
-      const at = 0.34;
+      const at = 0.12;
 
       letters.forEach((letter, i) => {
         const box = letter.getBoundingClientRect();
@@ -204,19 +197,14 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * back to its resting size — so it reads as having been behind them all
        * along rather than as a fifth thing arriving.
        */
-      tl.fromTo(
-        q(".ws-object"),
-        { opacity: 0, scale: 0.3 },
-        { opacity: 1, scale: 1, duration: 0.16, ease: "power3.out" },
-        0.46,
-      );
+      tl.set(q(".ws-object"), { opacity: 1, scale: 1 }, 0);
 
       // The label has done its job by the time the type has gone; leaving it
       // sat on top of the mark.
       tl.to(
         q(".ws-label"),
         { opacity: 0, y: -14, scale: 0.92, filter: "blur(7px)", duration: 0.1, ease: "power2.in" },
-        0.455,
+        0.16,
       );
 
       /*
@@ -498,6 +486,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
             display: "grid",
             placeItems: "center",
             pointerEvents: "none",
+            filter: "brightness(1.35)",
           }}
         >
           <div style={{ width: "min(560px, 46vw)", height: "min(560px, 60vh)" }}>

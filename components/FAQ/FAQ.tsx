@@ -38,7 +38,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
       // overlap deliberately so it reads as one move.
       tl.to(
         q(".faq-letters"),
-        { scale: 0.2, duration: 0.3, ease: "power2.inOut" },
+        { scale: 0.2, y: -92, duration: 0.3, ease: "power2.inOut" },
         0.05,
       )
         .to(q(".faq-letter"), { letterSpacing: "0.02em", duration: 0.3, stagger: 0.02 }, 0.05)
@@ -55,7 +55,7 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
   const list = (
     <div style={stacked
       ? { width: "100%", maxWidth: 1120, margin: "0 auto" }
-      : { width: "auto", marginLeft: "clamp(300px, 24vw, 440px)", marginRight: 0 }
+      : { width: "min(760px, 58vw)", margin: "0 auto" }
     }>
       {copy.items.map((item, i) => {
         const isOpen = open === i;
@@ -220,8 +220,9 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
             right: layout.pad,
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            transformOrigin: "left top",
+            justifyContent: "center",
+            gap: "clamp(44px, 8vw, 128px)",
+            transformOrigin: "center top",
             color: color.textOnDark,
             pointerEvents: "none",
           }}
@@ -234,14 +235,8 @@ export default function FAQ({ scrollLength = "200vh" }: { scrollLength?: string 
           <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: "11.7vw" }}>
             F
           </span>
-          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
-            Answers to key questions
-          </span>
           <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: "11.7vw" }}>
             A
-          </span>
-          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, maxWidth: "14ch" }}>
-            All you need to know
           </span>
           <span className="faq-letter" style={{ ...typeScale.displayLg, fontSize: "11vw", lineHeight: "11.7vw" }}>
             Q
