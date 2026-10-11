@@ -264,7 +264,7 @@ export const testimonials = {
   headline: "What entrepreneurs say after working with Stride",
   cards: [
     { quote: "Watch and listen to their experience working with Stride Media.", name: "Client testimonial", handle: "Dubai", stat: "Client perspective", initials: "ST" },
-    { quote: "I stopped introducing myself. People arrive already knowing what I do.", name: "Noah Bennett · Demo", handle: "Real estate", stat: "41× reach", initials: "NB" },
+    { quote: "Watch and listen to another client experience with Stride Media.", name: "Client testimonial", handle: "Dubai", stat: "Client perspective", initials: "ST" },
     { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "Leila Hart · Demo", handle: "Coaching", stat: "11 weeks straight", initials: "LH" },
     { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "Marcus Reed · Demo", handle: "Consulting", stat: "Calendar full", initials: "MR" },
     { quote: "The scripts are the thing. They write like they want it watched.", name: "Sofia Lane · Demo", handle: "Founder", stat: "18K saves", initials: "SL" },

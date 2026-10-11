@@ -147,7 +147,10 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                       <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
                     </div>
                     <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: space.md }}>
-                      <p style={{ margin: 0, ...typeScale.h3, maxWidth: "30ch", textWrap: "balance" }}>“Watch and listen to their experience working with <span style={{ color: color.accentOnDark }}>Stride Media.</span>”</p>
+                      <p style={{ margin: 0, ...typeScale.h3, maxWidth: "30ch", textWrap: "balance" }}>
+                        “{item.quote.replace("Stride Media.", "")}
+                        <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
+                      </p>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: space.md }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
                           <span style={{ ...typeScale.eyebrow, color: color.accentOnDark }}>{item.name}</span>

@@ -90,7 +90,10 @@ export default function App() {
       />
       <WhyStride />
       <Marquee items={marquee.outcome} direction={1} />
-      <Testimonials videos={["/testimonials/client-story-01.mp4"]} posters={["/testimonials/client-story-01-poster.jpg"]} />
+      <Testimonials
+        videos={["/testimonials/client-story-01.mp4", "/testimonials/client-story-02.mp4"]}
+        posters={["/testimonials/client-story-01-poster.jpg", "/testimonials/client-story-02-poster.jpg"]}
+      />
       <Founders />
       <FinalCTA />
       <FAQ />
