@@ -7,6 +7,16 @@ const sectionLinks = [
   ["strategy", "Strategy"], ["work", "What we did"], ["results", "Results"],
 ] as const;
 
+function BulletIcon({ index }: { index: number }) {
+  const paths = [
+    <path key="target" d="M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5M12 12l9-9m0 0v5m0-5h-5" />,
+    <path key="script" d="M6 3h9l3 3v15H6zM15 3v4h4M9 11h6M9 15h6" />,
+    <path key="camera" d="M4 8h3l2-3h6l2 3h3v11H4zm8 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6" />,
+    <path key="delivery" d="M4 6h11v11H4zm11 4h3l2 3v4h-5M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4m10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />,
+  ];
+  return <span className="study-bullet-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{paths[index % paths.length]}</svg></span>;
+}
+
 export default function CaseStudyDetail({ study }: { study: CaseStudyRecord }) {
   const [activeSection, setActiveSection] = useState("summary");
 
@@ -80,7 +90,7 @@ export default function CaseStudyDetail({ study }: { study: CaseStudyRecord }) {
                 <MicroLabel tone="accent">{chapter.label}</MicroLabel>
                 <h2>{chapter.title}</h2>
                 <p>{chapter.body}</p>
-                {chapter.bullets && <div className="study-bullets">{chapter.bullets.map((bullet) => <div key={bullet.title}><h3>{bullet.title}</h3><p>{bullet.body}</p></div>)}</div>}
+                {chapter.bullets && <div className={`study-bullets study-bullets-${chapter.bullets.length}`}>{chapter.bullets.map((bullet, bulletIndex) => <div key={bullet.title}><BulletIcon index={bulletIndex} /><h3>{bullet.title}</h3><p>{bullet.body}</p></div>)}</div>}
               </div>
             </section>
           ))}
