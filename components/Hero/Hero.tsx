@@ -53,7 +53,6 @@ export default function Hero({
       // in: it scales up from slightly smaller as the object fades away.
       gsap.set(lines, { y: 28, scale: 0.985, opacity: 0, transformOrigin: "50% 50%" });
       gsap.set(q(".hero-mosaic"), { opacity: 0, scale: 1.14 });
-      gsap.set(q(".hero-copy-focus"), { opacity: 0 });
       gsap.set(q(".hero-tail"), { opacity: 0, y: 24 });
 
       const tl = gsap.timeline({
@@ -77,7 +76,6 @@ export default function Hero({
       });
 
       tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.46, ease: "power2.out" }, 0.12)
-        .to(q(".hero-copy-focus"), { opacity: 1, duration: 0.32, ease: "power2.out" }, 0.2)
         .to(q(".hero-veil"), { opacity: 0.68, duration: 0.38 }, 0.14)
         .to(
           lines,
@@ -106,7 +104,6 @@ export default function Hero({
       const q = gsap.utils.selector(root);
       gsap.set(q(".hero-line-inner"), { y: 0, scale: 1, opacity: 1 });
       gsap.set(q(".hero-mosaic"), { opacity: 1, scale: 1 });
-      gsap.set(q(".hero-copy-focus"), { opacity: 1 });
       gsap.set(q(".hero-veil"), { opacity: 0.55 });
       gsap.set(q(".hero-tail, .hero-glow"), { opacity: 1, y: 0 });
       gsap.set(q(".hero-intro, .hero-hint"), { opacity: 0 });
@@ -157,8 +154,8 @@ export default function Hero({
           <VideoMosaic
             tiles={tiles}
             interactive={interactive && canHover}
-            columns={bp === "mobile" ? 1 : bp === "tablet" ? 6 : 12}
-            rows={bp === "mobile" ? 1 : bp === "tablet" ? 3 : 4}
+            columns={bp === "mobile" ? 1 : bp === "tablet" ? 6 : 8}
+            rows={bp === "mobile" ? 1 : 3}
             onHoverChange={setMosaicHovered}
           />
         </div>
@@ -259,20 +256,6 @@ export default function Hero({
             pointerEvents: "none",
           }}
         >
-          {/* A soft focus field separates the message from the busy mosaic
-              without hiding the cards around the edge of the composition. */}
-          <div
-            className="hero-copy-focus"
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              inset: 0,
-              opacity: 0,
-              background: `radial-gradient(ellipse 62% 58% at 50% 51%, ${hexA(color.black,.88)} 0%, ${hexA(color.black,.72)} 38%, ${hexA(color.black,.42)} 58%, ${hexA(color.black,.12)} 76%, transparent 100%)`,
-              pointerEvents: "none",
-            }}
-          />
-
           {/* The glow sits behind the headline, not on it. */}
           <div
             className="hero-glow"
@@ -299,11 +282,9 @@ export default function Hero({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              opacity: mosaicHovered ? 0 : 1,
-              transform: mosaicHovered ? "scale(.975)" : "scale(1)",
-              filter: mosaicHovered ? "blur(6px)" : "blur(0px)",
-              visibility: mosaicHovered ? "hidden" : "visible",
-              transition: `opacity 520ms ${ease.out}, transform 620ms ${ease.out}, filter 520ms ${ease.out}, visibility 0s linear ${mosaicHovered ? "520ms" : "0ms"}`,
+              opacity: mosaicHovered ? .16 : 1,
+              transform: mosaicHovered ? "scale(.985)" : "scale(1)",
+              transition: `opacity 480ms ${ease.out}, transform 560ms ${ease.out}`,
             }}
           >
           <SocialProof

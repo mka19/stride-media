@@ -18,6 +18,7 @@ import Founders from "../components/Founders/Founders";
 import Preloader from "../components/shared/Preloader";
 import ComparisonTransition from "../components/ComparisonTransition/ComparisonTransition";
 import CaseStudyDetail from "../components/CaseStudyDetail/CaseStudyDetail";
+import { reels } from "../components/Videos/videoData";
 import { findCaseStudy } from "../components/CaseStudyDetail/caseStudies";
 import VideoLibrary from "../components/Videos/VideoLibrary";
 
@@ -45,14 +46,12 @@ export default function App() {
 
   // Media is limited to components that already own image/video slots. This
   // keeps every restored animation and the original hero mark untouched.
-  const heroTiles = [
-    { src: "/case-studies/videos/ig-DVdxAsbD1g7.jpg", caption: "First-time investor reel", views: "6.2M views", href: "https://www.instagram.com/reel/DVdxAsbD1g7/" },
-    { src: "/case-studies/videos/ig-DY2K7TMMHux.jpg", caption: "Hindi property reel", views: "5.8M views", href: "https://www.instagram.com/reel/DY2K7TMMHux/" },
-    { src: "/case-studies/videos/ig-DSaEmRggv4u.jpg", caption: "First-time buyer reel", views: "3.8M views", href: "https://www.instagram.com/reel/DSaEmRggv4u/" },
-    { src: "/case-studies/videos/ig-DZ0E4ncMOrE.jpg", caption: "Property results reel", views: "3.5M views", href: "https://www.instagram.com/reel/DZ0E4ncMOrE/" },
-    { src: "/case-studies/videos/ig-DW1U7cEE8W1.jpg", caption: "Dubai advice reel", views: "2.5M views", href: "https://www.instagram.com/reel/DW1U7cEE8W1/" },
-    { src: "/case-studies/videos/ig-DdMXsvtsQxX.jpg", caption: "Investor conversation reel", views: "1.7M views", href: "https://www.instagram.com/reel/DdMXsvtsQxX/" },
-  ];
+  const heroTiles = reels.map((reel) => ({
+    src: `/case-studies/videos/ig-${reel.id}.jpg`,
+    caption: reel.title,
+    views: reel.views ? `${reel.views} views` : "Watch reel",
+    href: reel.instagram,
+  }));
 
   const resultMedia = [
     "/case-studies/videos/ig-DVdxAsbD1g7.jpg",

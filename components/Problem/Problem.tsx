@@ -694,7 +694,7 @@ export default function Problem({
                       className="pb-media"
                       style={{
                         position: "relative",
-                        width: "min(39vw, 580px)",
+                        width: "min(46vw, 720px)",
                         height: "min(500px, 58vh)",
                         aspectRatio: "4 / 3",
                         // The portrait settles out of a push-in across the
@@ -707,14 +707,11 @@ export default function Problem({
                     >
                       <MediaTile
                         src={cardMedia[i]}
-                        mediaFit="contain"
+                        mediaFit="cover"
                         imageLoading="eager"
                         seed={i * 5 + 11}
                         style={{ position: "absolute", inset: 0, background: color.black }}
                       />
-                      {[0, 1, 2, 3].map((icon) => (
-                        <span key={icon} className="pb-floating-icon" style={{ position: "absolute", zIndex: 3, width: 42, height: 42, borderRadius: 10, overflow: "hidden", left: icon % 2 === 0 ? 14 : undefined, right: icon % 2 ? 14 : undefined, top: icon < 2 ? 14 : undefined, bottom: icon >= 2 ? 14 : undefined, animationDelay: `${icon * -.55}s` }}><AboutIcon index={icon} /></span>
-                      ))}
                       <div
                         className="pb-media-shade"
                         aria-hidden="true"

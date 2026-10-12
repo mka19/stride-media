@@ -47,8 +47,8 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
       gsap.set(q(".ws-dark"), { opacity: 0 });
       // The mark is revealed as a physical object entering the scene: small
       // at first, then smoothly growing into its final centred position.
-      gsap.set(q(".ws-object"), { opacity: 1, scale: 1, transformOrigin: "50% 50%" });
-      gsap.set(q(".ws-headline"), { opacity: 0 });
+      gsap.set(q(".ws-object"), { opacity: 0, scale: 0.92, transformOrigin: "50% 50%" });
+      gsap.set(q(".ws-headline"), { opacity: 1, color: color.textOnLight });
       gsap.set(q(".ws-card"), { opacity: 0 });
       gsap.set(q(".ws-transition"), { opacity: 0 });
       // The object never dissolves here: it is the fixed centrepiece.
@@ -85,8 +85,7 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
        * the answer to the words, so it cannot precede them.
        */
       tl.to(q(".ws-dark"), { opacity: 1, duration: 0.07 }, 0.06)
-        .to(q(".ws-object"), { opacity: 0, scale: 0.92, duration: 0.045, ease: "power1.in" }, 0.08)
-        .set(q(".ws-headline"), { opacity: 1 }, 0.1)
+        .to(q(".ws-headline"), { color: color.textOnDark, duration: 0.07 }, 0.06)
 
         /* The window that uncovers each word would also clip it on the way
            out — the letters travel well past the block they belong to. It is

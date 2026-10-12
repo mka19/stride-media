@@ -65,8 +65,7 @@ export default function VideoMosaic({
   // be smaller than the mosaic, but the composition should still feel varied.
   const tileAt = (row: number, col: number) => {
     if (!tiles.length) return {};
-    const wideOffset = Math.floor(col / Math.max(1, tiles.length)) * 3;
-    return tiles[(col + row * 2 + wideOffset) % tiles.length];
+    return tiles[(row * columns + col) % tiles.length];
   };
   // Touch fires a hover on tap and then leaves it stuck on the tile the
   // finger last touched, so the push is for real pointers only.
@@ -191,6 +190,7 @@ export default function VideoMosaic({
                 rel="noreferrer"
                 aria-label={`${tile.caption}, ${tile.views}. Open on Instagram`}
                 onMouseEnter={() => { if (interactive && pointer) { setHover({ col, row }); onHoverChange?.(true); } }}
+                onMouseLeave={() => { setHover(null); onHoverChange?.(false); }}
                 onFocus={() => { if (interactive) { setHover({ col, row }); onHoverChange?.(true); } }}
                 onBlur={() => { setHover(null); onHoverChange?.(false); }}
                 style={frameStyle}
@@ -198,7 +198,7 @@ export default function VideoMosaic({
                 {tileContent}
               </a>
             ) : (
-              <div key={col} onMouseEnter={() => { if (interactive && pointer) { setHover({ col, row }); onHoverChange?.(true); } }} style={frameStyle}>{tileContent}</div>
+              <div key={col} onMouseEnter={() => { if (interactive && pointer) { setHover({ col, row }); onHoverChange?.(true); } }} onMouseLeave={() => { setHover(null); onHoverChange?.(false); }} style={frameStyle}>{tileContent}</div>
             );
           })}
         </div>
