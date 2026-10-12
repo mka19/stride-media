@@ -466,7 +466,7 @@ function ResultCard({
             isolation: "isolate",
           }}
         >
-          {card.views} Views
+          <span className="result-view-text">{card.views} Views</span>
         </div>
         {videoSrc && (
           <button type="button" onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, zIndex: 3, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>

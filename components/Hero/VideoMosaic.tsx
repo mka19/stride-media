@@ -43,6 +43,7 @@ export default function VideoMosaic({
   gap = 10,
   columns = 5,
   rows = 3,
+  onHoverChange,
 }: {
   /** Real client footage when available; empty entries render as cinematic fills. */
   tiles?: MosaicTile[];
@@ -55,6 +56,7 @@ export default function VideoMosaic({
   /** Tablet thins the grid; a phone gets a single quiet backdrop tile. */
   columns?: number;
   rows?: number;
+  onHoverChange?: (hovered: boolean) => void;
 }) {
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
@@ -79,7 +81,7 @@ export default function VideoMosaic({
   return (
     <div
       aria-label="Featured Stride reels"
-      onMouseLeave={() => setHover(null)}
+      onMouseLeave={() => { setHover(null); onHoverChange?.(false); }}
       style={{
         position: "absolute",
         inset: 0,
@@ -167,15 +169,15 @@ export default function VideoMosaic({
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`${tile.caption}, ${tile.views}. Open on Instagram`}
-                onMouseEnter={() => interactive && pointer && setHover({ col, row })}
-                onFocus={() => interactive && setHover({ col, row })}
-                onBlur={() => setHover(null)}
+                onMouseEnter={() => { if (interactive && pointer) { setHover({ col, row }); onHoverChange?.(true); } }}
+                onFocus={() => { if (interactive) { setHover({ col, row }); onHoverChange?.(true); } }}
+                onBlur={() => { setHover(null); onHoverChange?.(false); }}
                 style={frameStyle}
               >
                 {tileContent}
               </a>
             ) : (
-              <div key={col} onMouseEnter={() => interactive && pointer && setHover({ col, row })} style={frameStyle}>{tileContent}</div>
+              <div key={col} onMouseEnter={() => { if (interactive && pointer) { setHover({ col, row }); onHoverChange?.(true); } }} style={frameStyle}>{tileContent}</div>
             );
           })}
         </div>

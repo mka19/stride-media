@@ -37,6 +37,7 @@ export default function Hero({
 }) {
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const [interactive, setInteractive] = useState(false);
+  const [mosaicHovered, setMosaicHovered] = useState(false);
   // The headline decodes at the point the object hands the screen over to it.
   const bp = useBreakpoint();
   const canHover = useCanHover();
@@ -158,6 +159,7 @@ export default function Hero({
             interactive={interactive && canHover}
             columns={bp === "mobile" ? 1 : bp === "tablet" ? 6 : 12}
             rows={bp === "mobile" ? 1 : bp === "tablet" ? 3 : 4}
+            onHoverChange={setMosaicHovered}
           />
         </div>
 
@@ -289,6 +291,20 @@ export default function Hero({
             }}
           />
 
+          <div
+            className="hero-copy-content"
+            style={{
+              position: "relative",
+              zIndex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              opacity: mosaicHovered ? .12 : 1,
+              transform: mosaicHovered ? "scale(.985)" : "scale(1)",
+              filter: mosaicHovered ? "blur(1.5px)" : "blur(0px)",
+              transition: `opacity 420ms ${ease.out}, transform 520ms ${ease.out}, filter 420ms ${ease.out}`,
+            }}
+          >
           <SocialProof
             className="hero-tail"
             count={heroCopy.proofCount}
@@ -342,9 +358,10 @@ export default function Hero({
 
           <div
             className="hero-tail"
-            style={{ position: "relative", pointerEvents: "auto", marginTop: space.sm }}
+            style={{ position: "relative", pointerEvents: mosaicHovered ? "none" : "auto", marginTop: space.sm }}
           >
             <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
+          </div>
           </div>
         </div>
 
