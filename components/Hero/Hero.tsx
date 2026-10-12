@@ -299,10 +299,11 @@ export default function Hero({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              opacity: mosaicHovered ? .12 : 1,
-              transform: mosaicHovered ? "scale(.985)" : "scale(1)",
-              filter: mosaicHovered ? "blur(1.5px)" : "blur(0px)",
-              transition: `opacity 420ms ${ease.out}, transform 520ms ${ease.out}, filter 420ms ${ease.out}`,
+              opacity: mosaicHovered ? 0 : 1,
+              transform: mosaicHovered ? "scale(.975)" : "scale(1)",
+              filter: mosaicHovered ? "blur(6px)" : "blur(0px)",
+              visibility: mosaicHovered ? "hidden" : "visible",
+              transition: `opacity 520ms ${ease.out}, transform 620ms ${ease.out}, filter 520ms ${ease.out}, visibility 0s linear ${mosaicHovered ? "520ms" : "0ms"}`,
             }}
           >
           <SocialProof
