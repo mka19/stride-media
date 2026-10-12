@@ -146,7 +146,28 @@ export default function VideoMosaic({
                   }}
                 />
                 <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black,.12)}, ${hexA(color.black,isHovered ? .7 : .22)})` }} />
-                <span className="hero-tile-views" style={{ position: "absolute", left: 12, top: 11, color: "#fff", fontSize: "clamp(17px, 1.25vw, 24px)", lineHeight: 1, letterSpacing: "-.025em", fontWeight: 650, textShadow: "0 2px 16px rgba(0,0,0,.9)" }}>{tile.views}</span>
+                <span
+                  className="hero-tile-views"
+                  style={{
+                    position: "absolute",
+                    left: isHovered ? 12 : "50%",
+                    top: isHovered ? 11 : "50%",
+                    transform: isHovered ? "translate3d(0,0,0)" : "translate3d(-50%,-50%,0)",
+                    maxWidth: isHovered ? "calc(100% - 24px)" : "88%",
+                    color: "#fff",
+                    fontSize: "clamp(17px, 1.25vw, 24px)",
+                    lineHeight: 1,
+                    letterSpacing: "-.025em",
+                    fontWeight: 650,
+                    textAlign: isHovered ? "left" : "center",
+                    whiteSpace: "nowrap",
+                    textShadow: "0 2px 16px rgba(0,0,0,.9)",
+                    transition: `left 680ms ${ease.out}, top 680ms ${ease.out}, transform 680ms ${ease.out}, max-width 680ms ${ease.out}, text-align 680ms ${ease.out}`,
+                    willChange: "left, top, transform",
+                  }}
+                >
+                  {tile.views}
+                </span>
                 <span style={{ position: "absolute", left: 12, right: 12, bottom: 11, display: "flex", justifyContent: "space-between", gap: 12, color: "#fff", fontSize: 12, lineHeight: 1.25, fontWeight: 500, opacity: isHovered ? 1 : 0, transform: `translateY(${isHovered ? 0 : 8}px)`, transition: `opacity 320ms ease, transform 420ms ${ease.out}` }}><span>{tile.caption}</span><span aria-hidden="true">↗</span></span>
               </>
             );
