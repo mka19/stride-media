@@ -254,6 +254,26 @@ export default function Hero({
             pointerEvents: "none",
           }}
         >
+          {/* A soft focus field separates the message from the busy mosaic
+              without hiding the cards around the edge of the composition. */}
+          <div
+            className="hero-copy-focus"
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "51%",
+              transform: "translate(-50%, -50%)",
+              width: bp === "mobile" ? "112vw" : "min(1320px, 94vw)",
+              height: bp === "mobile" ? "72vh" : "min(680px, 72vh)",
+              borderRadius: "50%",
+              background: `radial-gradient(ellipse at center, ${hexA(color.black,.88)} 0%, ${hexA(color.black,.72)} 44%, ${hexA(color.black,.3)} 68%, transparent 82%)`,
+              backdropFilter: "blur(3px)",
+              WebkitBackdropFilter: "blur(3px)",
+              pointerEvents: "none",
+            }}
+          />
+
           {/* The glow sits behind the headline, not on it. */}
           <div
             className="hero-glow"
@@ -278,7 +298,7 @@ export default function Hero({
             label={heroCopy.proofLabel}
             faces={clientFaces}
             /* It labels the headline, so it takes the eyebrow gap. */
-            style={{ marginBottom: rhythm.eyebrowToHeadline }}
+            style={{ position: "relative", zIndex: 1, marginBottom: rhythm.eyebrowToHeadline }}
           />
           <h1
             style={{
@@ -316,7 +336,8 @@ export default function Hero({
               marginBottom: rhythm.bodyToCta,
               maxWidth: 640,
               ...typeScale.bodyLg,
-              color: color.textOnDarkMuted,
+              color: hexA("#FFFFFF", .86),
+              textShadow: "0 2px 18px rgba(0,0,0,.9)",
             }}
           >
             {heroCopy.sub}
