@@ -58,10 +58,14 @@ export default function VideoMosaic({
 }) {
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
 
-  const cells = Array.from(
-    { length: columns * rows },
-    (_, i) => (tiles.length ? tiles[i % tiles.length] : {}),
-  );
+  // Offset every row and the second half of wide layouts so the same reel
+  // never forms a repeated vertical or horizontal strip. The source set can
+  // be smaller than the mosaic, but the composition should still feel varied.
+  const tileAt = (row: number, col: number) => {
+    if (!tiles.length) return {};
+    const wideOffset = Math.floor(col / Math.max(1, tiles.length)) * 3;
+    return tiles[(col + row * 2 + wideOffset) % tiles.length];
+  };
   // Touch fires a hover on tap and then leaves it stuck on the tile the
   // finger last touched, so the push is for real pointers only.
   const pointer =
@@ -83,10 +87,23 @@ export default function VideoMosaic({
         flexDirection: "column",
         gap,
         padding: gap,
+        overflow: "hidden",
+        background: "#070609",
         opacity,
         pointerEvents: interactive ? "auto" : "none",
       }}
     >
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: "8% 4%",
+          background: `radial-gradient(circle at 22% 42%, ${hexA(color.accentBright,.34)}, transparent 34%), radial-gradient(circle at 76% 58%, ${hexA(color.accent,.3)}, transparent 38%), radial-gradient(circle at 52% 18%, ${hexA(color.accentDeep,.24)}, transparent 32%)`,
+          filter: "blur(54px)",
+          transform: "scale(1.12)",
+          pointerEvents: "none",
+        }}
+      />
       {Array.from({ length: rows }, (_, row) => (
         <div
           key={row}
@@ -96,13 +113,15 @@ export default function VideoMosaic({
             flexGrow: weight(row, hover?.row ?? null),
             flexBasis: 0,
             minHeight: 0,
+            position: "relative",
+            zIndex: 1,
             transition,
           }}
         >
           {Array.from({ length: columns }, (_, col) => {
             const i = row * columns + col;
             const isHovered = hover?.col === col && hover?.row === row;
-            const tile = cells[i];
+            const tile = tileAt(row, col);
             const tileContent = (
               <>
                 <MediaTile
@@ -125,7 +144,7 @@ export default function VideoMosaic({
                   }}
                 />
                 <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black,.12)}, ${hexA(color.black,isHovered ? .7 : .22)})` }} />
-                <span className="hero-tile-views" style={{ position: "absolute", left: 12, top: 11, color: "#fff", fontSize: 13, lineHeight: 1.1, fontWeight: 600, textShadow: "0 2px 12px rgba(0,0,0,.7)" }}>{tile.views}</span>
+                <span className="hero-tile-views" style={{ position: "absolute", left: 12, top: 11, color: "#fff", fontSize: "clamp(17px, 1.25vw, 24px)", lineHeight: 1, letterSpacing: "-.025em", fontWeight: 650, textShadow: "0 2px 16px rgba(0,0,0,.9)" }}>{tile.views}</span>
                 <span style={{ position: "absolute", left: 12, right: 12, bottom: 11, display: "flex", justifyContent: "space-between", gap: 12, color: "#fff", fontSize: 12, lineHeight: 1.25, fontWeight: 500, opacity: isHovered ? 1 : 0, transform: `translateY(${isHovered ? 0 : 8}px)`, transition: `opacity 320ms ease, transform 420ms ${ease.out}` }}><span>{tile.caption}</span><span aria-hidden="true">↗</span></span>
               </>
             );
@@ -138,7 +157,8 @@ export default function VideoMosaic({
               transition,
               borderRadius: 6,
               overflow: "hidden",
-              boxShadow: isHovered ? `0 0 0 1px ${hexA(color.accentBright,.55)}, 0 20px 60px ${hexA(color.accent,.22)}` : "none",
+              border: `1px solid ${hexA(color.accentBright, isHovered ? .5 : .14)}`,
+              boxShadow: isHovered ? `0 0 0 1px ${hexA(color.accentBright,.5)}, 0 20px 64px ${hexA(color.accent,.34)}` : `0 10px 34px ${hexA(color.accentDeep,.2)}, 0 0 24px ${hexA(color.accent,.1)}`,
             };
             return tile.href ? (
               <a
