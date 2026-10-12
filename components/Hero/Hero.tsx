@@ -52,6 +52,7 @@ export default function Hero({
       // in: it scales up from slightly smaller as the object fades away.
       gsap.set(lines, { y: 28, scale: 0.985, opacity: 0, transformOrigin: "50% 50%" });
       gsap.set(q(".hero-mosaic"), { opacity: 0, scale: 1.14 });
+      gsap.set(q(".hero-copy-focus"), { opacity: 0 });
       gsap.set(q(".hero-tail"), { opacity: 0, y: 24 });
 
       const tl = gsap.timeline({
@@ -75,6 +76,7 @@ export default function Hero({
       });
 
       tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.46, ease: "power2.out" }, 0.12)
+        .to(q(".hero-copy-focus"), { opacity: 1, duration: 0.32, ease: "power2.out" }, 0.2)
         .to(q(".hero-veil"), { opacity: 0.68, duration: 0.38 }, 0.14)
         .to(
           lines,
@@ -103,6 +105,7 @@ export default function Hero({
       const q = gsap.utils.selector(root);
       gsap.set(q(".hero-line-inner"), { y: 0, scale: 1, opacity: 1 });
       gsap.set(q(".hero-mosaic"), { opacity: 1, scale: 1 });
+      gsap.set(q(".hero-copy-focus"), { opacity: 1 });
       gsap.set(q(".hero-veil"), { opacity: 0.55 });
       gsap.set(q(".hero-tail, .hero-glow"), { opacity: 1, y: 0 });
       gsap.set(q(".hero-intro, .hero-hint"), { opacity: 0 });
@@ -261,15 +264,9 @@ export default function Hero({
             aria-hidden="true"
             style={{
               position: "absolute",
-              left: "50%",
-              top: "51%",
-              transform: "translate(-50%, -50%)",
-              width: bp === "mobile" ? "112vw" : "min(1320px, 94vw)",
-              height: bp === "mobile" ? "72vh" : "min(680px, 72vh)",
-              borderRadius: "50%",
-              background: `radial-gradient(ellipse at center, ${hexA(color.black,.88)} 0%, ${hexA(color.black,.72)} 44%, ${hexA(color.black,.3)} 68%, transparent 82%)`,
-              backdropFilter: "blur(3px)",
-              WebkitBackdropFilter: "blur(3px)",
+              inset: 0,
+              opacity: 0,
+              background: `radial-gradient(ellipse 62% 58% at 50% 51%, ${hexA(color.black,.88)} 0%, ${hexA(color.black,.72)} 38%, ${hexA(color.black,.42)} 58%, ${hexA(color.black,.12)} 76%, transparent 100%)`,
               pointerEvents: "none",
             }}
           />
