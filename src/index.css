@@ -344,16 +344,6 @@ html[data-motion="off"] .mobile-parallax-media {
 
 /* Verified view proof remains fully opaque, but carries the same liquid
    light language as the hero instead of a flat purple fill. */
-@keyframes result-liquid-shift {
-  0% { transform: translate3d(-22%, -24%, 0) rotate(-8deg) scale(1); }
-  50% { transform: translate3d(62%, -8%, 0) rotate(16deg) scale(1.18); }
-  100% { transform: translate3d(18%, -30%, 0) rotate(-4deg) scale(.96); }
-}
-@keyframes result-liquid-shift-alt {
-  0% { transform: translate3d(62%, -18%, 0) rotate(12deg) scale(1.08); }
-  50% { transform: translate3d(-18%, -34%, 0) rotate(-14deg) scale(.94); }
-  100% { transform: translate3d(34%, -12%, 0) rotate(8deg) scale(1.16); }
-}
 .result-view-strip {
   opacity: 1 !important;
   transform: none !important;
@@ -375,13 +365,13 @@ html[data-motion="off"] .mobile-parallax-media {
 }
 .result-view-strip::before {
   background: radial-gradient(circle at 38% 34%, #d8c8ff 0%, #a675ff 34%, #7c3aed 66%, transparent 74%);
-  animation: result-liquid-shift 5.8s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+  transform: translate3d(-8%, -26%, 0) rotate(-7deg) scale(1.08);
 }
 .result-view-strip::after {
   background: radial-gradient(circle at 52% 48%, #8b5cf6 0%, #4c1d95 58%, transparent 74%);
   mix-blend-mode: screen;
   opacity: .8;
-  animation: result-liquid-shift-alt 7.2s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+  transform: translate3d(72%, -18%, 0) rotate(11deg) scale(1.12);
 }
 .result-view-text { position: relative; z-index: 2; }
 
@@ -408,7 +398,7 @@ html[data-motion="off"] .mobile-parallax-media {
 .cs-plate:hover .cs-view-study { background-image: linear-gradient(110deg, #fff 0%, #d9c7ff 38%, #8b5cf6 68%, #c9adff 100%) !important; background-position: 0% 50% !important; border-color: rgba(167,139,250,.68) !important; box-shadow: 0 8px 28px rgba(124,58,237,.3); }
 .cs-plate:hover .cs-view-study .cta-arrow { transform: scale(1.5); }
 @media (prefers-reduced-motion: reduce) {
-  .about-icon-tile, .about-icon-glyph, .pb-floating-icon, .hero-liquid-field, .result-view-strip::before, .result-view-strip::after { animation: none !important; }
+  .about-icon-tile, .about-icon-glyph, .pb-floating-icon, .hero-liquid-field { animation: none !important; }
 }
 
 /* Internal case studies: the reference's editorial reading system, expressed

@@ -265,6 +265,10 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
     raf = requestAnimationFrame(frame);
 
     const onDown = (e: PointerEvent) => {
+      // Video controls and external links own their click. Starting carousel
+      // drag/pointer capture here swallowed the same gesture before the
+      // play/pause button could complete it.
+      if ((e.target as HTMLElement).closest("button, a")) return;
       dragging = true;
       velocity = 0;
       lastX = e.clientX;
@@ -464,12 +468,13 @@ function ResultCard({
             zIndex: 4,
             opacity: 1,
             isolation: "isolate",
+            pointerEvents: "none",
           }}
         >
           <span className="result-view-text">{card.views} Views</span>
         </div>
         {videoSrc && (
-          <button type="button" onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, zIndex: 3, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>
+          <button type="button" onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, zIndex: 5, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>
             <span style={{ position: "absolute", left: canHover ? cursorPos.x : "50%", top: canHover ? cursorPos.y : "50%", transform: "translate(-50%, -50%)", width: 78, height: 78, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .72), display: canHover && !hovered ? "none" : "grid", placeItems: "center", backdropFilter: "blur(10px)", fontSize: 10, lineHeight: 1.1, fontWeight: 600, textTransform: "uppercase", pointerEvents: "none" }}>{playing ? "Pause video" : "Play video"}</span>
           </button>
         )}
