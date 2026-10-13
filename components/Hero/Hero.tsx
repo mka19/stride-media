@@ -37,7 +37,6 @@ export default function Hero({
 }) {
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const [interactive, setInteractive] = useState(false);
-  const [mosaicHovered, setMosaicHovered] = useState(false);
   // The headline decodes at the point the object hands the screen over to it.
   const bp = useBreakpoint();
   const canHover = useCanHover();
@@ -69,8 +68,9 @@ export default function Hero({
             // Finish the expensive particle hand-off promptly, then let the
             // headline composition breathe for the rest of the pinned scene.
             objectRef.current?.setProgress(gsap.utils.clamp(0, 1, self.progress / 0.43));
-            // Hover push only once the mosaic has actually arrived.
-            setInteractive(self.progress > 0.54);
+            // Hover begins only after the complete copy chapter has cleared.
+            // Reversing the scroll restores the copy before disabling hover.
+            setInteractive(self.progress > 0.74);
           },
         },
       });
@@ -84,6 +84,8 @@ export default function Hero({
         )
         .to(q(".hero-glow"), { opacity: 1, duration: 0.34 }, 0.22)
         .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.26, stagger: 0.04 }, 0.37)
+        .to(q(".hero-copy-content"), { opacity: 0, scale: 0.985, duration: 0.2, ease: "power2.inOut" }, 0.67)
+        .to(q(".hero-glow"), { opacity: 0, duration: 0.18, ease: "power2.inOut" }, 0.68)
         .to(q(".hero-intro"), { opacity: 0, y: -20, duration: 0.25 }, 0.05)
         .to(q(".hero-hint"), { opacity: 0, duration: 0.2 }, 0.05);
 
@@ -156,7 +158,6 @@ export default function Hero({
             interactive={interactive && canHover}
             columns={bp === "mobile" ? 1 : bp === "tablet" ? 6 : 8}
             rows={bp === "mobile" ? 1 : 3}
-            onHoverChange={setMosaicHovered}
           />
         </div>
 
@@ -282,9 +283,8 @@ export default function Hero({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              opacity: mosaicHovered ? .16 : 1,
-              transform: mosaicHovered ? "scale(.985)" : "scale(1)",
-              transition: `opacity 480ms ${ease.out}, transform 560ms ${ease.out}`,
+              opacity: 1,
+              transform: "scale(1)",
             }}
           >
           <SocialProof
@@ -340,7 +340,7 @@ export default function Hero({
 
           <div
             className="hero-tail"
-            style={{ position: "relative", pointerEvents: mosaicHovered ? "none" : "auto", marginTop: space.sm }}
+            style={{ position: "relative", pointerEvents: interactive ? "none" : "auto", marginTop: space.sm }}
           >
             <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
           </div>
