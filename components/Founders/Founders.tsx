@@ -16,12 +16,12 @@ function Portrait({ person, index }: { person: Person; index: number }) {
   </div>;
 }
 
-function ProfileCard({ person, index, compact }: { person: Person; index: number; compact: boolean }) {
+function ProfileCard({ person, index, compact, activeSkill }: { person: Person; index: number; compact: boolean; activeSkill: number }) {
   return <article style={{ position: "relative", display: "grid", gridTemplateColumns: compact ? "1fr" : "minmax(300px, .9fr) minmax(420px, 1.1fr)", minHeight: compact ? undefined : "min(680px, 78vh)", overflow: "hidden", background: index ? "#111114" : "#0c0c0f", border: `1px solid ${hexA("#fff", .14)}`, boxShadow: "0 28px 90px rgba(0,0,0,.34)" }}>
     <div style={{ minHeight: compact ? "clamp(360px, 54vh, 500px)" : undefined }}><Portrait person={person} index={index} /></div>
     <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: compact ? "28px 22px 22px" : "clamp(36px, 5vw, 76px)", background: `radial-gradient(circle at 0 0, ${hexA(color.accent, .13)}, transparent 40%)` }}>
       <div><p style={{ margin: 0, ...typeScale.eyebrow, color: color.accentOnDark }}>{person.role}</p><h3 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>{person.name}</h3><p style={{ margin: `${space.xl}px 0 0`, maxWidth: "48ch", ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{person.bio}</p></div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", marginTop: compact ? 46 : space.xxl, borderTop: `1px solid ${hexA("#fff", .13)}` }}>{["Strategy", "Direction", "Delivery"].map((item, n) => <span key={item} style={{ padding: `${space.md}px 0`, borderRight: n < 2 ? `1px solid ${hexA("#fff", .13)}` : 0, textAlign: "center", ...typeScale.eyebrow, color: n === index ? color.accentOnDark : color.textOnDarkMuted }}>{item}</span>)}</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", marginTop: compact ? 46 : space.xxl, borderTop: `1px solid ${hexA("#fff", .13)}` }}>{["Strategy", "Direction", "Delivery"].map((item, n) => <span key={item} style={{ padding: `${space.md}px 0`, borderRight: n < 2 ? `1px solid ${hexA("#fff", .13)}` : 0, textAlign: "center", ...typeScale.eyebrow, color: n === activeSkill ? color.accentOnDark : color.textOnDarkMuted, background: n === activeSkill ? hexA(color.accent,.08) : "transparent", transition: `color 420ms ${ease.out}, background 420ms ${ease.out}` }}>{item}</span>)}</div>
     </div>
   </article>;
 }
@@ -40,11 +40,26 @@ function MemoryCard({ item, index, compact }: { item: MemoryItem; index: number;
 export default function Founders() {
   const bp = useBreakpoint();
   const compact = useStacked() || bp === "tablet";
-  return <section id="founders" style={{ position: "relative", padding: `${compact ? space.xxl : space.h}px ${layout.pad} ${layout.section}`, background: color.black, color: color.textOnDark, overflow: "clip" }}>
+  const root = useRef<HTMLElement | null>(null);
+  const [activeSkill, setActiveSkill] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const section = root.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const travel = Math.max(1, rect.height - window.innerHeight);
+      const progress = Math.max(0, Math.min(1, -rect.top / travel));
+      setActiveSkill(Math.min(2, Math.floor(progress * 3)));
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return <section id="founders" ref={root} style={{ position: "relative", padding: `${compact ? space.xxl : space.h}px ${layout.pad} ${layout.section}`, background: color.black, color: color.textOnDark, overflow: "clip" }}>
     <Grain opacity={.1} />
     <div style={{ position: "relative", zIndex: 1, maxWidth: 1600, margin: "0 auto" }}>
-      <header style={{ maxWidth: 760, margin: "0 auto", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}><MicroLabel tone="accent">{copy.label}</MicroLabel><GradientRevealText as="h2" tone="dark" style={{ margin: `${rhythm.eyebrowToHeadline}px 0 0`, ...typeScale.h1, lineHeight: 1.02, color: color.textOnDark }}>{copy.headline}</GradientRevealText><p style={{ margin: `${rhythm.headlineToBody}px auto 0`, maxWidth: "46ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>The thinking, direction and delivery behind Stride Media.</p></header>
-      <div style={{ position: "relative", marginTop: rhythm.headerToContent }}>{copy.people.map((person, index) => <div key={person.n} style={{ position: compact ? "relative" : "sticky", top: compact ? undefined : `calc(${layout.navHeight}px + ${28 + index * 20}px)`, zIndex: index + 1, marginTop: index ? (compact ? 24 : "22vh") : 0 }}><ProfileCard person={person} index={index} compact={compact} /></div>)}</div>
+      <header style={{ maxWidth: 760, margin: "0 auto", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}><MicroLabel tone="accent">{copy.label}</MicroLabel><GradientRevealText as="h2" tone="dark" style={{ margin: `${space.xl}px 0 0`, ...typeScale.h1, lineHeight: 1.02, color: color.textOnDark }}>{copy.headline}</GradientRevealText><p style={{ margin: `${rhythm.headlineToBody}px auto 0`, maxWidth: "46ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>The thinking, direction and delivery behind Stride Media.</p></header>
+      <div style={{ position: "relative", marginTop: rhythm.headerToContent }}>{copy.people.map((person, index) => <div key={person.n} style={{ position: compact ? "relative" : "sticky", top: compact ? undefined : `calc(${layout.navHeight}px + ${28 + index * 20}px)`, zIndex: index + 1, marginTop: index ? (compact ? 24 : "22vh") : 0 }}><ProfileCard person={person} index={index} compact={compact} activeSkill={activeSkill} /></div>)}</div>
       <section style={{ marginTop: compact ? layout.section : "clamp(120px, 15vw, 230px)" }}><header style={{ textAlign: "center", marginBottom: compact ? space.xl : space.xxl }}><MicroLabel tone="accent">Shared history</MicroLabel><h3 style={{ margin: `${space.md}px 0 0`, ...typeScale.h1, color: color.textOnDark }}>Built together.</h3></header><div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "repeat(4, minmax(0, 1fr))", alignItems: "center", gap: compact ? space.xl : "clamp(12px, 1.5vw, 28px)", maxWidth: compact ? 560 : undefined, margin: "0 auto" }}>{copy.memories.map((item, index) => <MemoryCard key={item.n} item={item} index={index} compact={compact} />)}</div></section>
     </div>
   </section>;

@@ -156,8 +156,8 @@ export default function Hero({
           <VideoMosaic
             tiles={tiles}
             interactive={interactive && canHover}
-            columns={bp === "mobile" ? 1 : bp === "tablet" ? 6 : 8}
-            rows={bp === "mobile" ? 1 : 3}
+            columns={bp === "mobile" ? 1 : bp === "tablet" ? 4 : 6}
+            rows={bp === "mobile" ? 1 : 2}
           />
         </div>
 

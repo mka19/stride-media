@@ -68,9 +68,9 @@ export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: s
           scrub: SCRUB,
           onUpdate: (self) => {
             surface.current?.setTone(self.progress < 0.2 ? "light" : "dark");
-            const index = self.progress < variantFirst + variantStep * 0.45
+            const index = self.progress < variantFirst + variantStep * 2.05
               ? 0
-              : 1 + Math.min(copy.capabilities.length - 1, Math.floor((self.progress - variantFirst - variantStep * 0.45) / variantStep));
+              : 1 + Math.min(copy.capabilities.length - 1, Math.floor((self.progress - variantFirst - variantStep * 2.05) / variantStep));
             objectRef.current?.setVariant(index);
           },
         },
