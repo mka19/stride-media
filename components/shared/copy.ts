@@ -335,10 +335,10 @@ export const founders = {
     },
   ],
   memories: [
-    { n: "01", title: "The first working session", meta: "Where the Stride system started taking shape.", image: "" },
-    { n: "02", title: "Building the first campaign", meta: "Testing the ideas that became our process.", image: "" },
-    { n: "03", title: "A late studio night", meta: "One more pass became the final direction.", image: "" },
-    { n: "04", title: "The first client win", meta: "The moment the system proved itself.", image: "" },
+    { n: "01", title: "The pre-shoot commute", meta: "Two founders, one camera bag and a content plan already in motion.", image: "/founders/memory-01.png" },
+    { n: "02", title: "Strategy, but comfortable", meta: "Big campaign thinking. Very serious sofa meeting.", image: "/founders/memory-02.png" },
+    { n: "03", title: "One more angle", meta: "Because the best shot is usually hiding three steps to the left.", image: "/founders/memory-03.png" },
+    { n: "04", title: "The official debrief", meta: "Campaign notes, fresh ideas and absolutely no sharing the fries.", image: "/founders/memory-04.png" },
   ],
 } as const;
 

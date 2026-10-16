@@ -73,6 +73,7 @@ export default function App() {
     "/case-studies/portraits/imtaz-ahmed-cover.png",
     "/case-studies/portraits/yasmin-shafi-cover.png",
     "/case-studies/portraits/maaz-kadri-cover.png",
+    "/case-studies/portraits/anonymous-client.png",
   ];
 
   if (selectedStudy) return <CaseStudyDetail study={selectedStudy} />;

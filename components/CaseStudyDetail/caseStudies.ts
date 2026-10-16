@@ -135,7 +135,7 @@ export const caseStudies: CaseStudyRecord[] = [
     ], results: ["Instagram grew from ~6K to 26.3K followers", "Facebook grew from 0 to 10,684 followers in about three months", "Average views rose from 500–600 to 10K–15K", "One reel reached 12M views", "Older property videos generated more leads than he could handle"],
   },
   {
-    slug: "anonymous-learning", client: "Anonymous client", handle: "Client kept anonymous", year: "3 months",
+    slug: "anonymous-learning", client: "Anonymous client", handle: "Client kept anonymous", year: "3 months", portrait: "/case-studies/portraits/anonymous-client.png",
     descriptor: "Dubai real estate professional · A transparent project retrospective",
     headline: "Not every project works. This one changed how every partnership starts.",
     summary: "The same team and process produced a very different outcome when creative roles became blurred and testing stopped.",
