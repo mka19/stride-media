@@ -4,7 +4,6 @@ import { results as copy } from "../shared/copy";
 import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, MediaTile, MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
-import { useInView } from "../shared/useInView";
 import GradientRevealText from "../shared/GradientRevealText";
 
 /**
@@ -382,7 +381,6 @@ function ResultCard({
 }) {
   const playing = activeVideo === instanceKey;
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.4 }, false);
   const videoSrc = src?.replace(/\.jpg(?:\?.*)?$/i, ".mp4");
 
   useEffect(() => {
@@ -394,10 +392,6 @@ function ResultCard({
       video.pause();
     }
   }, [playing, setActiveVideo]);
-
-  useEffect(() => {
-    if (!inView && playing) setActiveVideo(null);
-  }, [inView, playing, setActiveVideo]);
 
   const togglePlayback = () => {
     const video = videoRef.current;
@@ -426,7 +420,7 @@ function ResultCard({
         textDecoration: "none",
       }}
     >
-      <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
+      <div style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
         {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} muted playsInline preload="metadata" onClick={togglePlayback} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
