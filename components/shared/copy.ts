@@ -319,17 +319,19 @@ export const founders = {
   people: [
     {
       n: "01",
-      name: "Ayub Shaikh",
-      role: "Founder · Creative Direction",
-      bio: "Ayub leads Stride's creative direction and content creation, helping clients make more money through content and open doors that would not have been possible without it.",
+      name: "Ayub Shake",
+      role: "Founder · Brand & Content Strategy",
+      bio: "Ayub helps people build brands and sell through social media. His content-led approach has generated more than 100M views and shapes Stride's strategy, creative direction and growth systems.",
       image: "/founders/ayub-shaikh.webp",
+      instagram: "https://www.instagram.com/ayub_shake/",
     },
     {
       n: "02",
-      name: "Co-founder",
-      role: "Profile details coming soon",
-      bio: "The second founder profile will be completed when the confirmed name, role, biography and portrait are supplied.",
+      name: "Faiz Ali",
+      role: "Co-founder · Creative & Culture",
+      bio: "Faiz brings a creator's eye to Stride, drawing on Emirates-focused POV, comedy and review content to keep ideas culturally relevant, natural on camera and built for attention.",
       image: "/founders/co-founder.png",
+      instagram: "https://www.instagram.com/faizzali05/",
     },
   ],
   memories: [
