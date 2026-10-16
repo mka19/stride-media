@@ -196,7 +196,7 @@ export default function Hero({
           </div>
         </div>
 
-        <Grain opacity={0.14} />
+        {bp !== "mobile" && <Grain opacity={0.14} />}
 
         {/* Layer 4 — phase 1 minimal text, retires as the dissolve begins */}
         <div
@@ -271,7 +271,7 @@ export default function Hero({
               height: "44vh",
               opacity: 0,
               filter: "blur(90px)",
-              background: `radial-gradient(50% 50% at 50% 50%, ${hexA(color.accent, 0.45)} 0%, transparent 70%)`,
+              background: "transparent",
               pointerEvents: "none",
             }}
           />

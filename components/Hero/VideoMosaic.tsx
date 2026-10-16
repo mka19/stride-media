@@ -134,7 +134,10 @@ export default function VideoMosaic({
             const tileContent = (
               <>
                 <MediaTile
-                  src={tile.src}
+                  /* Phones render the supplied poster instead of creating a
+                     dozen MP4 decoders at once. Tapping still expands the
+                     tile; the full reels remain playable in Results. */
+                  src={mobile ? (tile.poster ?? tile.src) : tile.src}
                   poster={tile.poster}
                   seed={i + 3}
                   play={active && isHovered}
@@ -162,14 +165,14 @@ export default function VideoMosaic({
                     top: isHovered ? 11 : "50%",
                     transform: isHovered ? "translate3d(0,0,0)" : "translate3d(-50%,-50%,0)",
                     maxWidth: isHovered ? "calc(100% - 24px)" : "88%",
-                    color: color.accentBright,
+                    color: "#FFFFFF",
                     fontSize: mobile ? "clamp(12px, 3.55vw, 16px)" : "clamp(16px, 1.18vw, 23px)",
                     lineHeight: 1,
                     letterSpacing: "-.025em",
-                    fontWeight: 650,
+                    fontWeight: 800,
                     textAlign: isHovered ? "left" : "center",
                     whiteSpace: "nowrap",
-                    textShadow: "0 2px 5px rgba(0,0,0,1), 0 0 16px rgba(139, 92, 246, .72)",
+                    textShadow: "0 2px 8px rgba(0,0,0,.95)",
                     background: "transparent",
                     padding: 0,
                     borderRadius: 0,
