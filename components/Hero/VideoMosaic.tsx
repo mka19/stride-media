@@ -51,6 +51,7 @@ export default function VideoMosaic({
   gap = 10,
   columns = 5,
   rows = 3,
+  mobile = false,
   onHoverChange,
 }: {
   /** Real client footage when available; empty entries render as cinematic fills. */
@@ -64,6 +65,7 @@ export default function VideoMosaic({
   /** Tablet and phone layouts keep enough tiles visible to communicate scale. */
   columns?: number;
   rows?: number;
+  mobile?: boolean;
   onHoverChange?: (hovered: boolean) => void;
 }) {
   const [hover, setHover] = useState<{ col: number; row: number } | null>(null);
@@ -168,6 +170,10 @@ export default function VideoMosaic({
                     textAlign: isHovered ? "left" : "center",
                     whiteSpace: "nowrap",
                     textShadow: "0 2px 16px rgba(0,0,0,.9)",
+                    background: mobile ? "rgba(34, 14, 58, .88)" : "transparent",
+                    padding: mobile ? "6px 8px" : 0,
+                    borderRadius: mobile ? 6 : 0,
+                    boxShadow: mobile ? "0 6px 18px rgba(10, 4, 18, .34)" : "none",
                     transition: `left 680ms ${ease.out}, top 680ms ${ease.out}, transform 680ms ${ease.out}, max-width 680ms ${ease.out}, text-align 680ms ${ease.out}`,
                     willChange: "left, top, transform",
                   }}

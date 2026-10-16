@@ -156,6 +156,7 @@ export default function Hero({
           <VideoMosaic
             tiles={tiles}
             interactive={interactive}
+            mobile={bp === "mobile"}
             columns={bp === "mobile" ? 3 : bp === "tablet" ? 4 : 6}
             rows={4}
           />
