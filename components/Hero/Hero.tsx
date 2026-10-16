@@ -156,7 +156,7 @@ export default function Hero({
             tiles={tiles}
             interactive={interactive}
             columns={bp === "mobile" ? 3 : bp === "tablet" ? 4 : 6}
-            rows={bp === "mobile" ? 4 : 2}
+            rows={4}
           />
         </div>
 
