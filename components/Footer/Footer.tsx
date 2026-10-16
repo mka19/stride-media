@@ -1,7 +1,7 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
 import { BUILD, color, ease, hexA, layout, space, typeScale } from "../shared/theme";
-import { Grain, MediaTile, StrideMark } from "../shared/primitives";
+import { Grain, MediaTile } from "../shared/primitives";
 import { detailFor, useBreakpoint, useStacked } from "../shared/responsive";
 import Wordmark from "./Wordmark";
 
@@ -117,12 +117,6 @@ export default function Footer({
           justifyContent: "flex-start",
         }}
       >
-        {stacked && (
-          <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", paddingBottom: mobile ? 4 : space.lg }}>
-            <StrideMark size={mobile ? 56 : 64} glowing />
-          </div>
-        )}
-
         {/* ---- links: numbered left, social right ---- */}
         <div
           style={{
@@ -150,12 +144,6 @@ export default function Footer({
               </a>
             ))}
           </nav>
-
-          {!stacked && (
-            <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", alignSelf: "center", paddingInline: space.xl }}>
-              <StrideMark size={72} glowing />
-            </div>
-          )}
 
           <nav
             className="ft-item"

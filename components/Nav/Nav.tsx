@@ -5,7 +5,7 @@ import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { GlowButton, StrideMark } from "../shared/primitives";
 import SoundButton from "../shared/SoundButton";
 import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
-import { prefersReducedMotion } from "../shared/gsap";
+import { prefersReducedMotion, ScrollTrigger } from "../shared/gsap";
 
 type NavTransition = {
   phase: "enter" | "cover" | "reveal";
@@ -94,12 +94,27 @@ export default function Nav({
     if (!target) return;
     event.preventDefault();
     setMenuOpen(false);
-    const lenis = (window as Window & { __strideLenis?: { scrollTo: (target: HTMLElement, options?: Record<string, unknown>) => void } }).__strideLenis;
+    const lenis = (window as Window & { __strideLenis?: { scrollTo: (target: HTMLElement | number, options?: Record<string, unknown>) => void } }).__strideLenis;
     const label = id === "top" ? "STRIDE MEDIA" : navCopy.items.find((item) => item.id === id)?.label ?? id.replaceAll("-", " ");
+    // Pinned sections open with transitional artwork. A navigation click
+    // should land on the first readable composition rather than that empty
+    // opening frame.
+    const landingProgress: Record<string, number> = {
+      "what-we-do": 0.3,
+      "case-study": 0.1,
+      "how-it-works": 0.12,
+      problem: 0.1,
+    };
+    const travel = Math.max(0, target.offsetHeight - window.innerHeight);
+    const destination = Math.max(0, target.offsetTop + travel * (landingProgress[id] ?? 0) - height);
+    const land = () => {
+      if (lenis) lenis.scrollTo(destination, { immediate: true, force: true });
+      else window.scrollTo({ top: destination, behavior: "auto" });
+      window.requestAnimationFrame(() => ScrollTrigger.update());
+    };
 
     if (prefersReducedMotion()) {
-      if (lenis) lenis.scrollTo(target, { offset: -height, immediate: true, force: true });
-      else window.scrollTo({ top: Math.max(0, target.offsetTop - height), behavior: "auto" });
+      land();
       window.history.replaceState(null, "", `#${id}`);
       return;
     }
@@ -111,8 +126,7 @@ export default function Nav({
     window.requestAnimationFrame(() => setTransition((current) => current ? { ...current, phase: "cover" } : current));
 
     window.setTimeout(() => {
-      if (lenis) lenis.scrollTo(target, { offset: -height, immediate: true, force: true });
-      else window.scrollTo({ top: Math.max(0, target.offsetTop - height), behavior: "auto" });
+      land();
       window.history.replaceState(null, "", `#${id}`);
       window.requestAnimationFrame(() => setTransition((current) => current ? { ...current, phase: "reveal" } : current));
     }, 470);

@@ -156,17 +156,17 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                       <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Client story · {String(index + 1).padStart(2, "0")}</span>
                       <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
                     </div>
-                    <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: space.md }}>
-                      <p style={{ margin: 0, ...typeScale.h3, maxWidth: "30ch", textWrap: "balance" }}>
+                    <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: space.lg }}>
+                      <p style={{ margin: 0, maxWidth: "25ch", fontFamily: typeScale.h3.fontFamily, fontSize: "clamp(24px, 2.1vw, 34px)", lineHeight: 1.08, letterSpacing: "-.035em", fontWeight: 500, textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.72)" }}>
                         “{item.quote.replace("Stride Media.", "")}
                         <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
                       </p>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: space.md }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: space.lg, paddingTop: space.md, borderTop: `1px solid ${hexA("#fff", .16)}` }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
-                          <span style={{ ...typeScale.eyebrow, color: color.accentOnDark }}>{item.name}</span>
+                          <span style={{ ...typeScale.bodyLg, fontWeight: 600, color: color.textOnDark }}>{item.name}</span>
                           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{item.handle}</span>
                         </div>
-                        <span style={{ ...typeScale.h3, color: color.textOnDark }}>{item.stat}</span>
+                        <span style={{ ...typeScale.eyebrow, maxWidth: "14ch", textAlign: "right", lineHeight: 1.35, color: color.accentOnDark }}>{item.stat}</span>
                       </div>
                     </div>
                     <button
