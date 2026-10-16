@@ -52,6 +52,8 @@ body {
 }
 .hero-liquid-field { background-size: 150% 150% !important; animation: hero-liquid-shift 8s ease-in-out infinite alternate; }
 @keyframes hero-liquid-shift { 0% { background-position: 0% 20%; filter: saturate(.92) brightness(.9); } 50% { background-position: 90% 70%; filter: saturate(1.15) brightness(1.04); } 100% { background-position: 20% 100%; filter: saturate(1) brightness(.94); } }
+.hero-mobile-liquid { animation: hero-mobile-liquid 12s ease-in-out infinite alternate; }
+@keyframes hero-mobile-liquid { from { background-position: 0% 20%; } to { background-position: 100% 78%; } }
 .stride-drift { animation: stride-drift 26s ease-in-out infinite; }
 
 /* Mobile problem states rise as one composed card after a swipe. */

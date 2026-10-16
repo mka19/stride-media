@@ -54,7 +54,9 @@ export default function App() {
     src: `/case-studies/videos/ig-${reel.id}.mp4`,
     poster: `/case-studies/videos/ig-${reel.id}.jpg`,
     caption: reel.title,
-    views: `${reel.views ?? verifiedHeroViews.get(reel.id) ?? "Watch reel"}${reel.views || verifiedHeroViews.has(reel.id) ? " views" : ""}`,
+    views: reel.views || verifiedHeroViews.has(reel.id)
+      ? `${reel.views ?? verifiedHeroViews.get(reel.id)} views`
+      : "Views",
     href: reel.instagram,
   }));
 
