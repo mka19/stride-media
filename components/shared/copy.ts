@@ -369,10 +369,10 @@ export const footer = {
    * ── PASTE THE PROFILE URLS HERE ──────────────────────────────────────────
    */
   socials: [
-    { label: "Instagram", href: "https://www.instagram.com/" },
+    { label: "Instagram", href: "https://www.instagram.com/stride.media_/" },
     { label: "YouTube", href: "https://www.youtube.com/" },
     { label: "TikTok", href: "https://www.tiktok.com/" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/stridemediauae" },
   ],
   rights: "all rights reserved",
   basedLabel: "Based in",
