@@ -394,20 +394,25 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
         gap: space.h,
         minHeight: stacked ? 252 : 290,
         padding: `${stacked ? 24 : space.xl}px`,
+        opacity: 1,
+        visibility: "visible",
+        color: color.textOnDark,
         // A plate, not a framed box: the fill is what separates the card
         // from the ground, and an outline on top of it only draws a rectangle.
-        background: hexA("#FFFFFF", 0.05),
-        backdropFilter: "blur(6px)",
-        WebkitBackdropFilter: "blur(6px)",
+        background: hexA("#FFFFFF", stacked ? 0.1 : 0.05),
+        border: stacked ? `1px solid ${hexA("#FFFFFF", 0.14)}` : "none",
+        borderRadius: stacked ? 16 : 0,
+        backdropFilter: stacked ? "none" : "blur(6px)",
+        WebkitBackdropFilter: stacked ? "none" : "blur(6px)",
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: space.lg }}>
-        <h3 style={{ margin: 0, ...typeScale.h3, color: color.textOnDark, maxWidth: "12ch" }}>
+        <h3 style={{ margin: 0, ...typeScale.h3, color: "#FFFFFF", maxWidth: "12ch" }}>
           {cap.title}
         </h3>
         <span style={{ flex: "0 0 auto", opacity: 0.9 }}>{cardGlyph(i)}</span>
       </div>
-      <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted, maxWidth: "34ch" }}>
+      <p style={{ margin: 0, ...typeScale.bodyLg, color: stacked ? hexA("#FFFFFF", .78) : color.textOnDarkMuted, maxWidth: "34ch" }}>
         {cap.body}
       </p>
     </article>
@@ -453,6 +458,9 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
                 style={{
                   position: "relative",
                   zIndex: i + 1,
+                  opacity: 1,
+                  visibility: "visible",
+                  transform: "none",
                 }}
               >
                 {capability(cap, i)}
