@@ -121,7 +121,7 @@ export default function Footer({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: mobile ? "1fr 1fr" : "1fr auto 1fr",
             justifyContent: "space-between",
             gap: mobile ? 28 : space.xl,
           }}
@@ -145,6 +145,21 @@ export default function Footer({
             ))}
           </nav>
 
+          <div
+            className="ft-item"
+            aria-hidden="true"
+            style={{
+              display: "grid",
+              placeItems: "center",
+              alignSelf: "center",
+              gridColumn: mobile ? "1 / -1" : 2,
+              gridRow: mobile ? 2 : 1,
+              marginTop: mobile ? 4 : 0,
+            }}
+          >
+            <StrideMark size={mobile ? 54 : 76} glowing />
+          </div>
+
           <nav
             className="ft-item"
             aria-label="Social"
@@ -154,6 +169,8 @@ export default function Footer({
               gap: mobile ? 12 : space.s,
               textAlign: "right",
               justifySelf: "end",
+              gridColumn: mobile ? 2 : 3,
+              gridRow: 1,
             }}
           >
             {/* A name with no URL behind it is rendered as a name. Anything
@@ -172,11 +189,6 @@ export default function Footer({
               </a>
             ))}
           </nav>
-        </div>
-
-        {/* The brand mark bridges the utility links and the large wordmark. */}
-        <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", margin: mobile ? "4px 0 -4px" : "2px 0 -8px" }}>
-          <StrideMark size={mobile ? 54 : 70} glowing />
         </div>
 
         {/* ---- the wordmark, dissolving under the cursor ----

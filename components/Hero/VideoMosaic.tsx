@@ -107,9 +107,7 @@ export default function VideoMosaic({
         style={{
           position: "absolute",
           inset: "8% 4%",
-          background: `radial-gradient(circle at 22% 42%, ${hexA(color.accentBright,.34)}, transparent 34%), radial-gradient(circle at 76% 58%, ${hexA(color.accent,.3)}, transparent 38%), radial-gradient(circle at 52% 18%, ${hexA(color.accentDeep,.24)}, transparent 32%)`,
-          filter: "blur(54px)",
-          transform: "scale(1.12)",
+          background: "#070609",
           pointerEvents: "none",
         }}
       />
@@ -147,7 +145,7 @@ export default function VideoMosaic({
                   style={{
                     position: "absolute",
                     inset: 0,
-                    opacity: isHovered ? 0 : 0.38,
+                    opacity: 0,
                     background: `radial-gradient(90% 120% at ${18 + (i * 17) % 68}% ${16 + (i * 29) % 62}%, ${hexA(color.accentBright,.72)} 0%, transparent 52%), radial-gradient(110% 90% at ${82 - (i * 13) % 62}% ${80 - (i * 19) % 58}%, ${hexA(color.accentDeep,.86)} 0%, transparent 58%), linear-gradient(${125 + (i * 23) % 110}deg, #07070a, #24103f 52%, #080808)`,
                     transition: `opacity 520ms ${ease.out}`,
                     animationDelay: `${-(i % 8) * .7}s`,
@@ -188,8 +186,8 @@ export default function VideoMosaic({
               transition,
               borderRadius: 6,
               overflow: "hidden",
-              border: `1px solid ${hexA(color.accentBright, isHovered ? .5 : .14)}`,
-              boxShadow: isHovered ? `0 0 0 1px ${hexA(color.accentBright,.5)}, 0 20px 64px ${hexA(color.accent,.34)}` : `0 10px 34px ${hexA(color.accentDeep,.2)}, 0 0 24px ${hexA(color.accent,.1)}`,
+              border: `1px solid ${hexA("#FFFFFF", isHovered ? .34 : .12)}`,
+              boxShadow: isHovered ? `0 18px 54px ${hexA(color.black,.46)}` : `0 10px 30px ${hexA(color.black,.24)}`,
             };
             return tile.href ? (
               <a
@@ -203,10 +201,11 @@ export default function VideoMosaic({
                 onFocus={() => { if (interactive) { setHover({ col, row }); onHoverChange?.(true); } }}
                 onBlur={() => { setHover(null); onHoverChange?.(false); }}
                 onClick={(event) => {
-                  if (!interactive || pointer || isHovered) return;
+                  if (!interactive || pointer) return;
                   event.preventDefault();
-                  setHover({ col, row });
-                  onHoverChange?.(true);
+                  const next = isHovered ? null : { col, row };
+                  setHover(next);
+                  onHoverChange?.(next !== null);
                 }}
                 style={frameStyle}
               >

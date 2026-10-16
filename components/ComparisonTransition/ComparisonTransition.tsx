@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
 import { color, hexA, layout, space, typeScale } from "../shared/theme";
-import { MicroLabel, StrideMark } from "../shared/primitives";
+import { MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 
 /**
@@ -124,9 +124,6 @@ export default function ComparisonTransition({ scrollLength = "130vh" }: { scrol
     <section ref={rootRef} style={{ position: "relative", height: scrollLength, background: color.black, color: color.textOnDark }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
         {shell}
-        <div className="compare-mark" aria-hidden="true" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}>
-          <StrideMark size={132} glowing />
-        </div>
       </div>
     </section>
   );

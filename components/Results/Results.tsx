@@ -427,7 +427,7 @@ function ResultCard({
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" onClick={togglePlayback} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} muted playsInline preload="metadata" onClick={togglePlayback} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
         {/* client avatar, top-left */}

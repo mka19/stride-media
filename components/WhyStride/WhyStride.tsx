@@ -30,7 +30,10 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const mobileRoot = useRef<HTMLElement | null>(null);
   const bp = useBreakpoint();
-  const stacked = useStacked();
+  // Every phone gets the readable stacked cards. Some mobile browsers report
+  // hover support (stylus/emulation), which previously selected the desktop
+  // pinned ticker and left all six cards parked offscreen.
+  const stacked = useStacked() || bp === "mobile";
   const [, setTick] = useState(0);
 
   const rootRef = useGsapContext(
