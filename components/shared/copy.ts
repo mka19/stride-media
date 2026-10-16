@@ -169,10 +169,10 @@ export const howItWorks = {
 
 export const caseStudy = {
   label: "Case study",
-  client: "Atlas Realty", // Demo client
-  clientContext: "Real estate · Demo profile",
-  headline: ["Why Atlas Realty", "trusted Stride"],
-  intro: ["One entrepreneur. One invisible brand.", "One system that changed that."],
+  client: "Stride client results",
+  clientContext: "Five real estate brands · Verified growth",
+  headline: ["Why clients", "trusted Stride"],
+  intro: ["From 100 followers to 101K. From content to AED 20M+ in sales.", "Five client stories, built through one consistent system."],
   gallery: [
     { caption: "Anna Herbst · 15K organic followers" },
     { caption: "Monish Bakhru · 12.1M top-reel views" },
@@ -250,12 +250,12 @@ export const results = {
   body: "The highest-performing verified reels from Stride client accounts.",
   link: "View all videos",
   cards: [
+    { views: "12M", metric: "Breakthrough reel", desc: "A tested property format that turned consistency into a breakout result.", handle: "@maaz.realtor", client: "MK", link: "https://www.instagram.com/reel/DSH_yDNE7d_/" },
     { views: "6.2M", metric: "Top-performing reel", desc: "First-time investor content built for reach and trust.", handle: "@yasmin_dxb_", client: "YS", link: "https://www.instagram.com/reel/DVdxAsbD1g7/" },
     { views: "5.8M", metric: "Top-performing reel", desc: "Hindi-led property content reaching investors worldwide.", handle: "@monny.bullandbear", client: "MB", link: "https://www.instagram.com/reel/DY2K7TMMHux/" },
+    { views: "1.55M", metric: "Organic campaign reach", desc: "German investor content built around a clear identity and lead system.", handle: "@_annaherbst", client: "AH", link: "https://www.instagram.com/reel/DRZkSxOj3oh/" },
+    { views: "680K", metric: "Conversion-led reel", desc: "Bangla property content designed to turn attention into buyer action.", handle: "@realtyguru_", client: "IA", link: "https://www.instagram.com/reel/DaS18_JMXYx/" },
     { views: "3.8M", metric: "Verified result", desc: "A warm, direct explanation made for first-time buyers.", handle: "@yasmin_dxb_", client: "YS", link: "https://www.instagram.com/reel/DSaEmRggv4u/" },
-    { views: "3.5M", metric: "Verified result", desc: "A high-retention property reel delivered through a consistent system.", handle: "@monny.bullandbear", client: "MB", link: "https://www.instagram.com/reel/DZ0E4ncMOrE/" },
-    { views: "2.5M", metric: "+27K followers", desc: "One reel that turned clear advice into sustained account growth.", handle: "@yasmin_dxb_", client: "YS", link: "https://www.instagram.com/reel/DW1U7cEE8W1/" },
-    { views: "1.7M", metric: "Verified result", desc: "Investor-focused content with a direct conversation trigger.", handle: "@monny.bullandbear", client: "MB", link: "https://www.instagram.com/reel/DdMXsvtsQxX/" },
   ],
 } as const;
 

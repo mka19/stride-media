@@ -53,7 +53,7 @@ export default function VideoMosaic({
   interactive?: boolean;
   opacity?: number;
   gap?: number;
-  /** Tablet thins the grid; a phone gets a single quiet backdrop tile. */
+  /** Tablet and phone layouts keep enough tiles visible to communicate scale. */
   columns?: number;
   rows?: number;
   onHoverChange?: (hovered: boolean) => void;
@@ -193,6 +193,12 @@ export default function VideoMosaic({
                 onMouseLeave={() => { setHover(null); onHoverChange?.(false); }}
                 onFocus={() => { if (interactive) { setHover({ col, row }); onHoverChange?.(true); } }}
                 onBlur={() => { setHover(null); onHoverChange?.(false); }}
+                onClick={(event) => {
+                  if (!interactive || pointer || isHovered) return;
+                  event.preventDefault();
+                  setHover({ col, row });
+                  onHoverChange?.(true);
+                }}
                 style={frameStyle}
               >
                 {tileContent}

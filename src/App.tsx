@@ -57,12 +57,12 @@ export default function App() {
   ];
 
   const resultMedia = [
+    "/case-studies/videos/ig-DSH_yDNE7d_.jpg",
     "/case-studies/videos/ig-DVdxAsbD1g7.jpg",
     "/case-studies/videos/ig-DY2K7TMMHux.jpg",
+    "/case-studies/videos/ig-DRZkSxOj3oh.jpg",
+    "/case-studies/videos/ig-DaS18_JMXYx.jpg",
     "/case-studies/videos/ig-DSaEmRggv4u.jpg",
-    "/case-studies/videos/ig-DZ0E4ncMOrE.jpg",
-    "/case-studies/videos/ig-DW1U7cEE8W1.jpg",
-    "/case-studies/videos/ig-DdMXsvtsQxX.jpg",
   ];
 
   const caseStudyPortraits = [
@@ -80,7 +80,16 @@ export default function App() {
     <>
       <Preloader />
       <Nav />
-      <Hero tiles={heroTiles} />
+      <Hero
+        tiles={heroTiles}
+        clientFaces={[
+          "/case-studies/portraits/anna-herbst-cover.png",
+          "/case-studies/portraits/monish-bakhru-cover.png",
+          "/case-studies/portraits/imtaz-ahmed-cover.png",
+          "/case-studies/portraits/yasmin-shafi-cover.png",
+          "/case-studies/portraits/maaz-kadri-cover.png",
+        ]}
+      />
       <Results clips={resultMedia} />
       <Solution />
       <CaseStudy gallery={caseStudyPortraits} />

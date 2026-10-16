@@ -83,6 +83,9 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
           onPointerLeave={() => setPaused(false)}
           onPointerDown={() => setPaused(true)}
           onPointerUp={() => setPaused(false)}
+          onPointerCancel={() => setPaused(false)}
+          onTouchStart={() => setPaused(true)}
+          onTouchEnd={() => setPaused(false)}
           onScroll={(event) => {
             const el = event.currentTarget;
             const first = el.firstElementChild as HTMLElement | null;
@@ -101,7 +104,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
             overscrollBehaviorInline: "contain",
             scrollbarWidth: "none",
             WebkitOverflowScrolling: "touch",
-            touchAction: "pan-x pan-y",
+            touchAction: "auto",
             cursor: items.length > 1 ? "grab" : "default",
             paddingInline: stacked ? "8vw" : layout.pad,
             paddingBottom: space.md,

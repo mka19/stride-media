@@ -3,7 +3,7 @@ import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
-import { useBreakpoint, useCanHover } from "../shared/responsive";
+import { useBreakpoint } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 import SocialProof from "../shared/SocialProof";
 import type { HeroObjectHandle } from "./HeroObject";
@@ -29,7 +29,7 @@ export default function Hero({
   tiles = [],
   /** Client photographs for the proof row. Gaps render as tinted discs. */
   clientFaces = [],
-  scrollLength = "220vh",
+  scrollLength = "175vh",
 }: {
   tiles?: MosaicTile[];
   clientFaces?: string[];
@@ -39,7 +39,6 @@ export default function Hero({
   const [interactive, setInteractive] = useState(false);
   // The headline decodes at the point the object hands the screen over to it.
   const bp = useBreakpoint();
-  const canHover = useCanHover();
   // The object steps down with the viewport; the mosaic's push needs a real
   // pointer, so on touch it becomes a single quiet backdrop instead.
 
@@ -155,9 +154,9 @@ export default function Hero({
         <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
           <VideoMosaic
             tiles={tiles}
-            interactive={interactive && canHover}
-            columns={bp === "mobile" ? 1 : bp === "tablet" ? 4 : 6}
-            rows={bp === "mobile" ? 1 : 2}
+            interactive={interactive}
+            columns={bp === "mobile" ? 3 : bp === "tablet" ? 4 : 6}
+            rows={bp === "mobile" ? 4 : 2}
           />
         </div>
 

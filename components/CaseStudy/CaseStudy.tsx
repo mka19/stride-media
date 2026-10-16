@@ -27,7 +27,7 @@ import { caseStudies as detailStudies } from "../CaseStudyDetail/caseStudies";
 export default function CaseStudy({
   gallery = [],
   curtainImage,
-  scrollLength = "620vh",
+  scrollLength = "410vh",
 }: {
   gallery?: string[];
   /**

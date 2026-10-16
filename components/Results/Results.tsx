@@ -229,6 +229,7 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
     // One full set is half the track, since the set is rendered twice.
     const span = () => el.scrollWidth / 2 || 1;
 
+    let lastGeometry = 0;
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(64, now - prev) / 1000;
@@ -249,17 +250,19 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
       // back in proportion to how far it sits from the middle of the
       // viewport, so the centre of the run is the largest and the ends fall
       // away into the dark rather than being cut off by a hard edge.
-      const mid = view.clientWidth / 2;
-      for (const card of el.children as HTMLCollectionOf<HTMLElement>) {
-        const r = card.getBoundingClientRect();
+      // Geometry reads are the expensive part of this decorative ticker.
+      // Thirty updates a second remain visually smooth and halve that work.
+      if (now - lastGeometry >= 32) {
+        lastGeometry = now;
+        const mid = view.clientWidth / 2;
         const viewBox = view.getBoundingClientRect();
-        const t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - viewBox.left - mid) / mid));
-        const a = Math.abs(t);
-        card.style.transform = `perspective(1500px) rotateY(${-t * 34}deg) translateZ(${-a * 210}px) scale(${1 - a * 0.1})`;
-        // Keep every reel and its proof strip fully opaque. Perspective and
-        // scale provide enough depth; fading the whole card also faded the
-        // view count and made verified results look disabled.
-        card.style.opacity = "1";
+        for (const card of el.children as HTMLCollectionOf<HTMLElement>) {
+          const r = card.getBoundingClientRect();
+          const t = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - viewBox.left - mid) / mid));
+          const a = Math.abs(t);
+          card.style.transform = `perspective(1500px) rotateY(${-t * 34}deg) translateZ(${-a * 210}px) scale(${1 - a * 0.1})`;
+          card.style.opacity = "1";
+        }
       }
     };
     raf = requestAnimationFrame(frame);
@@ -423,7 +426,7 @@ function ResultCard({
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
         {/* client avatar, top-left */}

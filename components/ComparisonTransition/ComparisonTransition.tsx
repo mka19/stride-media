@@ -12,7 +12,7 @@ import { useBreakpoint, useStacked } from "../shared/responsive";
  * the bottom edge so the footer receives the same symbol instead of starting
  * as an unrelated block.
  */
-export default function ComparisonTransition({ scrollLength = "170vh" }: { scrollLength?: string }) {
+export default function ComparisonTransition({ scrollLength = "130vh" }: { scrollLength?: string }) {
   const [split, setSplit] = useState(50);
   const drag = useRef(false);
   const bp = useBreakpoint();

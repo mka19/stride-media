@@ -136,6 +136,15 @@ export default function FinalCTA({
               <ContactIcon type="mail" />
               {brand.email}
             </a>
+            <a
+              href={`https://wa.me/${brand.phone.replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noreferrer noopener"
+              style={{ ...typeScale.h3, color: color.textOnDark, textDecoration: "none", minHeight: 44, display: "inline-flex", alignItems: "center", gap: 10 }}
+            >
+              <ContactIcon type="phone" />
+              WhatsApp Stride
+            </a>
           </div>
 
           <div className="cta-item" style={{ position: "relative", marginTop: bp === "mobile" ? 18 : space.xl }}>

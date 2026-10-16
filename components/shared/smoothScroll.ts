@@ -28,6 +28,10 @@ const NAV_OFFSET = 88;
 export function initSmoothScroll(): () => void {
   if (typeof window === "undefined") return () => {};
   if (prefersReducedMotion()) return () => {};
+  // Native touch momentum is faster and more predictable on phones. Lenis
+  // added a second easing layer there, making every swipe travel less while
+  // the pinned timelines still had to catch up.
+  if (window.matchMedia("(pointer: coarse)").matches) return () => {};
 
   const lenis = new Lenis({
     // A longer ramp than the default. The page is almost entirely scrubbed
@@ -54,8 +58,7 @@ export function initSmoothScroll(): () => void {
     // duration and ScrollTrigger scrub continue to soften every arrival.
     wheelMultiplier: 0.9,
     // Touch devices already have their own momentum; adding ours fights it.
-    syncTouch: true,
-    touchMultiplier: 0.82,
+    syncTouch: false,
   });
   (window as Window & { __strideLenis?: Lenis }).__strideLenis = lenis;
 

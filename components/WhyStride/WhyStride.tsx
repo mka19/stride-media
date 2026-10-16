@@ -25,7 +25,7 @@ const HeroObject = lazy(() => import("../Hero/HeroObject"));
  * On phones the scatter is replaced by a plain crossfade and the labels
  * become a stacked list, per the responsive prompt.
  */
-export default function WhyStride({ scrollLength = "560vh" }: { scrollLength?: string }) {
+export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: string }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const mobileRoot = useRef<HTMLElement | null>(null);

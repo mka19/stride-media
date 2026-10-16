@@ -26,7 +26,7 @@ export default function Problem({
   backgroundSrc,
   /** One image per pain point, in order. */
   cardMedia = [],
-  scrollLength = "430vh",
+  scrollLength = "300vh",
 }: {
   backgroundSrc?: string;
   cardMedia?: string[];
