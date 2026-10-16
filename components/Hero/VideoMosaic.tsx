@@ -14,7 +14,7 @@ import { color, ease, hexA } from "../shared/theme";
  * long ease is the whole point of the effect — nothing snaps.
  */
 
-export type MosaicTile = { src?: string; caption?: string; views?: string; href?: string };
+export type MosaicTile = { src?: string; poster?: string; caption?: string; views?: string; href?: string };
 
 
 /**
@@ -27,12 +27,20 @@ export type MosaicTile = { src?: string; caption?: string; views?: string; href?
  * forty-eight cells, so the transition is kept short and each cell is a
  * containment boundary, which keeps that layout work inside the tile.
  */
-function weight(index: number, hovered: number | null) {
+function columnWeight(index: number, hovered: number | null) {
   if (hovered === null) return 1;
   const d = Math.abs(index - hovered);
-  if (d === 0) return 2.05;
-  if (d === 1) return 0.72;
-  return 0.86;
+  if (d === 0) return 1.18;
+  if (d === 1) return 0.94;
+  return 0.97;
+}
+
+function rowWeight(index: number, hovered: number | null) {
+  if (hovered === null) return 1;
+  const d = Math.abs(index - hovered);
+  if (d === 0) return 2.65;
+  if (d === 1) return 0.62;
+  return 0.72;
 }
 
 export default function VideoMosaic({
@@ -111,7 +119,7 @@ export default function VideoMosaic({
           style={{
             display: "flex",
             gap,
-            flexGrow: weight(row, hover?.row ?? null),
+            flexGrow: rowWeight(row, hover?.row ?? null),
             flexBasis: 0,
             minHeight: 0,
             position: "relative",
@@ -127,8 +135,9 @@ export default function VideoMosaic({
               <>
                 <MediaTile
                   src={tile.src}
+                  poster={tile.poster}
                   seed={i + 3}
-                  play={active}
+                  play={active && isHovered}
                   radius={6}
                   style={{ position: "absolute", inset: 0 }}
                 />
@@ -138,13 +147,13 @@ export default function VideoMosaic({
                   style={{
                     position: "absolute",
                     inset: 0,
-                    opacity: isHovered ? 0 : 1,
+                    opacity: isHovered ? 0 : 0.38,
                     background: `radial-gradient(90% 120% at ${18 + (i * 17) % 68}% ${16 + (i * 29) % 62}%, ${hexA(color.accentBright,.72)} 0%, transparent 52%), radial-gradient(110% 90% at ${82 - (i * 13) % 62}% ${80 - (i * 19) % 58}%, ${hexA(color.accentDeep,.86)} 0%, transparent 58%), linear-gradient(${125 + (i * 23) % 110}deg, #07070a, #24103f 52%, #080808)`,
                     transition: `opacity 520ms ${ease.out}`,
                     animationDelay: `${-(i % 8) * .7}s`,
                   }}
                 />
-                <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black,.12)}, ${hexA(color.black,isHovered ? .7 : .22)})` }} />
+                <div aria-hidden="true" style={{ position: "absolute", inset: 0, opacity: isHovered ? 0 : 1, background: `linear-gradient(180deg, ${hexA(color.black,.04)}, ${hexA(color.black,.12)})`, transition: `opacity 420ms ${ease.out}` }} />
                 <span
                   className="hero-tile-views"
                   style={{
@@ -172,7 +181,7 @@ export default function VideoMosaic({
             );
             const frameStyle = {
               position: "relative" as const,
-              flexGrow: weight(col, hover?.col ?? null),
+              flexGrow: columnWeight(col, hover?.col ?? null),
               flexBasis: 0,
               minWidth: 0,
               contain: "layout paint" as const,

@@ -1,7 +1,7 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
 import { BUILD, color, ease, hexA, layout, space, typeScale } from "../shared/theme";
-import { Grain, MediaTile } from "../shared/primitives";
+import { Grain, MediaTile, StrideMark } from "../shared/primitives";
 import { detailFor, useBreakpoint, useStacked } from "../shared/responsive";
 import Wordmark from "./Wordmark";
 
@@ -121,7 +121,7 @@ export default function Footer({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: stacked ? "1fr 1fr" : "1fr auto 1fr",
+            gridTemplateColumns: "1fr 1fr",
             justifyContent: "space-between",
             gap: mobile ? 28 : space.xl,
           }}
@@ -152,8 +152,8 @@ export default function Footer({
               display: "flex",
               flexDirection: "column",
               gap: mobile ? 12 : space.s,
-              textAlign: stacked ? "left" : "right",
-              justifySelf: stacked ? undefined : "end",
+              textAlign: "right",
+              justifySelf: "end",
             }}
           >
             {/* A name with no URL behind it is rendered as a name. Anything
@@ -172,6 +172,11 @@ export default function Footer({
               </a>
             ))}
           </nav>
+        </div>
+
+        {/* The brand mark bridges the utility links and the large wordmark. */}
+        <div className="ft-item" aria-hidden="true" style={{ display: "grid", placeItems: "center", margin: mobile ? "4px 0 -4px" : "2px 0 -8px" }}>
+          <StrideMark size={mobile ? 54 : 70} glowing />
         </div>
 
         {/* ---- the wordmark, dissolving under the cursor ----

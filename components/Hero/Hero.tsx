@@ -75,7 +75,7 @@ export default function Hero({
       });
 
       tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.46, ease: "power2.out" }, 0.12)
-        .to(q(".hero-veil"), { opacity: 0.68, duration: 0.38 }, 0.14)
+        .to(q(".hero-veil"), { opacity: 0.48, duration: 0.38 }, 0.14)
         .to(
           lines,
           { y: 0, scale: 1, opacity: 1, duration: 0.3, stagger: 0.055, ease: "power3.out" },
@@ -84,6 +84,7 @@ export default function Hero({
         .to(q(".hero-glow"), { opacity: 1, duration: 0.34 }, 0.22)
         .to(q(".hero-tail"), { opacity: 1, y: 0, duration: 0.26, stagger: 0.04 }, 0.37)
         .to(q(".hero-copy-content"), { opacity: 0, scale: 0.985, duration: 0.2, ease: "power2.inOut" }, 0.67)
+        .to(q(".hero-veil"), { opacity: 0.06, duration: 0.2, ease: "power2.inOut" }, 0.67)
         .to(q(".hero-glow"), { opacity: 0, duration: 0.18, ease: "power2.inOut" }, 0.68)
         .to(q(".hero-intro"), { opacity: 0, y: -20, duration: 0.25 }, 0.05)
         .to(q(".hero-hint"), { opacity: 0, duration: 0.2 }, 0.05);

@@ -46,15 +46,17 @@ export default function App() {
 
   // Media is limited to components that already own image/video slots. This
   // keeps every restored animation and the original hero mark untouched.
-  const heroTiles = [
-    ...reels.filter((reel) => reel.views).map((reel) => ({
-    src: `/case-studies/videos/ig-${reel.id}.jpg`,
+  const verifiedHeroViews = new Map([
+    ["DSH_yDNE7d_", "12M"],
+    ["DRZkSxOj3oh", "1.55M"],
+  ]);
+  const heroTiles = reels.map((reel) => ({
+    src: `/case-studies/videos/ig-${reel.id}.mp4`,
+    poster: `/case-studies/videos/ig-${reel.id}.jpg`,
     caption: reel.title,
-    views: `${reel.views} views`,
+    views: `${reel.views ?? verifiedHeroViews.get(reel.id) ?? "Watch reel"}${reel.views || verifiedHeroViews.has(reel.id) ? " views" : ""}`,
     href: reel.instagram,
-    })),
-    { caption: "Organic client reach", views: "350M+ views", href: "/videos" },
-  ];
+  }));
 
   const resultMedia = [
     "/case-studies/videos/ig-DSH_yDNE7d_.jpg",
