@@ -564,12 +564,14 @@ export default function CaseStudy({
                     right: space.s,
                     bottom: space.s,
                     zIndex: 3,
-                    padding: "9px 12px",
+                    height: 48,
+                    padding: `0 ${space.lg}px`,
+                    borderRadius: 8,
                     ...typeScale.eyebrow,
-                    color: "#fff",
-                    background: "rgba(8,6,13,.9)",
-                    border: `1px solid ${hexA("#fff", .18)}`,
-                    backdropFilter: "blur(12px)",
+                    fontWeight: 500,
+                    color: color.textOnLight,
+                    background: color.boneSoft,
+                    border: 0,
                   }}
                 >
                   <span>View case study</span><span className="cta-arrow" aria-hidden="true">↗</span>

@@ -3,7 +3,7 @@ import { gsap, useGsapContext, prefersReducedMotion } from "../shared/gsap";
 import { results as copy } from "../shared/copy";
 import { color, ease, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { GlowButton, MediaTile, MicroLabel } from "../shared/primitives";
-import { useBreakpoint, useCanHover, useStacked } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
 import GradientRevealText from "../shared/GradientRevealText";
 
@@ -380,10 +380,7 @@ function ResultCard({
   activeVideo: string | null;
   setActiveVideo: (key: string | null) => void;
 }) {
-  const canHover = useCanHover();
   const playing = activeVideo === instanceKey;
-  const [hovered, setHovered] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.4 }, false);
   const videoSrc = src?.replace(/\.jpg(?:\?.*)?$/i, ".mp4");
@@ -426,7 +423,7 @@ function ResultCard({
       }}
     >
       <div ref={ref} style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" onClick={togglePlayback} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
 
         {/* client avatar, top-left */}
@@ -477,8 +474,8 @@ function ResultCard({
           <span className="result-view-text">{card.views} Views</span>
         </div>
         {videoSrc && (
-          <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={togglePlayback} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} onPointerMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setCursorPos({ x: event.clientX - rect.left, y: event.clientY - rect.top }); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", inset: 0, zIndex: 5, width: "100%", height: "100%", border: 0, padding: 0, background: "transparent", color: "#fff", cursor: canHover ? "none" : "pointer" }}>
-            <span style={{ position: "absolute", left: canHover ? cursorPos.x : "50%", top: canHover ? cursorPos.y : "50%", transform: "translate(-50%, -50%)", width: 78, height: 78, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, background: hexA(color.black, .72), display: canHover && !hovered ? "none" : "grid", placeItems: "center", backdropFilter: "blur(10px)", fontSize: 10, lineHeight: 1.1, fontWeight: 600, textTransform: "uppercase", pointerEvents: "none" }}>{playing ? "Pause video" : "Play video"}</span>
+          <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1 }}>
+            <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
           </button>
         )}
       </div>
@@ -493,7 +490,7 @@ function ResultCard({
           marginTop: "auto",
         }}
       >
-        <a className="result-instagram-link" href={card.link} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4, minHeight: 44, display: "inline-flex", alignItems: "center" }} aria-label={`Open ${card.handle} reel on Instagram`}>{card.handle} · Instagram <span aria-hidden="true">↗</span></a>
+        <a className="result-instagram-link" href={`https://www.instagram.com/${card.handle.replace(/^@/, "")}/`} target="_blank" rel="noreferrer" onPointerDown={(event) => event.stopPropagation()} style={{ color: "inherit", textUnderlineOffset: 4, minHeight: 44, display: "inline-flex", alignItems: "center", position: "relative", zIndex: 7 }} aria-label={`Open ${card.handle} Instagram profile`}>{card.handle} · Instagram profile <span aria-hidden="true">↗</span></a>
       </div>
     </article>
   );
