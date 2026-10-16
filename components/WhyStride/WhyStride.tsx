@@ -441,8 +441,8 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
           <p style={{ margin: `${rhythm.headlineToBody}px 0 0`, maxWidth: "34ch", ...typeScale.bodyLg, lineHeight: 1.5, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "relative", zIndex: 8, width: "min(100%, 420px)", margin: "28px auto 0", height: "clamp(170px, 24vh, 220px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .1)}`, background: `radial-gradient(circle at 50% 45%, ${hexA(color.accent, .18)}, transparent 52%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
-            <div style={{ position: "absolute", inset: "8%" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
+          <div style={{ position: "relative", zIndex: 8, width: "min(100%, 420px)", margin: "28px auto 0", height: "clamp(210px, 29vh, 260px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .14)}`, background: `radial-gradient(circle at 50% 44%, ${hexA(color.accentBright, .25)}, transparent 54%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
+            <div style={{ position: "absolute", inset: "2%", filter: "brightness(1.45) contrast(1.06)", transform: "translateZ(0)" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 16, width: "100%", textAlign: "left" }}>
             {copy.capabilities.map((cap, i) => (
