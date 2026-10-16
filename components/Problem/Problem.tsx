@@ -341,7 +341,7 @@ export default function Problem({
                         aria-current={i === mobileCard}
                         onClick={() => setMobileCard(i)}
                         style={{ width: 44, height: 44, padding: 0, border: 0, display: "grid", placeItems: "center", background: "transparent", cursor: "pointer" }}
-                      ><span aria-hidden="true" style={{ display: "block", width: i === mobileCard ? 28 : 8, height: 8, borderRadius: 99, background: i === mobileCard ? color.accent : hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1), background 300ms ease" }} /></button>
+                      ><span aria-hidden="true" style={{ position: "relative", display: "block", width: i === mobileCard ? 32 : 8, height: 8, overflow: "hidden", borderRadius: 99, background: hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1)" }}>{i === mobileCard && <span key={`${mobileCard}-${i}`} className="testimonial-progress-fill" style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationDuration: "4.2s" }} />}</span></button>
                     ))}
                   </div>
                 </div>

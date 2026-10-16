@@ -455,16 +455,16 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
           <div style={{ position: "sticky", top: layout.navHeight + 12, zIndex: 8, width: "min(100%, 420px)", margin: "30px auto 0", height: 200, overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .14)}`, background: `radial-gradient(circle at 50% 44%, ${hexA(color.accentBright, .25)}, transparent 54%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
             <div style={{ position: "absolute", inset: "2%", filter: "brightness(1.45) contrast(1.06)", transform: "translateZ(0)" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 18, width: "100%", textAlign: "left", paddingBottom: 96 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative", zIndex: 9, marginTop: 18, width: "100%", textAlign: "left", paddingBottom: 32 }}>
             {copy.capabilities.map((cap, i) => (
               <div
                 key={cap.n}
                 className="ws-mobile-card"
                 data-index={i}
                 style={{
-                  position: "sticky",
-                  top: layout.navHeight + 226,
+                  position: "relative",
                   zIndex: 10 + i,
+                  marginTop: i === 0 ? 0 : -14,
                   opacity: 1,
                   visibility: "visible",
                   transform: "none",

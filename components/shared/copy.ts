@@ -329,7 +329,7 @@ export const founders = {
       name: "Co-founder",
       role: "Profile details coming soon",
       bio: "The second founder profile will be completed when the confirmed name, role, biography and portrait are supplied.",
-      image: "",
+      image: "/founders/co-founder.png",
     },
   ],
   memories: [

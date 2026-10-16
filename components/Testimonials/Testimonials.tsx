@@ -96,7 +96,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
           style={{
             display: items.length === 1 ? "flex" : "grid",
             gridAutoFlow: "column",
-            gridAutoColumns: stacked ? "78vw" : "clamp(290px, 27vw, 390px)",
+            gridAutoColumns: stacked ? "74vw" : "clamp(290px, 27vw, 390px)",
             gap: stacked ? 16 : 24,
             overflowX: "auto",
             scrollSnapType: "x mandatory",
@@ -106,7 +106,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
             WebkitOverflowScrolling: "touch",
             touchAction: "auto",
             cursor: items.length > 1 ? "grab" : "default",
-            paddingInline: stacked ? "8vw" : layout.pad,
+            paddingInline: stacked ? "13vw" : layout.pad,
             paddingBottom: space.md,
             justifyContent: items.length === 1 ? "center" : undefined,
           }}
@@ -119,9 +119,9 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                 key={`${item.name}-${index}`}
                 style={{
                   position: "relative",
-                  width: stacked ? "78vw" : "clamp(290px, 27vw, 390px)",
+                  width: stacked ? "74vw" : "clamp(290px, 27vw, 390px)",
                   flex: "0 0 auto",
-                  aspectRatio: "9 / 11.2",
+                  aspectRatio: stacked ? "9 / 15" : "9 / 11.2",
                   overflow: "hidden",
                   borderRadius: stacked ? 10 : 12,
                   background: "#111",
@@ -156,8 +156,8 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                       <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Client story · {String(index + 1).padStart(2, "0")}</span>
                       <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
                     </div>
-                    <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: space.lg }}>
-                      <p style={{ margin: 0, maxWidth: "25ch", fontFamily: typeScale.h3.fontFamily, fontSize: "clamp(24px, 2.1vw, 34px)", lineHeight: 1.08, letterSpacing: "-.035em", fontWeight: 500, textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.72)" }}>
+                    <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: stacked ? space.md : space.lg }}>
+                      <p style={{ margin: 0, maxWidth: "25ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(20px, 5.6vw, 25px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.12 : 1.08, letterSpacing: "-.035em", fontWeight: 500, textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.72)" }}>
                         “{item.quote.replace("Stride Media.", "")}
                         <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
                       </p>
@@ -178,8 +178,8 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                         position: "absolute",
                         inset: 0,
                         margin: "auto",
-                        width: 68,
-                        height: 68,
+                        width: stacked ? 58 : 68,
+                        height: stacked ? 58 : 68,
                         borderRadius: "50%",
                         border: `1px solid ${hexA("#fff", .3)}`,
                         background: hexA(color.black, .56),

@@ -351,12 +351,12 @@ export default function CaseStudy({
             alignItems: "center",
             transition: `background ${ease.hoverMs}ms ${ease.hover}`,
             ...(stacked ? {
-              position: "sticky",
-              top: `calc(${layout.navHeight}px + ${12 + i * 6}px)`,
+              position: "relative",
               zIndex: i + 1,
-              minHeight: "clamp(320px, 43vh, 380px)",
+              minHeight: 260,
+              overflow: "hidden",
               background: color.bone,
-              boxShadow: `0 -1px 0 ${hexA(color.black, .08)}, 0 -24px 60px ${hexA(color.black, .08)}`,
+              boxShadow: `0 1px 0 ${hexA(color.black, .08)}, 0 18px 44px ${hexA(color.black, .06)}`,
             } : {}),
           }}
           /* One colour rising from the floor of the card, at an alpha you
@@ -392,7 +392,7 @@ export default function CaseStudy({
               ...typeScale.numberXl,
               ...numberGradient,
               width: "100%",
-              fontSize: stacked ? "clamp(58px, 18vw, 96px)" : "clamp(48px, 5.2vw, 88px)",
+              fontSize: stacked ? "clamp(48px, 14vw, 66px)" : "clamp(48px, 5.2vw, 88px)",
               lineHeight: 0.92,
               letterSpacing: "-.055em",
               whiteSpace: "nowrap",
