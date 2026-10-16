@@ -345,9 +345,11 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
   }, [stacked]);
 
   /** A line-art mark in the corner of a card, alternating between two. */
-  const cardGlyph = (i: number) =>
+  const cardGlyph = (i: number) => {
+    const size = stacked ? 56 : 74;
+    return (
     i % 2 === 0 ? (
-      <svg width="74" height="74" viewBox="0 0 74 74" fill="none" aria-hidden="true">
+      <svg width={size} height={size} viewBox="0 0 74 74" fill="none" aria-hidden="true">
         {Array.from({ length: 10 }, (_, k) => (
           <line
             key={k}
@@ -361,7 +363,7 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
         ))}
       </svg>
     ) : (
-      <svg width="74" height="74" viewBox="0 0 74 74" fill="none" aria-hidden="true">
+      <svg width={size} height={size} viewBox="0 0 74 74" fill="none" aria-hidden="true">
         {[10, 19, 28].map((r, k) => (
           <g key={k}>
             <path
@@ -377,7 +379,8 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
           </g>
         ))}
       </svg>
-    );
+    ));
+  };
 
 
   /**
@@ -395,8 +398,8 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
         flexDirection: "column",
         justifyContent: "space-between",
         gap: space.h,
-        minHeight: stacked ? 252 : 290,
-        padding: `${stacked ? 24 : space.xl}px`,
+        minHeight: stacked ? 198 : 290,
+        padding: `${stacked ? 20 : space.xl}px`,
         opacity: 1,
         visibility: "visible",
         color: color.textOnDark,
@@ -435,7 +438,7 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",
-            padding: `${space.xxl}px ${layout.pad} ${layout.section}px`,
+            padding: `104px ${layout.pad} 128px`,
           }}
         >
           <MicroLabel tone="accent">{copy.label}</MicroLabel>
@@ -449,21 +452,23 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
           <p style={{ margin: `${rhythm.headlineToBody}px 0 0`, maxWidth: "34ch", ...typeScale.bodyLg, lineHeight: 1.5, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "relative", zIndex: 8, width: "min(100%, 420px)", margin: "28px auto 0", height: "clamp(210px, 29vh, 260px)", overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .14)}`, background: `radial-gradient(circle at 50% 44%, ${hexA(color.accentBright, .25)}, transparent 54%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
+          <div style={{ position: "sticky", top: layout.navHeight + 12, zIndex: 8, width: "min(100%, 420px)", margin: "30px auto 0", height: 200, overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .14)}`, background: `radial-gradient(circle at 50% 44%, ${hexA(color.accentBright, .25)}, transparent 54%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
             <div style={{ position: "absolute", inset: "2%", filter: "brightness(1.45) contrast(1.06)", transform: "translateZ(0)" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 16, width: "100%", textAlign: "left" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 9, marginTop: 18, width: "100%", textAlign: "left", paddingBottom: 96 }}>
             {copy.capabilities.map((cap, i) => (
               <div
                 key={cap.n}
                 className="ws-mobile-card"
                 data-index={i}
                 style={{
-                  position: "relative",
-                  zIndex: i + 1,
+                  position: "sticky",
+                  top: layout.navHeight + 226,
+                  zIndex: 10 + i,
                   opacity: 1,
                   visibility: "visible",
                   transform: "none",
+                  boxShadow: "0 -10px 30px rgba(0,0,0,.24)",
                 }}
               >
                 {capability(cap, i)}

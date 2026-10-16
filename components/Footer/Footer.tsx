@@ -29,10 +29,12 @@ export default function Footer({
       const q = gsap.utils.selector(root);
       gsap.set(q(".ft-item"), { opacity: 0, y: 16 });
       gsap.set(q(".ft-word"), { opacity: 0, scale: 0.96 });
+      gsap.set(q(".ft-mark"), { opacity: 0, scale: 0.35, y: -72, transformOrigin: "50% 50%" });
 
       gsap
         .timeline({ scrollTrigger: { trigger: root, start: "top 80%" } })
         .to(q(".ft-item"), { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 })
+        .to(q(".ft-mark"), { opacity: 1, scale: 1, y: 0, duration: 0.72, ease: "power3.out" }, 0.04)
         .to(q(".ft-word"), { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, 0.15);
     },
     [stacked],
@@ -40,6 +42,7 @@ export default function Footer({
       const q = gsap.utils.selector(root);
       gsap.set(q(".ft-item"), { opacity: 1, y: 0 });
       gsap.set(q(".ft-word"), { opacity: 1, scale: 1 });
+      gsap.set(q(".ft-mark"), { opacity: 1, scale: 1, y: 0 });
     },
   );
 
@@ -127,7 +130,7 @@ export default function Footer({
           }}
         >
           <nav
-            className="ft-item"
+            className="ft-mark"
             aria-label="Footer"
             style={{ display: "flex", flexDirection: "column", gap: mobile ? 12 : space.s }}
           >
