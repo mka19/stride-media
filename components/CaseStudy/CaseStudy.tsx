@@ -468,6 +468,9 @@ export default function CaseStudy({
               <figcaption style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>
                 {plate.caption}
               </figcaption>
+              <span style={{ minHeight: 44, display: "inline-flex", alignItems: "center", alignSelf: "flex-start", gap: 8, ...typeScale.eyebrow, color: color.textOnDark, borderBottom: `1px solid ${hexA(color.accentOnDark, .72)}` }}>
+                View case study <span aria-hidden="true">↗</span>
+              </span>
             </a>
           ))}
           </div>
@@ -480,15 +483,18 @@ export default function CaseStudy({
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",
-            gap: 6,
-            padding: `12px ${layout.pad} ${layout.section}px`,
+            gap: 0,
+            padding: `0 ${layout.pad} ${layout.section}px`,
           }}
         >
-          <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
-          <GradientRevealText as="h3" tone="light" style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>
-            {copy.resultsHeadline}
-          </GradientRevealText>
-          <div style={{ width: "100%", marginTop: 26 }}>{metrics}</div>
+          <div aria-hidden="true" style={{ width: "100%", height: 12, flex: "0 0 12px" }} />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
+            <GradientRevealText as="h3" tone="light" style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>
+              {copy.resultsHeadline}
+            </GradientRevealText>
+          </div>
+          <div style={{ width: "100%", marginTop: 18 }}>{metrics}</div>
         </div>
       </section>
     );

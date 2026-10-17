@@ -197,6 +197,17 @@ export default function HowItWorks({
         gap: rhythm.headlineToBody,
         maxWidth: 720,
         margin: "0 auto",
+        ...(stacked ? {
+          width: "100%",
+          minHeight: "min(68vh, 560px)",
+          justifyContent: "center",
+          padding: "36px 22px",
+          borderRadius: 20,
+          color: color.textOnDark,
+          background: `radial-gradient(circle at 50% 18%, ${hexA(color.accentBright, .3)}, transparent 46%), linear-gradient(145deg, #170725, #5b21b6)`,
+          border: `1px solid ${hexA("#fff", .16)}`,
+          boxShadow: `0 24px 70px ${hexA(color.black, .42)}`,
+        } : {}),
       }}
     >
       <div
@@ -207,12 +218,12 @@ export default function HowItWorks({
           gap: rhythm.eyebrowToHeadline,
         }}
       >
-        <MicroLabel number={step.n} tone={stacked ? "light" : "dark"}>
+        <MicroLabel number={step.n} tone={stacked ? "accent" : "dark"}>
           {step.tag}
         </MicroLabel>
         <GradientRevealText
           as="h3"
-          tone={stacked ? "light" : "dark"}
+          tone="dark"
           style={{
             maxWidth: "24ch",
             ...typeScale.h1,
@@ -227,7 +238,7 @@ export default function HowItWorks({
         style={{
           margin: 0,
           ...typeScale.bodyLg,
-          color: stacked ? color.textOnLightMuted : color.textOnDarkMuted,
+          color: color.textOnDarkMuted,
         }}
       >
         {step.body}
@@ -249,9 +260,10 @@ export default function HowItWorks({
             flexDirection: "column",
             gap: layout.section,
             padding: `${layout.section} ${layout.pad}`,
+            background: color.black,
           }}
         >
-          <FieldTexture breakpoint={bp} tone="light" />
+          <FieldTexture breakpoint={bp} tone="dark" />
           <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: layout.section }}>
             {stepList}
           </div>

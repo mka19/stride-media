@@ -344,42 +344,18 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
     return () => observer.disconnect();
   }, [stacked]);
 
-  /** A line-art mark in the corner of a card, alternating between two. */
+  /** One readable line icon for each capability. */
   const cardGlyph = (i: number) => {
     const size = stacked ? 56 : 74;
-    return (
-    i % 2 === 0 ? (
-      <svg width={size} height={size} viewBox="0 0 74 74" fill="none" aria-hidden="true">
-        {Array.from({ length: 10 }, (_, k) => (
-          <line
-            key={k}
-            x1={6 + k * 7}
-            y1={10}
-            x2={6 + k * 7}
-            y2={64}
-            stroke={hexA("#FFFFFF", 0.42)}
-            strokeWidth="1"
-          />
-        ))}
-      </svg>
-    ) : (
-      <svg width={size} height={size} viewBox="0 0 74 74" fill="none" aria-hidden="true">
-        {[10, 19, 28].map((r, k) => (
-          <g key={k}>
-            <path
-              d={`M 34 ${37 - r} A ${r} ${r} 0 0 0 34 ${37 + r}`}
-              stroke={hexA("#FFFFFF", 0.42)}
-              strokeWidth="1"
-            />
-            <path
-              d={`M 40 ${37 - r} A ${r} ${r} 0 0 1 40 ${37 + r}`}
-              stroke={hexA("#FFFFFF", 0.42)}
-              strokeWidth="1"
-            />
-          </g>
-        ))}
-      </svg>
-    ));
+    const paths = [
+      <><rect x="10" y="16" width="54" height="42" rx="5"/><path d="m31 27 18 10-18 10Z"/><path d="M18 10v12M56 10v12M18 52v12M56 52v12"/></>,
+      <><circle cx="37" cy="37" r="25"/><circle cx="37" cy="37" r="14"/><circle cx="37" cy="37" r="4"/><path d="M55 19 43 31"/></>,
+      <><path d="M37 9 46 28 65 37 46 46 37 65 28 46 9 37 28 28Z"/><circle cx="37" cy="37" r="5"/></>,
+      <><path d="M12 18h50v38H12Z"/><path d="m31 27 17 10-17 10Z"/><path d="M17 62h40"/></>,
+      <><circle cx="37" cy="28" r="11"/><path d="M18 62c2-14 9-22 19-22s17 8 19 22"/><path d="M9 28h10M55 28h10"/></>,
+      <><rect x="12" y="15" width="50" height="47" rx="6"/><path d="M12 28h50M23 9v12M51 9v12M26 45l8 8 16-18"/></>,
+    ];
+    return <svg width={size} height={size} viewBox="0 0 74 74" fill="none" stroke={hexA("#FFFFFF", .58)} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[i] ?? paths[0]}</svg>;
   };
 
 
@@ -466,11 +442,10 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
                   top: layout.navHeight + 226,
                   zIndex: 10 + i,
                   marginTop: i === 0 ? 0 : 30,
-                  marginBottom: i < copy.capabilities.length - 1 ? "18vh" : 0,
+                  marginBottom: i < copy.capabilities.length - 1 ? "32vh" : 0,
                   opacity: 1,
                   visibility: "visible",
                   transform: "none",
-                  background: "#202024",
                   boxShadow: "0 -12px 34px rgba(0,0,0,.48)",
                 }}
               >

@@ -73,14 +73,14 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         boxShadow: `0 0 0 1px ${hexA("#fff", .12)}`,
       }}
     >
-      <img src="/comparison-with-stride.png" alt="A polished real-estate Instagram profile after working with Stride Media" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
+      <img src="/comparison-with-stride.png" alt="A polished real-estate Instagram profile after working with Stride Media" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: stacked ? "cover" : "contain", objectPosition: stacked ? "top center" : "center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, width: `${split}%`, overflow: "hidden", background: "#080b0d" }}>
-        <img src="/comparison-without-stride.png" alt="The real-estate Instagram profile before working with Stride Media" style={{ position: "absolute", left: 0, top: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, height: "100%", objectFit: "contain", objectPosition: "center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
+        <img src="/comparison-without-stride.png" alt="The real-estate Instagram profile before working with Stride Media" style={{ position: "absolute", left: 0, top: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, height: "100%", objectFit: stacked ? "cover" : "contain", objectPosition: stacked ? "top center" : "center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, background: "linear-gradient(180deg, rgba(0,0,0,.12), transparent 34%, rgba(0,0,0,.08))", pointerEvents: "none" }} />
-        <MicroLabel tone="accent" style={{ position: "absolute", left: stacked ? 18 : 32, top: stacked ? 22 : 32, whiteSpace: "nowrap", opacity: Math.min(1, split / 28), transition: "opacity 420ms ease" }}>Without Stride</MicroLabel>
+        <MicroLabel tone="accent" style={{ position: "absolute", left: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, split / 28), transition: "opacity 420ms ease" }}>Without Stride</MicroLabel>
       </div>
 
-      <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 18 : 32, top: stacked ? 22 : 32, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
+      <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
 
       <div className="compare-copy" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}>
         <div style={{ textAlign: "center", padding: stacked ? 14 : layout.pad }}>

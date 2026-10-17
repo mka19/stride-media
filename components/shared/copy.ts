@@ -179,7 +179,7 @@ export const caseStudy = {
     { caption: "Imtaz Ahmed · AED 20M+ in sales" },
     { caption: "Yasmin Shafi · 101K followers" },
     { caption: "Maaz Kadri · 12M-view breakthrough" },
-    { caption: "Anonymous · What the process taught us" },
+    { caption: "Anonymous client · What the process taught us" },
     { caption: "Thumbnail set" },
     { caption: "Ep. 17 — Off-market" },
   ],

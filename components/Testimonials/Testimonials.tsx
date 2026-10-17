@@ -151,17 +151,17 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                       play={false}
                       style={{ position: "absolute", inset: 0, transform: "scale(1.02)" }}
                     />
-                    <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black, .08)} 10%, ${hexA(color.black, .9)} 100%)` }} />
-                    <div style={{ position: "absolute", top: space.lg, left: space.lg, right: space.lg, display: "flex", justifyContent: "space-between", alignItems: "center", gap: space.md }}>
+                    <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black, .12)} 10%, ${hexA(color.black, .94)} 100%)` }} />
+                    <div style={{ position: "absolute", top: stacked ? 16 : space.lg, left: stacked ? 16 : space.lg, right: stacked ? 16 : space.lg, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                       <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Client story · {String(index + 1).padStart(2, "0")}</span>
                       <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
                     </div>
-                    <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: stacked ? space.md : space.lg }}>
-                      <p style={{ margin: 0, maxWidth: "27ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(17px, 4.7vw, 21px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.28 : 1.08, letterSpacing: stacked ? "-.02em" : "-.035em", fontWeight: 500, textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.72)" }}>
+                    <div style={{ position: "absolute", left: stacked ? 16 : space.lg, right: stacked ? 16 : space.lg, bottom: stacked ? 16 : space.lg, display: "flex", flexDirection: "column", gap: stacked ? 8 : space.lg }}>
+                      <p style={{ margin: 0, maxWidth: "28ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(16px, 4.35vw, 19px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.35 : 1.08, letterSpacing: stacked ? "-.012em" : "-.035em", fontWeight: 500, color: "#fff", textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.84)" }}>
                         “{item.quote.replace("Stride Media.", "")}
                         <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
                       </p>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: space.lg, paddingTop: space.md, borderTop: `1px solid ${hexA("#fff", .16)}` }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, paddingTop: 8, borderTop: `1px solid ${hexA("#fff", .22)}` }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
                           <span style={{ ...typeScale.bodyLg, fontWeight: 600, color: color.textOnDark }}>{item.name}</span>
                           <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{item.handle}</span>
