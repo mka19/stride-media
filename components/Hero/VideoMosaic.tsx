@@ -156,7 +156,7 @@ export default function VideoMosaic({
                     animationDelay: `${-(i % 8) * .7}s`,
                   }}
                 />
-                <div aria-hidden="true" style={{ position: "absolute", inset: 0, opacity: isHovered ? 0 : 1, background: `linear-gradient(180deg, ${hexA(color.black,.04)}, ${hexA(color.black,.12)})`, transition: `opacity 420ms ${ease.out}` }} />
+                <div aria-hidden="true" style={{ position: "absolute", inset: 0, opacity: isHovered ? 0 : 1, background: hexA(color.black, .16), transition: `opacity 360ms ${ease.out}`, pointerEvents: "none" }} />
                 <span
                   className="hero-tile-views"
                   style={{

@@ -158,6 +158,9 @@ export default function Footer({
               gridColumn: mobile ? "1 / -1" : 2,
               gridRow: mobile ? 2 : 1,
               marginTop: mobile ? 4 : 0,
+              justifySelf: mobile ? "stretch" : "center",
+              width: "100%",
+              transform: mobile ? "translateX(2px)" : undefined,
             }}
           >
             <StrideMark size={mobile ? 54 : 76} glowing />
@@ -218,8 +221,8 @@ export default function Footer({
             flexDirection: mobile ? "column" : "row",
             alignItems: mobile ? "center" : undefined,
             textAlign: mobile ? "center" : undefined,
-            gap: mobile ? 4 : space.md,
-            paddingTop: mobile ? 12 : space.lg,
+            gap: mobile ? 0 : space.md,
+            paddingTop: mobile ? 8 : space.lg,
             borderTop: `1px solid ${color.hairlineOnDark}`,
             ...typeScale.eyebrow,
             color: color.textOnDarkMuted,
@@ -238,13 +241,13 @@ export default function Footer({
           </span>
           <a
             href={`mailto:${brand.email}`}
-            style={{ color: "inherit", textDecoration: "none", textTransform: "none", minHeight: 44, display: "inline-flex", alignItems: "center" }}
+            style={{ color: "inherit", textDecoration: "none", textTransform: "none", minHeight: mobile ? 34 : 44, display: "inline-flex", alignItems: "center" }}
           >
             {brand.email}
           </a>
           <span style={{ display: "flex", justifyContent: mobile ? "center" : undefined, gap: mobile ? 20 : space.md }}>
             {copy.legal.map((item) => (
-              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none", minHeight: 44, display: "inline-flex", alignItems: "center" }}>
+              <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" style={{ color: "inherit", textDecoration: "none", minHeight: mobile ? 36 : 44, display: "inline-flex", alignItems: "center" }}>
                 {item.label}
               </a>
             ))}

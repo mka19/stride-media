@@ -65,12 +65,12 @@ const LOGO_SVG = `
 // changing the form feels like one machined object reconfiguring itself.
 const ABSTRACT_SVGS = [
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M18 31 31 18h16L34 31v10L22 53l-4-4Z"/><path d="m82 31-13-13H53l13 13v10l12 12 4-4Z"/><path d="m18 69 13 13h16L34 69V59L22 47l-4 4Z"/><path d="m82 69-13 13H53l13-13V59l12-12 4 4Z"/><path d="M50 32c0 13 5 18 18 18-13 0-18 5-18 18 0-13-5-18-18-18 13 0 18-5 18-18Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 15c0 18 6 24 24 24-18 0-24 6-24 24 0-18-6-24-24-24 18 0 24-6 24-24Z"/><path d="M21 62h12v12H21Z"/><path d="M67 62h12v12H67Z"/><path d="M44 74h12v12H44Z"/><path d="m31 65 17 12-5 7-17-12Z"/><path d="m69 65-17 12 5 7 17-12Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M16 18h27v50H16Zm41 0h27v50H57ZM36 76h28v10H36Z"/><path d="m27 35 12 8-12 8Zm41 0 12 8-12 8Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M22 13h43l13 13v61H22Zm12 24h32V29H34Zm0 17h32v-8H34Zm0 17h22v-8H34Z"/><path d="M65 13v14h13Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 9 62 38 91 50 62 62 50 91 38 62 9 50 38 38Zm0 24-7 17 7 17 7-17Z"/><path d="M46 13h8v13h-8ZM46 74h8v13h-8ZM13 46h13v8H13ZM74 46h13v8H74Z"/></g></svg>`,
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M15 20h70v9H15ZM15 71h70v9H15ZM15 29h9v42h-9ZM76 29h9v42h-9Z"/><path d="m43 36 20 14-20 14Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 18a14 14 0 1 1 0 28 14 14 0 0 1 0-28Z"/><path d="M25 79c2-18 11-27 25-27s23 9 25 27Z"/><path d="M8 46h12v8H8ZM80 46h12v8H80ZM46 8h8v8H46Z"/></g></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 12c18 0 33 11 38 27l-11 4C73 32 63 25 50 25c-9 0-17 4-22 10l9 2-13 12L9 39l7-3C22 21 35 12 50 12Z"/><path d="M50 88c-18 0-33-11-38-27l11-4c4 11 14 18 27 18 9 0 17-4 22-10l-9-2 13-12 15 10-7 3C78 79 65 88 50 88Z"/><path d="m35 50 10 10 21-24 8 7-29 32-18-18Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 22a14 14 0 1 1 0 28 14 14 0 0 1 0-28Z"/><path d="M25 84c2-18 11-27 25-27s23 9 25 27Z"/><path d="M8 50h12v8H8ZM80 50h12v8H80ZM46 2h8v10H46Z"/></g></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#000"><path d="M50 8c18 0 33 10 39 25l-12 5C72 27 62 21 50 21c-9 0-17 3-23 9l10 2-14 12L8 34l7-3C22 17 35 8 50 8Z"/><path d="M50 92c-18 0-33-10-39-25l12-5c5 11 15 17 27 17 9 0 17-3 23-9l-10-2 14-12 15 10-7 3C78 83 65 92 50 92Z"/><path d="m38 49 8 8 14-16 7 6-21 23-15-15Z"/></g></svg>`,
 ];
 
 /**
