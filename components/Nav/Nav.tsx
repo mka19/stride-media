@@ -344,7 +344,7 @@ export default function Nav({
               position: "relative",
               display: "flex",
               alignItems: "center",
-              padding: 6,
+              padding: isMobile ? 0 : 6,
               borderRadius: 16,
               transform: navHidden
                 ? isMobile
@@ -352,9 +352,9 @@ export default function Nav({
                   : `translate3d(0, ${height}px, 0) scale(1)`
                 : "translate3d(0,0,0) scale(.96)",
               transformOrigin: "right center",
-              background: navHidden ? "rgba(8,8,8,0.94)" : "rgba(8,8,8,0)",
-              backdropFilter: navHidden ? "blur(20px) saturate(1.25)" : "blur(0px) saturate(1)",
-              WebkitBackdropFilter: navHidden ? "blur(20px) saturate(1.25)" : "blur(0px) saturate(1)",
+              background: isMobile ? "transparent" : navHidden ? "rgba(8,8,8,0.94)" : "rgba(8,8,8,0)",
+              backdropFilter: isMobile ? "none" : navHidden ? "blur(20px) saturate(1.25)" : "blur(0px) saturate(1)",
+              WebkitBackdropFilter: isMobile ? "none" : navHidden ? "blur(20px) saturate(1.25)" : "blur(0px) saturate(1)",
               boxShadow: "none",
               willChange: "transform, background-color",
               transition: [
@@ -370,7 +370,7 @@ export default function Nav({
               src={soundtrack}
               tone={navHidden ? "dark" : light ? "light" : "dark"}
               size={46}
-              style={{ marginRight: 8, marginLeft: isMobile ? 8 : railVisible ? 0 : 8, background: "transparent", borderColor: "transparent", boxShadow: "none" }}
+              style={{ marginRight: isMobile ? 0 : 8, marginLeft: isMobile ? 0 : railVisible ? 0 : 8, background: "transparent", border: 0, borderRadius: 0, boxShadow: "none" }}
             />
             {!isMobile && <GlowButton href="#contact">{navCopy.cta}</GlowButton>}
           </div>
