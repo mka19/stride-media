@@ -364,7 +364,7 @@ export default function HeroObject({
     // the fine bevel and reflected highlights that make the chrome feel real.
     const renderDpr = () => Math.min(
       window.devicePixelRatio || 1,
-      breakpoint === "mobile" ? (lowPowerMobile ? 1 : 1.2) : breakpoint === "tablet" ? 1.35 : 1.75,
+      breakpoint === "mobile" ? (lowPowerMobile ? 0.8 : 1) : breakpoint === "tablet" ? 1.35 : 1.75,
     );
     renderer.setPixelRatio(renderDpr());
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -1109,7 +1109,7 @@ export default function HeroObject({
       raf = requestAnimationFrame(tick);
       if (!inViewport) return;
       if (dormant) return;
-      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 41 : 32)) return;
+      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 50 : 41)) return;
       previousRender = now;
       const t = (now - t0) / 1000;
       const frameDelta = Math.min(0.05, Math.max(0, (now - previousFrame) / 1000));

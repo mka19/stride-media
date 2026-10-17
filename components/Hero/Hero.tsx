@@ -2,7 +2,7 @@ import { lazy, Suspense, useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { GlowButton, Grain, MicroLabel, StrideMark } from "../shared/primitives";
+import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 import SocialProof from "../shared/SocialProof";
@@ -75,7 +75,6 @@ export default function Hero({
       });
 
       tl.to(q(".hero-mosaic"), { opacity: 1, scale: 1, duration: 0.46, ease: "power2.out" }, 0.12)
-        .to(q(".hero-mobile-liquid"), { opacity: 0, scale: 1.04, duration: 0.28, ease: "power2.inOut" }, 0.1)
         .to(q(".hero-veil"), { opacity: 0.48, duration: 0.38 }, 0.14)
         .to(
           lines,
@@ -107,7 +106,6 @@ export default function Hero({
       const q = gsap.utils.selector(root);
       gsap.set(q(".hero-line-inner"), { y: 0, scale: 1, opacity: 1 });
       gsap.set(q(".hero-mosaic"), { opacity: 1, scale: 1 });
-      gsap.set(q(".hero-mobile-liquid"), { opacity: 0 });
       gsap.set(q(".hero-veil"), { opacity: 0.55 });
       gsap.set(q(".hero-tail, .hero-glow"), { opacity: 1, y: 0 });
       gsap.set(q(".hero-intro, .hero-hint"), { opacity: 0 });
@@ -191,17 +189,11 @@ export default function Hero({
           {/* The canvas fills the frame. It used to be a square the size of
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
-          {bp === "mobile" ? (
-            <div className="hero-mobile-liquid" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "radial-gradient(ellipse at 18% 28%, rgba(139,92,246,.72), transparent 34%), radial-gradient(ellipse at 82% 68%, rgba(76,29,149,.82), transparent 38%), radial-gradient(ellipse at 52% 48%, rgba(167,139,250,.42), transparent 31%), #08070b", backgroundSize: "145% 145%", willChange: "opacity, transform" }}>
-              <StrideMark size={88} glowing />
-            </div>
-          ) : (
-            <div style={{ position: "absolute", inset: 0 }}>
-              <Suspense fallback={null}>
-                <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
-              </Suspense>
-            </div>
-          )}
+          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "scale(1.08)" : undefined }}>
+            <Suspense fallback={null}>
+              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+            </Suspense>
+          </div>
         </div>
 
         {bp !== "mobile" && <Grain opacity={0.14} />}
