@@ -73,9 +73,9 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         boxShadow: `0 0 0 1px ${hexA("#fff", .12)}`,
       }}
     >
-      <img src="/comparison-with-stride.png" alt="A polished real-estate Instagram profile after working with Stride Media" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
+      <img src="/comparison-with-stride.png" alt="A polished real-estate Instagram profile after working with Stride Media" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: bp === "mobile" ? "contain" : "cover", objectPosition: "top center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, width: `${split}%`, overflow: "hidden", background: "#080b0d" }}>
-        <img src="/comparison-without-stride.png" alt="The real-estate Instagram profile before working with Stride Media" style={{ position: "absolute", left: 0, top: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, height: "100%", objectFit: "cover", objectPosition: "top center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
+        <img src="/comparison-without-stride.png" alt="The real-estate Instagram profile before working with Stride Media" style={{ position: "absolute", left: 0, top: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, height: "100%", objectFit: bp === "mobile" ? "contain" : "cover", objectPosition: "top center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, background: "linear-gradient(180deg, rgba(0,0,0,.12), transparent 34%, rgba(0,0,0,.08))", pointerEvents: "none" }} />
         <MicroLabel tone="accent" style={{ position: "absolute", left: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, split / 28), transition: "opacity 420ms ease" }}>Without Stride</MicroLabel>
       </div>
@@ -124,12 +124,12 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
   if (stacked) {
     if (bp === "mobile") {
       return (
-        <section ref={rootRef} style={{ position: "relative", padding: `0 ${layout.pad}px`, background: color.black }}>
+        <section ref={rootRef} style={{ position: "relative", padding: `0 ${layout.pad}`, background: color.black }}>
           <div className="compare-mobile-heading" style={{ margin: 0, padding: 0, textAlign: "center" }}>
-            <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(28px, 8vw, 38px)", lineHeight: 1.02, color: "#fff" }}>From invisible to unmistakable.</h2>
-            <span style={{ display: "block", marginTop: 8, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>Drag to compare</span>
+            <span style={{ display: "block", margin: 0, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>Drag to compare</span>
+            <h2 style={{ margin: "6px 0 0", ...typeScale.h1, fontSize: "clamp(28px, 8vw, 38px)", lineHeight: 1.02, color: "#fff" }}>From invisible to unmistakable.</h2>
           </div>
-          <div style={{ position: "relative", height: "clamp(360px, 94vw, 440px)", marginTop: 18 }}>
+          <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", marginTop: 18 }}>
             {shell}
           </div>
         </section>

@@ -36,8 +36,6 @@ export default function Problem({
   const [mobileCard, setMobileCard] = useState(0);
   const [mobileDirection, setMobileDirection] = useState<1 | -1>(1);
   const swipeStart = useRef<number | null>(null);
-  const mobilePaused = useRef(false);
-  const resumeTimer = useRef<number | null>(null);
   const bp = useBreakpoint();
   // Pinning is what janks on real phone hardware, and a cycling slot is
   // disorienting on a small screen, so below tablet the section becomes
@@ -47,23 +45,15 @@ export default function Problem({
   const changeMobileCard = (next: number, direction: 1 | -1) => {
     const normalized = (next + copy.cards.length) % copy.cards.length;
     setMobileDirection(direction);
-    const update = () => setMobileCard(normalized);
-    const transitionDocument = document as Document & { startViewTransition?: (callback: () => void) => void };
-    if (transitionDocument.startViewTransition) transitionDocument.startViewTransition(update);
-    else update();
+    setMobileCard(normalized);
   };
 
   useEffect(() => {
     if (!stacked) return;
-    const timer = window.setInterval(() => {
-      if (!mobilePaused.current && !document.hidden) {
-        changeMobileCard(mobileCard + 1, 1);
-      }
+    const timer = window.setTimeout(() => {
+      if (!document.hidden) changeMobileCard(mobileCard + 1, 1);
     }, 4200);
-    return () => {
-      window.clearInterval(timer);
-      if (resumeTimer.current != null) window.clearTimeout(resumeTimer.current);
-    };
+    return () => window.clearTimeout(timer);
   }, [stacked, mobileCard]);
 
   const rootRef = useGsapContext(
@@ -297,8 +287,6 @@ export default function Problem({
             overflow: "hidden",
           }}
           onTouchStart={(e) => {
-            mobilePaused.current = true;
-            if (resumeTimer.current != null) window.clearTimeout(resumeTimer.current);
             swipeStart.current = e.touches[0]?.clientX ?? null;
           }}
           onTouchEnd={(e) => {
@@ -309,8 +297,8 @@ export default function Problem({
               changeMobileCard(mobileCard + direction, direction);
             }
             swipeStart.current = null;
-            resumeTimer.current = window.setTimeout(() => { mobilePaused.current = false; }, 5000);
           }}
+          onTouchCancel={() => { swipeStart.current = null; }}
         >
           {(() => {
             const card = copy.cards[mobileCard];
