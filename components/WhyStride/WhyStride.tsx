@@ -335,10 +335,14 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
       frame = 0;
       if (!objectRef.current) return;
       const targetY = window.innerHeight * .58;
-      const next = cards.reduce((best, card, index) => {
-        const distance = Math.abs(card.getBoundingClientRect().top - targetY);
-        return distance < best.distance ? { index, distance } : best;
-      }, { index: 0, distance: Number.POSITIVE_INFINITY }).index;
+      // Earlier sticky cards share the same top edge once they have stacked.
+      // Choosing the geometrically closest card therefore kept selecting the
+      // first card and briefly replayed variant 1 between every later model.
+      // The active card is the last card that has crossed the reading line.
+      let next = 0;
+      cards.forEach((card, index) => {
+        if (card.getBoundingClientRect().top <= targetY) next = index;
+      });
       if (next !== activeIndex) {
         activeIndex = next;
         objectRef.current?.setVariant(next + 1);

@@ -34,11 +34,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
       });
       tl.to(q(".compare-shell"), { scale: 1, borderRadius: 0, duration: 0.32, ease: "power2.inOut" }, 0)
-        .to(q(".compare-copy"), { opacity: 0, y: -14, duration: 0.16, ease: "power1.inOut" }, 0.7)
-        .to(q(".compare-shell"), { scale: 0.7, borderRadius: 0, opacity: 0.08, duration: 0.24, ease: "power1.inOut" }, 0.72)
-        // The comparison card clears completely. The Stride mark is the
-        // handoff into the footer, so it remains visible and settled.
-        .to(q(".compare-shell"), { opacity: 0, duration: 0.06, ease: "power2.in" }, 0.94);
+        .to(q(".compare-copy"), { opacity: 1, y: 0, duration: 0.16, ease: "power1.inOut" }, 0.7);
     },
     [stacked],
     (root) => {
@@ -65,7 +61,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
       onLostPointerCapture={() => (drag.current = false)}
       style={{
         position: "absolute",
-        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + 181}px ${layout.pad} ${space.xl}px`,
+        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + 165}px ${layout.pad} 50px`,
         overflow: "hidden",
         cursor: "ew-resize",
         touchAction: "pan-y",
@@ -125,11 +121,11 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
     if (bp === "mobile") {
       return (
         <section ref={rootRef} style={{ position: "relative", padding: `0 ${layout.pad} 20px`, background: color.black }}>
-          <div className="compare-mobile-heading" style={{ margin: 0, padding: 0, textAlign: "center" }}>
+          <div className="compare-mobile-heading" style={{ margin: 0, padding: 0, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
             <span style={{ display: "block", margin: 0, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>Drag to compare</span>
-            <h2 style={{ margin: "6px 0 0", ...typeScale.h1, fontSize: "clamp(28px, 8vw, 38px)", lineHeight: 1.02, color: "#fff" }}>From invisible to unmistakable.</h2>
+            <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(28px, 8vw, 38px)", lineHeight: 1.02, color: "#fff" }}>From invisible to unmistakable.</h2>
           </div>
-          <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", marginTop: 18 }}>
+          <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", marginTop: 16 }}>
             {shell}
           </div>
         </section>
