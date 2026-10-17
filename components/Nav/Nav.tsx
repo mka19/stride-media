@@ -5,6 +5,7 @@ import { brand, nav as navCopy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { GlowButton, StrideMark } from "../shared/primitives";
 import SoundButton from "../shared/SoundButton";
+import { CALENDLY_URL } from "../shared/CalendlyEmbed";
 import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
 import { prefersReducedMotion, ScrollTrigger } from "../shared/gsap";
 
@@ -459,6 +460,14 @@ export default function Nav({
               {item.label}
             </a>
           ))}
+          <GlowButton
+            href={CALENDLY_URL}
+            target="_blank"
+            onClick={() => setMenuOpen(false)}
+            style={{ marginTop: 8, minWidth: 220, height: 52, borderRadius: 12 }}
+          >
+            Book a meeting
+          </GlowButton>
         </div>, document.body
       )}
 

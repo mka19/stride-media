@@ -893,7 +893,10 @@ export default function HeroObject({
     // --- dissolve cloud ---------------------------------------------------
     const sourcePosition = markGeo.attributes.position as THREE.BufferAttribute;
     const sourceNormal = markGeo.attributes.normal as THREE.BufferAttribute;
-    const sampleStep = breakpoint === "mobile" ? 3 : 2;
+    // The dissolve cloud is transient and soft-edged. Sampling every fifth
+    // vertex on phones keeps the silhouette while cutting particle work by
+    // roughly forty percent during the most demanding scroll transition.
+    const sampleStep = breakpoint === "mobile" ? 5 : 2;
     const count = Math.ceil(sourcePosition.count / sampleStep);
     const sampledPosition = new Float32Array(count * 3);
     const sampledNormal = new Float32Array(count * 3);

@@ -151,6 +151,27 @@ export default function Hero({
           }}
         />
 
+        {/* A static liquid plate on phones preserves the full purple art
+            direction without asking Android GPUs to shade a full-screen
+            animated plane underneath the chrome object. */}
+        {bp === "mobile" && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: `
+                radial-gradient(ellipse 70% 34% at 12% 18%, transparent 0 34%, rgba(138,74,255,.36) 42%, transparent 55%),
+                radial-gradient(ellipse 78% 42% at 88% 20%, transparent 0 31%, rgba(106,49,221,.5) 40%, transparent 54%),
+                radial-gradient(ellipse 82% 44% at 15% 63%, transparent 0 33%, rgba(118,55,238,.42) 41%, transparent 57%),
+                radial-gradient(ellipse 74% 38% at 88% 78%, transparent 0 34%, rgba(142,72,255,.38) 42%, transparent 58%),
+                linear-gradient(155deg, #10031f 0%, #2b0860 48%, #10021f 100%)
+              `,
+              boxShadow: "inset 0 0 110px rgba(0,0,0,.34)",
+            }}
+          />
+        )}
+
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
         <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
           <VideoMosaic
@@ -191,7 +212,7 @@ export default function Hero({
               outward and stopped dead at the box's edges. */}
           <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "translateY(-2.5svh) scale(1.02)" : undefined }}>
             <Suspense fallback={null}>
-              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground={bp !== "mobile"} />
             </Suspense>
           </div>
         </div>
