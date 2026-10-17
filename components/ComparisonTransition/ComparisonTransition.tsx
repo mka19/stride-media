@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
-import { color, hexA, layout, space, typeScale } from "../shared/theme";
+import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 
@@ -65,7 +65,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
       onLostPointerCapture={() => (drag.current = false)}
       style={{
         position: "absolute",
-        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + space.xl}px ${layout.pad} ${space.xl}px`,
+        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + 181}px ${layout.pad} ${space.xl}px`,
         overflow: "hidden",
         cursor: "ew-resize",
         touchAction: "pan-y",
@@ -73,9 +73,9 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         boxShadow: `0 0 0 1px ${hexA("#fff", .12)}`,
       }}
     >
-      <img src="/comparison-with-stride.png" alt="A polished real-estate Instagram profile after working with Stride Media" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: stacked ? "cover" : "contain", objectPosition: stacked ? "top center" : "center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
+      <img src="/comparison-with-stride.png" alt="A polished real-estate Instagram profile after working with Stride Media" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, width: `${split}%`, overflow: "hidden", background: "#080b0d" }}>
-        <img src="/comparison-without-stride.png" alt="The real-estate Instagram profile before working with Stride Media" style={{ position: "absolute", left: 0, top: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, height: "100%", objectFit: stacked ? "cover" : "contain", objectPosition: stacked ? "top center" : "center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
+        <img src="/comparison-without-stride.png" alt="The real-estate Instagram profile before working with Stride Media" style={{ position: "absolute", left: 0, top: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, height: "100%", objectFit: "cover", objectPosition: "top center", background: "#080b0d", userSelect: "none", pointerEvents: "none" }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, width: `calc(100vw - ${layout.pad} - ${layout.pad})`, background: "linear-gradient(180deg, rgba(0,0,0,.12), transparent 34%, rgba(0,0,0,.08))", pointerEvents: "none" }} />
         <MicroLabel tone="accent" style={{ position: "absolute", left: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, split / 28), transition: "opacity 420ms ease" }}>Without Stride</MicroLabel>
       </div>
@@ -88,7 +88,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
       )}
 
-      <div className="compare-copy" style={{ position: "absolute", inset: 0, display: bp === "mobile" ? "none" : "grid", placeItems: "center", pointerEvents: "none" }}>
+      <div className="compare-copy" style={{ position: "absolute", inset: 0, display: bp === "tablet" ? "grid" : "none", placeItems: "center", pointerEvents: "none" }}>
         <div style={{ textAlign: "center", padding: stacked ? 14 : layout.pad }}>
           <h2 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, fontSize: stacked ? "clamp(28px, 8vw, 38px)" : undefined, lineHeight: stacked ? 1.02 : undefined, color: "#fff", mixBlendMode: "difference" }}>
             From invisible to unmistakable.
@@ -141,6 +141,10 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
   return (
     <section ref={rootRef} style={{ position: "relative", height: scrollLength, background: color.black, color: color.textOnDark }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+        <header style={{ position: "absolute", top: layout.navHeight + space.xl, left: layout.pad, right: layout.pad, textAlign: "center" }}>
+          <h2 style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>From invisible to unmistakable.</h2>
+          <span style={{ display: "block", marginTop: rhythm.eyebrowToHeadline, ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Drag to compare</span>
+        </header>
         {shell}
       </div>
     </section>
