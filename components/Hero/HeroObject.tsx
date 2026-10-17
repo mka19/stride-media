@@ -352,7 +352,7 @@ export default function HeroObject({
     // Phone GPUs get the same liquid/chrome scene at a lighter raster cost.
     // The soft glow already hides sub-pixel edges, so multisampling only adds
     // heat and dropped frames during the hand-off into the mosaic.
-    const renderer = new THREE.WebGLRenderer({ antialias: breakpoint !== "mobile", alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: breakpoint !== "mobile", alpha: true, powerPreference: "high-performance" });
     // Capping DPR matters more than anything else for battery on phones.
     /*
      * Capped at 1, not at the display's own ratio.
@@ -371,7 +371,7 @@ export default function HeroObject({
     // the fine bevel and reflected highlights that make the chrome feel real.
     const renderDpr = () => Math.min(
       window.devicePixelRatio || 1,
-      breakpoint === "mobile" ? (lowPowerMobile ? 0.55 : 0.65) : breakpoint === "tablet" ? 1.35 : 1.75,
+      breakpoint === "mobile" ? (lowPowerMobile ? 0.85 : 1) : breakpoint === "tablet" ? 1.35 : 1.75,
     );
     renderer.setPixelRatio(renderDpr());
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -432,8 +432,8 @@ export default function HeroObject({
           vec3 deep=vec3(.022,.012,.052), mid=vec3(.22,.09,.46), bright=vec3(.55,.35,.93);
           vec3 col=mix(deep,mid,smoothstep(.24,.72,f));
           col=mix(col,bright,smoothstep(.56,.96,f)*.78);
-          col=mix(col,vec3(.40,.13,.78),uMobile*.22);
-          col*=1.+uMobile*.28;
+          col=mix(col,vec3(.43,.14,.82),uMobile*.32);
+          col*=1.+uMobile*.38;
           float vig=1.-smoothstep(.18,.76,length(vUv-.5));
           gl_FragColor=vec4(col,uFade*(.62+.38*vig));
         }

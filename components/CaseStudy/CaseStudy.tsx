@@ -326,7 +326,7 @@ export default function CaseStudy({
         display: "grid",
         gridTemplateColumns: stacked ? "1fr" : "repeat(4, minmax(0, 1fr))",
         gap: stacked ? 14 : layout.gutter,
-        width: "100%",
+        width: stacked ? "calc(100% - 40px)" : "100%",
         maxWidth: 1200,
         margin: "0 auto",
       }}
@@ -343,7 +343,7 @@ export default function CaseStudy({
             flexDirection: "column",
             justifyContent: "space-between",
             gap: stacked ? space.lg : space.h,
-            minHeight: 300,
+            minHeight: stacked ? undefined : 300,
             padding: `${stacked ? 24 : space.lg}px`,
             borderRadius: 12,
             background: hexA(color.textOnLight, 0.04),
@@ -353,7 +353,7 @@ export default function CaseStudy({
             ...(stacked ? {
               position: "relative",
               zIndex: i + 1,
-              minHeight: 260,
+              aspectRatio: "1 / 1",
               overflow: "hidden",
               background: color.bone,
               boxShadow: `0 1px 0 ${hexA(color.black, .08)}, 0 18px 44px ${hexA(color.black, .06)}`,

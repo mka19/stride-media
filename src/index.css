@@ -52,6 +52,23 @@ body {
 }
 .hero-liquid-field { background-size: 150% 150% !important; animation: hero-liquid-shift 8s ease-in-out infinite alternate; }
 @keyframes hero-liquid-shift { 0% { background-position: 0% 20%; filter: saturate(.92) brightness(.9); } 50% { background-position: 90% 70%; filter: saturate(1.15) brightness(1.04); } 100% { background-position: 20% 100%; filter: saturate(1) brightness(.94); } }
+.mobile-liquid-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .76;
+  background:
+    radial-gradient(95% 72% at 18% 28%, rgba(139,92,246,.72), transparent 62%),
+    radial-gradient(88% 78% at 84% 68%, rgba(76,29,149,.82), transparent 64%),
+    linear-gradient(145deg, #120725, #35106c 52%, #0b0615);
+  background-size: 145% 145%;
+  animation: mobile-liquid-drift 7s ease-in-out infinite alternate;
+}
+@keyframes mobile-liquid-drift {
+  from { background-position: 0% 12%; filter: saturate(1.05) brightness(.88); }
+  to { background-position: 100% 88%; filter: saturate(1.25) brightness(1.08); }
+}
 .stride-drift { animation: stride-drift 26s ease-in-out infinite; }
 
 /* Mobile problem states rise as one composed card after a swipe. */

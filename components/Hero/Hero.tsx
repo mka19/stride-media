@@ -57,13 +57,16 @@ export default function Hero({
       const rect = stage.getBoundingClientRect();
       const travel = Math.max(1, rect.height - window.innerHeight);
       const progress = Math.max(0, Math.min(1, -rect.top / travel));
-      const fade = Math.max(0, Math.min(1, (progress - .18) / .54));
+      // Hold the complete composition first. Copy leaves as one group, then
+      // the veil clears after it; only then does the mosaic accept taps.
+      const copyFade = Math.max(0, Math.min(1, (progress - .08) / .24));
+      const veilFade = Math.max(0, Math.min(1, (progress - .36) / .24));
       if (mobileCopyRef.current) {
-        mobileCopyRef.current.style.opacity = String(1 - fade);
-        mobileCopyRef.current.style.transform = `translate3d(0, ${-18 * fade}px, 0)`;
+        mobileCopyRef.current.style.opacity = String(1 - copyFade);
+        mobileCopyRef.current.style.transform = `translate3d(0, ${-18 * copyFade}px, 0)`;
       }
-      if (mobileVeilRef.current) mobileVeilRef.current.style.opacity = String(.82 * (1 - fade));
-      const nextInteractive = progress > .8;
+      if (mobileVeilRef.current) mobileVeilRef.current.style.opacity = String(.82 * (1 - veilFade));
+      const nextInteractive = progress > .64;
       if (nextInteractive !== lastInteractive) {
         lastInteractive = nextInteractive;
         setMobileInteractive(nextInteractive);
@@ -204,6 +207,7 @@ export default function Hero({
             `,
           }}
         />
+        {bp === "mobile" && <div className="mobile-liquid-fallback" aria-hidden="true" />}
 
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
         <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
@@ -442,15 +446,16 @@ export default function Hero({
       </div>
 
       {/* On phones the second hero chapter follows in normal document flow.
-          A regular upward swipe reveals it, so there is no pinned hand-off,
-          dissolve, or WebGL work competing with scroll. */}
+          It pins for one short, ordered reveal, then releases directly into
+          Results without leaving an empty black scroll chapter. */}
       {bp === "mobile" && (
         <div
           ref={mobileStageRef}
           style={{
             position: "relative",
-            height: "200svh",
-            overflow: "hidden",
+            height: "165svh",
+            overflow: "visible",
+            background: color.black,
             isolation: "isolate"
           }}
         >

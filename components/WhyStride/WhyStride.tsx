@@ -329,19 +329,33 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
   useEffect(() => {
     if (!stacked || !mobileRoot.current) return;
     const cards = [...mobileRoot.current.querySelectorAll<HTMLElement>(".ws-mobile-card")];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const active = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => Math.abs(a.boundingClientRect.top - window.innerHeight * .58) - Math.abs(b.boundingClientRect.top - window.innerHeight * .58))[0];
-        if (!active) return;
-        objectRef.current?.setVariant(Number((active.target as HTMLElement).dataset.index ?? 0) + 1);
-      },
-      { rootMargin: "-38% 0px -38% 0px", threshold: 0 },
-    );
-    cards.forEach((card) => observer.observe(card));
+    let frame = 0;
+    let activeIndex = -1;
+    const update = () => {
+      frame = 0;
+      if (!objectRef.current) return;
+      const targetY = window.innerHeight * .58;
+      const next = cards.reduce((best, card, index) => {
+        const distance = Math.abs(card.getBoundingClientRect().top - targetY);
+        return distance < best.distance ? { index, distance } : best;
+      }, { index: 0, distance: Number.POSITIVE_INFINITY }).index;
+      if (next !== activeIndex) {
+        activeIndex = next;
+        objectRef.current?.setVariant(next + 1);
+      }
+    };
+    const queue = () => { if (!frame) frame = requestAnimationFrame(update); };
     objectRef.current?.setVariant(1);
-    return () => observer.disconnect();
+    update();
+    const readyTimer = window.setTimeout(update, 180);
+    addEventListener("scroll", queue, { passive: true });
+    addEventListener("resize", queue);
+    return () => {
+      removeEventListener("scroll", queue);
+      removeEventListener("resize", queue);
+      window.clearTimeout(readyTimer);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [stacked]);
 
   /** One readable line icon for each capability. */
