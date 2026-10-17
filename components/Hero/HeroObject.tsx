@@ -403,6 +403,7 @@ export default function HeroObject({
       uTime: { value: 0 },
       uAspect: { value: camera.aspect },
       uFade: { value: liquidBackground ? 1 : 0 },
+      uMobile: { value: breakpoint === "mobile" ? 1 : 0 },
     };
     const liquidMat = new THREE.ShaderMaterial({
       uniforms: liquidUniforms,
@@ -415,6 +416,7 @@ export default function HeroObject({
         uniform float uTime;
         uniform float uAspect;
         uniform float uFade;
+        uniform float uMobile;
         varying vec2 vUv;
         float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
         float noise(vec2 p){
@@ -430,6 +432,8 @@ export default function HeroObject({
           vec3 deep=vec3(.022,.012,.052), mid=vec3(.22,.09,.46), bright=vec3(.55,.35,.93);
           vec3 col=mix(deep,mid,smoothstep(.24,.72,f));
           col=mix(col,bright,smoothstep(.56,.96,f)*.78);
+          col=mix(col,vec3(.40,.13,.78),uMobile*.22);
+          col*=1.+uMobile*.28;
           float vig=1.-smoothstep(.18,.76,length(vUv-.5));
           gl_FragColor=vec4(col,uFade*(.62+.38*vig));
         }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
@@ -37,10 +37,48 @@ export default function Hero({
 }) {
   const objectRef = useRef<HeroObjectHandle | null>(null);
   const [interactive, setInteractive] = useState(false);
+  const [mobileInteractive, setMobileInteractive] = useState(false);
+  const mobileStageRef = useRef<HTMLDivElement | null>(null);
+  const mobileCopyRef = useRef<HTMLDivElement | null>(null);
+  const mobileVeilRef = useRef<HTMLDivElement | null>(null);
   // The headline decodes at the point the object hands the screen over to it.
   const bp = useBreakpoint();
   // The object steps down with the viewport; the mosaic's push needs a real
   // pointer, so on touch it becomes a single quiet backdrop instead.
+
+  useEffect(() => {
+    if (bp !== "mobile") return;
+    let frame = 0;
+    let lastInteractive = false;
+    const update = () => {
+      frame = 0;
+      const stage = mobileStageRef.current;
+      if (!stage) return;
+      const rect = stage.getBoundingClientRect();
+      const travel = Math.max(1, rect.height - window.innerHeight);
+      const progress = Math.max(0, Math.min(1, -rect.top / travel));
+      const fade = Math.max(0, Math.min(1, (progress - .18) / .54));
+      if (mobileCopyRef.current) {
+        mobileCopyRef.current.style.opacity = String(1 - fade);
+        mobileCopyRef.current.style.transform = `translate3d(0, ${-18 * fade}px, 0)`;
+      }
+      if (mobileVeilRef.current) mobileVeilRef.current.style.opacity = String(.82 * (1 - fade));
+      const nextInteractive = progress > .8;
+      if (nextInteractive !== lastInteractive) {
+        lastInteractive = nextInteractive;
+        setMobileInteractive(nextInteractive);
+      }
+    };
+    const queue = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    addEventListener("scroll", queue, { passive: true });
+    addEventListener("resize", queue);
+    return () => {
+      removeEventListener("scroll", queue);
+      removeEventListener("resize", queue);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [bp]);
 
   const rootRef = useGsapContext(
     (root) => {
@@ -205,7 +243,7 @@ export default function Hero({
           {/* The canvas fills the frame. It used to be a square the size of
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
-          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "translateY(-2.5svh) scale(1.02)" : undefined }}>
+          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "translateY(-8svh) scale(1.02)" : undefined }}>
             <Suspense fallback={null}>
               <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground showMark={bp !== "mobile"} />
             </Suspense>
@@ -214,7 +252,7 @@ export default function Hero({
             <StrideMark
               size={190}
               glowing
-              style={{ position: "relative", zIndex: 2, width: "clamp(158px, 46vw, 190px)", height: "auto", transform: "translateY(-2.5svh)" }}
+              style={{ position: "relative", zIndex: 2, width: "clamp(158px, 46vw, 190px)", height: "auto", transform: "translateY(-8svh)" }}
             />
           )}
         </div>
@@ -245,7 +283,7 @@ export default function Hero({
               // bar on tablet/desktop; the compact phone composition keeps
               // its model-relative spacing.
               top: bp === "mobile" ? undefined : `calc(${layout.navHeight}px + ${space.xl}px + 18px)`,
-              bottom: bp === "mobile" ? "calc(50% + 24vmin + 22px)" : undefined,
+              bottom: bp === "mobile" ? "calc(50% + 24vmin + 85px)" : undefined,
             }}
           >
             {heroCopy.label}
@@ -253,7 +291,7 @@ export default function Hero({
           <div
             style={{
               position: "absolute",
-              bottom: bp === "mobile" ? "clamp(182px, 25svh, 220px)" : 118,
+              bottom: bp === "mobile" ? "clamp(222px, 30svh, 258px)" : 118,
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
               maxWidth: 640,
@@ -377,7 +415,7 @@ export default function Hero({
           style={{
             position: "absolute",
             left: "50%",
-            bottom: space.lg,
+            bottom: bp === "mobile" ? 120 : space.lg,
             transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
@@ -408,28 +446,27 @@ export default function Hero({
           dissolve, or WebGL work competing with scroll. */}
       {bp === "mobile" && (
         <div
+          ref={mobileStageRef}
           style={{
             position: "relative",
-            minHeight: "100svh",
+            height: "200svh",
             overflow: "hidden",
-            display: "grid",
-            placeItems: "center",
-            padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`,
-            boxSizing: "border-box",
-            isolation: "isolate",
+            isolation: "isolate"
           }}
         >
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -3 }}>
-            <VideoMosaic tiles={tiles} interactive={false} mobile columns={3} rows={4} />
-          </div>
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -2, background: `linear-gradient(180deg, ${hexA(color.black, .82)}, ${hexA(color.black, .5)} 46%, ${hexA(color.black, .92)})` }} />
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%", maxWidth: 560 }}>
-            <SocialProof count={heroCopy.proofCount} label={heroCopy.proofLabel} faces={clientFaces} style={{ marginBottom: rhythm.eyebrowToHeadline }} />
-            <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(32px, 9vw, 40px)", lineHeight: 1.04, color: color.textOnDark, textWrap: "balance" }}>
-              {heroCopy.headline.map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}
-            </h2>
-            <p style={{ margin: `${rhythm.headlineToBody}px 0 ${rhythm.bodyToCta}px`, ...typeScale.bodyLg, color: hexA("#fff", .82), textShadow: "0 2px 18px rgba(0,0,0,.9)" }}>{heroCopy.sub}</p>
-            <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
+          <div style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
+            <div style={{ position: "absolute", inset: 0, zIndex: -3 }}>
+              <VideoMosaic tiles={tiles} interactive={mobileInteractive} mobile columns={3} rows={4} />
+            </div>
+            <div ref={mobileVeilRef} aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -2, opacity: .82, background: `linear-gradient(180deg, ${color.black}, ${hexA(color.black, .62)} 46%, ${color.black})`, willChange: "opacity" }} />
+            <div ref={mobileCopyRef} style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%", maxWidth: 560, willChange: "opacity, transform", pointerEvents: mobileInteractive ? "none" : "auto" }}>
+              <SocialProof count={heroCopy.proofCount} label={heroCopy.proofLabel} faces={clientFaces} style={{ marginBottom: rhythm.eyebrowToHeadline }} />
+              <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(32px, 9vw, 40px)", lineHeight: 1.04, color: color.textOnDark, textWrap: "balance" }}>
+                {heroCopy.headline.map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}
+              </h2>
+              <p style={{ margin: `${rhythm.headlineToBody}px 0 ${rhythm.bodyToCta}px`, ...typeScale.bodyLg, color: hexA("#fff", .82), textShadow: "0 2px 18px rgba(0,0,0,.9)" }}>{heroCopy.sub}</p>
+              <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
+            </div>
           </div>
         </div>
       )}

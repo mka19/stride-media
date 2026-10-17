@@ -237,6 +237,7 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
     let offset = 0;
     let velocity = 0;
     let dragging = false;
+    let interactiveHold = false;
     let lastX = 0;
     let lastT = 0;
     let raf = 0;
@@ -251,7 +252,7 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
       const dt = Math.min(64, now - prev) / 1000;
       prev = now;
 
-      if (!dragging) {
+      if (!dragging && !interactiveHold) {
         // A throw decays into the steady drift rather than stopping dead.
         velocity *= Math.pow(0.0015, dt);
         const drift = reduced || view.dataset.paused === "true" ? 0 : 34; // px per second
@@ -287,7 +288,11 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
       // Video controls and external links own their click. Starting carousel
       // drag/pointer capture here swallowed the same gesture before the
       // play/pause button could complete it.
-      if ((e.target as HTMLElement).closest("button, a")) return;
+      if ((e.target as HTMLElement).closest("button, a, video")) {
+        interactiveHold = true;
+        velocity = 0;
+        return;
+      }
       dragging = true;
       velocity = 0;
       lastX = e.clientX;
@@ -306,6 +311,12 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
       lastT = now;
     };
     const onUp = (e: PointerEvent) => {
+      if (interactiveHold) {
+        // Keep the transformed card still until the browser dispatches the
+        // click that follows pointerup. Moving it here can cancel that click.
+        requestAnimationFrame(() => { interactiveHold = false; });
+        return;
+      }
       if (!dragging) return;
       dragging = false;
       view.releasePointerCapture(e.pointerId);
@@ -404,6 +415,8 @@ function ResultCard({
     const video = videoRef.current;
     if (!video) return;
     if (playing) {
+      video.muted = false;
+      video.volume = 1;
       void video.play().catch(() => setActiveVideo(null));
     } else {
       video.pause();
@@ -418,6 +431,8 @@ function ResultCard({
       setActiveVideo(null);
       return;
     }
+    video.muted = false;
+    video.volume = 1;
     setActiveVideo(instanceKey);
     void video.play().catch(() => setActiveVideo(null));
   };
@@ -438,7 +453,7 @@ function ResultCard({
       }}
     >
       <div style={{ position: "relative", width: "100%", height: 472, maxHeight: "68vh", overflow: "hidden", borderRadius: 4, background: color.black }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" onClick={togglePlayback} onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: "0 0 52px" }} />}
 
         {/* client avatar, top-left */}
@@ -490,7 +505,7 @@ function ResultCard({
           <span className="result-view-text">{card.views} Views</span>
         </div>
         {videoSrc && (
-          <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1 }}>
+          <button type="button" onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1 }}>
             <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
           </button>
         )}
@@ -506,7 +521,7 @@ function ResultCard({
           marginTop: "auto",
         }}
       >
-        <a className="result-instagram-link" href={`https://www.instagram.com/${card.handle.replace(/^@/, "")}/`} target="_blank" rel="noreferrer" onPointerDown={(event) => event.stopPropagation()} style={{ color: "inherit", textUnderlineOffset: 4, minHeight: 44, display: "inline-flex", alignItems: "center", position: "relative", zIndex: 7 }} aria-label={`Open ${card.handle} Instagram profile`}>{card.handle} · Instagram profile <span aria-hidden="true">↗</span></a>
+        <a className="result-instagram-link" href={`https://www.instagram.com/${card.handle.replace(/^@/, "")}/`} target="_blank" rel="noreferrer" style={{ color: "inherit", textUnderlineOffset: 4, minHeight: 44, display: "inline-flex", alignItems: "center", position: "relative", zIndex: 7 }} aria-label={`Open ${card.handle} Instagram profile`}>{card.handle} · Instagram profile <span aria-hidden="true">↗</span></a>
       </div>
     </article>
   );
