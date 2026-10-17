@@ -487,7 +487,7 @@ export default function CaseStudy({
             padding: `0 ${layout.pad} ${layout.section}px`,
           }}
         >
-          <div aria-hidden="true" style={{ width: "100%", height: 20, flex: "0 0 20px" }} />
+          <div aria-hidden="true" style={{ width: "100%", height: 24, flex: "0 0 24px" }} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
             <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
             <GradientRevealText as="h3" tone="light" style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>

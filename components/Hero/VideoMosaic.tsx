@@ -97,7 +97,7 @@ export default function VideoMosaic({
         display: "flex",
         flexDirection: "column",
         gap,
-        padding: gap,
+        padding: mobile ? 0 : gap,
         overflow: "hidden",
         background: "#070609",
         opacity,
@@ -119,7 +119,7 @@ export default function VideoMosaic({
           style={{
             display: "flex",
             gap,
-            flexGrow: rowWeight(row, hover?.row ?? null),
+            flexGrow: mobile && hover ? (hover.row === row ? 4.2 : .35) : rowWeight(row, hover?.row ?? null),
             flexBasis: 0,
             minHeight: 0,
             position: "relative",
@@ -188,7 +188,7 @@ export default function VideoMosaic({
             );
             const frameStyle = {
               position: "relative" as const,
-              flexGrow: columnWeight(col, hover?.col ?? null),
+              flexGrow: mobile && hover?.row === row ? (hover.col === col ? 2.8 : .45) : columnWeight(col, hover?.col ?? null),
               flexBasis: 0,
               minWidth: 0,
               contain: "layout paint" as const,
@@ -205,12 +205,12 @@ export default function VideoMosaic({
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`${tile.caption}, ${tile.views}. Open on Instagram`}
-                onMouseEnter={() => { if (interactive && pointer) { setHover({ col, row }); onHoverChange?.(true); } }}
+                onMouseEnter={() => { if (interactive && pointer && !mobile) { setHover({ col, row }); onHoverChange?.(true); } }}
                 onMouseLeave={() => { setHover(null); onHoverChange?.(false); }}
                 onFocus={() => { if (interactive) { setHover({ col, row }); onHoverChange?.(true); } }}
                 onBlur={() => { setHover(null); onHoverChange?.(false); }}
                 onClick={(event) => {
-                  if (!interactive || pointer) return;
+                  if (!interactive || (!mobile && pointer)) return;
                   event.preventDefault();
                   const next = isHovered ? null : { col, row };
                   setHover(next);
