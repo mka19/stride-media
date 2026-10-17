@@ -322,7 +322,7 @@ export default function Problem({
                 <GradientRevealText
                   as="h3"
                   tone="light"
-                  style={{ ...typeScale.h1, fontSize: fluid(26, 44), maxWidth: "100%", textWrap: "balance" }}
+                  style={{ ...typeScale.h1, fontSize: "clamp(19px, 5.5vw, 24px)", lineHeight: 1.1, maxWidth: "100%", whiteSpace: "nowrap" }}
                 >
                   {card.headline}
                 </GradientRevealText>
