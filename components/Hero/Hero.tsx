@@ -131,7 +131,7 @@ export default function Hero({
         style={{
           position: "sticky",
           top: 0,
-          height: "calc(100vh + 2px)",
+          height: bp === "mobile" ? "calc(100svh + 2px)" : "calc(100vh + 2px)",
           marginBottom: -2,
           overflow: "hidden",
           isolation: "isolate",
@@ -189,7 +189,7 @@ export default function Hero({
           {/* The canvas fills the frame. It used to be a square the size of
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
-          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "scale(1.08)" : undefined }}>
+          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "translateY(-2.5svh) scale(1.02)" : undefined }}>
             <Suspense fallback={null}>
               <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
             </Suspense>
@@ -222,7 +222,7 @@ export default function Hero({
               // bar on tablet/desktop; the compact phone composition keeps
               // its model-relative spacing.
               top: bp === "mobile" ? undefined : `calc(${layout.navHeight}px + ${space.xl}px + 18px)`,
-              bottom: bp === "mobile" ? "calc(50% + 27vmin + 28px)" : undefined,
+              bottom: bp === "mobile" ? "calc(50% + 24vmin + 16px)" : undefined,
             }}
           >
             {heroCopy.label}
@@ -230,7 +230,7 @@ export default function Hero({
           <div
             style={{
               position: "absolute",
-              bottom: bp === "mobile" ? 124 : 118,
+              bottom: bp === "mobile" ? "clamp(152px, 21svh, 190px)" : 118,
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
               maxWidth: 640,

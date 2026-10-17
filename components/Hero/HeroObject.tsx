@@ -345,7 +345,10 @@ export default function HeroObject({
     const lowPowerMobile = breakpoint === "mobile"
       && (deviceMemory <= 4 || (navigator.hardwareConcurrency || 8) <= 4);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Phone GPUs get the same liquid/chrome scene at a lighter raster cost.
+    // The soft glow already hides sub-pixel edges, so multisampling only adds
+    // heat and dropped frames during the hand-off into the mosaic.
+    const renderer = new THREE.WebGLRenderer({ antialias: breakpoint !== "mobile", alpha: true });
     // Capping DPR matters more than anything else for battery on phones.
     /*
      * Capped at 1, not at the display's own ratio.
@@ -364,7 +367,7 @@ export default function HeroObject({
     // the fine bevel and reflected highlights that make the chrome feel real.
     const renderDpr = () => Math.min(
       window.devicePixelRatio || 1,
-      breakpoint === "mobile" ? (lowPowerMobile ? 0.8 : 1) : breakpoint === "tablet" ? 1.35 : 1.75,
+      breakpoint === "mobile" ? (lowPowerMobile ? 0.68 : 0.8) : breakpoint === "tablet" ? 1.35 : 1.75,
     );
     renderer.setPixelRatio(renderDpr());
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -1109,7 +1112,7 @@ export default function HeroObject({
       raf = requestAnimationFrame(tick);
       if (!inViewport) return;
       if (dormant) return;
-      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 50 : 41)) return;
+      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 67 : 55)) return;
       previousRender = now;
       const t = (now - t0) / 1000;
       const frameDelta = Math.min(0.05, Math.max(0, (now - previousFrame) / 1000));

@@ -65,7 +65,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
       onLostPointerCapture={() => (drag.current = false)}
       style={{
         position: "absolute",
-        inset: stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + space.xl}px ${layout.pad} ${space.xl}px`,
+        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + space.xl}px ${layout.pad} ${space.xl}px`,
         overflow: "hidden",
         cursor: "ew-resize",
         touchAction: "pan-y",
@@ -88,7 +88,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
       )}
 
-      <div className="compare-copy" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}>
+      <div className="compare-copy" style={{ position: "absolute", inset: 0, display: bp === "mobile" ? "none" : "grid", placeItems: "center", pointerEvents: "none" }}>
         <div style={{ textAlign: "center", padding: stacked ? 14 : layout.pad }}>
           <h2 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, fontSize: stacked ? "clamp(28px, 8vw, 38px)" : undefined, lineHeight: stacked ? 1.02 : undefined, color: "#fff", mixBlendMode: "difference" }}>
             From invisible to unmistakable.
@@ -122,6 +122,19 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
   );
 
   if (stacked) {
+    if (bp === "mobile") {
+      return (
+        <section ref={rootRef} style={{ position: "relative", padding: `0 ${layout.pad}px`, background: color.black }}>
+          <div className="compare-mobile-heading" style={{ margin: 0, padding: 0, textAlign: "center" }}>
+            <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(28px, 8vw, 38px)", lineHeight: 1.02, color: "#fff" }}>From invisible to unmistakable.</h2>
+            <span style={{ display: "block", marginTop: 8, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>Drag to compare</span>
+          </div>
+          <div style={{ position: "relative", height: "clamp(360px, 94vw, 440px)", marginTop: 18 }}>
+            {shell}
+          </div>
+        </section>
+      );
+    }
     return <section ref={rootRef} style={{ position: "relative", height: "clamp(360px, 72vw, 440px)", background: color.black }}>{shell}</section>;
   }
 
