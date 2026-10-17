@@ -367,7 +367,7 @@ export default function HeroObject({
     // the fine bevel and reflected highlights that make the chrome feel real.
     const renderDpr = () => Math.min(
       window.devicePixelRatio || 1,
-      breakpoint === "mobile" ? (lowPowerMobile ? 0.68 : 0.8) : breakpoint === "tablet" ? 1.35 : 1.75,
+      breakpoint === "mobile" ? (lowPowerMobile ? 0.55 : 0.65) : breakpoint === "tablet" ? 1.35 : 1.75,
     );
     renderer.setPixelRatio(renderDpr());
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -896,7 +896,7 @@ export default function HeroObject({
     // The dissolve cloud is transient and soft-edged. Sampling every fifth
     // vertex on phones keeps the silhouette while cutting particle work by
     // roughly forty percent during the most demanding scroll transition.
-    const sampleStep = breakpoint === "mobile" ? 5 : 2;
+    const sampleStep = breakpoint === "mobile" ? 7 : 2;
     const count = Math.ceil(sourcePosition.count / sampleStep);
     const sampledPosition = new Float32Array(count * 3);
     const sampledNormal = new Float32Array(count * 3);
@@ -968,6 +968,10 @@ export default function HeroObject({
       }),
     );
     scene.add(cloud);
+    // On phones the chrome can dissolve cleanly through opacity alone. The
+    // full particle cloud is the costly overlap that caused the hitch before
+    // the next chapter; desktop keeps the richer particle hand-off.
+    cloud.visible = breakpoint !== "mobile";
 
     // --- dust -------------------------------------------------------------
     const dustSpread = zScale() * 1.15;
@@ -1115,7 +1119,7 @@ export default function HeroObject({
       raf = requestAnimationFrame(tick);
       if (!inViewport) return;
       if (dormant) return;
-      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 67 : 55)) return;
+      if (breakpoint === "mobile" && now - previousRender < (lowPowerMobile ? 50 : 42)) return;
       previousRender = now;
       const t = (now - t0) / 1000;
       const frameDelta = Math.min(0.05, Math.max(0, (now - previousFrame) / 1000));
