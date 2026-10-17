@@ -452,6 +452,7 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
                 {capability(cap, i)}
               </div>
             ))}
+            {bp === "mobile" && <div aria-hidden="true" style={{ height: "70vh", flex: "0 0 70vh" }} />}
           </div>
         </div>
       </section>

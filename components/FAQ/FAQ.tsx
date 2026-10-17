@@ -53,7 +53,7 @@ export default function FAQ({ scrollLength = "150vh" }: { scrollLength?: string 
   );
 
   const list = (
-    <div style={stacked
+    <div className={bp === "mobile" ? "mobile-faq-list" : undefined} style={stacked
       ? { width: "100%", maxWidth: 1120, margin: "0 auto" }
       : { width: "min(760px, 58vw)", margin: "0 auto" }
     }>
@@ -188,7 +188,7 @@ export default function FAQ({ scrollLength = "150vh" }: { scrollLength?: string 
           padding: `${layout.section} ${layout.pad}`,
         }}
       >
-        <GradientRevealText as="h2" style={{ ...typeScale.h1, maxWidth: "18ch" }}>
+        <GradientRevealText as="h2" className={bp === "mobile" ? "mobile-faq-title" : undefined} style={{ ...typeScale.h1, maxWidth: "18ch" }}>
           {copy.label}
         </GradientRevealText>
         {list}

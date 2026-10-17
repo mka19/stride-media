@@ -80,7 +80,13 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         <MicroLabel tone="accent" style={{ position: "absolute", left: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, split / 28), transition: "opacity 420ms ease" }}>Without Stride</MicroLabel>
       </div>
 
-      <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
+      {bp === "mobile" ? (
+        <div style={{ position: "absolute", left: `${split}%`, right: 0, top: 0, bottom: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <MicroLabel tone="accent" style={{ position: "absolute", right: 12, bottom: 14, whiteSpace: "nowrap" }}>With Stride</MicroLabel>
+        </div>
+      ) : (
+        <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 12 : 32, top: stacked ? undefined : 32, bottom: stacked ? 14 : undefined, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
+      )}
 
       <div className="compare-copy" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}>
         <div style={{ textAlign: "center", padding: stacked ? 14 : layout.pad }}>

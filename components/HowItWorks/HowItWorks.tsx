@@ -31,6 +31,7 @@ export default function HowItWorks({
   const surface = useRef<SurfaceHandle | null>(null);
   const bp = useBreakpoint();
   const stacked = useStacked();
+  const mobile = bp === "mobile";
 
   const rootRef = useGsapContext(
     (root) => {
@@ -197,7 +198,7 @@ export default function HowItWorks({
         gap: rhythm.headlineToBody,
         maxWidth: 720,
         margin: "0 auto",
-        ...(stacked ? {
+        ...(mobile ? {
           width: "100%",
           minHeight: "min(68vh, 560px)",
           justifyContent: "center",
@@ -218,12 +219,12 @@ export default function HowItWorks({
           gap: rhythm.eyebrowToHeadline,
         }}
       >
-        <MicroLabel number={step.n} tone={stacked ? "accent" : "dark"}>
+        <MicroLabel number={step.n} tone={mobile ? "accent" : stacked ? "light" : "dark"}>
           {step.tag}
         </MicroLabel>
         <GradientRevealText
           as="h3"
-          tone="dark"
+          tone={mobile ? "dark" : stacked ? "light" : "dark"}
           style={{
             maxWidth: "24ch",
             ...typeScale.h1,
@@ -238,7 +239,7 @@ export default function HowItWorks({
         style={{
           margin: 0,
           ...typeScale.bodyLg,
-          color: color.textOnDarkMuted,
+          color: mobile ? color.textOnDarkMuted : stacked ? color.textOnLightMuted : color.textOnDarkMuted,
         }}
       >
         {step.body}
@@ -260,10 +261,10 @@ export default function HowItWorks({
             flexDirection: "column",
             gap: layout.section,
             padding: `${layout.section} ${layout.pad}`,
-            background: color.black,
+            background: mobile ? color.black : color.bone,
           }}
         >
-          <FieldTexture breakpoint={bp} tone="dark" />
+          <FieldTexture breakpoint={bp} tone={mobile ? "dark" : "light"} />
           <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: layout.section }}>
             {stepList}
           </div>

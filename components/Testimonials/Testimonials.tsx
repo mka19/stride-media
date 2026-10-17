@@ -3,7 +3,7 @@ import { testimonials as copy } from "../shared/copy";
 import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
 import { MediaTile, MicroLabel } from "../shared/primitives";
 import GradientRevealText from "../shared/GradientRevealText";
-import { useStacked } from "../shared/responsive";
+import { useBreakpoint, useStacked } from "../shared/responsive";
 import { useInView } from "../shared/useInView";
 
 /**
@@ -15,6 +15,8 @@ import { useInView } from "../shared/useInView";
  */
 export default function Testimonials({ videos = [], posters = [] }: { videos?: string[]; posters?: string[] }) {
   const stacked = useStacked();
+  const bp = useBreakpoint();
+  const mobile = bp === "mobile";
   const { ref } = useInView<HTMLElement>({ threshold: 0.18 }, false);
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -153,20 +155,20 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                     />
                     <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${hexA(color.black, .12)} 10%, ${hexA(color.black, .94)} 100%)` }} />
                     <div style={{ position: "absolute", top: stacked ? 16 : space.lg, left: stacked ? 16 : space.lg, right: stacked ? 16 : space.lg, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-                      <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Client story · {String(index + 1).padStart(2, "0")}</span>
-                      <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
+                      <span style={{ ...typeScale.eyebrow, padding: mobile ? "6px 8px" : 0, borderRadius: mobile ? 5 : 0, color: mobile ? "#fff" : color.textOnDarkMuted, background: mobile ? hexA(color.black, .72) : "transparent", textShadow: mobile ? "0 1px 3px rgba(0,0,0,.7)" : undefined }}>Client story · {String(index + 1).padStart(2, "0")}</span>
+                      <span style={{ ...typeScale.eyebrow, padding: mobile ? "6px 8px" : 0, borderRadius: mobile ? 5 : 0, letterSpacing: ".12em", color: mobile ? "#c4a5ff" : color.accentOnDark, background: mobile ? hexA(color.black, .72) : "transparent", textShadow: mobile ? "0 1px 3px rgba(0,0,0,.7)" : undefined }}>STRIDE MEDIA</span>
                     </div>
                     <div style={{ position: "absolute", left: stacked ? 16 : space.lg, right: stacked ? 16 : space.lg, bottom: stacked ? 16 : space.lg, display: "flex", flexDirection: "column", gap: stacked ? 8 : space.lg }}>
-                      <p style={{ margin: 0, maxWidth: "28ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(16px, 4.35vw, 19px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.35 : 1.08, letterSpacing: stacked ? "-.012em" : "-.035em", fontWeight: 500, color: "#fff", textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.84)" }}>
+                      {!mobile && <p style={{ margin: 0, maxWidth: "28ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(16px, 4.35vw, 19px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.35 : 1.08, letterSpacing: stacked ? "-.012em" : "-.035em", fontWeight: 500, color: "#fff", textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.84)" }}>
                         “{item.quote.replace("Stride Media.", "")}
                         <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
-                      </p>
+                      </p>}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, paddingTop: 8, borderTop: `1px solid ${hexA("#fff", .22)}` }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
-                          <span style={{ ...typeScale.bodyLg, fontWeight: 600, color: color.textOnDark }}>{item.name}</span>
-                          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{item.handle}</span>
+                          <span style={{ ...typeScale.bodyLg, fontWeight: 600, color: color.textOnDark }}>{mobile ? (index === 0 ? "Monny Bullandbear" : "Yasmin Shafi") : item.name}</span>
+                          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{mobile ? (index === 0 ? "@monny.bullandbear" : "@yasmin_dxb_") : item.handle}</span>
                         </div>
-                        <span style={{ ...typeScale.eyebrow, maxWidth: "14ch", textAlign: "right", lineHeight: 1.35, color: color.accentOnDark }}>{item.stat}</span>
+                        {!mobile && <span style={{ ...typeScale.eyebrow, maxWidth: "14ch", textAlign: "right", lineHeight: 1.35, color: color.accentOnDark }}>{item.stat}</span>}
                       </div>
                     </div>
                     <button

@@ -44,19 +44,27 @@ export default function Problem({
   // ordinary sequential scroll instead of a shortened version of the pin.
   const stacked = useStacked();
 
+  const changeMobileCard = (next: number, direction: 1 | -1) => {
+    const normalized = (next + copy.cards.length) % copy.cards.length;
+    setMobileDirection(direction);
+    const update = () => setMobileCard(normalized);
+    const transitionDocument = document as Document & { startViewTransition?: (callback: () => void) => void };
+    if (transitionDocument.startViewTransition) transitionDocument.startViewTransition(update);
+    else update();
+  };
+
   useEffect(() => {
     if (!stacked) return;
     const timer = window.setInterval(() => {
       if (!mobilePaused.current && !document.hidden) {
-        setMobileDirection(1);
-        setMobileCard((current) => (current + 1) % copy.cards.length);
+        changeMobileCard(mobileCard + 1, 1);
       }
     }, 4200);
     return () => {
       window.clearInterval(timer);
       if (resumeTimer.current != null) window.clearTimeout(resumeTimer.current);
     };
-  }, [stacked]);
+  }, [stacked, mobileCard]);
 
   const rootRef = useGsapContext(
     (root) => {
@@ -298,8 +306,7 @@ export default function Problem({
             const delta = e.changedTouches[0].clientX - swipeStart.current;
             if (Math.abs(delta) > 42) {
               const direction = delta < 0 ? 1 : -1;
-              setMobileDirection(direction);
-              setMobileCard((current) => (current + direction + copy.cards.length) % copy.cards.length);
+              changeMobileCard(mobileCard + direction, direction);
             }
             swipeStart.current = null;
             resumeTimer.current = window.setTimeout(() => { mobilePaused.current = false; }, 5000);
@@ -311,37 +318,36 @@ export default function Problem({
               <article
                 key={card.n}
                 className={`mobile-problem-enter ${mobileDirection > 0 ? "from-right" : "from-left"}`}
-                style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, minHeight: "72vh" }}
+                style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, minHeight: "72vh", viewTransitionName: "problem-card" }}
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
                   <CardIcon index={mobileCard} />
                   <div style={{ ...typeScale.numberXl, ...numberGradient, fontSize: fluid(54, 82), lineHeight: .8 }}>{card.n}</div>
                 </div>
                 <MicroLabel tone="light">Problem</MicroLabel>
-                <div style={{ ...typeScale.h3 }}>{card.label}</div>
+                <div style={{ ...typeScale.h3, minHeight: "1.3em" }}>{card.label}</div>
                 <GradientRevealText
                   as="h3"
                   tone="light"
-                  style={{ ...typeScale.h1, fontSize: "clamp(19px, 5.5vw, 24px)", lineHeight: 1.1, maxWidth: "100%", whiteSpace: "nowrap" }}
+                  style={{ ...typeScale.h1, fontSize: "clamp(19px, 5.5vw, 24px)", lineHeight: 1.1, maxWidth: "100%", minHeight: "1.2em", whiteSpace: "nowrap" }}
                 >
                   {card.headline}
                 </GradientRevealText>
                 <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3", overflow: "hidden" }}>
                   <MediaTile src={cardMedia[mobileCard]} mediaFit="contain" imageLoading="eager" seed={mobileCard * 5 + 11} style={{ position: "absolute", inset: 0, background: color.black }} />
                 </div>
-                <p style={{ margin: 0, maxWidth: "40ch", ...typeScale.bodyLg, color: color.textOnLightMuted }}>
+                <p style={{ margin: 0, maxWidth: "40ch", minHeight: "7.5em", ...typeScale.bodyLg, color: color.textOnLightMuted }}>
                   {card.body}
                 </p>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: space.md }}>
-                  <span style={{ ...typeScale.eyebrow, color: color.textOnLightMuted }}>Swipe to explore</span>
-                  <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "auto", paddingTop: space.md }}>
+                  <div style={{ display: "flex", justifyContent: "center", gap: 2 }}>
                     {copy.cards.map((item, i) => (
                       <button
                         key={item.n}
                         type="button"
                         aria-label={`Show problem ${item.n}`}
                         aria-current={i === mobileCard}
-                        onClick={() => { setMobileDirection(i >= mobileCard ? 1 : -1); setMobileCard(i); }}
+                        onClick={() => changeMobileCard(i, i >= mobileCard ? 1 : -1)}
                         style={{ width: 44, height: 44, padding: 0, border: 0, display: "grid", placeItems: "center", background: "transparent", cursor: "pointer" }}
                       ><span aria-hidden="true" style={{ position: "relative", display: "block", width: i === mobileCard ? 32 : 8, height: 8, overflow: "hidden", borderRadius: 99, background: hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1)" }}>{i === mobileCard && <span key={`${mobileCard}-${i}`} className="testimonial-progress-fill" style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationDuration: "4.2s" }} />}</span></button>
                     ))}
