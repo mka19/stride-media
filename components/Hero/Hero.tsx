@@ -2,7 +2,7 @@ import { lazy, Suspense, useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGsapContext, SCRUB } from "../shared/gsap";
 import { hero as heroCopy } from "../shared/copy";
 import { color, ease, glow, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
-import { GlowButton, Grain, MicroLabel } from "../shared/primitives";
+import { GlowButton, Grain, MicroLabel, StrideMark } from "../shared/primitives";
 import { useBreakpoint } from "../shared/responsive";
 import GradientRevealText from "../shared/GradientRevealText";
 import SocialProof from "../shared/SocialProof";
@@ -46,6 +46,16 @@ export default function Hero({
     (root) => {
       const q = gsap.utils.selector(root);
       const lines = q(".hero-line-inner");
+
+      // Phones use a single-screen editorial hero. The next chapter enters
+      // through normal upward scrolling, avoiding the pinned WebGL dissolve
+      // that caused long frames on Android hardware.
+      if (bp === "mobile") {
+        gsap.set(q(".hero-mosaic, .hero-copy"), { opacity: 0 });
+        gsap.set(q(".hero-intro, .hero-hint"), { opacity: 1, y: 0 });
+        objectRef.current?.setProgress(0);
+        return;
+      }
 
       // The headline emerges from where the object was rather than sliding
       // in: it scales up from slightly smaller as the object fades away.
@@ -100,7 +110,7 @@ export default function Hero({
 
       return () => ScrollTrigger.refresh();
     },
-    [],
+    [bp],
     // Reduced motion: land on the phase-3 composition immediately, no scrub.
     (root) => {
       const q = gsap.utils.selector(root);
@@ -120,7 +130,7 @@ export default function Hero({
       ref={rootRef}
       style={{
         position: "relative",
-        height: scrollLength,
+        height: bp === "mobile" ? "100svh" : scrollLength,
         background: color.black,
         color: color.textOnDark,
         fontFamily: typeScale.bodyLg.fontFamily,
@@ -191,9 +201,16 @@ export default function Hero({
               outward and stopped dead at the box's edges. */}
           <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "translateY(-2.5svh) scale(1.02)" : undefined }}>
             <Suspense fallback={null}>
-              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground showMark={bp !== "mobile"} />
             </Suspense>
           </div>
+          {bp === "mobile" && (
+            <StrideMark
+              size={190}
+              glowing
+              style={{ position: "relative", zIndex: 2, width: "clamp(158px, 46vw, 190px)", height: "auto", transform: "translateY(-2.5svh)" }}
+            />
+          )}
         </div>
 
         {bp !== "mobile" && <Grain opacity={0.14} />}
@@ -222,7 +239,7 @@ export default function Hero({
               // bar on tablet/desktop; the compact phone composition keeps
               // its model-relative spacing.
               top: bp === "mobile" ? undefined : `calc(${layout.navHeight}px + ${space.xl}px + 18px)`,
-              bottom: bp === "mobile" ? "calc(50% + 24vmin + 16px)" : undefined,
+              bottom: bp === "mobile" ? "calc(50% + 24vmin + 22px)" : undefined,
             }}
           >
             {heroCopy.label}
@@ -230,7 +247,7 @@ export default function Hero({
           <div
             style={{
               position: "absolute",
-              bottom: bp === "mobile" ? "clamp(152px, 21svh, 190px)" : 118,
+              bottom: bp === "mobile" ? "clamp(182px, 25svh, 220px)" : 118,
               ...typeScale.bodyLg,
               color: color.textOnDarkMuted,
               maxWidth: 640,

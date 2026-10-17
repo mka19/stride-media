@@ -309,6 +309,7 @@ export default function HeroObject({
   breakpoint = "desktop",
   pointerTracking = true,
   liquidBackground = false,
+  showMark = true,
 }: {
   handleRef: React.MutableRefObject<HeroObjectHandle | null>;
   className?: string;
@@ -318,6 +319,9 @@ export default function HeroObject({
   pointerTracking?: boolean;
   /** Full-frame liquid belongs to the opening hero only. */
   liquidBackground?: boolean;
+  /** Render the chrome object. Phones can retain the liquid field with a
+   * lightweight vector mark layered above this canvas. */
+  showMark?: boolean;
 }) {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const [ready, setReady] = useState(false);
@@ -1161,7 +1165,7 @@ export default function HeroObject({
       const reform = 1 - reformWave * 0.24;
       const reformOpacity = 1 - reformWave * 0.94;
       solidMat.opacity = (1 - THREE.MathUtils.smoothstep(eased, 0.0, 0.45)) * reformOpacity;
-      solidMat.visible = solidMat.opacity > 0.01;
+      solidMat.visible = showMark && solidMat.opacity > 0.01;
       liquidMorph.visible = false;
 
       // Damped toward the pointer so the mark follows the cursor without
@@ -1205,7 +1209,7 @@ export default function HeroObject({
       // Shrinking as it goes hands the centre of the screen to the headline.
       const shrink = (1 - eased * 0.3) * reform;
       solid.scale.setScalar(shrink);
-      rim.visible = eased > 0.01 && eased < 0.98;
+      rim.visible = showMark && eased > 0.01 && eased < 0.98;
       rim.rotation.copy(solid.rotation);
       rim.position.copy(solid.position);
       rim.scale.copy(solid.scale);
@@ -1251,7 +1255,7 @@ export default function HeroObject({
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
     };
-  }, [handleRef, breakpoint, pointerTracking, liquidBackground, ready]);
+  }, [handleRef, breakpoint, pointerTracking, liquidBackground, showMark, ready]);
 
   return <div ref={mountRef} className={className} style={{ width: "100%", height: "100%" }} />;
 }
