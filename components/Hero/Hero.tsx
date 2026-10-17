@@ -114,6 +114,12 @@ export default function Hero({
     // Reduced motion: land on the phase-3 composition immediately, no scrub.
     (root) => {
       const q = gsap.utils.selector(root);
+      if (bp === "mobile") {
+        gsap.set(q(".hero-mosaic, .hero-copy"), { opacity: 0 });
+        gsap.set(q(".hero-intro, .hero-hint"), { opacity: 1, y: 0 });
+        objectRef.current?.setProgress(0);
+        return;
+      }
       gsap.set(q(".hero-line-inner"), { y: 0, scale: 1, opacity: 1 });
       gsap.set(q(".hero-mosaic"), { opacity: 1, scale: 1 });
       gsap.set(q(".hero-veil"), { opacity: 0.55 });
@@ -130,7 +136,7 @@ export default function Hero({
       ref={rootRef}
       style={{
         position: "relative",
-        height: bp === "mobile" ? "100svh" : scrollLength,
+        height: bp === "mobile" ? "auto" : scrollLength,
         background: color.black,
         color: color.textOnDark,
         fontFamily: typeScale.bodyLg.fontFamily,
@@ -139,7 +145,7 @@ export default function Hero({
       <div
         className="hero-frame"
         style={{
-          position: "sticky",
+          position: bp === "mobile" ? "relative" : "sticky",
           top: 0,
           height: bp === "mobile" ? "calc(100svh + 2px)" : "calc(100vh + 2px)",
           marginBottom: -2,
@@ -396,6 +402,37 @@ export default function Hero({
           />
         </div>
       </div>
+
+      {/* On phones the second hero chapter follows in normal document flow.
+          A regular upward swipe reveals it, so there is no pinned hand-off,
+          dissolve, or WebGL work competing with scroll. */}
+      {bp === "mobile" && (
+        <div
+          style={{
+            position: "relative",
+            minHeight: "100svh",
+            overflow: "hidden",
+            display: "grid",
+            placeItems: "center",
+            padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`,
+            boxSizing: "border-box",
+            isolation: "isolate",
+          }}
+        >
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -3 }}>
+            <VideoMosaic tiles={tiles} interactive={false} mobile columns={3} rows={4} />
+          </div>
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -2, background: `linear-gradient(180deg, ${hexA(color.black, .82)}, ${hexA(color.black, .5)} 46%, ${hexA(color.black, .92)})` }} />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%", maxWidth: 560 }}>
+            <SocialProof count={heroCopy.proofCount} label={heroCopy.proofLabel} faces={clientFaces} style={{ marginBottom: rhythm.eyebrowToHeadline }} />
+            <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(32px, 9vw, 40px)", lineHeight: 1.04, color: color.textOnDark, textWrap: "balance" }}>
+              {heroCopy.headline.map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}
+            </h2>
+            <p style={{ margin: `${rhythm.headlineToBody}px 0 ${rhythm.bodyToCta}px`, ...typeScale.bodyLg, color: hexA("#fff", .82), textShadow: "0 2px 18px rgba(0,0,0,.9)" }}>{heroCopy.sub}</p>
+            <GlowButton href="#contact">{heroCopy.cta}</GlowButton>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
