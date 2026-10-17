@@ -50,13 +50,11 @@ export default function App() {
     ["DSH_yDNE7d_", "12M"],
     ["DRZkSxOj3oh", "1.55M"],
   ]);
-  const heroTiles = reels.map((reel) => ({
+  const heroTiles = reels.filter((reel) => Boolean(reel.views || verifiedHeroViews.has(reel.id))).map((reel) => ({
     src: `/case-studies/videos/ig-${reel.id}.mp4`,
     poster: `/case-studies/videos/ig-${reel.id}.jpg`,
     caption: reel.title,
-    views: reel.views || verifiedHeroViews.has(reel.id)
-      ? `${reel.views ?? verifiedHeroViews.get(reel.id)} views`
-      : "Views",
+    views: `${reel.views ?? verifiedHeroViews.get(reel.id)} views`,
     href: reel.instagram,
   }));
 

@@ -157,7 +157,7 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                       <span style={{ ...typeScale.eyebrow, letterSpacing: ".12em", color: color.accentOnDark }}>STRIDE MEDIA</span>
                     </div>
                     <div style={{ position: "absolute", left: space.lg, right: space.lg, bottom: space.lg, display: "flex", flexDirection: "column", gap: stacked ? space.md : space.lg }}>
-                      <p style={{ margin: 0, maxWidth: "25ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(20px, 5.6vw, 25px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.12 : 1.08, letterSpacing: "-.035em", fontWeight: 500, textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.72)" }}>
+                      <p style={{ margin: 0, maxWidth: "27ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(17px, 4.7vw, 21px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.28 : 1.08, letterSpacing: stacked ? "-.02em" : "-.035em", fontWeight: 500, textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.72)" }}>
                         “{item.quote.replace("Stride Media.", "")}
                         <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
                       </p>

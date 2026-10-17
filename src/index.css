@@ -56,12 +56,17 @@ body {
 
 /* Mobile problem states rise as one composed card after a swipe. */
 @keyframes mobile-problem-enter {
-  from { opacity: 0; transform: translate3d(0, 34px, 0); }
+  from { opacity: 0; transform: translate3d(32px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes mobile-problem-enter-left {
+  from { opacity: 0; transform: translate3d(-32px, 0, 0); }
   to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 .mobile-problem-enter {
-  animation: mobile-problem-enter 680ms cubic-bezier(.16,1,.3,1) both;
+  animation: mobile-problem-enter 520ms cubic-bezier(.22,.8,.22,1) both;
 }
+.mobile-problem-enter.from-left { animation-name: mobile-problem-enter-left; }
 
 @keyframes mobile-case-ticker {
   to { transform: translate3d(calc(-50% - 8px), 0, 0); }

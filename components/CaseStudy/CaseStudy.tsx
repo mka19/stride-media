@@ -480,15 +480,15 @@ export default function CaseStudy({
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",
-            gap: rhythm.headerToContent,
-            padding: `${space.xxl}px ${layout.pad} ${layout.section}px`,
+            gap: 6,
+            padding: `10px ${layout.pad} ${layout.section}px`,
           }}
         >
           <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
           <GradientRevealText as="h3" tone="light" style={{ ...typeScale.h1, maxWidth: "18ch" }}>
             {copy.resultsHeadline}
           </GradientRevealText>
-          {metrics}
+          <div style={{ width: "100%", marginTop: rhythm.headerToContent }}>{metrics}</div>
         </div>
       </section>
     );

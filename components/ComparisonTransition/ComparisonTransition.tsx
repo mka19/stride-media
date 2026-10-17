@@ -83,8 +83,8 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
       <MicroLabel tone="accent" style={{ position: "absolute", right: stacked ? 18 : 32, top: stacked ? 22 : 32, whiteSpace: "nowrap", opacity: Math.min(1, (100 - split) / 28), transition: "opacity 420ms ease" }}>With Stride</MicroLabel>
 
       <div className="compare-copy" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}>
-        <div style={{ textAlign: "center", padding: layout.pad }}>
-          <h2 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, color: "#fff", mixBlendMode: "difference" }}>
+        <div style={{ textAlign: "center", padding: stacked ? 14 : layout.pad }}>
+          <h2 style={{ margin: `${space.lg}px 0 0`, ...typeScale.h1, fontSize: stacked ? "clamp(28px, 8vw, 38px)" : undefined, lineHeight: stacked ? 1.02 : undefined, color: "#fff", mixBlendMode: "difference" }}>
             From invisible to unmistakable.
           </h2>
           <span style={{ display: "block", marginTop: space.lg, ...typeScale.eyebrow, color: "#fff", mixBlendMode: "difference", opacity: .72 }}>Drag to compare</span>
@@ -116,7 +116,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
   );
 
   if (stacked) {
-    return <section ref={rootRef} style={{ position: "relative", height: "clamp(520px, 68vh, 640px)", background: color.black }}>{shell}</section>;
+    return <section ref={rootRef} style={{ position: "relative", height: "clamp(360px, 72vw, 440px)", background: color.black }}>{shell}</section>;
   }
 
   return (

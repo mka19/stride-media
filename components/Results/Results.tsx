@@ -31,10 +31,19 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const [mobileIndex, setMobileIndex] = useState(0);
   const [mobilePaused, setMobilePaused] = useState(false);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const loopCards = [...copy.cards, ...copy.cards, ...copy.cards];
+
+  useEffect(() => {
+    if (!stacked || !mobileTrack.current) return;
+    const rail = mobileTrack.current;
+    const first = rail.children[0] as HTMLElement | undefined;
+    if (!first) return;
+    rail.scrollLeft = copy.cards.length * (first.offsetWidth + 14);
+  }, [stacked]);
 
   const goToMobile = (index: number) => {
     const el = mobileTrack.current;
-    const card = el?.children[index] as HTMLElement | undefined;
+    const card = el?.children[copy.cards.length + index] as HTMLElement | undefined;
     if (el && card) {
       const left = card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2;
       el.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
@@ -126,7 +135,13 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               const card = el.firstElementChild as HTMLElement | null;
               if (!card) return;
               const step = card.offsetWidth + 14;
-              setMobileIndex(Math.max(0, Math.min(copy.cards.length - 1, Math.round(el.scrollLeft / step))));
+              const raw = Math.round(el.scrollLeft / step);
+              const count = copy.cards.length;
+              const logical = ((raw % count) + count) % count;
+              setMobileIndex(logical);
+              if (raw < count || raw >= count * 2) {
+                window.requestAnimationFrame(() => { el.scrollLeft = (count + logical) * step; });
+              }
             }}
             style={{
               display: "flex",
@@ -142,13 +157,15 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               touchAction: "pan-x pan-y",
             }}
           >
-            {copy.cards.map((card, i) => (
+            {loopCards.map((card, i) => {
+              const sourceIndex = i % copy.cards.length;
+              return (
               <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
-                <ResultCard card={card} src={clips[i]} seed={i} width="100%" instanceKey={`mobile-${i}`} activeVideo={activeVideo} setActiveVideo={setActiveVideo} />
+                <ResultCard card={card} src={clips[sourceIndex]} seed={sourceIndex} width="100%" instanceKey={`mobile-${i}`} activeVideo={activeVideo} setActiveVideo={setActiveVideo} />
               </div>
-            ))}
+            );})}
           </div>
-          <div aria-label={`Result ${mobileIndex + 1} of ${copy.cards.length}`} style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, paddingTop: 6 }}>
+          <div aria-label={`Result ${mobileIndex + 1} of ${copy.cards.length}`} style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, paddingTop: 0 }}>
             {copy.cards.map((_, i) => (
               <button
                 key={i}
@@ -160,7 +177,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               >
                 <span aria-hidden="true" style={{ position: "relative", display: "block", width: mobileIndex === i ? 32 : 7, height: 7, overflow: "hidden", borderRadius: 999, background: hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}` }}>
                   {mobileIndex === i && (
-                    <span className="testimonial-progress-fill" onAnimationEnd={() => { if (!mobilePaused) goToMobile((mobileIndex + 1) % copy.cards.length); }} style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationPlayState: mobilePaused ? "paused" : "running" }} />
+                    <span className="testimonial-progress-fill" onAnimationEnd={() => { if (!mobilePaused) goToMobile((mobileIndex + 1) % copy.cards.length); }} style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationDuration: "3.4s", animationPlayState: mobilePaused ? "paused" : "running" }} />
                   )}
                 </span>
               </button>
@@ -420,9 +437,9 @@ function ResultCard({
         textDecoration: "none",
       }}
     >
-      <div style={{ position: "relative", width: "100%", height: 420, maxHeight: "56vh", overflow: "hidden", borderRadius: 4 }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} muted controls playsInline preload="none" onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
-        {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: 0 }} />}
+      <div style={{ position: "relative", width: "100%", height: 472, maxHeight: "68vh", overflow: "hidden", borderRadius: 4, background: color.black }}>
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} muted controls playsInline preload="none" onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
+        {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: "0 0 52px" }} />}
 
         {/* client avatar, top-left */}
         <div
@@ -452,6 +469,7 @@ function ResultCard({
             left: 0,
             right: 0,
             bottom: 0,
+            minHeight: 52,
             padding: "14px 16px",
             borderRadius: 0,
             fontSize: "clamp(20px, 1.65vw, 28px)",

@@ -182,6 +182,7 @@ export function ArrowIcon({ size = 14 }: { size?: number }) {
 export function GlowButton({
   children,
   href,
+  target,
   onClick,
   variant = "solid",
   arrow = true,
@@ -189,6 +190,7 @@ export function GlowButton({
 }: {
   children: ReactNode;
   href?: string;
+  target?: "_blank" | "_self";
   onClick?: () => void;
   variant?: "solid" | "ghost";
   arrow?: boolean;
@@ -255,7 +257,7 @@ export function GlowButton({
   );
 
   return href ? (
-    <a href={href} className="stride-press stride-glow-button" style={base} {...handlers}>
+    <a href={href} target={target} rel={target === "_blank" ? "noreferrer" : undefined} className="stride-press stride-glow-button" style={base} {...handlers}>
       {inner}
     </a>
   ) : (

@@ -34,6 +34,7 @@ export default function Problem({
 }) {
   const surface = useRef<SurfaceHandle | null>(null);
   const [mobileCard, setMobileCard] = useState(0);
+  const [mobileDirection, setMobileDirection] = useState<1 | -1>(1);
   const swipeStart = useRef<number | null>(null);
   const mobilePaused = useRef(false);
   const resumeTimer = useRef<number | null>(null);
@@ -47,6 +48,7 @@ export default function Problem({
     if (!stacked) return;
     const timer = window.setInterval(() => {
       if (!mobilePaused.current && !document.hidden) {
+        setMobileDirection(1);
         setMobileCard((current) => (current + 1) % copy.cards.length);
       }
     }, 4200);
@@ -295,9 +297,9 @@ export default function Problem({
             if (swipeStart.current == null) return;
             const delta = e.changedTouches[0].clientX - swipeStart.current;
             if (Math.abs(delta) > 42) {
-              setMobileCard((current) => delta < 0
-                ? Math.min(copy.cards.length - 1, current + 1)
-                : Math.max(0, current - 1));
+              const direction = delta < 0 ? 1 : -1;
+              setMobileDirection(direction);
+              setMobileCard((current) => (current + direction + copy.cards.length) % copy.cards.length);
             }
             swipeStart.current = null;
             resumeTimer.current = window.setTimeout(() => { mobilePaused.current = false; }, 5000);
@@ -308,7 +310,7 @@ export default function Problem({
             return (
               <article
                 key={card.n}
-                className="mobile-problem-enter"
+                className={`mobile-problem-enter ${mobileDirection > 0 ? "from-right" : "from-left"}`}
                 style={{ display: "flex", flexDirection: "column", gap: rhythm.eyebrowToHeadline, minHeight: "72vh" }}
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
@@ -339,7 +341,7 @@ export default function Problem({
                         type="button"
                         aria-label={`Show problem ${item.n}`}
                         aria-current={i === mobileCard}
-                        onClick={() => setMobileCard(i)}
+                        onClick={() => { setMobileDirection(i >= mobileCard ? 1 : -1); setMobileCard(i); }}
                         style={{ width: 44, height: 44, padding: 0, border: 0, display: "grid", placeItems: "center", background: "transparent", cursor: "pointer" }}
                       ><span aria-hidden="true" style={{ position: "relative", display: "block", width: i === mobileCard ? 32 : 8, height: 8, overflow: "hidden", borderRadius: 99, background: hexA(color.black, .18), transition: "width 420ms cubic-bezier(.16,1,.3,1)" }}>{i === mobileCard && <span key={`${mobileCard}-${i}`} className="testimonial-progress-fill" style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationDuration: "4.2s" }} />}</span></button>
                     ))}

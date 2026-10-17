@@ -405,7 +405,7 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
         color: color.textOnDark,
         // A plate, not a framed box: the fill is what separates the card
         // from the ground, and an outline on top of it only draws a rectangle.
-        background: hexA("#FFFFFF", stacked ? 0.1 : 0.05),
+        background: stacked ? "#202024" : hexA("#FFFFFF", 0.05),
         border: stacked ? `1px solid ${hexA("#FFFFFF", 0.14)}` : "none",
         borderRadius: stacked ? 16 : 0,
         backdropFilter: stacked ? "none" : "blur(6px)",
@@ -452,7 +452,7 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
           <p style={{ margin: `${rhythm.headlineToBody}px 0 0`, maxWidth: "34ch", ...typeScale.bodyLg, lineHeight: 1.5, color: color.textOnDarkMuted }}>
             {copy.transition}
           </p>
-          <div style={{ position: "sticky", top: layout.navHeight + 12, zIndex: 8, width: "min(100%, 420px)", margin: "30px auto 0", height: 200, overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .14)}`, background: `radial-gradient(circle at 50% 44%, ${hexA(color.accentBright, .25)}, transparent 54%), #08080a`, boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
+          <div style={{ position: "sticky", top: layout.navHeight + 12, zIndex: 8, width: "min(100%, 420px)", margin: "30px auto 0", height: 200, overflow: "hidden", borderRadius: 20, border: `1px solid ${hexA("#fff", .14)}`, background: "#08080a", boxShadow: "0 24px 70px rgba(0,0,0,.42)" }}>
             <div style={{ position: "absolute", inset: "2%", filter: "brightness(1.45) contrast(1.06)", transform: "translateZ(0)" }}><Suspense fallback={null}><HeroObject handleRef={objectRef} breakpoint={bp} /></Suspense></div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative", zIndex: 9, marginTop: 18, width: "100%", textAlign: "left", paddingBottom: 32 }}>
@@ -462,13 +462,16 @@ export default function WhyStride({ scrollLength = "380vh" }: { scrollLength?: s
                 className="ws-mobile-card"
                 data-index={i}
                 style={{
-                  position: "relative",
+                  position: "sticky",
+                  top: layout.navHeight + 226,
                   zIndex: 10 + i,
-                  marginTop: i === 0 ? 0 : -14,
+                  marginTop: i === 0 ? 0 : 30,
+                  marginBottom: i < copy.capabilities.length - 1 ? "18vh" : 0,
                   opacity: 1,
                   visibility: "visible",
                   transform: "none",
-                  boxShadow: "0 -10px 30px rgba(0,0,0,.24)",
+                  background: "#202024",
+                  boxShadow: "0 -12px 34px rgba(0,0,0,.48)",
                 }}
               >
                 {capability(cap, i)}

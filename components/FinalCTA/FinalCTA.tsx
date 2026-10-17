@@ -139,7 +139,7 @@ export default function FinalCTA({
           </div>
 
           <div className="cta-item" style={{ position: "relative", marginTop: bp === "mobile" ? 18 : space.xl }}>
-            <GlowButton href={calendly}>{copy.button}</GlowButton>
+            <GlowButton href={calendly} target="_blank">{copy.button}</GlowButton>
           </div>
         </div>
 

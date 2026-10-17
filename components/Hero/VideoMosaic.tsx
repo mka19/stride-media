@@ -166,7 +166,7 @@ export default function VideoMosaic({
                     transform: isHovered ? "translate3d(0,0,0)" : "translate3d(-50%,-50%,0)",
                     maxWidth: isHovered ? "calc(100% - 24px)" : "88%",
                     color: "#FFFFFF",
-                    fontSize: mobile ? "clamp(12px, 3.55vw, 16px)" : "clamp(16px, 1.18vw, 23px)",
+                    fontSize: mobile ? "clamp(15px, 4.5vw, 21px)" : "clamp(20px, 1.7vw, 30px)",
                     lineHeight: 1,
                     letterSpacing: "-.025em",
                     fontWeight: 800,

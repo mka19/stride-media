@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useBreakpoint, useNavRoom } from "../shared/responsive";
 import { brand, nav as navCopy } from "../shared/copy";
 import { color, ease, hexA, layout, space, typeScale } from "../shared/theme";
@@ -369,7 +370,7 @@ export default function Nav({
               src={soundtrack}
               tone={navHidden ? "dark" : light ? "light" : "dark"}
               size={46}
-              style={{ marginRight: 8, marginLeft: isMobile ? 8 : railVisible ? 0 : 8 }}
+              style={{ marginRight: 8, marginLeft: isMobile ? 8 : railVisible ? 0 : 8, background: "transparent", borderColor: "transparent", boxShadow: "none" }}
             />
             {!isMobile && <GlowButton href="#contact">{navCopy.cta}</GlowButton>}
           </div>
@@ -425,15 +426,15 @@ export default function Nav({
       )}
 
       {/* Mobile menu panel */}
-      {isMobile && menuOpen && (
+      {isMobile && menuOpen && createPortal(
         <div
           style={{
             // The header's backdrop-filter creates a containing block on
             // mobile browsers, so a fixed child only inherited the header's
             // height. Size the panel explicitly from the header instead.
-            position: "absolute",
+            position: "fixed",
+            inset: 0,
             top: height,
-            left: -layout.pad,
             width: "100vw",
             height: `calc(100dvh - ${height}px)`,
             overflowY: "auto",
@@ -458,10 +459,10 @@ export default function Nav({
               {item.label}
             </a>
           ))}
-        </div>
+        </div>, document.body
       )}
 
-      {transition && (
+      {transition && createPortal(
         <div
           aria-live="polite"
           aria-label={`Opening ${transition.label}`}
@@ -498,7 +499,7 @@ export default function Nav({
             <StrideMark size={72} glowing />
             <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, letterSpacing: ".12em" }}>{transition.label}</span>
           </div>
-        </div>
+        </div>, document.body
       )}
 
     </header>
