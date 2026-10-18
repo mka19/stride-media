@@ -455,7 +455,7 @@ export default function Hero({
           style={{
             position: "relative",
             height: "165dvh",
-            marginTop: -2,
+            marginTop: -58,
             overflow: "visible",
             background: "#210947",
             isolation: "isolate"
