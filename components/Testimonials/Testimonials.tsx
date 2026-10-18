@@ -25,6 +25,8 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
   // Only render supplied client footage. This prevents placeholder stories
   // from appearing as real testimonials while additional interviews arrive.
   const items = copy.cards.slice(0, videos.length);
+  const clientNames = ["Monny Bullandbear", "Yasmin Shafi"];
+  const clientHandles = ["@monny.bullandbear", "@yasmin_dxb_"];
 
   const goTo = (index: number) => {
     const next = Math.max(0, Math.min(items.length - 1, index));
@@ -158,16 +160,11 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
                       <span style={{ ...typeScale.eyebrow, padding: mobile ? "6px 8px" : 0, borderRadius: mobile ? 5 : 0, color: mobile ? "#fff" : color.textOnDarkMuted, background: mobile ? hexA(color.black, .72) : "transparent", textShadow: mobile ? "0 1px 3px rgba(0,0,0,.7)" : undefined }}>Client story · {String(index + 1).padStart(2, "0")}</span>
                     </div>
                     <div style={{ position: "absolute", left: stacked ? 16 : space.lg, right: stacked ? 16 : space.lg, bottom: stacked ? 16 : space.lg, display: "flex", flexDirection: "column", gap: stacked ? 8 : space.lg }}>
-                      {!mobile && <p style={{ margin: 0, maxWidth: "28ch", fontFamily: typeScale.h3.fontFamily, fontSize: stacked ? "clamp(16px, 4.35vw, 19px)" : "clamp(24px, 2.1vw, 34px)", lineHeight: stacked ? 1.35 : 1.08, letterSpacing: stacked ? "-.012em" : "-.035em", fontWeight: 500, color: "#fff", textWrap: "balance", textShadow: "0 2px 18px rgba(0,0,0,.84)" }}>
-                        “{item.quote.replace("Stride Media.", "")}
-                        <span style={{ color: color.accentOnDark }}>Stride Media.</span>”
-                      </p>}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, paddingTop: 8, borderTop: `1px solid ${hexA("#fff", .22)}` }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
-                          <span style={{ ...typeScale.bodyLg, fontWeight: 600, color: color.textOnDark }}>{mobile ? (index === 0 ? "Monny Bullandbear" : "Yasmin Shafi") : item.name}</span>
-                          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{mobile ? (index === 0 ? "@monny.bullandbear" : "@yasmin_dxb_") : item.handle}</span>
+                          <span style={{ ...typeScale.bodyLg, fontWeight: 600, color: color.textOnDark }}>{clientNames[index] ?? item.name}</span>
+                          <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted }}>{clientHandles[index] ?? item.handle}</span>
                         </div>
-                        {!mobile && <span style={{ ...typeScale.eyebrow, maxWidth: "14ch", textAlign: "right", lineHeight: 1.35, color: color.accentOnDark }}>{item.stat}</span>}
                       </div>
                     </div>
                     <button

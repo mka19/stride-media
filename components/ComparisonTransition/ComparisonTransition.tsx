@@ -26,14 +26,14 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         gsap.set(q(".compare-mark"), { opacity: 0 });
         return;
       }
-      gsap.set(q(".compare-shell"), { scale: 0.9, borderRadius: 18 });
+      gsap.set(q(".compare-shell"), { scale: 0.9, borderRadius: 12 });
       gsap.set(q(".compare-copy"), { opacity: 1, y: 0 });
       gsap.set(q(".compare-mark"), { opacity: 0, scale: 0.55, y: 30 });
 
       const tl = gsap.timeline({
         scrollTrigger: { trigger: root, start: "top top", end: "bottom bottom", scrub: SCRUB },
       });
-      tl.to(q(".compare-shell"), { scale: 1, borderRadius: 0, duration: 0.32, ease: "power2.inOut" }, 0)
+      tl.to(q(".compare-shell"), { scale: 1, borderRadius: 12, duration: 0.32, ease: "power2.inOut" }, 0)
         .to(q(".compare-copy"), { opacity: 1, y: 0, duration: 0.16, ease: "power1.inOut" }, 0.7);
     },
     [stacked],
@@ -63,6 +63,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
         position: "absolute",
         inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + 148}px ${layout.pad} 60px`,
         overflow: "hidden",
+        borderRadius: 12,
         cursor: "ew-resize",
         touchAction: "pan-y",
         background: "#0a0710",
