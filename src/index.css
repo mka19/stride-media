@@ -512,7 +512,7 @@ html[data-motion="off"] .mobile-parallax-media {
 .study-bullets p { margin-top: 16px; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.58); }
 .study-results { background: linear-gradient(145deg, #2e1065, #080808 72%); }
 .study-result-list { margin-top: 48px; border-top: 1px solid rgba(255,255,255,.16); }
-.study-result-list > div { display: grid; grid-template-columns: 64px minmax(0,1fr); gap: 24px; padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+.study-result-list > div { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: baseline; gap: 24px; padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,.16); }
 .study-result-list span { color: #a78bfa; font-size: 12px; line-height: 16px; }
 .study-result-list p { max-width: 52ch; font-size: clamp(20px, 2.15vw, 34px); line-height: 1.14; letter-spacing: -.025em; text-wrap: balance; }
 .study-reels > div { margin-top: 48px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
@@ -534,9 +534,9 @@ html[data-motion="off"] .mobile-parallax-media {
   .study-hero-portrait { width: min(100%, 620px); justify-self: center; aspect-ratio: 4 / 3; }
   .study-hero-copy { align-items: center; text-align: center; }.study-meta { width: 100%; }.study-summary { text-align: center; }
   .study-context { grid-template-columns: 1fr; gap: 24px; }.study-context > div { padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.12); }
-  .study-row { grid-template-columns: .7fr 1fr; gap: 12px; }.study-row > :last-child { grid-column: 2; }.study-row-head span:last-child { display: none; }
+  .study-row { grid-template-columns: minmax(70px,.72fr) minmax(0,1fr) minmax(0,1.18fr); gap: 10px; align-items: start; }.study-row > :last-child { grid-column: auto; }.study-row-head span:last-child { display: block; }
   .study-chapter { grid-template-columns: 1fr; gap: 20px; }.study-bullets, .study-bullets-2, .study-bullets-3 { grid-template-columns: 1fr; margin-top: 32px; }.study-bullets > div { min-height: auto; }
-  .study-result-list > div { grid-template-columns: 36px minmax(0,1fr); gap: 12px; }.study-reels > div { grid-template-columns: 1fr; margin-top: 32px; }
+  .study-result-list > div { grid-template-columns: 36px minmax(0,1fr); align-items: baseline; gap: 12px; }.study-reels > div { grid-template-columns: 1fr; margin-top: 32px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -489,7 +489,6 @@ export default function CaseStudy({
         >
           <div aria-hidden="true" style={{ width: "100%", height: 24, flex: "0 0 24px" }} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-            <MicroLabel tone="light">{copy.resultsLabel}</MicroLabel>
             <GradientRevealText as="h3" tone="light" style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch" }}>
               {copy.resultsHeadline}
             </GradientRevealText>
@@ -645,9 +644,6 @@ export default function CaseStudy({
               gap: rhythm.eyebrowToHeadline,
             }}
           >
-            <MicroLabel tone="accent" className="cs-results-head">
-              {copy.resultsLabel}
-            </MicroLabel>
             <GradientRevealText
               as="h3"
               tone="light"

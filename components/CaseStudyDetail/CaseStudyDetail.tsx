@@ -9,13 +9,31 @@ const sectionLinks = [
 
 function BulletIcon({ title }: { title: string }) {
   const key = title.toLowerCase();
-  const path = key.includes("script")
-    ? <path d="M6 3h9l3 3v15H6zM15 3v4h4M9 11h6M9 15h6" />
-    : key.includes("produc") || key.includes("shoot") || key.includes("edit")
-      ? <path d="M4 8h3l2-3h6l2 3h3v11H4zm8 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6" />
-      : key.includes("publish") || key.includes("schedule") || key.includes("deliver")
-        ? <path d="M5 4h14v16H5zM8 2v4M16 2v4M5 9h14M8 13h3M8 16h6" />
-        : <path d="M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5M12 12l9-9m0 0v5m0-5h-5" />;
+  const path = key.includes("voice") || key.includes("camera coaching")
+    ? <><path d="M9 5a3 3 0 0 1 6 0v6a3 3 0 0 1-6 0zM6 10v1a6 6 0 0 0 12 0v-1M12 17v4M9 21h6" /></>
+    : key.includes("language") || key.includes("tone")
+      ? <path d="M4 5h16v11H9l-5 4zm4 4h8M8 12h5" />
+      : key.includes("hook")
+        ? <path d="M7 4v8a5 5 0 0 0 10 0V7M7 7h4M13 7h4M5 4h4M15 4h4" />
+        : key.includes("lead capture") || key.includes("cta") || key.includes("call")
+          ? <path d="M4 5h16v11H9l-5 4zm5 5h6m-2-3 3 3-3 3" />
+          : key.includes("viewer") || key.includes("investor")
+            ? <path d="M12 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6M6 20a6 6 0 0 1 12 0M18 4h3v3M21 4l-4 4" />
+            : key.includes("identity") || key.includes("look")
+              ? <path d="M12 3 4 8v8l8 5 8-5V8zm0 0v18M4 8l8 5 8-5" />
+              : key.includes("format")
+                ? <path d="M4 5h7v6H4zm9 0h7v10h-7zM4 13h7v6H4zm9 4h7v2h-7z" />
+                : key.includes("script")
+                  ? <path d="M6 3h9l3 3v15H6zM15 3v4h4M9 11h6M9 15h6" />
+                  : key.includes("produc") || key.includes("shoot") || key.includes("edit")
+                    ? <path d="M4 8h3l2-3h6l2 3h3v11H4zm8 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6" />
+                    : key.includes("publish") || key.includes("schedule") || key.includes("deliver") || key.includes("consistency")
+                      ? <path d="M5 4h14v16H5zM8 2v4M16 2v4M5 9h14M8 13h3M8 16h6" />
+                      : key.includes("volume")
+                        ? <path d="m12 3 8 4-8 4-8-4zm-8 8 8 4 8-4M4 15l8 4 8-4" />
+                        : key.includes("reason") || key.includes("direction") || key.includes("strategy") || key.includes("idea")
+                          ? <path d="M9 18h6M10 22h4M8 14a6 6 0 1 1 8 0c-1 1-1.5 2-1.5 4h-5C9.5 16 9 15 8 14" />
+                          : <path d="M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5M12 12l9-9m0 0v5m0-5h-5" />;
   return <span className="study-bullet-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{path}</svg></span>;
 }
 
