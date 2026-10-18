@@ -192,6 +192,7 @@ export default function Hero({
           marginBottom: -2,
           overflow: "hidden",
           isolation: "isolate",
+            background: bp === "mobile" ? "#210947" : color.black,
         }}
       >
         {/* Layer 0 — warm, noisy gradient ground */}
@@ -456,16 +457,16 @@ export default function Hero({
             height: "165dvh",
             marginTop: -2,
             overflow: "visible",
-            background: color.black,
+            background: "#210947",
             isolation: "isolate"
           }}
         >
           <div style={{ position: "sticky", top: 0, height: "100dvh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
             <div className="mobile-liquid-fallback" aria-hidden="true" style={{ zIndex: -4 }} />
-            <div style={{ position: "absolute", inset: 0, zIndex: -3 }}>
+            <div style={{ position: "absolute", top: -56, right: 0, bottom: 0, left: 0, zIndex: -3 }}>
               <VideoMosaic tiles={tiles} interactive mobile columns={3} rows={4} />
             </div>
-            <div ref={mobileVeilRef} aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -2, opacity: .82, background: `linear-gradient(180deg, ${color.black}, ${hexA(color.black, .62)} 46%, ${color.black})`, willChange: "opacity" }} />
+            <div ref={mobileVeilRef} aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -2, opacity: .82, background: `linear-gradient(180deg, ${hexA("#210947", .44)} 0%, ${hexA(color.black, .62)} 46%, ${color.black} 100%)`, willChange: "opacity" }} />
             <div ref={mobileCopyRef} style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%", maxWidth: 560, willChange: "opacity, transform", pointerEvents: mobileInteractive ? "none" : "auto" }}>
               <SocialProof count={heroCopy.proofCount} label={heroCopy.proofLabel} faces={clientFaces} style={{ marginBottom: rhythm.eyebrowToHeadline }} />
               <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(32px, 9vw, 40px)", lineHeight: 1.04, color: color.textOnDark, textWrap: "balance" }}>

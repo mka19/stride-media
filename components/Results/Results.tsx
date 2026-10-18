@@ -29,7 +29,6 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const cardWidth = bp === "mobile" ? "85vw" : bp === "tablet" ? 240 : 280;
   const mobileTrack = useRef<HTMLDivElement | null>(null);
   const [mobileIndex, setMobileIndex] = useState(0);
-  const [mobilePaused, setMobilePaused] = useState(false);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const loopCards = [...copy.cards, ...copy.cards, ...copy.cards];
 
@@ -126,10 +125,6 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
           <div
             ref={mobileTrack}
             aria-label="Client results — swipe horizontally"
-            onPointerDown={() => setMobilePaused(true)}
-            onPointerUp={() => setMobilePaused(false)}
-            onPointerCancel={() => setMobilePaused(false)}
-            onTouchEnd={() => setMobilePaused(false)}
             onScroll={(event) => {
               const el = event.currentTarget;
               const card = el.firstElementChild as HTMLElement | null;
@@ -177,7 +172,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               >
                 <span aria-hidden="true" style={{ position: "relative", display: "block", width: mobileIndex === i ? 32 : 7, height: 7, overflow: "hidden", borderRadius: 999, background: hexA(color.textOnDark, .26), transition: `width 400ms ${ease.out}` }}>
                   {mobileIndex === i && (
-                    <span className="testimonial-progress-fill" onAnimationEnd={() => { if (!mobilePaused) goToMobile((mobileIndex + 1) % copy.cards.length); }} style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent, animationDuration: "3.4s", animationPlayState: mobilePaused ? "paused" : "running" }} />
+                    <span style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: color.accent }} />
                   )}
                 </span>
               </button>

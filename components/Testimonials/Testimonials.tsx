@@ -25,8 +25,8 @@ export default function Testimonials({ videos = [], posters = [] }: { videos?: s
   // Only render supplied client footage. This prevents placeholder stories
   // from appearing as real testimonials while additional interviews arrive.
   const items = copy.cards.slice(0, videos.length);
-  const clientNames = ["Monny Bullandbear", "Yasmin Shafi"];
-  const clientHandles = ["@monny.bullandbear", "@yasmin_dxb_"];
+  const clientNames = ["Monny Bullandbear", "Yasmin Shafi", "Imtaz Ahmed", "Client testimonial"];
+  const clientHandles = ["@monny.bullandbear", "@yasmin_dxb_", "@realtyguru_", "Dubai"];
 
   const goTo = (index: number) => {
     const next = Math.max(0, Math.min(items.length - 1, index));

@@ -265,6 +265,8 @@ export const testimonials = {
   cards: [
     { quote: "Watch and listen to their experience working with Stride Media.", name: "Client testimonial", handle: "Dubai", stat: "Client perspective", initials: "ST" },
     { quote: "Watch and listen to another client experience with Stride Media.", name: "Client testimonial", handle: "Dubai", stat: "Client perspective", initials: "ST" },
+    { quote: "Two deals closed and two more leads moving toward close in the first week.", name: "Imtaz Ahmed", handle: "@realtyguru_", stat: "First-week results", initials: "IA" },
+    { quote: "Real leads generated in one week through a consistent content system.", name: "Client testimonial", handle: "Dubai", stat: "Leads in one week", initials: "ST" },
     { quote: "Two agencies before this. Stride is the first one that shipped every single week.", name: "Leila Hart · Demo", handle: "Coaching", stat: "11 weeks straight", initials: "LH" },
     { quote: "I have not been on a filming call in four months and my feed has never looked better.", name: "Marcus Reed · Demo", handle: "Consulting", stat: "Calendar full", initials: "MR" },
     { quote: "The scripts are the thing. They write like they want it watched.", name: "Sofia Lane · Demo", handle: "Founder", stat: "18K saves", initials: "SL" },
@@ -324,6 +326,7 @@ export const founders = {
       bio: "Ayub helps people build brands and sell through social media. His content-led approach has generated more than 100M views and shapes Stride's strategy, creative direction and growth systems.",
       image: "/founders/ayub-shaikh.webp",
       instagram: "https://www.instagram.com/ayub_shake/",
+      linkedin: "https://www.linkedin.com/in/ayub-shaikh-a90b57292/",
     },
     {
       n: "02",
@@ -332,6 +335,7 @@ export const founders = {
       bio: "Faiz brings a creator's eye to Stride, drawing on Emirates-focused POV, comedy and review content to keep ideas culturally relevant, natural on camera and built for attention.",
       image: "/founders/co-founder.png",
       instagram: "https://www.instagram.com/faizzali05/",
+      linkedin: "",
     },
   ],
   memories: [
@@ -372,7 +376,7 @@ export const footer = {
     { label: "Instagram", href: "https://www.instagram.com/stride.media_/" },
     { label: "YouTube", href: "https://www.youtube.com/" },
     { label: "TikTok", href: "https://www.tiktok.com/" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/company/stridemediauae" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/stridemediauae/" },
   ],
   rights: "all rights reserved",
   basedLabel: "Based in",
