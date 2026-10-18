@@ -8,6 +8,7 @@ import SoundButton from "../shared/SoundButton";
 import { CALENDLY_URL } from "../shared/CalendlyEmbed";
 import { subscribeSurface, toneAt, type Tone } from "../shared/surface";
 import { prefersReducedMotion, ScrollTrigger } from "../shared/gsap";
+import { SHOW_VSL } from "../shared/features";
 
 type NavTransition = {
   phase: "enter" | "cover" | "reveal";
@@ -15,6 +16,8 @@ type NavTransition = {
   x: number;
   y: number;
 };
+
+const visibleNavItems = navCopy.items.filter((item) => SHOW_VSL || item.id !== "what-we-do");
 
 /**
  * Sticky nav — designxhand.com/experience reference, locked.
@@ -169,7 +172,7 @@ export default function Nav({
       let found = -1;
       let ratio = 0;
 
-      navCopy.items.forEach((item, i) => {
+      visibleNavItems.forEach((item, i) => {
         const el = document.getElementById(item.id);
         if (!el) return;
         const rect = el.getBoundingClientRect();
@@ -272,7 +275,7 @@ export default function Nav({
           transition: "opacity 240ms ease, transform 520ms cubic-bezier(.16,1,.3,1)",
         }}
       >
-        {navCopy.items.map((item, i) => {
+        {visibleNavItems.map((item, i) => {
           const done = activeIndex > i;
           const active = activeIndex === i;
           return (
@@ -450,7 +453,7 @@ export default function Nav({
             zIndex: 1000,
           }}
         >
-          {navCopy.items.map((item) => (
+          {visibleNavItems.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}

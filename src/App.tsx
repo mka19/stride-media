@@ -22,6 +22,7 @@ import { reels } from "../components/Videos/videoData";
 import { findCaseStudy } from "../components/CaseStudyDetail/caseStudies";
 import VideoLibrary from "../components/Videos/VideoLibrary";
 import PageTransition from "../components/shared/PageTransition";
+import { SHOW_VSL } from "../components/shared/features";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so the
@@ -96,7 +97,7 @@ export default function App() {
         ]}
       />
       <Results clips={resultMedia} />
-      <Solution />
+      {SHOW_VSL && <Solution />}
       <CaseStudy gallery={caseStudyPortraits} />
       <HowItWorks />
       <Marquee items={marquee.process} />
