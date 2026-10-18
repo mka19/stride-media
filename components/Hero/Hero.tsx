@@ -189,7 +189,7 @@ export default function Hero({
           position: bp === "mobile" ? "relative" : "sticky",
           top: 0,
           height: bp === "mobile" ? "100dvh" : "calc(100vh + 2px)",
-          marginBottom: bp === "mobile" ? 0 : -2,
+          marginBottom: -2,
           overflow: "hidden",
           isolation: "isolate",
         }}
@@ -454,12 +454,14 @@ export default function Hero({
           style={{
             position: "relative",
             height: "165dvh",
+            marginTop: -2,
             overflow: "visible",
             background: color.black,
             isolation: "isolate"
           }}
         >
           <div style={{ position: "sticky", top: 0, height: "100dvh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
+            <div className="mobile-liquid-fallback" aria-hidden="true" style={{ zIndex: -4 }} />
             <div style={{ position: "absolute", inset: 0, zIndex: -3 }}>
               <VideoMosaic tiles={tiles} interactive mobile columns={3} rows={4} />
             </div>

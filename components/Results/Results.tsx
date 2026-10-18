@@ -453,7 +453,7 @@ function ResultCard({
       }}
     >
       <div style={{ position: "relative", width: "100%", height: 472, maxHeight: "68vh", overflow: "hidden", borderRadius: 4, background: color.black }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" draggable={false} onPointerDown={(event) => { event.preventDefault(); event.stopPropagation(); togglePlayback(); }} onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer" }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" draggable={false} onPointerUp={(event) => { event.stopPropagation(); togglePlayback(); }} onClick={(event) => { if (event.detail === 0) togglePlayback(); }} onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer", touchAction: "manipulation" }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: "0 0 52px" }} />}
 
         {/* client avatar, top-left */}
@@ -505,7 +505,7 @@ function ResultCard({
           <span className="result-view-text">{card.views} Views</span>
         </div>
         {videoSrc && (
-          <button type="button" onPointerDown={(event) => { event.preventDefault(); event.stopPropagation(); togglePlayback(); }} onClick={(event) => { if (event.detail === 0) togglePlayback(); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1, touchAction: "manipulation" }}>
+          <button type="button" onPointerUp={(event) => { event.stopPropagation(); togglePlayback(); }} onClick={(event) => { if (event.detail === 0) togglePlayback(); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1, touchAction: "manipulation" }}>
             <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
           </button>
         )}
