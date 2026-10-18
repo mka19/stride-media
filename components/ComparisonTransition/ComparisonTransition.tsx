@@ -125,7 +125,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
             <span style={{ display: "block", margin: 0, ...typeScale.eyebrow, color: hexA("#fff", .72) }}>Drag to compare</span>
             <h2 style={{ margin: 0, ...typeScale.h1, fontSize: "clamp(28px, 8vw, 38px)", lineHeight: 1.02, color: "#fff" }}>From invisible to unmistakable.</h2>
           </div>
-          <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", marginTop: 16 }}>
+          <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", marginTop: 18 }}>
             {shell}
           </div>
         </section>
