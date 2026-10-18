@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { gsap, SCRUB, useGsapContext } from "../shared/gsap";
-import { color, hexA, layout, rhythm, space, typeScale } from "../shared/theme";
+import { color, hexA, layout, space, typeScale } from "../shared/theme";
 import { MicroLabel } from "../shared/primitives";
 import { useBreakpoint, useStacked } from "../shared/responsive";
 
@@ -61,7 +61,7 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
       onLostPointerCapture={() => (drag.current = false)}
       style={{
         position: "absolute",
-        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + 165}px ${layout.pad} 50px`,
+        inset: bp === "mobile" ? 0 : stacked ? `${space.xxl}px ${layout.pad}` : `${layout.navHeight + 148}px ${layout.pad} 60px`,
         overflow: "hidden",
         cursor: "ew-resize",
         touchAction: "pan-y",
@@ -137,9 +137,9 @@ export default function ComparisonTransition({ scrollLength = "105vh" }: { scrol
   return (
     <section ref={rootRef} style={{ position: "relative", height: scrollLength, background: color.black, color: color.textOnDark }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
-        <header style={{ position: "absolute", top: layout.navHeight + space.xl, left: layout.pad, right: layout.pad, textAlign: "center" }}>
+        <header style={{ position: "absolute", top: layout.navHeight + space.xl, left: layout.pad, right: layout.pad, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, textAlign: "center" }}>
+          <span style={{ display: "block", margin: 0, ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Drag to compare</span>
           <h2 style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>From invisible to unmistakable.</h2>
-          <span style={{ display: "block", marginTop: rhythm.eyebrowToHeadline, ...typeScale.eyebrow, color: color.textOnDarkMuted }}>Drag to compare</span>
         </header>
         {shell}
       </div>

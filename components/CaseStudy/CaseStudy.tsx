@@ -567,8 +567,8 @@ export default function CaseStudy({
                   className="cs-view-study"
                   style={{
                     position: "absolute",
-                    right: space.s,
-                    bottom: space.s,
+                    right: space.lg,
+                    bottom: space.lg,
                     zIndex: 3,
                     height: 48,
                     padding: `0 ${space.lg}px`,

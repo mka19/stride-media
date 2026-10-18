@@ -21,6 +21,7 @@ import CaseStudyDetail from "../components/CaseStudyDetail/CaseStudyDetail";
 import { reels } from "../components/Videos/videoData";
 import { findCaseStudy } from "../components/CaseStudyDetail/caseStudies";
 import VideoLibrary from "../components/Videos/VideoLibrary";
+import PageTransition from "../components/shared/PageTransition";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so the
@@ -76,11 +77,12 @@ export default function App() {
     "/case-studies/portraits/anonymous-client.png",
   ];
 
-  if (selectedStudy) return <CaseStudyDetail study={selectedStudy} />;
-  if (isVideoLibrary) return <VideoLibrary />;
+  if (selectedStudy) return <><PageTransition /><CaseStudyDetail study={selectedStudy} /></>;
+  if (isVideoLibrary) return <><PageTransition /><VideoLibrary /></>;
 
   return (
     <>
+      <PageTransition />
       <Preloader />
       <Nav />
       <Hero

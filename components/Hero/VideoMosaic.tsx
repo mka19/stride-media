@@ -90,7 +90,7 @@ export default function VideoMosaic({
   return (
     <div
       aria-label="Featured Stride reels"
-      onMouseLeave={() => { setHover(null); onHoverChange?.(false); }}
+      onMouseLeave={() => { if (!mobile) { setHover(null); onHoverChange?.(false); } }}
       style={{
         position: "absolute",
         inset: 0,
@@ -206,7 +206,7 @@ export default function VideoMosaic({
                 rel="noreferrer"
                 aria-label={`${tile.caption}, ${tile.views}. Open on Instagram`}
                 onMouseEnter={() => { if (interactive && pointer && !mobile) { setHover({ col, row }); onHoverChange?.(true); } }}
-                onMouseLeave={() => { setHover(null); onHoverChange?.(false); }}
+                onMouseLeave={() => { if (!mobile) { setHover(null); onHoverChange?.(false); } }}
                 onFocus={() => { if (interactive) { setHover({ col, row }); onHoverChange?.(true); } }}
                 onBlur={() => { setHover(null); onHoverChange?.(false); }}
                 onClick={(event) => {

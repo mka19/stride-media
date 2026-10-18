@@ -33,11 +33,15 @@ export default function Preloader({
   onDone?: () => void;
 }) {
   const [leaving, setLeaving] = useState(false);
-  const [gone, setGone] = useState(false);
+  const [gone, setGone] = useState(() => sessionStorage.getItem("stride-session-loaded") === "1");
   const [progress, setProgress] = useState(0);
   const done = useRef(false);
 
   useEffect(() => {
+    if (gone) {
+      onDone?.();
+      return;
+    }
     // The scroll position is restored by the browser before we get here, and
     // a pinned section measured from halfway down is measured wrong.
     window.scrollTo(0, 0);
@@ -55,6 +59,7 @@ export default function Preloader({
     const finish = () => {
       if (done.current) return;
       done.current = true;
+      sessionStorage.setItem("stride-session-loaded", "1");
       cancelAnimationFrame(raf);
       document.body.style.overflow = prevOverflow;
       setLeaving(true);

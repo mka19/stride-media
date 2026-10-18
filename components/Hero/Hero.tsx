@@ -188,8 +188,8 @@ export default function Hero({
         style={{
           position: bp === "mobile" ? "relative" : "sticky",
           top: 0,
-          height: bp === "mobile" ? "calc(100svh + 2px)" : "calc(100vh + 2px)",
-          marginBottom: -2,
+          height: bp === "mobile" ? "100dvh" : "calc(100vh + 2px)",
+          marginBottom: bp === "mobile" ? 0 : -2,
           overflow: "hidden",
           isolation: "isolate",
         }}
@@ -453,15 +453,15 @@ export default function Hero({
           ref={mobileStageRef}
           style={{
             position: "relative",
-            height: "165svh",
+            height: "165dvh",
             overflow: "visible",
             background: color.black,
             isolation: "isolate"
           }}
         >
-          <div style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
+          <div style={{ position: "sticky", top: 0, height: "100dvh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
             <div style={{ position: "absolute", inset: 0, zIndex: -3 }}>
-              <VideoMosaic tiles={tiles} interactive={mobileInteractive} mobile columns={3} rows={4} />
+              <VideoMosaic tiles={tiles} interactive mobile columns={3} rows={4} />
             </div>
             <div ref={mobileVeilRef} aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: -2, opacity: .82, background: `linear-gradient(180deg, ${color.black}, ${hexA(color.black, .62)} 46%, ${color.black})`, willChange: "opacity" }} />
             <div ref={mobileCopyRef} style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%", maxWidth: 560, willChange: "opacity, transform", pointerEvents: mobileInteractive ? "none" : "auto" }}>
