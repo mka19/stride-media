@@ -16,6 +16,7 @@ export default function FluidWake() {
     const drops: Drop[] = [];
     let previous: { x: number; y: number; time: number } | null = null;
     let raf = 0;
+    let active = true;
     let width = 1;
     let height = 1;
     const dpr = Math.min(devicePixelRatio, 1.5);
@@ -58,6 +59,7 @@ export default function FluidWake() {
     const leave = () => { previous = null; };
 
     const frame = () => {
+      if (!active) return;
       raf = requestAnimationFrame(frame);
       ctx.clearRect(0, 0, width, height);
       ctx.globalCompositeOperation = "screen";
@@ -95,8 +97,27 @@ export default function FluidWake() {
     host.addEventListener("pointerleave", leave);
     raf = requestAnimationFrame(frame);
 
+    const setActive = (next: boolean) => {
+      if (active === next) return;
+      active = next;
+      cancelAnimationFrame(raf);
+      if (active) raf = requestAnimationFrame(frame);
+    };
+    const intersection = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting && !document.hidden),
+      { rootMargin: "10% 0px" },
+    );
+    const onVisibility = () => {
+      const box = host.getBoundingClientRect();
+      setActive(!document.hidden && box.bottom > 0 && box.top < innerHeight);
+    };
+    intersection.observe(host);
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       cancelAnimationFrame(raf);
+      intersection.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       observer.disconnect();
       host.removeEventListener("pointermove", move);
       host.removeEventListener("pointerleave", leave);

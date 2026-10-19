@@ -46,6 +46,7 @@ export default function Wordmark({
     let h = 0;
     let off: HTMLCanvasElement | null = null;
     let raf = 0;
+    let active = true;
 
     // Pointer target, the eased position that follows it, and how much of the
     // effect is currently applied. Starting off-canvas means nothing dissolves
@@ -155,6 +156,7 @@ export default function Wordmark({
     };
 
     const frame = () => {
+      if (!active) return;
       raf = requestAnimationFrame(frame);
       if (!off || !w || !h) return;
 
@@ -301,12 +303,34 @@ export default function Wordmark({
     resize();
     frame();
 
+    const setActive = (next: boolean) => {
+      if (active === next) return;
+      active = next;
+      cancelAnimationFrame(raf);
+      if (active) {
+        last = performance.now();
+        frame();
+      }
+    };
+    const intersection = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting && !document.hidden),
+      { rootMargin: "15% 0px" },
+    );
+    const onVisibility = () => {
+      const box = canvas.getBoundingClientRect();
+      setActive(!document.hidden && box.bottom > 0 && box.top < innerHeight);
+    };
+    intersection.observe(canvas);
+    document.addEventListener("visibilitychange", onVisibility);
+
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
     window.addEventListener("pointermove", onPointer, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
+      intersection.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
       canvas.removeEventListener("pointerdown", onDown);

@@ -24,7 +24,7 @@ import { prefersReducedMotion } from "./gsap";
  * after the curtain has left.
  */
 
-const HOLD_MS = 3000;
+const HOLD_MS = 1200;
 
 export default function Preloader({
   /** Runs once the curtain is gone and the page has been re-measured. */
@@ -34,7 +34,6 @@ export default function Preloader({
 }) {
   const [leaving, setLeaving] = useState(false);
   const [gone, setGone] = useState(() => sessionStorage.getItem("stride-session-loaded") === "1");
-  const [progress, setProgress] = useState(0);
   const done = useRef(false);
 
   useEffect(() => {
@@ -48,19 +47,10 @@ export default function Preloader({
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const started = performance.now();
-    let raf = 0;
-    const tick = () => {
-      raf = requestAnimationFrame(tick);
-      setProgress(Math.min(1, (performance.now() - started) / HOLD_MS));
-    };
-    raf = requestAnimationFrame(tick);
-
     const finish = () => {
       if (done.current) return;
       done.current = true;
       sessionStorage.setItem("stride-session-loaded", "1");
-      cancelAnimationFrame(raf);
       document.body.style.overflow = prevOverflow;
       setLeaving(true);
       // Out of the tree once the fade is over, so its layer is not held for
@@ -74,7 +64,6 @@ export default function Preloader({
     const hold = window.setTimeout(finish, HOLD_MS);
 
     return () => {
-      cancelAnimationFrame(raf);
       window.clearTimeout(hold);
       document.body.style.overflow = prevOverflow;
     };
@@ -151,7 +140,8 @@ export default function Preloader({
               position: "absolute",
               inset: 0,
               transformOrigin: "0% 50%",
-              transform: `scaleX(${leaving ? 1 : progress})`,
+              transform: "scaleX(1)",
+              animation: leaving ? "none" : `stride-preloader-progress ${HOLD_MS}ms linear both`,
               background: `linear-gradient(90deg, ${color.accent}, ${color.accentBright})`,
             }}
           />

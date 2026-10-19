@@ -37,6 +37,7 @@ export default function Marquee({
     let offset = 0;
     let prev = performance.now();
     let raf = 0;
+    let active = true;
 
     // Drag state. A throw hands its velocity to the loop and it decays back
     // into the steady travel, so letting go does not stop the strip dead.
@@ -46,7 +47,7 @@ export default function Marquee({
     const view = el.parentElement as HTMLElement | null;
 
     const frame = (now: number) => {
-      raf = requestAnimationFrame(frame);
+      if (!active) return;
       const dt = Math.min(64, now - prev) / 1000;
       prev = now;
       const span = el.scrollWidth / 2 || 1;
@@ -70,8 +71,29 @@ export default function Marquee({
        * where the second copy always covers what the first one leaves.
        */
       el.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
+
+    const setActive = (next: boolean) => {
+      if (active === next) return;
+      active = next;
+      cancelAnimationFrame(raf);
+      if (active) {
+        prev = performance.now();
+        raf = requestAnimationFrame(frame);
+      }
+    };
+    const intersection = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting && !document.hidden),
+      { rootMargin: "10% 0px" },
+    );
+    const onVisibility = () => {
+      const box = view?.getBoundingClientRect();
+      setActive(!document.hidden && Boolean(box && box.bottom > 0 && box.top < innerHeight));
+    };
+    if (view) intersection.observe(view);
+    document.addEventListener("visibilitychange", onVisibility);
 
     const onDown = (e: PointerEvent) => {
       dragging = true;
@@ -103,6 +125,8 @@ export default function Marquee({
 
     return () => {
       cancelAnimationFrame(raf);
+      intersection.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       view?.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);

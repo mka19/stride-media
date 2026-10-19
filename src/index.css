@@ -392,6 +392,11 @@ html[data-motion="off"] .mobile-parallax-media {
   to { transform: scaleX(1); }
 }
 
+@keyframes stride-preloader-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 .testimonial-progress-fill {
   transform-origin: left center;
   animation: testimonial-progress 5.6s linear forwards;

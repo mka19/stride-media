@@ -30,19 +30,9 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
   const mobileTrack = useRef<HTMLDivElement | null>(null);
   const [mobileIndex, setMobileIndex] = useState(0);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
-  const loopCards = [...copy.cards, ...copy.cards, ...copy.cards];
-
-  useEffect(() => {
-    if (!stacked || !mobileTrack.current) return;
-    const rail = mobileTrack.current;
-    const first = rail.children[0] as HTMLElement | undefined;
-    if (!first) return;
-    rail.scrollLeft = copy.cards.length * (first.offsetWidth + 14);
-  }, [stacked]);
-
   const goToMobile = (index: number) => {
     const el = mobileTrack.current;
-    const card = el?.children[copy.cards.length + index] as HTMLElement | undefined;
+    const card = el?.children[index] as HTMLElement | undefined;
     if (el && card) {
       const left = card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2;
       el.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
@@ -131,12 +121,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               if (!card) return;
               const step = card.offsetWidth + 14;
               const raw = Math.round(el.scrollLeft / step);
-              const count = copy.cards.length;
-              const logical = ((raw % count) + count) % count;
-              setMobileIndex(logical);
-              if (raw < count || raw >= count * 2) {
-                window.requestAnimationFrame(() => { el.scrollLeft = (count + logical) * step; });
-              }
+              setMobileIndex(Math.max(0, Math.min(copy.cards.length - 1, raw)));
             }}
             style={{
               display: "flex",
@@ -152,8 +137,8 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
               touchAction: "pan-x pan-y",
             }}
           >
-            {loopCards.map((card, i) => {
-              const sourceIndex = i % copy.cards.length;
+            {copy.cards.map((card, i) => {
+              const sourceIndex = i;
               return (
               <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
                 <ResultCard card={card} src={clips[sourceIndex]} seed={sourceIndex} width="100%" instanceKey={`mobile-${i}`} activeVideo={activeVideo} setActiveVideo={setActiveVideo} />

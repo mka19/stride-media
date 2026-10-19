@@ -218,15 +218,16 @@ export default function Hero({
         {bp === "mobile" && <div className="mobile-liquid-fallback" aria-hidden="true" />}
 
         {/* Layer 1 — video mosaic (phase 2 arrival, phase 3 hover) */}
-        <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
-          <VideoMosaic
-            tiles={tiles}
-            interactive={interactive}
-            mobile={bp === "mobile"}
-            columns={bp === "mobile" ? 3 : bp === "tablet" ? 4 : 6}
-            rows={4}
-          />
-        </div>
+        {bp !== "mobile" && (
+          <div className="hero-mosaic" style={{ position: "absolute", inset: 0 }}>
+            <VideoMosaic
+              tiles={tiles}
+              interactive={interactive}
+              columns={bp === "tablet" ? 4 : 6}
+              rows={4}
+            />
+          </div>
+        )}
 
         {/* Layer 2 — veil that keeps type legible over moving footage */}
         <div
@@ -255,11 +256,13 @@ export default function Hero({
           {/* The canvas fills the frame. It used to be a square the size of
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
-          <div style={{ position: "absolute", inset: 0, transform: bp === "mobile" ? "translateY(-8svh) scale(1.02)" : undefined }}>
-            <Suspense fallback={null}>
-              <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground showMark={bp !== "mobile"} />
-            </Suspense>
-          </div>
+          {bp !== "mobile" && (
+            <div style={{ position: "absolute", inset: 0 }}>
+              <Suspense fallback={null}>
+                <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+              </Suspense>
+            </div>
+          )}
           {bp === "mobile" && (
             <StrideMark
               size={190}

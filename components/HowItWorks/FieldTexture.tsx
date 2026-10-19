@@ -77,10 +77,11 @@ export default function FieldTexture({
     }));
 
     let raf = 0;
+    let active = true;
     let prev = performance.now();
 
     const draw = (now: number) => {
-      raf = requestAnimationFrame(draw);
+      if (!active) return;
       const dt = reduced ? 0 : Math.min(64, now - prev) / 1000;
       prev = now;
       ctx.clearRect(0, 0, w, h);
@@ -183,13 +184,36 @@ export default function FieldTexture({
           ctx.fillText(c.label, x + size * 0.7, y - size * 0.4);
         }
       }
+      if (!reduced && active) raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
+
+    const setActive = (next: boolean) => {
+      if (active === next) return;
+      active = next;
+      cancelAnimationFrame(raf);
+      if (active && !reduced) {
+        prev = performance.now();
+        raf = requestAnimationFrame(draw);
+      }
+    };
+    const intersection = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting && !document.hidden),
+      { rootMargin: "15% 0px" },
+    );
+    const onVisibility = () => {
+      const box = canvas.getBoundingClientRect();
+      setActive(!document.hidden && box.bottom > 0 && box.top < innerHeight);
+    };
+    intersection.observe(canvas);
+    document.addEventListener("visibilitychange", onVisibility);
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
     return () => {
       cancelAnimationFrame(raf);
+      intersection.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       ro.disconnect();
     };
   }, [breakpoint, tone]);
