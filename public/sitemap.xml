@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://stridemedia.co/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://stridemedia.co/videos</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stridemedia.co/case-studies/anna-herbst</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stridemedia.co/case-studies/monish-bakhru</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stridemedia.co/case-studies/imtaz-ahmed</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stridemedia.co/case-studies/yasmin-shafi</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stridemedia.co/case-studies/maaz-kadri</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stridemedia.co/case-studies/anonymous-learning</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://stridemedia.co/privacy.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://stridemedia.co/terms.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+</urlset>

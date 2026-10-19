@@ -23,6 +23,7 @@ import { findCaseStudy } from "../components/CaseStudyDetail/caseStudies";
 import VideoLibrary from "../components/Videos/VideoLibrary";
 import PageTransition from "../components/shared/PageTransition";
 import { SHOW_VSL } from "../components/shared/features";
+import Seo from "../components/shared/Seo";
 
 /**
  * Preview harness. Not part of the Framer deliverable — it exists so the
@@ -78,11 +79,12 @@ export default function App() {
     "/case-studies/portraits/anonymous-client.png",
   ];
 
-  if (selectedStudy) return <><PageTransition /><CaseStudyDetail study={selectedStudy} /></>;
-  if (isVideoLibrary) return <><PageTransition /><VideoLibrary /></>;
+  if (selectedStudy) return <><Seo study={selectedStudy} /><PageTransition /><CaseStudyDetail study={selectedStudy} /></>;
+  if (isVideoLibrary) return <><Seo videoLibrary /><PageTransition /><VideoLibrary /></>;
 
   return (
     <>
+      <Seo />
       <PageTransition />
       <Preloader />
       <Nav />

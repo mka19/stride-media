@@ -390,6 +390,14 @@ export function MediaTile({
           decoding="async"
           style={{ width: "100%", height: "100%", objectFit: mediaFit, objectPosition: "center", display: "block" }}
         />
+      ) : src && !play && poster ? (
+        <img
+          src={poster}
+          alt=""
+          loading={imageLoading}
+          decoding="async"
+          style={{ width: "100%", height: "100%", objectFit: mediaFit, objectPosition: "center", display: "block" }}
+        />
       ) : src ? (
         <video
           ref={videoRef}
