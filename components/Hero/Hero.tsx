@@ -39,6 +39,7 @@ export default function Hero({
   const [interactive, setInteractive] = useState(false);
   const [mobileInteractive, setMobileInteractive] = useState(false);
   const mobileStageRef = useRef<HTMLDivElement | null>(null);
+  const mobileStickyRef = useRef<HTMLDivElement | null>(null);
   const mobileCopyRef = useRef<HTMLDivElement | null>(null);
   const mobileVeilRef = useRef<HTMLDivElement | null>(null);
   // The headline decodes at the point the object hands the screen over to it.
@@ -55,12 +56,20 @@ export default function Hero({
       const stage = mobileStageRef.current;
       if (!stage) return;
       const rect = stage.getBoundingClientRect();
-      const travel = Math.max(1, rect.height - window.innerHeight);
+      // Keep the scroll mapping tied to the actual pinned composition. Mobile
+      // browser chrome changes `innerHeight` while the user scrolls; using it
+      // here made the progress jump and the second chapter visibly resize.
+      const pinnedHeight = mobileStickyRef.current?.getBoundingClientRect().height ?? window.innerHeight;
+      const travel = Math.max(1, rect.height - pinnedHeight);
       const progress = Math.max(0, Math.min(1, -rect.top / travel));
       // Hold the complete composition first. Copy leaves as one group, then
       // the veil clears after it; only then does the mosaic accept taps.
-      const copyFade = Math.max(0, Math.min(1, (progress - .08) / .24));
-      const veilFade = Math.max(0, Math.min(1, (progress - .36) / .24));
+      const smooth = (value: number) => {
+        const t = Math.max(0, Math.min(1, value));
+        return t * t * (3 - 2 * t);
+      };
+      const copyFade = smooth((progress - .08) / .24);
+      const veilFade = smooth((progress - .36) / .24);
       if (mobileCopyRef.current) {
         mobileCopyRef.current.style.opacity = String(1 - copyFade);
         mobileCopyRef.current.style.transform = `translate3d(0, ${-18 * copyFade}px, 0)`;
@@ -75,10 +84,8 @@ export default function Hero({
     const queue = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
     addEventListener("scroll", queue, { passive: true });
-    addEventListener("resize", queue);
     return () => {
       removeEventListener("scroll", queue);
-      removeEventListener("resize", queue);
       if (frame) cancelAnimationFrame(frame);
     };
   }, [bp]);
@@ -188,7 +195,7 @@ export default function Hero({
         style={{
           position: bp === "mobile" ? "relative" : "sticky",
           top: 0,
-          height: bp === "mobile" ? "100dvh" : "calc(100vh + 2px)",
+          height: bp === "mobile" ? "100svh" : "calc(100vh + 2px)",
           marginBottom: -2,
           overflow: "hidden",
           isolation: "isolate",
@@ -454,14 +461,14 @@ export default function Hero({
           ref={mobileStageRef}
           style={{
             position: "relative",
-            height: "165dvh",
+            height: "165svh",
             marginTop: -58,
             overflow: "visible",
             background: "#210947",
             isolation: "isolate"
           }}
         >
-          <div style={{ position: "sticky", top: 0, height: "100dvh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
+          <div ref={mobileStickyRef} style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
             <div className="mobile-liquid-fallback" aria-hidden="true" style={{ zIndex: -4 }} />
             <div style={{ position: "absolute", top: -56, right: 0, bottom: 0, left: 0, zIndex: -3 }}>
               <VideoMosaic tiles={tiles} interactive mobile columns={3} rows={4} />
