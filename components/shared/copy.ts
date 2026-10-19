@@ -331,11 +331,11 @@ export const founders = {
     {
       n: "02",
       name: "Faiz Ali",
-      role: "Co-founder · Creative & Culture",
-      bio: "Faiz brings a creator's eye to Stride, drawing on Emirates-focused POV, comedy and review content to keep ideas culturally relevant, natural on camera and built for attention.",
+      role: "Founder",
+      bio: "Faiz leads agency operations, brand strategy, partnerships and executive production, ensuring every engagement is delivered to a premium standard.",
       image: "/founders/co-founder.png",
       instagram: "https://www.instagram.com/faizzali05/",
-      linkedin: "",
+      linkedin: "https://www.linkedin.com/in/shaik-faiz-ali-61b828209/",
     },
   ],
   memories: [
