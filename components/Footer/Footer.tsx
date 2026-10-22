@@ -234,7 +234,7 @@ export default function Footer({
               next to the copyright line has no idea what it is, and it is not
               theirs to read. Inspect the footer, or run scripts/audit.mjs. */}
           <span data-build={BUILD}>
-            @{brand.url.replace(/\..*$/, "")} — {copy.rights}
+            © 2026 {brand.name.toUpperCase()} — {copy.rights}
           </span>
           <span>
             {copy.basedLabel} {copy.basedIn}
