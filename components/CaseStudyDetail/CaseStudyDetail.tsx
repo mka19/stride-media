@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowIcon, MicroLabel, StrideMark } from "../shared/primitives";
 import { caseStudies, type CaseStudyRecord } from "./caseStudies";
 
@@ -39,6 +39,10 @@ function BulletIcon({ title }: { title: string }) {
 
 export default function CaseStudyDetail({ study }: { study: CaseStudyRecord }) {
   const [activeSection, setActiveSection] = useState("summary");
+  const [edgeOffset, setEdgeOffset] = useState(0);
+  const [edgeDragging, setEdgeDragging] = useState(false);
+  const [edgeReturning, setEdgeReturning] = useState(false);
+  const edgeStart = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -66,7 +70,34 @@ export default function CaseStudyDetail({ study }: { study: CaseStudyRecord }) {
   const next = caseStudies[(current + 1) % caseStudies.length];
 
   return (
-    <main className="study-page">
+    <main
+      className="study-page"
+      onTouchStart={(event) => {
+        const touch = event.touches[0];
+        if (touch && touch.clientX <= 32) { edgeStart.current = { x: touch.clientX, y: touch.clientY }; setEdgeDragging(true); }
+      }}
+      onTouchMove={(event) => {
+        const start = edgeStart.current;
+        const touch = event.touches[0];
+        if (!start || !touch) return;
+        const x = Math.max(0, touch.clientX - start.x);
+        const y = Math.abs(touch.clientY - start.y);
+        if (y > x) { edgeStart.current = null; setEdgeDragging(false); setEdgeOffset(0); return; }
+        setEdgeOffset(Math.min(window.innerWidth * .72, x));
+      }}
+      onTouchEnd={() => {
+        if (!edgeStart.current) return;
+        edgeStart.current = null;
+        setEdgeDragging(false);
+        if (edgeOffset >= 76) {
+          setEdgeReturning(true);
+          setEdgeOffset(window.innerWidth);
+          window.setTimeout(() => window.location.assign("/#case-study"), 220);
+        } else setEdgeOffset(0);
+      }}
+      onTouchCancel={() => { edgeStart.current = null; setEdgeDragging(false); setEdgeOffset(0); }}
+      style={{ transform: `translate3d(${edgeOffset}px,0,0)`, transition: edgeDragging ? "none" : `transform ${edgeReturning ? 220 : 280}ms cubic-bezier(.16,1,.3,1)`, boxShadow: edgeOffset ? "-18px 0 48px rgba(0,0,0,.5)" : undefined, willChange: edgeOffset ? "transform" : undefined }}
+    >
       <header className="study-topbar">
         <a className="study-brand" href="/" aria-label="Stride Media home"><StrideMark size={34} /><span>STRIDE MEDIA</span></a>
         <a className="study-back" href="/#case-study"><span aria-hidden="true">←</span><span>Back to case studies</span></a>

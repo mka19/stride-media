@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://stridemedia.co/sitemap.xml
+Sitemap: https://www.thestridemedia.com/sitemap.xml

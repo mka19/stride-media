@@ -15,10 +15,24 @@ function ReelCard({ reel, activeId, setActiveId }: { reel: Reel; activeId: strin
     else video.pause();
   }, [playing, setActiveId]);
 
+  const togglePlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (playing) {
+      video.pause();
+      setActiveId(null);
+      return;
+    }
+    video.muted = false;
+    video.volume = 1;
+    setActiveId(reel.id);
+    void video.play().catch(() => setActiveId(null));
+  };
+
   return <article className="video-library-card">
     <div className="video-library-frame">
-      <video ref={videoRef} src={src} poster={poster} playsInline preload="metadata" onEnded={() => setActiveId(null)} />
-      <button type="button" className="video-library-play" onClick={() => setActiveId(playing ? null : reel.id)} aria-label={`${playing ? "Pause" : "Play"} ${reel.title}`}><span>{playing ? "Ⅱ" : "▶"}</span></button>
+      <video ref={videoRef} src={src} poster={poster} playsInline preload="none" onClick={togglePlayback} onEnded={() => setActiveId(null)} />
+      <button type="button" className="video-library-play" onClick={togglePlayback} aria-label={`${playing ? "Pause" : "Play"} ${reel.title}`}><span>{playing ? "Ⅱ" : "▶"}</span></button>
     </div>
     <div className="video-library-copy"><span>{reel.handle}</span><h2>{reel.title}</h2><div><strong>{reel.views ? `${reel.views}+ views` : "Watch the reel"}</strong><a href={reel.instagram} target="_blank" rel="noreferrer">Instagram <ArrowIcon /></a></div></div>
   </article>;

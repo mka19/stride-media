@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
-const siteUrl = "https://stridemedia.co";
+const siteUrl = "https://www.thestridemedia.com";
 const pages = [
   {
     path: "/videos",
@@ -65,6 +65,16 @@ for (const page of pages) {
     .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${escape(page.title)}" />`)
     .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escape(page.description)}" />`)
     .replace(/<meta name="twitter:image" content="[^"]*"\s*\/>/, `<meta name="twitter:image" content="${image}" />`);
+
+  const fallback = `<main><h1>${escape(page.title)}</h1><p>${escape(page.description)}</p><nav aria-label="Public pages"><a href="/">Stride Media home</a> <a href="/videos">Client video results</a></nav><p>Contact <a href="mailto:hello@thestridemedia.com">hello@thestridemedia.com</a>.</p></main>`;
+  html = html.replace(/<!--seo-fallback:start-->[\s\S]*?<!--seo-fallback:end-->/, `<!--seo-fallback:start-->${fallback}<!--seo-fallback:end-->`);
+
+  const graph = [
+    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "Stride Media", url: `${siteUrl}/`, logo: `${siteUrl}/favicon.svg`, email: "hello@thestridemedia.com", telephone: "+971544278816", sameAs: ["https://www.instagram.com/stride.media_/", "https://www.linkedin.com/company/stridemediauae/"] },
+    { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: `${siteUrl}/`, name: "Stride Media", publisher: { "@id": `${siteUrl}/#organization` }, inLanguage: "en" },
+  ];
+  if (page.path.startsWith("/case-studies/")) graph.push({ "@type": "BreadcrumbList", "@id": `${canonical}#breadcrumb`, itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` }, { "@type": "ListItem", position: 2, name: "Case Studies", item: `${siteUrl}/#case-study` }, { "@type": "ListItem", position: 3, name: page.title.replace(" Case Study | Stride Media Dubai", ""), item: canonical }] });
+  html = html.replace(/<script type="application\/ld\+json" data-stride-seo="structured-data">[\s\S]*?<\/script>/, `<script type="application/ld+json" data-stride-seo="structured-data">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph })}</script>`);
 
   if (page.path.startsWith("/case-studies/")) {
     html = html.replace('<meta property="og:type" content="website" />', '<meta property="og:type" content="article" />');

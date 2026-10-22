@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { CaseStudyRecord } from "../CaseStudyDetail/caseStudies";
 
-const SITE_URL = "https://stridemedia.co";
+const SITE_URL = "https://www.thestridemedia.com";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
 
 function upsertMeta(selector: string, attributes: Record<string, string>) {
@@ -31,7 +31,7 @@ function organizationGraph() {
       name: "Stride Media",
       url: `${SITE_URL}/`,
       logo: `${SITE_URL}/favicon.svg`,
-      email: "hello@stridemedia.co",
+      email: "hello@thestridemedia.com",
       telephone: "+971544278816",
       sameAs: [
         "https://www.instagram.com/stride.media_/",
@@ -44,7 +44,7 @@ function organizationGraph() {
       name: "Stride Media",
       url: `${SITE_URL}/`,
       image: DEFAULT_IMAGE,
-      email: "hello@stridemedia.co",
+      email: "hello@thestridemedia.com",
       telephone: "+971544278816",
       address: { "@type": "PostalAddress", addressLocality: "Dubai", addressCountry: "AE" },
       areaServed: { "@type": "Place", name: "Dubai, United Arab Emirates" },
@@ -93,6 +93,7 @@ export default function Seo({ study, videoLibrary = false }: { study?: CaseStudy
     upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: title });
     upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
     upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: image });
+    upsertMeta('meta[name="twitter:image:alt"]', { name: "twitter:image:alt", content: study ? `${study.client} — Stride Media client case study` : "Stride Media — Strategy. Content. Recognition." });
 
     const graph: Record<string, unknown>[] = organizationGraph();
     if (study) {

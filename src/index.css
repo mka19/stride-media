@@ -283,12 +283,6 @@ html[data-motion="off"] .mobile-parallax-media {
 }
 
 @media (max-width: 768px) {
-  .founder-focus-copy {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-  }
   .mobile-faq-title {
     animation: mobile-faq-title-in linear both;
     animation-timeline: view();

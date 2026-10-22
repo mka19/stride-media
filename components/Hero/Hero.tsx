@@ -195,8 +195,8 @@ export default function Hero({
         style={{
           position: bp === "mobile" ? "relative" : "sticky",
           top: 0,
-          height: bp === "mobile" ? "100svh" : "calc(100vh + 2px)",
-          marginBottom: -2,
+          height: bp === "mobile" ? "100vh" : "calc(100vh + 2px)",
+          marginBottom: bp === "mobile" ? 0 : -2,
           overflow: "hidden",
           isolation: "isolate",
             background: bp === "mobile" ? "#210947" : color.black,
@@ -256,13 +256,11 @@ export default function Hero({
           {/* The canvas fills the frame. It used to be a square the size of
               the mark, which clipped the dissolve — the particles travel
               outward and stopped dead at the box's edges. */}
-          {bp !== "mobile" && (
-            <div style={{ position: "absolute", inset: 0 }}>
+          <div style={{ position: "absolute", inset: 0 }}>
               <Suspense fallback={null}>
-                <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground />
+                <HeroObject handleRef={objectRef} breakpoint={bp} liquidBackground showMark={bp !== "mobile"} />
               </Suspense>
-            </div>
-          )}
+          </div>
           {bp === "mobile" && (
             <StrideMark
               size={190}
@@ -464,14 +462,14 @@ export default function Hero({
           ref={mobileStageRef}
           style={{
             position: "relative",
-            height: "165svh",
-            marginTop: -58,
-            overflow: "visible",
+            height: "165vh",
+            marginTop: 0,
+            overflow: "clip",
             background: "#210947",
             isolation: "isolate"
           }}
         >
-          <div ref={mobileStickyRef} style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
+          <div ref={mobileStickyRef} style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", display: "grid", placeItems: "center", padding: `calc(${layout.navHeight}px + ${space.xl}px) ${layout.pad} ${space.xxl}px`, boxSizing: "border-box" }}>
             <div className="mobile-liquid-fallback" aria-hidden="true" style={{ zIndex: -4 }} />
             <div style={{ position: "absolute", top: -56, right: 0, bottom: 0, left: 0, zIndex: -3 }}>
               <VideoMosaic tiles={tiles} interactive mobile columns={3} rows={4} />

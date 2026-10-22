@@ -1,6 +1,5 @@
 import { gsap, useGsapContext } from "../shared/gsap";
 import { brand, footer as copy } from "../shared/copy";
-import { SHOW_VSL } from "../shared/features";
 import { BUILD, color, ease, hexA, layout, space, typeScale } from "../shared/theme";
 import { Grain, MediaTile, StrideMark } from "../shared/primitives";
 import { detailFor, useBreakpoint, useStacked } from "../shared/responsive";
@@ -135,7 +134,7 @@ export default function Footer({
             aria-label="Footer"
             style={{ display: "flex", flexDirection: "column", gap: mobile ? 12 : space.s }}
           >
-            {copy.nav.filter((item) => SHOW_VSL || item.href !== "#what-we-do").map((item) => (
+            {copy.nav.map((item) => (
               <a
                 key={item.n}
                 href={item.href}

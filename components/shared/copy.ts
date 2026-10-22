@@ -17,8 +17,8 @@ export const brand = {
   tagline: "Strategy. Content. Recognition.",
   phone: "+971 54 427 8816",
   phoneLabel: "Call us 24/7",
-  email: "hello@stridemedia.co", // PLACEHOLDER
-  url: "stridemedia.co",
+  email: "hello@thestridemedia.com",
+  url: "www.thestridemedia.com",
   /*
    * The scheduling link does not live here.
    *
@@ -358,7 +358,7 @@ export const footer = {
   /** Numbered, down the left. */
   nav: [
     { n: "01", label: "Home", href: "#top" },
-    { n: "02", label: "What We Do", href: "#what-we-do" },
+    { n: "02", label: "Case Studies", href: "#case-study" },
     { n: "03", label: "Work", href: "#results" },
     { n: "04", label: "Contact", href: "#contact" },
   ],
@@ -375,7 +375,6 @@ export const footer = {
   socials: [
     { label: "Instagram", href: "https://www.instagram.com/stride.media_/" },
     { label: "YouTube", href: "https://www.youtube.com/" },
-    { label: "TikTok", href: "https://www.tiktok.com/" },
     { label: "LinkedIn", href: "https://www.linkedin.com/company/stridemediauae/" },
   ],
   rights: "all rights reserved",

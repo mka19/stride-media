@@ -111,7 +111,8 @@ export default function Nav({
       problem: 0.1,
     };
     const travel = Math.max(0, target.offsetHeight - window.innerHeight);
-    const destination = Math.max(0, target.offsetTop + travel * (landingProgress[id] ?? 0) - height);
+    const targetTop = window.scrollY + target.getBoundingClientRect().top;
+    const destination = Math.max(0, targetTop + travel * (landingProgress[id] ?? 0) - height);
     const land = () => {
       if (lenis) lenis.scrollTo(destination, { immediate: true, force: true });
       else window.scrollTo({ top: destination, behavior: "auto" });
@@ -502,14 +503,12 @@ export default function Nav({
             style={{
               display: "grid",
               justifyItems: "center",
-              gap: space.md,
               opacity: transition.phase === "cover" ? 1 : 0,
               transform: transition.phase === "cover" ? "translateY(0) scale(1)" : "translateY(10px) scale(.96)",
               transition: `opacity 260ms ${ease.out}, transform 520ms ${ease.out}`,
             }}
           >
             <StrideMark size={72} glowing />
-            <span style={{ ...typeScale.eyebrow, color: color.textOnDarkMuted, letterSpacing: ".12em" }}>{transition.label}</span>
           </div>
         </div>, document.body
       )}

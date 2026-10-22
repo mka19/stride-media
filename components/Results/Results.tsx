@@ -34,7 +34,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
     const el = mobileTrack.current;
     const card = el?.children[index] as HTMLElement | undefined;
     if (el && card) {
-      const left = card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2;
+      const left = card.offsetLeft - 24;
       el.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
     }
   };
@@ -43,21 +43,23 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
     (root) => {
       const q = gsap.utils.selector(root);
       if (stacked) {
-        gsap.set(q(".rs-card"), { opacity: 1, x: 0, clearProps: "transform" });
+        gsap.set(q(".rs-card"), { opacity: 1 });
         return;
       }
-      gsap.set(q(".rs-card"), { opacity: 0, x: 60 });
+      // The ticker owns each card's transform for its perspective curve.
+      // Animating x on the same element made GSAP and the ticker overwrite
+      // one another on the first viewport entry, producing a visible jump.
+      gsap.set(q(".rs-card"), { opacity: 0 });
       gsap.to(q(".rs-card"), {
         opacity: 1,
-        x: 0,
-        duration: 0.6,
-        stagger: 0.08,
+        duration: 0.38,
+        stagger: 0.045,
         ease: "power2.out",
         scrollTrigger: { trigger: root, start: "top 75%" },
       });
     },
     [stacked],
-    (root) => gsap.set(gsap.utils.selector(root)(".rs-card"), { opacity: 1, x: 0 }),
+    (root) => gsap.set(gsap.utils.selector(root)(".rs-card"), { opacity: 1 }),
   );
 
   return (
@@ -89,9 +91,9 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
         }}
       >
         <MicroLabel tone="accent">{copy.label}</MicroLabel>
-        <GradientRevealText as="h2" tone="dark" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>
-          {copy.headline}
-        </GradientRevealText>
+        {stacked
+          ? <h2 style={{ margin: 0, ...typeScale.h1, maxWidth: "18ch", color: color.textOnDark, textWrap: "balance" }}>{copy.headline}</h2>
+          : <GradientRevealText as="h2" tone="dark" style={{ ...typeScale.h1, maxWidth: "18ch", textWrap: "balance" }}>{copy.headline}</GradientRevealText>}
         <p
           style={{
             margin: 0,
@@ -125,13 +127,16 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
             }}
             style={{
               display: "flex",
+              width: "100%",
+              boxSizing: "border-box",
               gap: 14,
               overflowX: "auto",
               scrollSnapType: "x mandatory",
               scrollBehavior: "smooth",
               overscrollBehaviorInline: "contain",
               WebkitOverflowScrolling: "touch",
-              padding: `10px ${layout.pad}px ${space.lg}px`,
+              padding: `10px 24px ${space.lg}px`,
+              scrollPaddingInline: 24,
               scrollbarWidth: "none",
               cursor: "grab",
               touchAction: "pan-x pan-y",
@@ -140,7 +145,7 @@ export default function Results({ clips = [] }: { clips?: string[] }) {
             {copy.cards.map((card, i) => {
               const sourceIndex = i;
               return (
-              <div key={`${card.views}-${i}`} style={{ flex: "0 0 82vw", scrollSnapAlign: "center" }}>
+              <div key={`${card.views}-${i}`} style={{ flex: "0 0 calc(100vw - 48px)", scrollSnapAlign: "start" }}>
                 <ResultCard card={card} src={clips[sourceIndex]} seed={sourceIndex} width="100%" instanceKey={`mobile-${i}`} activeVideo={activeVideo} setActiveVideo={setActiveVideo} />
               </div>
             );})}
@@ -302,11 +307,20 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
       view.releasePointerCapture(e.pointerId);
       view.style.cursor = "grab";
     };
+    const onOver = (e: PointerEvent) => {
+      if ((e.target as HTMLElement).closest(".rs-card")) interactiveHold = true;
+    };
+    const onOut = (e: PointerEvent) => {
+      const next = e.relatedTarget as HTMLElement | null;
+      if (!next?.closest?.(".rs-card")) interactiveHold = false;
+    };
 
     view.addEventListener("pointerdown", onDown);
     view.addEventListener("pointermove", onMove);
     view.addEventListener("pointerup", onUp);
     view.addEventListener("pointercancel", onUp);
+    view.addEventListener("pointerover", onOver);
+    view.addEventListener("pointerout", onOut);
 
     return () => {
       cancelAnimationFrame(raf);
@@ -314,6 +328,8 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
       view.removeEventListener("pointermove", onMove);
       view.removeEventListener("pointerup", onUp);
       view.removeEventListener("pointercancel", onUp);
+      view.removeEventListener("pointerover", onOver);
+      view.removeEventListener("pointerout", onOut);
     };
   }, []);
 
@@ -335,7 +351,6 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
         overflow: "hidden",
         cursor: "grab",
         touchAction: "pan-y",
-        perspective: 1500,
         /*
          * The padding here is headroom for the clip, not spacing, and the
          * matching negative margin is what keeps it from becoming spacing.
@@ -360,7 +375,6 @@ function Ticker({ children, paused = false }: { children: ReactNode; paused?: bo
           alignItems: "center",
           gap: "clamp(12px, 1.4vw, 22px)",
           width: "max-content",
-          transformStyle: "preserve-3d",
           willChange: "transform",
         }}
       >
@@ -426,14 +440,13 @@ function ResultCard({
         flexDirection: "column",
         gap: space.s,
         userSelect: "none",
-        transformStyle: "preserve-3d",
         willChange: "transform, opacity",
         color: "inherit",
         textDecoration: "none",
       }}
     >
       <div style={{ position: "relative", width: "100%", height: 472, maxHeight: "68vh", overflow: "hidden", borderRadius: 4, background: color.black }}>
-        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="metadata" draggable={false} onPointerDown={(event) => { event.stopPropagation(); togglePlayback(); }} onClick={(event) => { if (event.detail === 0) togglePlayback(); }} onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer", touchAction: "manipulation" }} />}
+        {videoSrc && <video ref={videoRef} src={videoSrc} poster={src} playsInline preload="none" draggable={false} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); togglePlayback(); }} onPlay={() => setActiveVideo(instanceKey)} onPause={() => { if (playing) setActiveVideo(null); }} onEnded={() => setActiveVideo(null)} style={{ position: "absolute", inset: "0 0 52px", width: "100%", height: "calc(100% - 52px)", objectFit: "cover", background: color.black, cursor: "pointer", touchAction: "manipulation" }} />}
         {!videoSrc && <MediaTile src={src} seed={seed + 21} radius={4} style={{ position: "absolute", inset: "0 0 52px" }} />}
 
         {/* client avatar, top-left */}
@@ -485,13 +498,13 @@ function ResultCard({
           <span className="result-view-text">{card.views} Views</span>
         </div>
         {videoSrc && (
-          <button type="button" onPointerDown={(event) => { event.stopPropagation(); togglePlayback(); }} onClick={(event) => { if (event.detail === 0) togglePlayback(); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1, touchAction: "manipulation" }}>
+          <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); togglePlayback(); }} aria-label={`${playing ? "Pause" : "Play"} ${card.handle} video`} style={{ position: "absolute", top: space.md, right: space.md, zIndex: 6, width: 48, height: 48, borderRadius: "50%", border: `1px solid ${hexA("#fff", .42)}`, padding: 0, background: hexA(color.black, .76), color: "#fff", display: "grid", placeItems: "center", cursor: "pointer", backdropFilter: "blur(10px)", fontSize: 18, lineHeight: 1, touchAction: "manipulation" }}>
             <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
           </button>
         )}
       </div>
 
-      <div className="premium-rise-copy" style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>
+      <div style={{ ...typeScale.eyebrow, color: color.accent }}>{card.metric}</div>
       <p style={{ margin: 0, ...typeScale.bodyLg, color: color.textOnDarkMuted }}>{card.desc}</p>
       <div
         style={{

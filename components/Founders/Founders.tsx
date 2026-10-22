@@ -51,26 +51,12 @@ function MemoryCard({ item, index, compact }: { item: MemoryItem; index: number;
 export default function Founders() {
   const bp = useBreakpoint();
   const compact = useStacked() || bp === "tablet";
-  const root = useRef<HTMLElement | null>(null);
-  const [activeSkill, setActiveSkill] = useState(0);
-  useEffect(() => {
-    const update = () => {
-      const section = root.current;
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      const travel = Math.max(1, rect.height - window.innerHeight);
-      const progress = Math.max(0, Math.min(1, -rect.top / travel));
-      setActiveSkill(Math.min(2, Math.floor(progress * 3)));
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, []);
-  return <section id="founders" ref={root} style={{ position: "relative", padding: `${bp === "mobile" ? 24 : compact ? space.xxl : space.h}px ${layout.pad} ${layout.section}`, background: color.black, color: color.textOnDark, overflow: "clip" }}>
+  const [activeSkills, setActiveSkills] = useState([0, 0]);
+  return <section id="founders" style={{ position: "relative", padding: `${bp === "mobile" ? 24 : compact ? space.xxl : space.h}px ${layout.pad} ${layout.section}`, background: color.black, color: color.textOnDark, overflow: "clip" }}>
     <Grain opacity={.1} />
     <div style={{ position: "relative", zIndex: 1, maxWidth: 1600, margin: "0 auto" }}>
       <header style={{ maxWidth: 760, margin: "0 auto", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}><GradientRevealText as="h2" tone="dark" style={{ margin: 0, ...typeScale.h1, lineHeight: 1.02, color: color.textOnDark }}>{copy.headline}</GradientRevealText><p style={{ margin: `${rhythm.headlineToBody}px auto 0`, maxWidth: "46ch", ...typeScale.bodyLg, lineHeight: 1.55, color: color.textOnDarkMuted }}>The thinking, direction and delivery behind Stride Media.</p></header>
-      <div style={{ position: "relative", marginTop: bp === "mobile" ? space.xl : rhythm.headerToContent }}>{copy.people.map((person, index) => <div key={person.n} style={{ position: compact ? "relative" : "sticky", top: compact ? undefined : `calc(${layout.navHeight}px + ${28 + index * 20}px)`, zIndex: index + 1, marginTop: index ? (compact ? 24 : "22vh") : 0 }}><ProfileCard person={person} index={index} compact={compact} activeSkill={activeSkill} onSkillChange={setActiveSkill} /></div>)}</div>
+      <div style={{ position: "relative", marginTop: bp === "mobile" ? space.xl : rhythm.headerToContent }}>{copy.people.map((person, index) => <div key={person.n} style={{ position: compact ? "relative" : "sticky", top: compact ? undefined : `calc(${layout.navHeight}px + ${28 + index * 20}px)`, zIndex: index + 1, marginTop: index ? (compact ? 24 : "22vh") : 0 }}><ProfileCard person={person} index={index} compact={compact} activeSkill={activeSkills[index]} onSkillChange={(skill) => setActiveSkills((current) => current.map((value, card) => card === index ? skill : value))} /></div>)}</div>
       <section style={{ marginTop: compact ? layout.section : "clamp(120px, 15vw, 230px)" }}><header style={{ textAlign: "center", marginBottom: compact ? space.xl : space.xxl }}><h3 style={{ margin: 0, ...typeScale.h1, color: color.textOnDark }}>Built together.</h3></header><div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "repeat(4, minmax(0, 1fr))", alignItems: "center", gap: compact ? space.xl : "clamp(12px, 1.5vw, 28px)", maxWidth: compact ? 560 : undefined, margin: "0 auto" }}>{copy.memories.map((item, index) => <MemoryCard key={item.n} item={item} index={index} compact={compact} />)}</div></section>
     </div>
   </section>;
