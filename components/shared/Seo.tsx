@@ -30,7 +30,7 @@ function organizationGraph() {
       "@id": `${SITE_URL}/#organization`,
       name: "Stride Media",
       url: `${SITE_URL}/`,
-      logo: `${SITE_URL}/favicon.svg`,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon-192x192.png`, width: 192, height: 192 },
       email: "hello@thestridemedia.com",
       telephone: "+971544278816",
       sameAs: [
@@ -70,12 +70,12 @@ export default function Seo({ study, videoLibrary = false }: { study?: CaseStudy
       ? `${study.client} Case Study | Stride Media Dubai`
       : videoLibrary
         ? "Client Video Results | Stride Media Dubai"
-        : "Stride Media Dubai | Short-Form Video & Personal Brand Agency";
+        : "Stride Media Dubai | Video Production & Personal Branding";
     const description = study
       ? study.summary
       : videoLibrary
         ? "Watch verified short-form video results produced by Stride Media for property advisors and entrepreneurs in Dubai."
-        : "Stride Media is a Dubai short-form video and personal brand agency delivering strategy, scripting, production and consistent publishing.";
+        : "Stride Media is a Dubai-based creative agency helping brands and professionals grow through content strategy, scripting, video production and personal branding.";
     const image = study?.portrait ? `${SITE_URL}${study.portrait}` : DEFAULT_IMAGE;
 
     document.title = title;

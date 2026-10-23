@@ -70,7 +70,7 @@ for (const page of pages) {
   html = html.replace(/<!--seo-fallback:start-->[\s\S]*?<!--seo-fallback:end-->/, `<!--seo-fallback:start-->${fallback}<!--seo-fallback:end-->`);
 
   const graph = [
-    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "Stride Media", url: `${siteUrl}/`, logo: `${siteUrl}/favicon.svg`, email: "hello@thestridemedia.com", telephone: "+971544278816", sameAs: ["https://www.instagram.com/stride.media_/", "https://www.linkedin.com/company/stridemediauae/"] },
+    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "Stride Media", url: `${siteUrl}/`, logo: { "@type": "ImageObject", url: `${siteUrl}/favicon-192x192.png`, width: 192, height: 192 }, email: "hello@thestridemedia.com", telephone: "+971544278816", sameAs: ["https://www.instagram.com/stride.media_/", "https://www.linkedin.com/company/stridemediauae/"] },
     { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: `${siteUrl}/`, name: "Stride Media", publisher: { "@id": `${siteUrl}/#organization` }, inLanguage: "en" },
   ];
   if (page.path.startsWith("/case-studies/")) graph.push({ "@type": "BreadcrumbList", "@id": `${canonical}#breadcrumb`, itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` }, { "@type": "ListItem", position: 2, name: "Case Studies", item: `${siteUrl}/#case-study` }, { "@type": "ListItem", position: 3, name: page.title.replace(" Case Study | Stride Media Dubai", ""), item: canonical }] });
